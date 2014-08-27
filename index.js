@@ -42,25 +42,27 @@ var start = function (callback) {
     freeport(function (err, webPort) {
       freeport(function(err, mongoPort) {
         child_process.exec('kill $(ps aux -e | grep \'DB_PURPOSE=KITEMATIC\' | awk \'{print $2}\')', function (error, stdout, stderr) {
-          var command = 'DB_PURPOSE=KITEMATIC ' + process.cwd() + '/resources/mongod --bind_ip 127.0.0.1 --dbpath ' + dataPath.replace(' ', '\\ ') + ' --port ' + mongoPort + ' --unixSocketPrefix ' + dataPath.replace(' ', '\\ ');
-          console.log(command);
-          var mongoChild = child_process.exec(command, function (error, stdout, stderr) {
-            console.log(error);
-            console.log(stdout);
-            console.log(stderr);
+          var mongoChild = child_process.spawn(path.join(process.cwd(), 'resources', 'mongod'), ['--bind_ip', '127.0.0.1', '--dbpath', dataPath, '--port', mongoPort, '--unixSocketPrefix', dataPath], {
+            env: {
+              DB_PURPOSE: 'KITEMATIC'
+            }
           });
-
-          process.stdout.write(process.cwd());
-          var rootUrl = 'http://localhost:' + webPort;
-          var user_env = process.env;
-          process.env.ROOT_URL = rootUrl;
-          process.env.PORT = webPort;
-          process.env.BIND_IP = '127.0.0.1';
-          process.env.DB_PATH = dataPath;
-          process.env.MONGO_URL = 'mongodb://localhost:' + mongoPort + '/meteor';
-          process.argv.splice(2, 0, 'program.json');
-          require('./bundle/main.js');
-          callback(process.env.ROOT_URL);
+          mongoChild.stdout.setEncoding('utf8');
+          mongoChild.stdout.on('data', function (data) {
+            if (data.indexOf('waiting for connections on port ' + mongoPort)) {
+              process.stdout.write(process.cwd());
+              var rootUrl = 'http://localhost:' + webPort;
+              var user_env = process.env;
+              process.env.ROOT_URL = rootUrl;
+              process.env.PORT = webPort;
+              process.env.BIND_IP = '127.0.0.1';
+              process.env.DB_PATH = dataPath;
+              process.env.MONGO_URL = 'mongodb://localhost:' + mongoPort + '/meteor';
+              process.argv.splice(2, 0, 'program.json');
+              require('./bundle/main.js');
+              callback(process.env.ROOT_URL);
+            }
+          });
         });
       });
     });
@@ -78,7 +80,7 @@ start(function (url) {
     mainWindow.on('loaded', function () {
       mainWindow.show();
     });
-  }, 600);
+  }, 1000);
   mainWindow.on('close', function (type) {
     this.hide();
     if (type === 'quit') {

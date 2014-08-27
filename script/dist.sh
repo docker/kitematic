@@ -53,6 +53,7 @@ chmod +x dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/terminal
 chmod +x dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/unison
 
 if [ -f $DIR/sign.sh ]; then
+  cecho "-----> Signing app file...." $blue
   $DIR/sign.sh $BASE/dist/osx/Kitematic.app
 fi
 

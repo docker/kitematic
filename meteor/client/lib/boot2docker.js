@@ -185,7 +185,6 @@ startBoot2Docker = function (callback) {
     if (installed) {
       boot2DockerVMExists(function (err, exists) {
         if (exists) {
-          console.log('Running up (server)');
           boot2dockerexec('up', function (err, stdout) {
             console.log(err);
             console.log(stdout);

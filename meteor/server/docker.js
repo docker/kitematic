@@ -359,23 +359,25 @@ reloadDefaultContainers = function (callback) {
   var defaultNames = defaultContainerOptions().map(function (container) {
     return container.name;
   });
-  console.log('Removing old Kitematic default containers.');
-  killAndRemoveContainers(defaultNames, function (err) {
-    console.log('Removed old Kitematic default containers.');
-    if (err) {
-      console.log('Removing old Kitematic default containers ERROR.');
-      callback(err);
-      return;
-    }
-    console.log('Removing old Kitematic default images.');
-    removeImages(defaultNames, function () {
-      console.log('Removed old Kitematic default images.');
-      // if (err) {
-      //   console.log('Removing old Kitematic default images ERROR.');
-      //   console.log(err);
-      //   callback(err);
-      //   return;
-      // }
+
+  var results;
+  async.until(function () {
+    return !!results;
+  }, function (callback) {
+    docker.listContainers(function (err, containers) {
+      results = containers;
+      callback();
+    });
+  }, function (err) {
+    console.log(err);
+    console.log('Removing old Kitematic default containers.');
+    killAndRemoveContainers(defaultNames, function (err) {
+      console.log('Removed old Kitematic default containers.');
+      if (err) {
+        console.log('Removing old Kitematic default containers ERROR.');
+        callback(err);
+        return;
+      }
       console.log('Loading new Kitematic default images.');
       docker.loadImage(path.join(getBinDir(), 'base-images.tar.gz'), {}, function (err) {
         if (err) {
