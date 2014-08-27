@@ -1,7 +1,7 @@
 var watchers = {};
 
 removeBindFolder = function (name, callback) {
-  exec(path.join(getBinDir(), 'boot2docker') + ' ssh "rm -rf /var/lib/docker/binds/' + name + '"', function(err, stdout) {
+  exec(path.join(getBinDir(), 'boot2docker') + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function(err, stdout) {
     callback(err, stdout);
   });
 };
@@ -181,8 +181,15 @@ Meteor.methods({
       var image = Images.findOne(appObj.imageId);
       loadKiteVolumes(image.path, appObj.name);
       var app = Apps.findOne(appId);
-      Meteor.call('runApp', app, function (err) {
-        if (err) { throw err; }
+      removeBindFolder(app.name, function (err) {
+        if (err) {
+          console.error(err);
+        }
+        Fiber(function () {
+          Meteor.call('runApp', app, function (err) {
+            if (err) { throw err; }
+          });
+        }).run();
       });
     }
   },

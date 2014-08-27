@@ -190,12 +190,14 @@ createTarFileSync = function (image) {
 
 var convertVolumeObjToArray = function (obj) {
   var result = [];
-  _.each(_.keys(obj), function (key) {
-    var volumeObj = {};
-    volumeObj.Path = key;
-    volumeObj.Value = obj[key];
-    result.push(volumeObj);
-  });
+  if (obj !== null && typeof obj === 'object') {
+    _.each(_.keys(obj), function (key) {
+      var volumeObj = {};
+      volumeObj.Path = key;
+      volumeObj.Value = obj[key];
+      result.push(volumeObj);
+    });
+  }
   return result;
 };
 
