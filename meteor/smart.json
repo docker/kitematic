@@ -1,0 +1,17 @@
+{
+  "packages": {
+    "bootstrap3-less": {},
+    "iron-router": {},
+    "npm": {},
+    "headers": {},
+    "handlebar-helpers": {},
+    "collection2": {},
+    "collection-hooks": {},
+    "moment": {},
+    "underscore-string-latest": {},
+    "collection-helpers": {},
+    "octicons": {},
+    "fast-render": {},
+    "iron-router-ga": {}
+  }
+}

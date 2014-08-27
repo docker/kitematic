@@ -1,0 +1,59 @@
+<template name="modal_create_app">
+  <div class="modal fade" id="modal-create-app" tabindex="-1" role="dialog" aria-labelledby="modal-create-app" aria-hidden="true">
+    <div class="modal-dialog modal-small">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h5 class="modal-title">Create App</h5>
+        </div>
+        <form id="form-create-app">
+          <div class="modal-body">
+            <div class="form-group">
+              <label>App Name</label>
+              <div class="right-inner-addon">
+                <i class="fa fa-cube"></i>
+                <input type="text" name="name" class="form-control" placeholder="my-application">
+                <p id="slug-create-app-name" class="help-block"></p>
+              </div>
+              {{#if hasItem images}}
+                <div id="image-picker">
+                  <label class="space-top">Pick an Image</label>
+                  <input type="hidden" name="imageId">
+                  <div class="existing-images">
+                    {{#each images}}
+                      <div class="line-select pick-image">
+                        {{#if logoPath}}
+                          <img src="file://{{logoPath}}" class="avatar">
+                        {{else}}
+                          <img src="/image-placeholder.png" class="avatar">
+                        {{/if}}
+                        <h5>{{meta.name}}<small>Created {{timeSince createdAt}}</small></h5>
+                        <span class="icon">
+                          <i class="fa fa-check-square-o no-display"></i>
+                          <i class="fa fa-square-o"></i>
+                        </span>
+                      </div>
+                    {{/each}}
+                  </div>
+                </div>
+              {{else}}
+                <div class="center space-top">
+                  <p class="text-muted">You don't have any images to create apps from.</p>
+                  <a href="#" class="btn btn-sm btn-positive btn-create-image">Create Image</a>
+                </div>
+              {{/if}}
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
+            {{#if hasItem images}}
+              <button onclick="trackLink('confirm create app')" type="submit" class="btn btn-sm btn-action">Create App</button>
+            {{else}}
+              <button type="submit" class="btn btn-sm btn-action" disabled="disabled">Create App</button>
+            {{/if}}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</template>

@@ -1,0 +1,41 @@
+<template name="setup_install">
+  <div class="container text-left">
+    <div class="steps">
+      {{#each steps}}
+        <div class="media">
+          {{#if $gt this.index currentInstallStep}}
+            <span class="pull-left">
+              <img src="/step_pending.png">
+            </span>
+            <div class="media-body">
+              {{this.imperativeMessage}}
+            </div>
+          {{/if}}
+          {{#if $lt this.index currentInstallStep}}
+            <span class="pull-left">
+              <img src="/step_finished.png">
+            </span>
+            <div class="media-body">
+              {{this.pastMessage}}
+            </div>
+          {{/if}}
+          {{#if $eq this.index currentInstallStep}}
+            <span class="pull-left">
+              {{> spinner}}
+            </span>
+            <div class="media-body">
+              {{this.message}}
+            </div>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+    <div class="install-finish text-center">
+      {{#if installComplete}}
+        <a onclick="trackLink('finish install')" class="btn btn-action" href="/apps">
+          Start Using Kitematic
+        </a>
+      {{/if}}
+    </div>
+  </div>
+</template>

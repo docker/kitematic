@@ -1,0 +1,36 @@
+<template name="dashboard_images_layout">
+  {{setTitle this.meta.name}}
+  <input id="imageId" type="hidden" value="{{this._id}}">
+  <div class="dashboard">
+    <div class="container">
+      <div class="dashboard-row">
+        {{> dashboard_menu}}
+        <div class="dashboard-body">
+          {{> menu_header}}
+          <div class="header">
+            <h3>
+              <a href="/images" onclick="trackLink('back to images')">Images</a> &raquo; {{this.meta.name}}
+              <span class="icons">
+                {{#if $eq status 'READY'}}
+                  <a onclick="trackLink('create app from image')" href="#" class="btn-create-app" data-toggle="tooltip" data-placement="bottom" title="Create App" data-container="body"><span class="typcn typcn-plus-outline"></span></a>
+                {{/if}}
+                <a onclick="trackLink('open image folder')" href="#" class="btn-folder" data-toggle="tooltip" data-placement="bottom" title="Folder" data-container="body"><span class="typcn typcn-folder-open"></span></a>
+                {{#if $eq status 'READY'}}
+                  <a onclick="trackLink('rebuild image')" href="#" class="btn-rebuild" data-toggle="tooltip" data-placement="bottom" title="Rebuild" data-container="body"><span class="typcn typcn-refresh-outline"></span></a>
+                {{/if}}
+              </span>
+            </h3>
+            <div class="options">
+              <a onclick="trackLink('image logs')" href="/images/{{this._id}}/logs" class="btn btn-action {{activeDashboardSubMenuItem 'logs'}}"><span class="typcn typcn-document-text"></span> Logs</a>
+              <a onclick="trackLink('image settings')" href="/images/{{this._id}}/settings" class="btn btn-action {{activeDashboardSubMenuItem 'settings'}}"><span class="typcn typcn-cog-outline"></span> Settings</a>
+            </div>
+          </div>
+          <div class="content">
+            {{> yield}}
+          </div>
+        </div>
+      </div>
+    </div>
+    {{> modal_create_app}}
+  </div>
+</template>

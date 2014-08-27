@@ -1,0 +1,269 @@
+.dashboard {
+  min-width: @window-width;
+  .container {
+    width: @window-width;
+  }
+
+  .line-item() {
+    height: 42px;
+    padding-top: 0.2em;
+    padding-left: 0.6em;
+    padding-right: 0.6em;
+    border-bottom: 1px solid @text-color-lightest;
+    &:last-child {
+      border-bottom: 0;
+    }
+    .options {
+      position: relative;
+      float: right;
+      top: -24px;
+      .btn-icon {
+        font-size: 20px;
+        margin-left: 0.4em;
+      }
+    }
+    &:hover {
+      background-color: lighten(@text-color-lightest, 5%);;
+    }
+    a.error {
+      color: @brand-negative;
+      &:hover {
+        color: @brand-negative;
+      }
+    }
+    a.name {
+      position: relative;
+      top: 10px;
+      font-size: 15px;
+      font-weight: 400;
+      color: @text-color;
+      &:hover {
+        color: lighten(@text-color, 10%);
+        text-decoration: underline;
+      }
+    }
+    small {
+      position: relative;
+      font-weight: 300;
+      top: 10px;
+      margin-left: 1em;
+      font-size: 12px;
+      color: @text-color-light;
+      a {
+        color: @text-color-light;
+        &:hover {
+          color: lighten(@text-color-light, 10%);
+          text-decoration: underline;
+        }
+      }
+    }
+    .status {
+      float: left;
+      font-size: 30px;
+      position: relative;
+      margin-right: 0.3em;
+    }
+  }
+
+  .dashboard-row {
+    .make-row();
+    .dashboard-menu {
+      position: relative;
+      height: @window-height;
+      .make-xs-column(1);
+      .logo {
+        position: absolute;
+        margin-left: -2px;
+        bottom: 14px;
+        width: 38px;
+        height: 38px;
+      }
+      .nav-stacked {
+        margin-top: 42px;
+      }
+      .nav-pills > li > a {
+        i {
+          position: relative;
+          left: -11px;
+        }
+        margin-top: -4px;
+        font-size: 30px;
+        font-weight: 600;
+        border-radius: 0px;
+        color: rgba(255,255,255,0.5);
+        &:hover, &:focus {
+          color: rgba(255,255,255,0.8);
+          background-color: transparent;
+        }
+      }
+      .nav-pills > li.active > a,
+      .nav-pills > li.active > a:hover,
+      .nav-pills > li.active > a:focus {
+        color: rgba(255,255,255,1);
+        background-color: transparent;
+      }
+    }
+    .dashboard-body {
+      .make-xs-column(11);
+      min-height: @window-height;
+      padding: 0;
+      background-color: white;
+      .empty-placeholder {
+        padding-top: 5em;
+        padding-bottom: 2em;
+        text-align: center;
+        .big-icon i {
+          color: @text-color-lightest;
+          font-size: 200px;
+        }
+        h4 {
+          color: @text-color-lighter;
+          margin-bottom: 0.6em;
+        }
+      }
+      .header {
+        padding: 1.6em;
+        height: @dashboard-header-height;
+        .icons {
+          margin-left: 0.6em;
+          font-size: 15px;
+          a {
+            margin-left: 0.2em;
+          }
+        }
+        .options {
+          position: absolute;
+          top: 50px;
+          right: 18px;
+        }
+      }
+      .content {
+        .padded {
+          padding: 1.6em;
+          padding-top: 0;
+        }
+        &.longer {
+          min-height: @dashboard-content-height + @dashboard-header-height;
+          max-height: @dashboard-content-height + @dashboard-header-height;
+        }
+        min-height: @dashboard-content-height;
+        max-height: @dashboard-content-height;
+        overflow-y: overlay;
+      }
+      .nav-tabs > li,
+      .nav-pills > li {
+        float: none;
+        display: inline-block;
+        *display: inline;
+        zoom: 1;
+      }
+      .nav-tabs, .nav-pills {
+        text-align: center;
+      }
+    }
+    .app {
+      .line-item();
+      .status {
+        top: 1px;
+        &.starting {
+          top: 3px;
+          font-size: 26px;
+        }
+      }
+    }
+    .image {
+      .line-item();
+      .status {
+        top: 5px;
+        &.building {
+          font-size: 26px;
+        }
+      }
+      .avatar {
+        float: left;
+        font-size: 26px;
+        position: relative;
+        top: 5px;
+        width: 26px;
+        height: 26px;
+        border-radius: 26px;
+        margin-right: 0.3em;
+      }
+    }
+  }
+
+  .logs {
+    background-color: @logs-background-color;
+    color: white;
+    padding: 1em;
+    font-family: monospace;
+    min-height: @dashboard-content-height;
+  }
+
+  .warning-badge {
+    color: white;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 5px;
+    right: -3px;
+    border-radius: 21px;
+    background-color: @brand-negative;
+    i {
+      position: relative;
+      left: 7px;
+    }
+  }
+
+  .env-var-pair {
+    .make-row();
+    margin-bottom: 0.2em;
+    font-size: 12px;
+    .env-var-key {
+      .make-xs-column(5);
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .env-var-value {
+      .make-xs-column(5);
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+    .options {
+      .make-xs-column(2);
+    }
+  }
+
+  .utilization {
+    font-size: 12px;
+  }
+
+  .disk-utilization {
+    margin-top: 2em;
+  }
+
+  .progress {
+    font-weight: 600;
+    height: 24px;
+    border-radius: @border-radius-base;
+  }
+
+  .progress-bar {
+    padding-top: 2px;
+    background-color: @brand-action;
+    border-radius: @border-radius-base;
+  }
+
+  .download-status {
+    .progress {
+      border-radius: 0px;
+      margin-bottom: 0px;
+    }
+    .progress-bar {
+      background-color: darken(@logs-background-color, 1%);
+      border-radius: 0px;
+    }
+  }
+}

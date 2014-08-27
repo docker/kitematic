@@ -1,0 +1,20 @@
+.DS_Store
+bundle
+bundle.tar.gz
+.demeteorized
+dist
+node_modules
+package
+cache
+bin
+
+# Resources
+resources/cache
+resources/base-images.tar.gz
+resources/virtualbox-4.3.12.pkg
+resources/boot2docker
+resources/node-webkit
+resources/mongod
+resources/MONGOD_LICENSE
+
+script/sign.sh

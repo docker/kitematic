@@ -1,0 +1,33 @@
+<template name="dashboard_apps">
+  <div class="header">
+    <h3>Apps</h3>
+    <div class="options">
+      {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
+        <a href="#" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action" disabled="disabled"><span class="typcn typcn-plus-outline"></span> Create App</a>
+      {{else}}
+        <a href="#" onclick="trackLink('create app')" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action"><span class="typcn typcn-plus-outline"></span> Create App</a>
+      {{/if}}
+    </div>
+  </div>
+  <div class="padded">
+    {{#if hasItem apps}}
+      <div class="apps line-item-collection">
+        {{#each apps}}
+          {{> dashboard_single_app}}
+        {{/each}}
+      </div>
+    {{else}}
+      <div class="empty-placeholder">
+        <div class="big-icon"><i class="fa fa-cube"></i></div>
+        <h4>There are no apps yet.</h4>
+        {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
+          <a href="#" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action" disabled="disabled"><span class="typcn typcn-plus-outline"></span> Create App</a>
+        {{else}}
+          <a href="#" onclick="trackLink('create app')" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action"><span class="typcn typcn-plus-outline"></span> Create App</a>
+        {{/if}}
+      </div>
+    {{/if}}
+  </div>
+  {{> modal_create_app}}
+  {{> modal_create_image}}
+</template>

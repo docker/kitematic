@@ -1,0 +1,71 @@
+<template name="dashboard_apps_settings">
+  <div class="section">
+    <div class="left-section">
+      <h4>App Details</h4>
+      <p class="help-block">This section lists more information about this app.</p>
+    </div>
+    <div class="right-section">
+      <div class="row">
+        <div class="col-xs-3">
+          <label>Host URL</label>
+        </div>
+        <div class="col-xs-8">
+          {{url}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-3">
+          <label>Status</label>
+        </div>
+        <div class="col-xs-8">
+          {{status}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="left-section">
+      <h4>Config Variables</h4>
+      <p class="help-block">You can update your app's environment variables here.</p>
+    </div>
+    <div class="right-section">
+      <form class="form-env-vars wide">
+        <div class="row">
+          <div class="col-xs-5">
+            <label>Key</label>
+          </div>
+          <div class="col-xs-5">
+            <label>Value</label>
+          </div>
+        </div>
+        {{#each arrayify config }}
+          <div class="env-var-pair">
+            <div class="env-var-key" data-key="{{name}}" title="{{name}}">{{name}}</div>
+            <div class="env-var-value" data-value="{{value}}" title="{{value}}">{{value}}</div>
+            <div class="options">
+              <a href="#" onclick="trackLink('delete environment variable')" class="btn btn-negative btn-xs btn-delete-var" data-app-id="{{../_id}}" data-key="{{name}}"><i class="fa fa-times"></i></a>
+            </div>
+          </div>
+        {{/each}}
+        <div class="row form-group">
+          <div class="col-xs-5">
+            <input type="text" name="env-var-key" class="form-control" placeholder="New Key">
+          </div>
+          <div class="col-xs-5">
+            <input type="text" name="env-var-value" class="form-control" placeholder="New Value">
+          </div>
+        </div>
+        <button onclick="trackLink('add environment variable')" type="submit" class="btn btn-action btn-sm">Save Variable</button>
+      </form>
+    </div>
+  </div>
+  <div class="section">
+    <div class="left-section">
+      <h4>Delete App</h4>
+      <p class="help-block">Delete this app permanently.</p>
+    </div>
+    <div class="right-section">
+      <a onclick="trackLink('delete app')" class="btn btn-negative btn-delete-app btn-sm">Delete App</a>
+    </div>
+  </div>
+</template>

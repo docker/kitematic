@@ -1,0 +1,37 @@
+<template name="dashboard_apps_layout">
+  {{setTitle this.name}}
+  <input id="appId" type="hidden" value="{{this._id}}">
+  <div class="dashboard">
+    <div class="container">
+      <div class="dashboard-row">
+        {{> dashboard_menu}}
+        <div class="dashboard-body">
+          {{> menu_header}}
+          <div class="header">
+            <h3>
+              <a href="/apps" onclick="trackLink('back to apps')">Apps</a> &raquo; {{this.name}}
+              <span class="icons">
+                {{#if $eq status 'READY'}}
+                  {{#if url}}
+                    <a onclick="trackLink('view app')" href="{{url}}" class="btn-view" target="_blank" data-toggle="tooltip" data-placement="bottom" title="View App" data-container="body"><span class="typcn typcn-eye-outline"></span></a>
+                  {{/if}}
+                  <a onclick="trackLink('terminal into app')" href="#" class="btn-terminal" data-toggle="tooltip" data-placement="bottom" title="Terminal" data-container="body"><span class="typcn typcn-device-laptop"></span></a>
+                  <a onclick="trackLink('go to app image')" href="/images/{{image._id}}" class="btn-image" data-toggle="tooltip" data-placement="bottom" title="Image" data-container="body"><span class="typcn typcn-camera-outline"></span></a>
+                {{/if}}
+                <a onclick="trackLink('open app folder')" href="#" class="btn-folder" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Folder" data-container="body"><span class="typcn typcn-folder-open"></span></a>
+                <a onclick="trackLink('restart app')" href="#" class="btn-restart" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Restart" data-container="body"><span class="typcn typcn-refresh-outline"></span></a>
+              </span>
+            </h3>
+            <div class="options">
+              <a onclick="trackLink('app logs')" href="/apps/{{this.name}}/logs" class=" btn btn-action {{activeDashboardSubMenuItem 'logs'}} btn-logs"><span class="typcn typcn-document-text"></span> Logs</a>
+              <a onclick="trackLink('app settings')" href="/apps/{{this.name}}/settings" class="btn btn-action {{activeDashboardSubMenuItem 'settings'}}"><span class="typcn typcn-cog-outline"></span> Settings</a>
+            </div>
+          </div>
+          <div class="content">
+            {{> yield}}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

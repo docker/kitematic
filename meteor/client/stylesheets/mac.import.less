@@ -1,0 +1,55 @@
+.traffic-light() {
+  width: 12px;
+  height: 12px;
+  border-radius: 12px;
+  display: inline-block;
+  cursor: pointer;
+  font-size: 10px;
+  i {
+    position: relative;
+    top: -1px;
+    left: 2px;
+  }
+}
+
+.mac-window-options {
+  position: absolute;
+  top: 7px;
+  left: 10px;
+  .mac-close {
+    .traffic-light();
+    background-color: #FA5F56;
+    color: darken(#C95A57, 10%);
+  }
+  .mac-minimize {
+    .traffic-light();
+    background-color: #FEBB27;
+    color: darken(#D9AB43, 10%);
+  }
+  .mac-maximize {
+    .traffic-light();
+    background-color: #23C93E;
+    color: darken(#37A345, 10%);
+  }
+}
+
+.mac-window-header {
+  text-align: center;
+  border-bottom: 1px solid @text-color-lightest;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  -webkit-app-region: drag;
+  a {
+    outline: 0;
+    &:focus {
+      text-decoration: none;
+    }
+    cursor: default;
+    font-size: 13px;
+    color: @text-color-light;
+    font-weight: 500;
+    &:hover {
+      text-decoration: none;
+    }
+  }
+}

@@ -1,0 +1,20 @@
+<template name="dashboard_menu">
+  <div class="dashboard-menu">
+    <div class="mac-window-options">
+      <div class="mac-close"><i class="fa fa-times no-display"></i></div>
+      <div class="mac-minimize"><i class="fa fa-minus no-display"></i></div>
+      <div class="mac-maximize"><i class="fa fa-plus no-display"></i></div>
+    </div>
+    <ul class="nav nav-pills nav-stacked">
+      <li class="{{activeDashboardMenuItem 'apps'}}"><a onclick="trackLink('menu apps')" href="/apps" data-toggle="tooltip" data-placement="right" title="Apps"><i class="fa fa-cube"></i></a></li>
+      <li class="{{activeDashboardMenuItem 'images'}}"><a onclick="trackLink('menu images')" href="/images" data-toggle="tooltip" data-placement="right" title="Images" style="margin-left: -2px;"><i class="fa fa-camera"></i></a></li>
+      <li class="{{activeDashboardMenuItem 'settings'}}">
+        <a onclick="trackLink('menu settings')" href="/settings" data-toggle="tooltip" data-placement="right" title="Settings" style="margin-left: 1px;"><i class="fa fa-gear"></i></a>
+        {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
+          <span class="warning-badge"><i class="fa fa-exclamation"></i></span>
+        {{/if}}
+      </li>
+    </ul>
+    <img src="/mac/logo.png" class="logo">
+  </div>
+</template>

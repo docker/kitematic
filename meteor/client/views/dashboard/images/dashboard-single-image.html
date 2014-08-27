@@ -1,0 +1,40 @@
+<template name="dashboard_single_image">
+  <div class="image">
+    <h5>
+      {{#if $eq status 'READY'}}
+        {{#if logoPath}}
+          <img src="file://{{logoPath}}" class="avatar">
+        {{else}}
+          <img src="/image-placeholder.png" class="avatar">
+        {{/if}}
+      {{else}}
+        {{#if $eq status 'BUILDING'}}
+          <span style="color: #D6D6D6;" class="status building"><i class="fa fa-circle-o-notch fa-spin"></i></span>
+        {{else}}
+          {{#if $eq status 'ERROR'}}
+            <span style="color: #D97A7A;" class="status"><i class="fa fa-circle-o"></i></span>
+          {{else}}
+            <span style="color: #D6D6D6;" class="status"><i class="fa fa-circle-o"></i></span>
+          {{/if}}
+        {{/if}}
+      {{/if}}
+      <a onclick="trackLink('image detail')" href="/images/{{_id}}" class="name">{{meta.name}}</a>
+      {{#if $eq status 'BUILDING'}}
+        <small>Creating image. This may take a couple minutes...</small>
+      {{else}}
+        <small>Created {{timeSince createdAt}}</small>
+      {{/if}}
+    </h5>
+    <div class="options">
+      {{#if $eq status 'READY'}}
+        <a onclick="trackLink('create app from image')" href="#" class="btn-icon btn-create-app" data-toggle="tooltip" data-placement="bottom" title="Create App"><span class="typcn typcn-plus-outline"></span></a>
+      {{/if}}
+      <a onclick="trackLink('open image folder')" href="#" class="btn-icon btn-folder" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Folder"><span class="typcn typcn-folder-open"></span></a>
+      {{#if $eq status 'READY'}}
+        <a onclick="trackLink('rebuild image')" href="#" class="btn-icon btn-rebuild" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Rebuild"><span class="typcn typcn-refresh-outline"></span></a>
+      {{/if}}
+      <a onclick="trackLink('image logs')" href="/images/{{_id}}/logs" class="btn-icon" data-toggle="tooltip" data-placement="bottom" title="Logs"><span class="typcn typcn-document-text"></span></a>
+      <a onclick="trackLink('image settings')" href="/images/{{_id}}/settings" class="btn-icon" data-toggle="tooltip" data-placement="bottom" title="Settings"><span class="typcn typcn-cog-outline"></span></a>
+    </div>
+  </div>
+</template>

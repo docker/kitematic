@@ -1,0 +1,47 @@
+#!/bin/sh
+
+# Lookup the Kitematic VM resolver for .dev domains
+echo "nameserver 172.17.42.1" > /etc/resolver/dev
+
+# Install virtualbox
+if [ -n "$INSTALL_VIRTUALBOX" ]; then
+  /usr/sbin/installer -pkg $VIRTUALBOX_PKG_PATH -target /
+fi
+
+/bin/rm -rf /Library/LaunchAgents/com.kitematic.route.plist
+
+echo '<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.kitematic.route</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/sbin/route</string>
+    <string>-n</string>
+    <string>add</string>
+    <string>172.17.0.0/16</string>
+    <string>192.168.59.103</string>
+  </array>
+  <key>KeepAlive</key>
+  <false/>
+  <key>RunAtLoad</key>
+  <true/>
+  <key>ServiceIPC</key>
+  <false/>
+  <key>UserName</key>
+  <string>root</string>
+  <key>LaunchOnlyOnce</key>
+  <true/>
+</dict>
+</plist>' > /Library/LaunchAgents/com.kitematic.route.plist
+
+DIR=$(dirname "$0")
+USER=`w -h | sort -u -t' ' -k1,1 | awk '{print $1}'`
+
+sudo -u $USER $DIR/boot2docker init
+
+# Add entries to routing table for Kitematic VM
+/sbin/route delete 172.17.0.0/16 192.168.59.103
+/sbin/route -n add 172.17.0.0/16 192.168.59.103

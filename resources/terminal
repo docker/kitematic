@@ -1,0 +1,50 @@
+#!/bin/sh
+
+ITERM_EXISTS=`osascript <<EOF
+set doesExist to false
+try
+    do shell script "osascript -e 'exists application \"iTerm\"'"
+    set doesExist to true
+end try
+return doesExist
+EOF`
+
+echo $ITERM_EXISTS
+
+if [ $ITERM_EXISTS == "true" ]; then
+  osascript > /dev/null <<EOF
+tell application "iTerm"
+  activate
+  try
+    tell the first terminal
+      launch session "Default Session"
+      tell the last session
+        write text "clear && $*"
+      end tell
+    end tell
+  on error
+    tell (make new terminal)
+      launch session "Default Session"
+      tell the last session
+        write text "clear && $*"
+      end tell
+    end tell
+  end try
+end tell
+EOF
+
+else
+  osascript > /dev/null <<EOF
+
+tell application "Terminal"
+  activate
+end tell
+tell application "System Events"
+  tell process "Terminal" to keystroke "t" using command down
+end
+tell application "Terminal"
+  do script "clear && $*" in window 1
+end tell
+EOF
+
+fi
