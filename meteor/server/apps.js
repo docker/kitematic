@@ -104,7 +104,7 @@ recoverApps = function (callback) {
     }
     var container = docker.getContainer(app.docker.Id);
     container.inspect(function (err, data) {
-      if (app.status !== 'STARTING' && !data.State.Running) {
+      if (app.status !== 'STARTING' && data && data.State && !data.State.Running) {
         console.log('restarting: ' + app.name);
         console.log(app.docker.Id);
         Fiber(function () {
