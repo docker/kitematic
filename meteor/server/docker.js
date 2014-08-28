@@ -502,7 +502,13 @@ killAndRemoveContainers = function (names, callback) {
 pullImageFromDockerfile = function (dockerfile, imageId, callback) {
   var fromImage = getFromImage(dockerfile);
   console.log('From image: ' + fromImage);
-  if (fromImage) {
+  var installedImage = null;
+  try {
+    installedImage = getImageDataSync(fromImage);
+  } catch (e) {
+    console.error(e);
+  }
+  if (fromImage && !installedImage) {
     Fiber(function () {
       Images.update(imageId, {
         $set: {
@@ -542,6 +548,8 @@ pullImageFromDockerfile = function (dockerfile, imageId, callback) {
         callback(null);
       });
     });
+  } else {
+    callback(null);
   }
 };
 
