@@ -128,7 +128,7 @@ var getFromImage = function (dockerfile) {
   var regex = new RegExp(patternString, "g");
   var fromInstruction = dockerfile.match(regex);
   if (fromInstruction && fromInstruction.length > 0) {
-    return fromInstruction[0].split(' ')[1].trim();
+    return fromInstruction[0].replace('FROM', '').trim();
   } else {
     return null;
   }
@@ -199,12 +199,14 @@ createTarFileSync = function (image) {
 
 var convertVolumeObjToArray = function (obj) {
   var result = [];
-  _.each(_.keys(obj), function (key) {
-    var volumeObj = {};
-    volumeObj.Path = key;
-    volumeObj.Value = obj[key];
-    result.push(volumeObj);
-  });
+  if (obj !== null && typeof obj === 'object') {
+    _.each(_.keys(obj), function (key) {
+      var volumeObj = {};
+      volumeObj.Path = key;
+      volumeObj.Value = obj[key];
+      result.push(volumeObj);
+    });
+  }
   return result;
 };
 
