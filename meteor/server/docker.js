@@ -124,7 +124,7 @@ var getFromImage = function (dockerfile) {
   var regex = new RegExp(patternString, "g");
   var fromInstruction = dockerfile.match(regex);
   if (fromInstruction && fromInstruction.length > 0) {
-    return fromInstruction[0].split(' ')[1].trim();
+    return fromInstruction[0].replace('FROM', '').trim();
   } else {
     return null;
   }
