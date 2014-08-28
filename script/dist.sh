@@ -18,7 +18,7 @@ rm -rf dist/osx/Kitematic.zip
 mkdir -p dist/osx/
 
 cecho "-----> Creating Kitematic.app..." $blue
-cp -R resources/node-webkit/node-webkit.app dist/osx/
+cp -R cache/node-webkit/node-webkit.app dist/osx/
 mv dist/osx/node-webkit.app dist/osx/Kitematic.app
 mkdir -p dist/osx/Kitematic.app/Contents/Resources/app.nw
 
@@ -35,22 +35,14 @@ $DIR/setup.sh
 
 cecho "-----> Copying binary files to Kitematic.app" $blue
 mkdir -p dist/osx/Kitematic.app/Contents/Resources/app.nw/resources
-cp resources/$BASE_IMAGE_FILE dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/
-cp resources/$VIRTUALBOX_FILE dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/
-cp resources/$COCOASUDO_FILE dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/
-cp resources/$BOOT2DOCKER_CLI_FILE dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/
-cp resources/install dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/
-cp resources/terminal dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/
-cp resources/unison dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/
-cp resources/UNISON_LICENSE.txt dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/
-cp resources/kite-binaries.tar.gz dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/
-cp resources/mongod dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/
-cp resources/MONGOD_LICENSE.txt dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/
+cp -v resources/* dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/ || :
+
 chmod +x dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/$BOOT2DOCKER_CLI_FILE
 chmod +x dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/$COCOASUDO_FILE
 chmod +x dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/install
 chmod +x dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/terminal
 chmod +x dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/unison
+chmod +x dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/node
 
 if [ -f $DIR/sign.sh ]; then
   cecho "-----> Signing app file...." $blue

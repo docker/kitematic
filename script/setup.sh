@@ -8,9 +8,9 @@ source $DIR/versions.sh
 BASE=$DIR/..
 pushd $BASE
 
-mkdir -p resources/cache
+mkdir -p cache
 
-pushd resources/cache
+pushd cache
 
 if [ ! -f $BASE_IMAGE_VERSION_FILE ]; then
   cecho "-----> Downloading Kitematic base images..." $purple
@@ -25,22 +25,24 @@ fi
 if [ ! -f kite-node-webkit.tar.gz ]; then
   cecho "-----> Downloading node-webkit..." $purple
   curl -L -o kite-node-webkit.tar.gz https://s3.amazonaws.com/kite-installer/kite-node-webkit.tar.gz
-  tar -zxf kite-node-webkit.tar.gz -C ..
+  tar -zxf kite-node-webkit.tar.gz -C .
 fi
 
 if [ ! -f mongodb-osx-x86_64-2.6.3.tgz ]; then
   cecho "-----> Downloading mongodb..." $purple
   curl -L -o mongodb-osx-x86_64-2.6.3.tgz http://downloads.mongodb.org/osx/mongodb-osx-x86_64-2.6.3.tgz
   tar -zxvf mongodb-osx-x86_64-2.6.3.tgz
-  cp mongodb-osx-x86_64-2.6.3/bin/mongod ..
-  cp mongodb-osx-x86_64-2.6.3/GNU-AGPL-3.0 ../MONGOD_LICENSE.txt
+  cp mongodb-osx-x86_64-2.6.3/bin/mongod $BASE/resources
+  cp mongodb-osx-x86_64-2.6.3/GNU-AGPL-3.0 $BASE/resources/MONGOD_LICENSE.txt
 fi
 
-if [ ! -f "node-v0.11.13-darwin-x64.tar.gz" ]; then
+if [ ! -f "node-v0.10.29-darwin-x64.tar.gz" ]; then
   cecho "-----> Downloading Nodejs distribution..." $purple
-  curl -L -o node-v0.11.13-darwin-x64.tar.gz http://nodejs.org/dist/v0.11.13/node-v0.11.13-darwin-x64.tar.gz
+  curl -L -o node-v0.10.29-darwin-x64.tar.gz http://nodejs.org/dist/v0.10.29/node-v0.10.29-darwin-x64.tar.gz
   mkdir -p node
-  tar -xzf node-v0.11.13-darwin-x64.tar.gz --strip-components 1 -C node
+  tar -xzf node-v0.10.29-darwin-x64.tar.gz --strip-components 1 -C node
+  cp node/bin/node $BASE/resources/node
+  cp node/LICENSE $BASE/resources/NODE_LICENSE.txt
 fi
 
 popd
@@ -59,8 +61,6 @@ if [ ! -f $COCOASUDO_FILE ]; then
 fi
 
 
-cecho "-----> Creating binary files from cache" $blue
-
 if [ ! -f $BASE_IMAGE_FILE ]; then
   cp cache/$BASE_IMAGE_VERSION_FILE $BASE_IMAGE_FILE
 fi
@@ -71,5 +71,8 @@ if [ ! -f $BOOT2DOCKER_CLI_FILE ]; then
 fi
 
 popd
+
+NPM="$BASE/cache/node/bin/npm"
+$NPM install
 
 popd

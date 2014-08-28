@@ -41,26 +41,59 @@ var start = function (callback) {
     // One for meteor, one for mongo
     freeport(function (err, webPort) {
       freeport(function(err, mongoPort) {
-        child_process.exec('kill $(ps aux -e | grep \'DB_PURPOSE=KITEMATIC\' | awk \'{print $2}\')', function (error, stdout, stderr) {
+        child_process.exec('kill $(ps aux -e | grep \'PURPOSE=KITEMATIC\' | awk \'{print $2}\')', function (error, stdout, stderr) {
           var mongoChild = child_process.spawn(path.join(process.cwd(), 'resources', 'mongod'), ['--bind_ip', '127.0.0.1', '--dbpath', dataPath, '--port', mongoPort, '--unixSocketPrefix', dataPath], {
             env: {
               DB_PURPOSE: 'KITEMATIC'
             }
           });
+          var started = false;
           mongoChild.stdout.setEncoding('utf8');
           mongoChild.stdout.on('data', function (data) {
             if (data.indexOf('waiting for connections on port ' + mongoPort)) {
-              process.stdout.write(process.cwd());
-              var rootUrl = 'http://localhost:' + webPort;
+              if (!started) {
+                started = true;
+              } else {
+                return;
+              }
+
+              console.log('Starting node child...');
+              var rootURL = 'http://localhost:' + webPort;
               var user_env = process.env;
-              process.env.ROOT_URL = rootUrl;
-              process.env.PORT = webPort;
-              process.env.BIND_IP = '127.0.0.1';
-              process.env.DB_PATH = dataPath;
-              process.env.MONGO_URL = 'mongodb://localhost:' + mongoPort + '/meteor';
-              process.argv.splice(2, 0, 'program.json');
-              require('./bundle/main.js');
-              callback(process.env.ROOT_URL);
+              user_env.ROOT_URL = rootURL;
+              user_env.PORT = webPort;
+              user_env.BIND_IP = '127.0.0.1';
+              user_env.DB_PATH = dataPath;
+              user_env.MONGO_URL = 'mongodb://localhost:' + mongoPort + '/meteor';
+              console.log(path.join(process.cwd(), 'resources', 'node'));
+              var nodeChild = child_process.spawn(path.join(process.cwd(), 'resources', 'node'), ['./bundle/main.js'], {
+                env: user_env
+              });
+
+              var cleanUpChildren = function () {
+                console.log('Cleaning up children.')
+                mongoChild.kill();
+                nodeChild.kill();
+              };
+
+              process.on('exit', cleanUpChildren);
+              process.on('uncaughtException', cleanUpChildren);
+              process.on('SIGINT', cleanUpChildren);
+              process.on('SIGTERM', cleanUpChildren);
+
+              var opened = false;
+              nodeChild.stdout.setEncoding('utf8');
+              nodeChild.stdout.on('data', function (data) {
+                console.log(data);
+                if (data.indexOf('Kitematic started.') !== -1) {
+                  if (!opened) {
+                    opened = true;
+                  } else {
+                    return;
+                  }
+                  callback(rootURL);
+                }
+              });
             }
           });
         });
@@ -80,7 +113,7 @@ start(function (url) {
     mainWindow.on('loaded', function () {
       mainWindow.show();
     });
-  }, 1000);
+  }, 400);
   mainWindow.on('close', function (type) {
     this.hide();
     if (type === 'quit') {
