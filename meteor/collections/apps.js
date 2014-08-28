@@ -64,6 +64,8 @@ Apps.helpers({
     var image = Images.findOne(app.imageId);
     if (image && image.meta.app && image.meta.app.webPort) {
       return 'http://' + app.name + '.dev:' + image.meta.app.webPort;
+    } else if (image && image.meta.app && image.meta.app.webPort === false) {
+      return null;
     } else {
       // Picks the best port
       if (app.docker && app.docker.NetworkSettings.Ports) {
