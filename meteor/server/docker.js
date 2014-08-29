@@ -94,7 +94,7 @@ runContainer = function (app, image, callback) {
       if (err) { callback(err, null); return; }
       console.log('Started container: ' + container.id);
       // Use dig to refresh the DNS
-      exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function(err, out, code) {
+      exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function(err, out) {
         console.log(out);
       });
       callback(null, container);
@@ -147,7 +147,7 @@ restartApp = function (app, callback) {
     callback(null);
 
     // Use dig to refresh the DNS
-    exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function(err, out, code) {
+    exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function(err, out) {
       console.log(out);
     });
   } else {
