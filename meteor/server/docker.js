@@ -589,9 +589,9 @@ buildImage = function (image, callback) {
           console.error(e);
         }
         Fiber(function () {
+          var imageData = null;
           try {
-            var imageData = getImageDataSync(image._id);
-            var oldImageId = null;
+            imageData = getImageDataSync(image._id);
             Images.update(image._id, {
               $set: {
                 docker: imageData,
@@ -606,10 +606,11 @@ buildImage = function (image, callback) {
               }
             });
           }
+          var oldImageId = null;
           if (image.docker && image.docker.Id) {
             oldImageId = image.docker.Id;
           }
-          if (oldImageId && oldImageId !== imageData.Id) {
+          if (oldImageId && imageData && oldImageId !== imageData.Id) {
             try {
               removeImageSync(oldImageId);
             } catch (e) {
