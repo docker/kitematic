@@ -38,7 +38,7 @@
 - Remove VirtualBox
 - rm /usr/local/bin/boot2docker
 - sudo route delete 172.17.0.0/16 192.168.59.103 (disable routing to containers through VM)
-- rm -rf ~/Application\ Support/Kitematic (remove app data)
+- rm -rf ~/Library/Application\ Support/Kitematic (remove app data)
 - rm /Library/LaunchAgents/com.kitematic.route.plist (remove launch job that sets up routing to the containers)
 
 ## Bugs and Feature Requests
