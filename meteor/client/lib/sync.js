@@ -20,15 +20,14 @@ addAppWatcher = function (app) {
   var vmPath = 'ssh://docker@localhost:2022/' + vmDir;
   var watcher = chokidar.watch(appPath, {ignored: /.*\.DS_Store/});
   var syncing = false;
+  var willSyncAgain = false;
 
   var syncFunc = function (event, changedPath) {
     if (syncing) {
+      willSyncAgain = true;
       return;
     }
     syncing = true;
-    // Make sure that if they delete the app_name folder under ~/Kitematic, we don't delete all the volumes.
-    // Deleting files inside the app_name folder _will_ delete the volumes.
-
     var errorPattern = /The\sfile\s(.*)\son\shost/g;
     var archiveErrorPattern = /Archive\s(.*)\son\shost\s.*\sshould\sbe\sDELETED/g;
     var cmd = path.join(getBinDir(), 'unison');
@@ -79,6 +78,10 @@ addAppWatcher = function (app) {
         // console.error(e);
       }
       syncing = false;
+      if (willSyncAgain) {
+        syncFunc();
+        willSyncAgain = false;
+      }
     });
   };
 
@@ -110,9 +113,9 @@ resolveWatchers = function (callback) {
   });
 
   // Run a sync for 'pulling' changes in the volumes.
-  /*_.each(watchers, function (watcher) {
+  _.each(watchers, function (watcher) {
     watcher.sync();
-  });*/
+  });
 
   callback();
 };
