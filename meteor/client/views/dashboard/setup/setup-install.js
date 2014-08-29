@@ -24,7 +24,7 @@ var steps = [
     },
     pastMessage: 'VirtualBox installed',
     message: 'Installing VirtualBox',
-    imperativeMessage: 'Install VirtualBox if necessary'
+    futureMessage: 'Install VirtualBox if necessary'
   },
 
   // Set up the routing.
@@ -36,7 +36,7 @@ var steps = [
     },
     pastMessage: 'Container routing set up (root required).',
     message: 'Setting up container routing (root required).',
-    imperativeMessage: 'Set up container routing to VM (root required).'
+    futureMessage: 'Set up container routing to VM (root required).'
   },
 
   // Set up the VM for running Kitematic apps
@@ -63,7 +63,7 @@ var steps = [
     },
     pastMessage: 'Set up the Kitematic VM',
     message: 'Setting up the Kitematic VM...',
-    imperativeMessage: 'Set up the Kitematic VM'
+    futureMessage: 'Set up the Kitematic VM'
   },
 
   // Start the Kitematic VM
@@ -74,8 +74,9 @@ var steps = [
       });
     },
     pastMessage: 'Started the Kitematic VM',
-    message: 'Starting the Kitematic VM...',
-    imperativeMessage: 'Start the Kitematic VM'
+    message: 'Starting the Kitematic VM',
+    subMessage: '(This may take a few minutes)',
+    futureMessage: 'Start the Kitematic VM',
   },
 
   // Set up the default Kitematic images
@@ -87,7 +88,8 @@ var steps = [
     },
     pastMessage: 'Started the Kitematic VM',
     message: 'Setting up the default Kitematic images...',
-    imperativeMessage: 'Set up the default Kitematic images'
+    subMessage: '(This may take a few minutes)',
+    futureMessage: 'Set up the default Kitematic images',
   }
 ];
 
