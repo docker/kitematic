@@ -1,5 +1,5 @@
 var fs = require('fs');
-var exec = require('exec');
+var child_process = require('child_process');
 var path = require('path');
 
 isVirtualBoxInstalled = function (callback) {
@@ -24,25 +24,31 @@ isResolverSetup = function (callback) {
   });
 };
 
-setupVirtualBoxAndResolver = function (skipVirtualBox, callback) {
+setupResolver = function (callback) {
   var installFile = path.join(getBinDir(), 'install');
   var cocoaSudo = path.join(getBinDir(), 'cocoasudo');
   var execCommand = cocoaSudo + ' --prompt="Kitematic Setup wants to make changes. Type your password to allow this." ' + installFile;
-  console.log(execCommand);
-  var env = {
-    VIRTUALBOX_PKG_PATH: path.join(getBinDir(), 'virtualbox-4.3.12.pkg')
-  };
-  if (!skipVirtualBox) {
-    env.INSTALL_VIRTUALBOX = true;
-  }
-  exec(execCommand, {env: env}, function (err, stdout) {
+  child_process.exec(execCommand, function (error, stdout, stderr) {
     console.log(stdout);
-    if (err) {
-      console.log(err);
-      callback(err);
+    if (error) {
+      console.log(error);
+      callback(error);
       return;
     }
     console.log('Virtualbox Installation & Resolver config complete.');
+    callback();
+  });
+};
+
+setupVirtualBox = function (callback) {
+  child_process.exec('open -W ' + path.join(getBinDir(), 'virtualbox-4.3.12.pkg'), function (error, stdout, stderr) {
+    console.log(stdout);
+    if (error) {
+      console.log(error);
+      callback(error);
+      return;
+    }
+    console.log('Virtualbox Installation running.');
     callback();
   });
 };

@@ -21,10 +21,17 @@
           {{/if}}
           {{#if $eq this.index currentInstallStep}}
             <span class="pull-left">
-              {{> spinner}}
+              {{#if $eq this.index failedStep}}
+                <img src="/step_failed.png">
+              {{else}}
+                {{> spinner}}
+              {{/if}}
             </span>
             <div class="media-body">
               {{this.message}}
+              {{#if $eq this.index failedStep}}
+                <p>{{failedError}}</p>
+              {{/if}}
             </div>
           {{/if}}
         </div>
