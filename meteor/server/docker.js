@@ -94,9 +94,7 @@ runContainer = function (app, image, callback) {
       if (err) { callback(err, null); return; }
       console.log('Started container: ' + container.id);
       // Use dig to refresh the DNS
-      exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function(err, out, code) {
-        console.log(out);
-      });
+      exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function(err, out, code) {});
       callback(null, container);
     });
   });
@@ -147,9 +145,7 @@ restartApp = function (app, callback) {
     callback(null);
 
     // Use dig to refresh the DNS
-    exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function(err, out, code) {
-      console.log(out);
-    });
+    exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function(err, out, code) {});
   } else {
     callback(null);
   }
@@ -582,20 +578,29 @@ buildImage = function (image, callback) {
           console.error(e);
         }
         Fiber(function () {
-          var imageData = getImageDataSync(image._id);
-          var oldImageId = null;
+          try {
+            var imageData = getImageDataSync(image._id);
+            var oldImageId = null;
+            Images.update(image._id, {
+              $set: {
+                docker: imageData,
+                status: 'READY'
+              }
+            });
+          } catch (e) {
+            console.log(e);
+            Images.update(image._id, {
+              $set: {
+                status: 'ERROR'
+              }
+            });
+          }
           if (image.docker && image.docker.Id) {
             oldImageId = image.docker.Id;
           }
           if (oldImageId && oldImageId !== imageData.Id) {
             removeImageSync(oldImageId);
           }
-          Images.update(image._id, {
-            $set: {
-              docker: imageData,
-              status: 'READY'
-            }
-          });
         }).run();
         callback(null);
       });

@@ -7,6 +7,7 @@ Template.dashboard_images_settings.events({
           $('#error-delete-image').html('<small class="error">' + err.reason + '</small>');
           $('#error-delete-image').fadeIn();
         } else {
+          removeAppWatcher(this._id);
           Router.go('dashboard_images');
         }
       });

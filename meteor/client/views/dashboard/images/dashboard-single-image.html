@@ -30,7 +30,7 @@
         <a onclick="trackLink('create app from image')" href="#" class="btn-icon btn-create-app" data-toggle="tooltip" data-placement="bottom" title="Create App"><span class="typcn typcn-plus-outline"></span></a>
       {{/if}}
       <a onclick="trackLink('open image folder')" href="#" class="btn-icon btn-folder" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Folder"><span class="typcn typcn-folder-open"></span></a>
-      {{#if $eq status 'READY'}}
+      {{#if $neq status 'BUILDING'}}
         <a onclick="trackLink('rebuild image')" href="#" class="btn-icon btn-rebuild" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Rebuild"><span class="typcn typcn-refresh-outline"></span></a>
       {{/if}}
       <a onclick="trackLink('image logs')" href="/images/{{_id}}/logs" class="btn-icon" data-toggle="tooltip" data-placement="bottom" title="Logs"><span class="typcn typcn-document-text"></span></a>

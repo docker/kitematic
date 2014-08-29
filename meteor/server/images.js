@@ -137,9 +137,15 @@ Meteor.methods({
     }
     var app = Apps.findOne({imageId: imageId});
     if (!app) {
-      deleteImageSync(image);
-      deleteFolder(image.path);
-      Images.remove({_id: image._id});
+      console.log('here');
+      try {
+        deleteImageSync(image);
+        deleteFolder(image.path);
+      } catch (e) {
+        console.log(e);
+      } finally {
+        Images.remove({_id: image._id});
+      }
     } else {
       throw new Meteor.Error(400, 'This image is currently being used by <a href="/apps/' + app.name + '">' + app.name + "</a>.");
     }

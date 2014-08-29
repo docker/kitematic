@@ -40,7 +40,7 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 DIR=$(dirname "$0")
 USER=`w -h | sort -u -t' ' -k1,1 | awk '{print $1}'`
 
-sudo -u $USER $DIR/boot2docker init
+sudo -u $USER $DIR/boot2docker init --lowerip=192.168.59.103 --upperip=192.168.59.103
 
 # Add entries to routing table for Kitematic VM
 /sbin/route delete 172.17.0.0/16 192.168.59.103

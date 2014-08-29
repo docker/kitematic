@@ -6,4 +6,4 @@ path = Meteor.require('path');
 exec = Meteor.require('child_process').exec;
 async = Meteor.require('async');
 Fiber = Meteor.require('fibers');
-chokidar = Meteor.require('chokidar');
+child_process = Meteor.require('child_process');

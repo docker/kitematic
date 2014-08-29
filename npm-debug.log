@@ -1,0 +1,70 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/Users/jmorgan/workspace/kite-desktop/script/../cache/node/bin/node',
+1 verbose cli   '/Users/jmorgan/workspace/kite-desktop/cache/node/bin/npm',
+1 verbose cli   'install',
+1 verbose cli   '--quiet' ]
+2 info using npm@1.4.14
+3 info using node@v0.10.29
+4 verbose node symlink /Users/jmorgan/workspace/kite-desktop/script/../cache/node/bin/node
+5 warn package.json Kitematic@0.1.0 No repository field.
+6 verbose readDependencies using package.json deps
+7 verbose install where, deps [ '/Users/jmorgan/workspace/kite-desktop',
+7 verbose install   [ 'async', 'chokidar', 'exec', 'moment', 'open' ] ]
+8 info preinstall Kitematic@0.1.0
+9 verbose readDependencies using package.json deps
+10 verbose already installed skipping moment@2.8.1 /Users/jmorgan/workspace/kite-desktop
+11 verbose already installed skipping open@0.0.5 /Users/jmorgan/workspace/kite-desktop
+12 verbose already installed skipping exec@^0.1.2 /Users/jmorgan/workspace/kite-desktop
+13 verbose already installed skipping async@^0.9.0 /Users/jmorgan/workspace/kite-desktop
+14 verbose cache add [ 'chokidar@git+https://github.com/usekite/chokidar.git', null ]
+15 verbose cache add name=undefined spec="chokidar@git+https://github.com/usekite/chokidar.git" args=["chokidar@git+https://github.com/usekite/chokidar.git",null]
+16 verbose parsed url { protocol: null,
+16 verbose parsed url   slashes: null,
+16 verbose parsed url   auth: null,
+16 verbose parsed url   host: null,
+16 verbose parsed url   port: null,
+16 verbose parsed url   hostname: null,
+16 verbose parsed url   hash: null,
+16 verbose parsed url   search: null,
+16 verbose parsed url   query: null,
+16 verbose parsed url   pathname: 'chokidar@git+https://github.com/usekite/chokidar.git',
+16 verbose parsed url   path: 'chokidar@git+https://github.com/usekite/chokidar.git',
+16 verbose parsed url   href: 'chokidar@git+https://github.com/usekite/chokidar.git' }
+17 verbose cache add name="chokidar" spec="git+https://github.com/usekite/chokidar.git" args=["chokidar","git+https://github.com/usekite/chokidar.git"]
+18 verbose parsed url { protocol: 'git+https:',
+18 verbose parsed url   slashes: true,
+18 verbose parsed url   auth: null,
+18 verbose parsed url   host: 'github.com',
+18 verbose parsed url   port: null,
+18 verbose parsed url   hostname: 'github.com',
+18 verbose parsed url   hash: null,
+18 verbose parsed url   search: null,
+18 verbose parsed url   query: null,
+18 verbose parsed url   pathname: '/usekite/chokidar.git',
+18 verbose parsed url   path: '/usekite/chokidar.git',
+18 verbose parsed url   href: 'git+https://github.com/usekite/chokidar.git' }
+19 silly lockFile 9e9e81d6--github-com-usekite-chokidar-git https://github.com/usekite/chokidar.git
+20 verbose lock https://github.com/usekite/chokidar.git /Users/jmorgan/.npm/9e9e81d6--github-com-usekite-chokidar-git.lock
+21 verbose addRemoteGit [ 'https://github.com/usekite/chokidar.git', 'master' ]
+22 verbose git remote.origin.url https://github.com/usekite/chokidar.git
+23 error git fetch -a origin (https://github.com/usekite/chokidar.git) fatal: unable to access 'https://github.com/usekite/chokidar.git/': Could not resolve host: github.com
+24 silly lockFile 9e9e81d6--github-com-usekite-chokidar-git https://github.com/usekite/chokidar.git
+25 silly lockFile 9e9e81d6--github-com-usekite-chokidar-git https://github.com/usekite/chokidar.git
+26 error Error: Command failed: fatal: unable to access 'https://github.com/usekite/chokidar.git/': Could not resolve host: github.com
+26 error
+26 error     at ChildProcess.exithandler (child_process.js:647:15)
+26 error     at ChildProcess.emit (events.js:98:17)
+26 error     at maybeClose (child_process.js:755:16)
+26 error     at Socket.<anonymous> (child_process.js:968:11)
+26 error     at Socket.emit (events.js:95:17)
+26 error     at Pipe.close (net.js:465:12)
+27 error If you need help, you may report this *entire* log,
+27 error including the npm and node versions, at:
+27 error     <http://github.com/npm/npm/issues>
+28 error System Darwin 13.3.0
+29 error command "/Users/jmorgan/workspace/kite-desktop/script/../cache/node/bin/node" "/Users/jmorgan/workspace/kite-desktop/cache/node/bin/npm" "install" "--quiet"
+30 error cwd /Users/jmorgan/workspace/kite-desktop
+31 error node -v v0.10.29
+32 error npm -v 1.4.14
+33 error code 128
+34 verbose exit [ 1, true ]

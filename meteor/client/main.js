@@ -105,7 +105,7 @@ fixDefaultImages = function (callback) {
       Session.set('available', false);
       Meteor.call('resolveDefaultImages', function (err) {
         if (err) {
-          callback(err);
+          callback();
         } else {
           Session.set('available', true);
           callback();
@@ -145,10 +145,10 @@ fixInterval = null;
 startFixInterval = function () {
   stopFixInterval();
   fixInterval = Meteor.setInterval(function () {
+    resolveWatchers(function () {});
     fixBoot2DockerVM(function (err) {
       if (err) { console.log(err); return; }
-      Meteor.call('resolveWatchers');
-      Meteor.call('recoverApps');
+      // Meteor.call('recoverApps');
       fixDefaultImages(function (err) {
         if (err) { console.log(err); return; }
         fixDefaultContainers(function (err) {

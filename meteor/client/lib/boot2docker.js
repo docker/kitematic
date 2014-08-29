@@ -2,7 +2,7 @@ var exec = require('exec');
 var path = require('path');
 
 boot2dockerexec = function (command, callback) {
-  exec(path.join(getBinDir(), 'boot2docker') + ' --lowerip=192.168.59.103 --upperip=192.168.59.103 --dhcp=false ' + command, function(err, stdout) {
+  exec(path.join(getBinDir(), 'boot2docker') + ' --lowerip=192.168.59.103 --upperip=192.168.59.103 ' + command, function(err, stdout) {
     callback(err, stdout);
   });
 };
@@ -93,26 +93,30 @@ getBoot2DockerMemoryUsage = function (callback) {
 };
 
 getBoot2DockerInfo = function (callback) {
-  getBoot2DockerState(function (err, state) {
-    if (err) {
-      callback(err, null);
-      return;
-    }
-    if (state === 'poweroff') {
-      callback(null, {state: state});
-    } else {
-      getBoot2DockerMemoryUsage(function (err, mem) {
-        if (err) { callback(null, {state: state}); }
-        getBoot2DockerDiskUsage(function (err, disk) {
+  boot2dockerexec('ssh "sudo ifconfig eth1 192.168.59.103 netmask 255.255.255.0"', function (err, stdout) {
+    exec('VBoxManage dhcpserver remove --netname HostInterfaceNetworking-vboxnet0', function (err, stdout) {
+      getBoot2DockerState(function (err, state) {
+      if (err) {
+        callback(err, null);
+        return;
+      }
+      if (state === 'poweroff') {
+        callback(null, {state: state});
+      } else {
+        getBoot2DockerMemoryUsage(function (err, mem) {
           if (err) { callback(null, {state: state}); }
-          callback(null, {
-            state: state,
-            memory: mem,
-            disk: disk
+          getBoot2DockerDiskUsage(function (err, disk) {
+            if (err) { callback(null, {state: state}); }
+            callback(null, {
+              state: state,
+              memory: mem,
+              disk: disk
+            });
           });
         });
-      });
-    }
+      }
+    });
+    });
   });
 };
 
@@ -174,6 +178,8 @@ installBoot2DockerAddons = function (callback) {
     console.log(stdout);
     callback(err);
   });
+  boot2dockerexec('ssh "sudo ifconfig eth1 192.168.59.103 netmask 255.255.255.0"', function (err, stdout) {});
+  exec('VBoxManage dhcpserver remove --netname HostInterfaceNetworking-vboxnet0', function (err, stdout) {});
 };
 
 startBoot2Docker = function (callback) {

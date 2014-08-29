@@ -4,7 +4,7 @@ getBinDir = function () {
   if (process.env.NODE_ENV === 'development') {
     return path.join(path.join(process.env.PWD, '..'), 'resources');
   } else {
-    return path.join(path.join(process.cwd(), '../../..'), 'resources');
+    return path.join(process.cwd(), 'resources');
   }
 };
 
