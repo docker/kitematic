@@ -596,7 +596,11 @@ buildImage = function (image, callback) {
             oldImageId = image.docker.Id;
           }
           if (oldImageId && oldImageId !== imageData.Id) {
-            removeImageSync(oldImageId);
+            try {
+              removeImageSync(oldImageId);
+            } catch (e) {
+              console.error(e);
+            }
           }
           Images.update(image._id, {
             $set: {
