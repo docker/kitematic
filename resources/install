@@ -3,10 +3,8 @@
 # Lookup the Kitematic VM resolver for .dev domains
 echo "nameserver 172.17.42.1" > /etc/resolver/dev
 
-# Install virtualbox
-if [ -n "$INSTALL_VIRTUALBOX" ]; then
-  /usr/sbin/installer -pkg $VIRTUALBOX_PKG_PATH -target /
-fi
+DIR=$(dirname "$0")
+USER=`w -h | sort -u -t' ' -k1,1 | awk '{print $1}'`
 
 /bin/rm -rf /Library/LaunchAgents/com.kitematic.route.plist
 
@@ -36,9 +34,6 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
   <true/>
 </dict>
 </plist>' > /Library/LaunchAgents/com.kitematic.route.plist
-
-DIR=$(dirname "$0")
-USER=`w -h | sort -u -t' ' -k1,1 | awk '{print $1}'`
 
 sudo -u $USER $DIR/boot2docker init --lowerip=192.168.59.103 --upperip=192.168.59.103
 

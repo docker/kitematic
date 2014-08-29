@@ -8,13 +8,18 @@ var async = require('async');
 // - imperativeMessage: Message to show before running
 var steps = [
 
-  // Step 0, set up VirtualBox
+  // Set up VirtualBox
   {
     install: function (callback) {
       isVirtualBoxInstalled(function (err, virtualBoxInstalled) {
-        setupVirtualBoxAndResolver(virtualBoxInstalled, function () {
+        var installedYet = false;
+        if (!virtualBoxInstalled) {
+          setupVirtualBox(function (err) {
+            callback(err);
+          });
+        } else {
           callback();
-        });
+        }
       });
     },
     pastMessage: 'VirtualBox installed',
@@ -22,7 +27,19 @@ var steps = [
     imperativeMessage: 'Install VirtualBox if necessary'
   },
 
-  // Step 1: Set up the VM for running Kitematic apps
+  // Set up the routing.
+  {
+    install: function (callback) {
+      setupResolver(function (err) {
+        callback(err);
+      });
+    },
+    pastMessage: 'Container routing set up (root required).',
+    message: 'Setting up container routing (root required).',
+    imperativeMessage: 'Set up container routing to VM (root required).'
+  },
+
+  // Set up the VM for running Kitematic apps
   {
     install: function (callback) {
       console.log('Checking if vm exists...');
@@ -49,7 +66,7 @@ var steps = [
     imperativeMessage: 'Set up the Kitematic VM'
   },
 
-  // Step 2: Start the Kitematic VM
+  // Start the Kitematic VM
   {
     install: function (callback) {
       startBoot2Docker(function (err) {
@@ -61,7 +78,7 @@ var steps = [
     imperativeMessage: 'Start the Kitematic VM'
   },
 
-  // Step 3: Set up the default Kitematic images
+  // Set up the default Kitematic images
   {
     install: function (callback) {
       Meteor.call('reloadDefaultContainers', function (err) {
@@ -93,8 +110,10 @@ runSetup = function (callback) {
   }, function (err) {
     if (err) {
       // if any of the steps fail
-      console.log('Kitematic setup failed at step' + currentStep);
+      console.log('Kitematic setup failed at step ' + currentStep);
       console.log(err);
+      Session.set('failedStep', currentStep);
+      Session.set('failedError', err);
       callback(err);
     } else {
       // Setup Finished
@@ -121,10 +140,6 @@ Template.setup_install.rendered = function() {
   }
 };
 
-Template.setup_install.events({
-
-});
-
 Template.setup_install.steps = function () {
   return steps.map(function (step, index) {
     step.index = index;
@@ -135,11 +150,15 @@ Template.setup_install.steps = function () {
 Template.setup_install.helpers({
   currentInstallStep: function () {
     return Session.get('currentInstallStep');
+  },
+  installComplete: function () {
+    return Session.get('currentInstallStep') === steps.length;
+  },
+  failedStep: function () {
+    return Session.get('failedStep');
+  },
+  failedError: function () {
+    return Session.get('failedError');
   }
 });
 
-Template.setup_install.helpers({
-  installComplete: function () {
-    return Session.get('currentInstallStep') === steps.length;
-  }
-});
