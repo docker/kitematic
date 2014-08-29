@@ -8,7 +8,7 @@
               <img src="/step_pending.png">
             </span>
             <div class="media-body">
-              {{this.imperativeMessage}}
+              {{this.futureMessage}}
             </div>
           {{/if}}
           {{#if $lt this.index currentInstallStep}}
@@ -31,6 +31,10 @@
               {{this.message}}
               {{#if $eq this.index failedStep}}
                 <p>{{failedError}}</p>
+              {{else}}
+                {{#if this.subMessage}}
+                  <p>{{this.subMessage}}</p>
+                {{/if}}
               {{/if}}
             </div>
           {{/if}}
