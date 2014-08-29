@@ -36,6 +36,7 @@ var steps = [
     },
     pastMessage: 'Container routing set up (root required).',
     message: 'Setting up container routing (root required).',
+    subMessage: '(This may take a few minutes)',
     futureMessage: 'Set up container routing to VM (root required).'
   },
 
@@ -163,4 +164,3 @@ Template.setup_install.helpers({
     return Session.get('failedError');
   }
 });
-
