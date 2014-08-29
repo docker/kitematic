@@ -1,6 +1,6 @@
 # [Kitematic](https://kitematic.com)
 
-![Kitematic Screenshot](https://kitematic.com/img/screenshot.5843.png)
+![Kitematic Screenshot](https://s3.amazonaws.com/kite-installer/screenshot.5843.png)
 
 
 ## Table of Contents

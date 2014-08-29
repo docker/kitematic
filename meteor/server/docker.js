@@ -94,7 +94,7 @@ runContainer = function (app, image, callback) {
       if (err) { callback(err, null); return; }
       console.log('Started container: ' + container.id);
       // Use dig to refresh the DNS
-      exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function(err, out, code) {});
+      exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function() {});
       callback(null, container);
     });
   });
@@ -134,7 +134,11 @@ var getFromImage = function (dockerfile) {
 
 restartApp = function (app, callback) {
   if (app.docker && app.docker.Id) {
-    restartContainerSync(app.docker.Id);
+    try {
+      restartContainerSync(app.docker.Id);
+    } catch (e) {
+      console.error(e);
+    }
     var containerData = getContainerDataSync(app.docker.Id);
     Fiber(function () {
       Apps.update(app._id, {$set: {
@@ -143,9 +147,8 @@ restartApp = function (app, callback) {
       }});
     }).run();
     callback(null);
-
     // Use dig to refresh the DNS
-    exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function(err, out, code) {});
+    exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function() {});
   } else {
     callback(null);
   }
@@ -498,7 +501,13 @@ killAndRemoveContainers = function (names, callback) {
 pullImageFromDockerfile = function (dockerfile, imageId, callback) {
   var fromImage = getFromImage(dockerfile);
   console.log('From image: ' + fromImage);
-  if (fromImage) {
+  var installedImage = null;
+  try {
+    installedImage = getImageDataSync(fromImage);
+  } catch (e) {
+    console.error(e);
+  }
+  if (fromImage && !installedImage) {
     Fiber(function () {
       Images.update(imageId, {
         $set: {
@@ -538,6 +547,8 @@ pullImageFromDockerfile = function (dockerfile, imageId, callback) {
         callback(null);
       });
     });
+  } else {
+    callback(null);
   }
 };
 
@@ -599,7 +610,11 @@ buildImage = function (image, callback) {
             oldImageId = image.docker.Id;
           }
           if (oldImageId && oldImageId !== imageData.Id) {
-            removeImageSync(oldImageId);
+            try {
+              removeImageSync(oldImageId);
+            } catch (e) {
+              console.error(e);
+            }
           }
         }).run();
         callback(null);

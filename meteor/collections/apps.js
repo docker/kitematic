@@ -59,11 +59,28 @@ Apps.helpers({
   image: function () {
     return Images.findOne(this.imageId);
   },
+  hostUrl: function () {
+    return this.name + '.dev';
+  },
+  ports: function () {
+    var app = this;
+    if (app.docker && app.docker.NetworkSettings.Ports) {
+      var ports = _.map(_.keys(app.docker.NetworkSettings.Ports), function (portObj) {
+        var port = parseInt(portObj.split('/')[0], 10);
+        return port;
+      });
+      return ports.join(', ');
+    } else {
+      return null;
+    }
+  },
   url: function () {
     var app = this;
     var image = Images.findOne(app.imageId);
     if (image && image.meta.app && image.meta.app.webPort) {
       return 'http://' + app.name + '.dev:' + image.meta.app.webPort;
+    } else if (image && image.meta.app && image.meta.app.webPort === false) {
+      return null;
     } else {
       // Picks the best port
       if (app.docker && app.docker.NetworkSettings.Ports) {
