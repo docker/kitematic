@@ -10,9 +10,19 @@
           <label>Host URL</label>
         </div>
         <div class="col-xs-8">
-          {{url}}
+          {{hostUrl}}
         </div>
       </div>
+      {{#if ports}}
+        <div class="row">
+          <div class="col-xs-3">
+            <label>Ports</label>
+          </div>
+          <div class="col-xs-8">
+            {{ports}}
+          </div>
+        </div>
+      {{/if}}
       <div class="row">
         <div class="col-xs-3">
           <label>Status</label>
