@@ -136,7 +136,11 @@ var getFromImage = function (dockerfile) {
 
 restartApp = function (app, callback) {
   if (app.docker && app.docker.Id) {
-    restartContainerSync(app.docker.Id);
+    try {
+      restartContainerSync(app.docker.Id);
+    } catch (e) {
+      console.error(e);
+    }
     var containerData = getContainerDataSync(app.docker.Id);
     Fiber(function () {
       Apps.update(app._id, {$set: {
@@ -145,7 +149,6 @@ restartApp = function (app, callback) {
       }});
     }).run();
     callback(null);
-
     // Use dig to refresh the DNS
     exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function(err, out) {
       console.log(out);
