@@ -370,12 +370,14 @@ reloadDefaultContainers = function (callback) {
     return container.name;
   });
 
-  var results;
+  var ready = false;
   async.until(function () {
-    return !!results;
+    return ready;
   }, function (callback) {
     docker.listContainers(function (err, containers) {
-      results = containers;
+      if (!err) {
+        ready = true;
+      }
       callback();
     });
   }, function (err) {
