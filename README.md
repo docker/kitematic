@@ -22,7 +22,7 @@
 - Install demeteorizer `npm install demeteorizer -g`
 - Run ./script/setup.sh to download the binary requirements (things like virtualbox).
 
-### Running the develoment Server
+### Running the development Server
 
 - ./script/run.sh
 
