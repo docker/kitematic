@@ -1,6 +1,6 @@
 # [Kitematic](https://kitematic.com)
 
-# [Download the latest version (Mac OS X 64-bit).](https://s3.amazonaws.com/kite-installer/Kitematic.zip)
+### [Download the latest version (Mac OS X 64-bit).](https://s3.amazonaws.com/kite-installer/Kitematic.zip)
 
 ![Kitematic Screenshot](https://s3.amazonaws.com/kite-installer/screenshot.5843.png)
 
