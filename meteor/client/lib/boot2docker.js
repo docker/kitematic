@@ -178,6 +178,7 @@ installBoot2DockerAddons = function (callback) {
     console.log(stdout);
     callback(err);
   });
+  exec('VBoxManage modifyvm boot2docker-vm --nic2 hostonly --nictype2 virtio --cableconnected2 on --hostonlyadapter2 vboxnet0', function (err, stdout) {});
   boot2dockerexec('ssh "sudo ifconfig eth1 192.168.59.103 netmask 255.255.255.0"', function (err, stdout) {});
   exec('VBoxManage dhcpserver remove --netname HostInterfaceNetworking-vboxnet0', function (err, stdout) {});
 };
