@@ -2,7 +2,7 @@ var exec = require('exec');
 var path = require('path');
 
 boot2dockerexec = function (command, callback) {
-  exec(path.join(getBinDir(), 'boot2docker') + ' --lowerip=192.168.59.103 --upperip=192.168.59.103 ' + command, function(err, stdout) {
+  exec(path.join(getBinDir(), 'boot2docker') + ' ' + command, function(err, stdout) {
     callback(err, stdout);
   });
 };
@@ -195,7 +195,7 @@ startBoot2Docker = function (callback) {
             console.log(err);
             console.log(stdout);
             if (err) {
-              if (err.indexOf('Waiting for VM to be started') !== -1) {
+              if (err.indexOf('Waiting for VM to be started') !== -1 || err.indexOf('..........') !== -1) {
                 installBoot2DockerAddons(function (err) {
                   callback(err);
                 });
