@@ -36,6 +36,8 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 </plist>' > /Library/LaunchAgents/com.kitematic.route.plist
 
 sudo -u $USER $DIR/boot2docker init --lowerip=192.168.59.103 --upperip=192.168.59.103
+VBoxManage modifyvm boot2docker-vm --nic2 hostonly --nictype2 virtio --cableconnected2 on --hostonlyadapter2 vboxnet0
+VBoxManage dhcpserver add --netname=vboxnet0 --ip=192.168.59.99 --netmask=255.255.255.0 --lowerip=192.168.59.103 --upperip=192.168.59.103
 
 # Add entries to routing table for Kitematic VM
 /sbin/route delete 172.17.0.0/16 192.168.59.103

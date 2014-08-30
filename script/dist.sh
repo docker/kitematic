@@ -6,6 +6,7 @@ source $DIR/colors.sh
 source $DIR/versions.sh
 
 BASE=$DIR/..
+
 pushd $BASE
 
 if [ ! -d bundle ]; then
@@ -18,6 +19,7 @@ rm -rf dist/osx/Kitematic.zip
 mkdir -p dist/osx/
 
 cecho "-----> Creating Kitematic.app..." $blue
+find cache/node-webkit -name "debug\.log" -print0 | xargs -0 rm -rf
 cp -R cache/node-webkit/node-webkit.app dist/osx/
 mv dist/osx/node-webkit.app dist/osx/Kitematic.app
 mkdir -p dist/osx/Kitematic.app/Contents/Resources/app.nw
@@ -50,8 +52,8 @@ if [ -f $DIR/sign.sh ]; then
 fi
 
 pushd dist/osx
-cecho "-----> Creating disributable zip file...." $blue
-zip -rq --display-dots Kitematic.zip Kitematic.app
+  cecho "-----> Creating disributable zip file...." $blue
+  ditto -c -k --sequesterRsrc --keepParent Kitematic.app Kitematic.zip
 popd
 
 cecho "Done." $green
