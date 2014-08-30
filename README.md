@@ -1,7 +1,10 @@
 # [Kitematic](https://kitematic.com)
 
-![Kitematic Screenshot](https://s3.amazonaws.com/kite-installer/screenshot.5843.png)
+Kitematic is still in Beta. Any effort in helping us find issues and improving the experience is greatly appreciated!
 
+[Fixes for Known Issues](http://kitematic.com/docs/known-issue-fixes)
+
+![Kitematic Screenshot](https://s3.amazonaws.com/kite-installer/screenshot.5843.png)
 
 ## Table of Contents
 
