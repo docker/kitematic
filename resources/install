@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # Lookup the Kitematic VM resolver for .dev domains
+mkdir -p /etc/resolver
 echo "nameserver 172.17.42.1" > /etc/resolver/dev
 
 DIR=$(dirname "$0")
