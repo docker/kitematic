@@ -78,20 +78,28 @@ For transparency into our release cycle and in striving to maintain backward com
 
 ## Creators
 
+Team E-mail: [contact@kitematic.com](mailto:contact@kitematic.com)
+
 **Sean Li**
 
 - <https://twitter.com/lisean106>
 - <https://github.com/Elesant>
+- Email: [sean@kitematic.com](mailto:sean@kitematic.com)
+- [LinkedIn](https://www.linkedin.com/in/lishang)
 
 **Jeffrey Morgan**
 
 - <https://twitter.com/jmorgan>
 - <https://github.com/jeffdm>
+- Email: [jeff@kitematic.com](mailto:jeff@kitematic.com)
+- [LinkedIn](https://www.linkedin.com/in/jeffdmorgan)
 
 **Michael Chiang**
 
 - <https://twitter.com/mchiang0610>
 - <https://github.com/mk101>
+- Email: [mike@kitematic.com](mailto:mike@kitematic.com)
+- [LinkedIn](https://www.linkedin.com/in/mchiang0610)
 
 ## Copyright and License
 
