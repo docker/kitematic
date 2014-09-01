@@ -1,4 +1,4 @@
-createTarFile = function (image, callback) {
+var createTarFile = function (image, callback) {
   var TAR_PATH = path.join(KITE_TAR_PATH, image._id + '.tar');
   exec('tar czf ' + TAR_PATH + ' -C ' + image.path + ' .', function (err) {
     if (err) { callback(err, null); return; }
@@ -7,11 +7,11 @@ createTarFile = function (image, callback) {
   });
 };
 
-createTarFileSync = function (image) {
+var createTarFileSync = function (image) {
   return Meteor._wrapAsync(createTarFile)(image);
 };
 
-getFromImage = function (dockerfile) {
+var getFromImage = function (dockerfile) {
   var patternString = "(FROM)(.*)";
   var regex = new RegExp(patternString, "g");
   var fromInstruction = dockerfile.match(regex);
@@ -22,7 +22,7 @@ getFromImage = function (dockerfile) {
   }
 };
 
-getImageJSON = function (directory) {
+var getImageJSON = function (directory) {
   var KITE_JSON_PATH = path.join(directory, 'image.json');
   if (fs.existsSync(KITE_JSON_PATH)) {
     var data = fs.readFileSync(KITE_JSON_PATH, 'utf8');
@@ -32,23 +32,7 @@ getImageJSON = function (directory) {
   }
 };
 
-saveImageFolder = function (directory, imageId, callback) {
-  var destinationPath = path.join(KITE_IMAGES_PATH, imageId);
-  if (!fs.existsSync(destinationPath)) {
-    fs.mkdirSync(destinationPath, function (err) {
-      if (err) { callback(err); return; }
-    });
-    Util.copyFolder(directory, destinationPath);
-    console.log('Copied image folder for: ' + imageId);
-    callback(null);
-  }
-};
-
-saveImageFolderSync = function (directory, imageId) {
-  return Meteor._wrapAsync(saveImageFolder)(directory, imageId);
-};
-
-getImageMetaData = function (directory) {
+var getImageMetaData = function (directory) {
   var kiteJSON = getImageJSON(directory);
   if (kiteJSON) {
     if (!kiteJSON.name) {
@@ -62,24 +46,23 @@ getImageMetaData = function (directory) {
   return kiteJSON;
 };
 
-deleteImage = function (image, callback) {
-  if (!image.docker) {
-    callback(null, {});
-    return;
+Images.saveFolder = function (directory, imageId, callback) {
+  var destinationPath = path.join(KITE_IMAGES_PATH, imageId);
+  if (!fs.existsSync(destinationPath)) {
+    fs.mkdirSync(destinationPath, function (err) {
+      if (err) { callback(err); return; }
+    });
+    Util.copyFolder(directory, destinationPath);
+    console.log('Copied image folder for: ' + imageId);
+    callback(null);
   }
-  try {
-    Docker.removeImageSync(image.docker.Id);
-  } catch (e) {
-    console.error(e);
-  }
-  callback(null);
 };
 
-deleteImageSync = function (image) {
-  return Meteor._wrapAsync(deleteImage)(image);
+Images.saveFolderSync = function (directory, imageId) {
+  return Meteor._wrapAsync(Images.saveFolder)(directory, imageId);
 };
 
-rebuildImage = function (image, callback) {
+Images.rebuild = function (image, callback) {
   Util.deleteFolder(image.path);
   var imageMetaData = getImageMetaData(image.originPath);
   if (imageMetaData.logo) {
@@ -102,21 +85,21 @@ rebuildImage = function (image, callback) {
     }
   });
   image = Images.findOne(image._id);
-  saveImageFolderSync(image.originPath, image._id);
-  pullImageFromDockerfile(fs.readFileSync(path.join(image.path, 'Dockerfile'), 'utf8'), image._id, function (err) {
+  Images.saveFolderSync(image.originPath, image._id);
+  Images.pull(fs.readFileSync(path.join(image.path, 'Dockerfile'), 'utf8'), image._id, function (err) {
     if (err) { callback(err, null); return; }
-    buildImage(image, function (err) {
+    Images.build(image, function (err) {
       if (err) { console.error(err); }
       callback(null, null);
     });
   });
 };
 
-rebuildImageSync = function (image) {
-  return Meteor._wrapAsync(rebuildImage)(image);
+Images.rebuildSync = function (image) {
+  return Meteor._wrapAsync(Images.rebuild)(image);
 };
 
-pullImageFromDockerfile = function (dockerfile, imageId, callback) {
+Images.pull = function (dockerfile, imageId, callback) {
   var fromImage = getFromImage(dockerfile);
   console.log('From image: ' + fromImage);
   var installedImage = null;
@@ -170,7 +153,7 @@ pullImageFromDockerfile = function (dockerfile, imageId, callback) {
   }
 };
 
-buildImage = function (image, callback) {
+Images.build = function (image, callback) {
   Fiber(function () {
     var tarFilePath = createTarFileSync(image);
     Images.update(image._id, {
@@ -251,29 +234,7 @@ Meteor.methods({
     };
     var imageMetaData = getImageMetaData(directory);
     imageObj.meta = imageMetaData;
-    var imageId = Images.insert(imageObj);
-    var imagePath = path.join(KITE_IMAGES_PATH, imageId);
-    Images.update(imageId, {
-      $set: {
-        path: imagePath
-      }
-    });
-    if (imageObj.meta.logo) {
-      Images.update(imageId, {
-        $set: {
-          logoPath: path.join(imagePath, imageObj.meta.logo)
-        }
-      });
-    }
-    var image = Images.findOne(imageId);
-    saveImageFolderSync(directory, imageId);
-    console.log('Saved folder sync');
-    pullImageFromDockerfile(fs.readFileSync(path.join(image.path, 'Dockerfile'), 'utf8'), imageId, function (err) {
-      if (err) { throw err; }
-      buildImage(image, function (err) {
-        if (err) { console.error(err); }
-      });
-    });
+    Images.insert(imageObj);
   },
   rebuildImage: function (imageId) {
     this.unblock();
@@ -300,7 +261,7 @@ Meteor.methods({
           }
         });
       });
-      rebuildImageSync(image);
+      Images.rebuildSync(image);
       _.each(apps, function (app) {
         app = Apps.findOne(app._id);
         Meteor.call('runApp', app, function (err) {
@@ -308,7 +269,7 @@ Meteor.methods({
         });
       });
     } else {
-      rebuildImageSync(image);
+      Images.rebuildSync(image);
     }
   },
   changeDirectory: function (imageId, directory) {
@@ -337,15 +298,7 @@ Meteor.methods({
     }
     var app = Apps.findOne({imageId: imageId});
     if (!app) {
-      console.log('here');
-      try {
-        deleteImageSync(image);
-        Util.deleteFolder(image.path);
-      } catch (e) {
-        console.log(e);
-      } finally {
-        Images.remove({_id: image._id});
-      }
+      Images.remove({_id: image._id});
     } else {
       throw new Meteor.Error(400, 'This image is currently being used by <a href="/apps/' + app.name + '">' + app.name + "</a>.");
     }
