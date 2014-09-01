@@ -128,7 +128,7 @@
       // Packages
       "Fiber": true,
       "moment": true,
-      "Docker": true,
+      "Dockerode": true,
       "byline": true,
       "fs": true,
       "zlib": true,
@@ -142,6 +142,7 @@
       "chokidar": true,
       "docker": true,
       "async": true,
+      "child_process": true,
 
       // Collections
       "SimpleSchema": false,
@@ -161,6 +162,7 @@
       "SetupController": true,
 
       // Server and Client
+      "Docker": true,
       "boot2dockerexec": true,
       "getBinDir": true,
       "getBoot2DockerIp": true,
@@ -202,16 +204,8 @@
       "loadKiteVolumes": true,
       "getAppLogs": true,
       "hasDockerfile": true,
-      "runContainer": true,
-      "runContainerSync": true,
-      "restartContainer": true,
-      "restartContainerSync": true,
       "createTarFile": true,
       "createTarFileSync": true,
-      "getImageData": true,
-      "getImageDataSync": true,
-      "removeImage": true,
-      "removeImageSync": true,
       "deleteImage": true,
       "checkDefaultImages": true,
       "resolveDefaultImages": true,
@@ -239,11 +233,7 @@
       "FormSchema": true,
       "showFormSuccess": true,
       "resetForm": true,
-      "removeContainer": true,
-      "removeContainerSync": true,
       "deleteAppSync": true,
-      "getContainerData": true,
-      "getContainerDataSync": true,
 
       // Testing
       "require": false,
