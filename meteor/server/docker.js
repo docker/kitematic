@@ -3,8 +3,8 @@ Docker = Meteor.require('dockerode');
 var Convert = Meteor.require('ansi-to-html');
 var convert = new Convert();
 
-var DOCKER_HOST='192.168.59.103';
-docker = new Docker({host: '192.168.59.103', port: '2375'});
+var DOCKER_HOST='192.168.60.103';
+docker = new Docker({host: DOCKER_HOST, port: '2375'});
 
 hasDockerfile = function (directory) {
   return fs.existsSync(path.join(directory, 'Dockerfile'));

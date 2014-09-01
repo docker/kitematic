@@ -68,19 +68,6 @@ Meteor.call('getDockerHost', function (err, host) {
   Session.set('dockerHost', host);
 });
 
-updateBoot2DockerInfo = function () {
-  getBoot2DockerInfo(function (err, info) {
-    if (err) {
-      return;
-    }
-    Session.set('boot2dockerState', info.state);
-    if (info.state !== 'poweroff' && info.memory && info.disk) {
-      Session.set('boot2dockerMemoryUsage', info.memory);
-      Session.set('boot2dockerDiskUsage', info.disk);
-    }
-  });
-};
-
 fixBoot2DockerVM = function (callback) {
   checkBoot2DockerVM(function (err) {
     if (err) {
@@ -138,7 +125,24 @@ fixDefaultContainers = function (callback) {
 };
 
 Meteor.setInterval(function () {
-  updateBoot2DockerInfo();
+  Boot2Docker.exists(function (err, exists) {
+    if (err) { return; }
+    if (exists) {
+      Boot2Docker.state(function (err, state) {
+        if (err) { return; }
+        if (state === 'running') {
+          Boot2Docker.info(function (err, info) {
+            if (err) { return; }
+            Session.set('boot2dockerState', info.state);
+            if (info.state !== 'poweroff' && info.memory && info.disk) {
+              Session.set('boot2dockerMemoryUsage', info.memory);
+              Session.set('boot2dockerDiskUsage', info.disk);
+            }
+          });
+        }
+      });
+    }
+  });
 }, 5000);
 
 fixInterval = null;
@@ -148,7 +152,6 @@ startFixInterval = function () {
     resolveWatchers(function () {});
     fixBoot2DockerVM(function (err) {
       if (err) { console.log(err); return; }
-      // Meteor.call('recoverApps');
       fixDefaultImages(function (err) {
         if (err) { console.log(err); return; }
         fixDefaultContainers(function (err) {
