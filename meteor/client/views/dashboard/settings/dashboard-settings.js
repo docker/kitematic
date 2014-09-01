@@ -3,7 +3,7 @@ Template.dashboard_settings.events({
     var $btn = $(e.currentTarget);
     $btn.html('Starting Boot2Docker...');
     $btn.attr("disabled", "disabled");
-    startFixInterval();
+    //startFixInterval();
     startBoot2Docker(function (err) {
       if (err) { console.error(err); }
     });

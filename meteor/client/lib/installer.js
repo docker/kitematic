@@ -1,0 +1,146 @@
+var async = require('async');
+
+Installer = {};
+
+/**
+ * Install steps. A step is a function that accepts a function (err) callback and returns once that step is complete.keys:
+ * - run: Function that runs the installation step and calls the callback with an error if failed.
+ * - pastMessage: Message to show after step completion
+ * - message: Message to show while step is running
+ * - imperativeMessage: Message to show before running
+ */
+Installer.steps = [
+  {
+    run: function (callback) {
+      var installed = VirtualBox.installed();
+      if (!installed) {
+        VirtualBox.install(function (err) {
+          callback(err);
+        });
+      } else {
+        // Version 4.3.12 is required.
+        VirtualBox.version(function (err, installedVersion) {
+          if (err) {
+            callback(err);
+            return;
+          }
+          var needsUpdate = Utilities.compareVersions(installedVersion, VirtualBox.REQUIRED_VERSION) < 0;
+          if (needsUpdate) {
+            VirtualBox.install(function (err) {
+              callback(err);
+            });
+          } else {
+            callback();
+          }
+        });
+      }
+    },
+    pastMessage: 'VirtualBox installed',
+    message: 'Installing VirtualBox',
+    futureMessage: 'Install VirtualBox if necessary'
+  },
+
+  // Initialize Boot2Docker if necessary.
+  {
+    run: function (callback) {
+      Boot2Docker.exists(function (err, exists) {
+        if (err) {
+          callback(err);
+          return;
+        }
+        if (!exists) {
+          Boot2Docker.init(function (err) {
+            callback(err);
+          });
+        } else {
+          Boot2Docker.stop(function (err) {
+            Boot2Docker.upgrade(function (err) {
+              callback(err);
+            });
+          });
+        }
+      });
+    },
+    pastMessage: 'Setup the Boot2Docker VM (if required)',
+    message: 'Setting up the Boot2Docker VM',
+    futureMessage: 'Set up the Boot2Docker VM(if required)'
+  },
+
+  // Set up the routing.
+  {
+    run: function (callback) {
+      VirtualBox.setupRouting('boot2docker-vm', function (err, ifname) {
+        callback(err);
+      });
+    },
+    pastMessage: 'Container routing set up.',
+    message: 'Setting up container routing (root required).',
+    subMessage: '(This may take a few minutes)',
+    futureMessage: 'Set up container routing to VM (root required).'
+  },
+
+  // Start the Kitematic VM
+  {
+    run: function (callback) {
+      Boot2Docker.state(function (err, state) {
+        if (state !== 'running') {
+          Boot2Docker.start(function (err) {
+            callback(err);
+          });
+        } else {
+          Boot2Docker.setIp('eth2', Boot2Docker.REQUIRED_IP, function(err) {
+            callback(err);
+          });
+        }
+      });
+    },
+    pastMessage: 'Started the Boot2Docker VM',
+    message: 'Starting the Boot2Docker VM',
+    subMessage: '(This may take a few minutes)',
+    futureMessage: 'Start the Kitematic VM',
+  },
+
+  // Set up the default Kitematic images
+  {
+    run: function (callback) {
+      Meteor.call('reloadDefaultContainers', function (err) {
+        callback(err);
+      });
+    },
+    pastMessage: 'Started the Boot2Docker VM',
+    message: 'Setting up the default Kitematic images...',
+    subMessage: '(This may take a few minutes)',
+    futureMessage: 'Set up the default Kitematic images',
+  }
+];
+
+Installer.run = function (callback) {
+  var currentStep = 0;
+  Session.set('currentInstallStep', currentStep);
+  Session.set('numberOfInstallSteps', this.steps.length);
+  async.eachSeries(this.steps, function (step, callback) {
+    console.log('Performing step ' + currentStep);
+    step.run(function (err) {
+      if (err) {
+        callback(err);
+      } else {
+        currentStep += 1;
+        Session.set('currentInstallStep', currentStep);
+        callback();
+      }
+    });
+  }, function (err) {
+    if (err) {
+      // if any of the steps fail
+      console.log('Kitematic setup failed at step ' + currentStep);
+      console.log(err);
+      Session.set('failedStep', currentStep);
+      Session.set('failedError', err);
+      callback(err);
+    } else {
+      // Setup Finished
+      console.log('Setup finished.');
+      callback();
+    }
+  });
+};
