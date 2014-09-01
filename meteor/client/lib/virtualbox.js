@@ -106,16 +106,12 @@ VirtualBox.hostOnlyAdapter = function (callback) {
     if (!iface) {
       self.exec('hostonlyif create', function (err, stdout, stderr) {
         var match = stdout.match(/Interface '(vboxnet\d+)' was successfully created/);
-        console.log(match);
         if (!match) {
           callback('Could not parse output of hostonlyif create');
           return;
         }
         self.exec('hostonlyif ipconfig ' + match[1] + ' --ip ' + VirtualBox.HOSTONLY_HOSTIP + ' --netmask ' + VirtualBox.HOSTONLY_NETWORKMASK, function(err, stdout, stderr) {
-          if (err) {
-            callback(err);
-            return;
-          }
+          if (err) { callback(err); return; }
           callback(null, match[1]);
         });
       });
@@ -128,10 +124,7 @@ VirtualBox.hostOnlyAdapter = function (callback) {
 VirtualBox.addCustomHostAdapter = function (vm, callback) {
   var self = this;
   self.hostOnlyAdapter(function (err, ifname) {
-    if (err) {
-      callback(err);
-      return;
-    }
+    if (err) { callback(err); return; }
     self.exec('modifyvm ' + vm + ' --nic3 hostonly --nictype3 virtio --cableconnected3 on --hostonlyadapter3 ' + ifname, function (err, stdout, stderr) {
       callback(err, ifname);
     });
@@ -143,7 +136,7 @@ VirtualBox.setupRouting = function (vm, callback) {
   this.addCustomHostAdapter(vm, function (err, ifname) {
     var installFile = path.join(Util.getBinDir(), 'install');
     var cocoaSudo = path.join(Util.getBinDir(), 'cocoasudo');
-    var execCommand = cocoaSudo + ' --prompt="Kitematic needs your password to allow routing *.dev requests to containers." ' + installFile;
+    var execCommand = cocoaSudo + ' --prompt="Kitematic needs your password to allow routing *.kite requests to containers." ' + installFile;
     exec(execCommand, {env: {IFNAME: ifname, GATEWAY: Boot2Docker.REQUIRED_IP}}, function (error, stdout, stderr) {
       if (error) {
         callback(error);
