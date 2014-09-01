@@ -62,7 +62,7 @@ getImageJSON = function (directory) {
   }
 };
 
-loadKiteVolumes = function (directory, appName) {
+copyVolumes = function (directory, appName) {
   var KITE_VOLUMES_PATH = path.join(directory, 'volumes');
   if (fs.existsSync(KITE_VOLUMES_PATH)) {
     var destinationPath = path.join(KITE_PATH, appName);

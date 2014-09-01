@@ -58,39 +58,22 @@ Meteor.methods({
       throw new Meteor.Error(400, 'Validation Failed.', validationResult.errors);
     } else {
       var cleaned = validationResult.cleaned;
-      var appObj = {
-        name: cleaned.name,
-        imageId: cleaned.imageId,
-        status: 'STARTING',
-        config: {}
-      };
-      var appId = Apps.insert(appObj);
-      var appPath = path.join(KITE_PATH, appObj.name);
+      var appName = cleaned.name;
+      var appPath = path.join(KITE_PATH, appName);
       if (!fs.existsSync(appPath)) {
-        console.log('Created Kite ' + appObj.name + ' directory.');
+        console.log('Created Kite ' + appName + ' directory.');
         fs.mkdirSync(appPath, function (err) {
           if (err) { throw err; }
         });
       }
-      Apps.update(appId, {
-        $set: {
-          'config.APP_ID': appId,
-          path: appPath
-        }
-      });
-      var image = Images.findOne(appObj.imageId);
-      loadKiteVolumes(image.path, appObj.name);
-      var app = Apps.findOne(appId);
-      removeBindFolder(app.name, function (err) {
-        if (err) {
-          console.error(err);
-        }
-        Fiber(function () {
-          Meteor.call('runApp', app, function (err) {
-            if (err) { throw err; }
-          });
-        }).run();
-      });
+      var appObj = {
+        name: appName,
+        imageId: cleaned.imageId,
+        status: 'STARTING',
+        config: {},
+        path: appPath
+      };
+      Apps.insert(appObj);
     }
   },
   getAppLogs: function (appId) {

@@ -117,6 +117,29 @@ Apps.helpers({
 
 Apps.attachSchema(schemaApps);
 
+Apps.after.insert(function (userId, app) {
+  // Give app an unique environment variable
+  var appId = this._id;
+  Apps.update(appId, {
+    $set: {
+      'config.APP_ID': appId
+    }
+  });
+  var image = Images.findOne(app.imageId);
+  copyVolumes(image.path, app.name);
+  app = Apps.findOne(appId);
+  removeBindFolder(app.name, function (err) {
+    if (err) {
+      console.error(err);
+    }
+    Fiber(function () {
+      Meteor.call('runApp', app, function (err) {
+        if (err) { throw err; }
+      });
+    }).run();
+  });
+});
+
 Apps.after.remove(function (userId, app) {
   deleteApp(app, function (err) {
     if (err) { console.error(err); }
