@@ -12,7 +12,6 @@ var steps = [
   {
     install: function (callback) {
       isVirtualBoxInstalled(function (err, virtualBoxInstalled) {
-        var installedYet = false;
         if (!virtualBoxInstalled) {
           setupVirtualBox(function (err) {
             callback(err);
@@ -77,7 +76,7 @@ var steps = [
     pastMessage: 'Started the Kitematic VM',
     message: 'Starting the Kitematic VM',
     subMessage: '(This may take a few minutes)',
-    futureMessage: 'Start the Kitematic VM',
+    futureMessage: 'Start the Kitematic VM'
   },
 
   // Set up the default Kitematic images
@@ -90,7 +89,7 @@ var steps = [
     pastMessage: 'Started the Kitematic VM',
     message: 'Setting up the default Kitematic images...',
     subMessage: '(This may take a few minutes)',
-    futureMessage: 'Set up the default Kitematic images',
+    futureMessage: 'Set up the default Kitematic images'
   }
 ];
 
