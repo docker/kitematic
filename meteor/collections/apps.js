@@ -116,3 +116,14 @@ Apps.helpers({
 });
 
 Apps.attachSchema(schemaApps);
+
+Apps.after.remove(function (userId, app) {
+  deleteApp(app, function (err) {
+    if (err) { console.error(err); }
+    var appPath = path.join(KITE_PATH, app.name);
+    deleteFolder(appPath);
+    removeBindFolder(app.name, function () {
+      console.log('Deleted Kite ' + app.name + ' directory.');
+    });
+  });
+});

@@ -632,12 +632,14 @@ Meteor.methods({
   runApp: function (app) {
     this.unblock();
     var image = Images.findOne({_id: app.imageId});
+    // Delete old container if one already exists
     try {
       Docker.removeContainerSync(app.name);
     } catch (e) {}
     try {
       var container = Docker.runContainerSync(app, image);
       var containerData = Docker.getContainerDataSync(container.id);
+      // Set a delay for app to spin up
       Meteor.setTimeout(function () {
         Apps.update(app._id, {$set: {
           docker: containerData,
@@ -652,18 +654,23 @@ Meteor.methods({
     return DOCKER_HOST;
   },
   reloadDefaultContainers: function () {
+    this.unblock();
     return Meteor._wrapAsync(reloadDefaultContainers)();
   },
   checkDefaultImages: function () {
+    this.unblock();
     return Meteor._wrapAsync(checkDefaultImages)();
   },
   resolveDefaultImages: function () {
+    this.unblock();
     return Meteor._wrapAsync(resolveDefaultImages)();
   },
   checkDefaultContainers: function () {
+    this.unblock();
     return Meteor._wrapAsync(checkDefaultContainers)();
   },
   resolveDefaultContainers: function () {
+    this.unblock();
     return Meteor._wrapAsync(resolveDefaultContainers)();
   }
 });
