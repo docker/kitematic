@@ -143,6 +143,8 @@
       "docker": true,
       "async": true,
       "child_process": true,
+      "convert": true,
+      "Convert": true,
 
       // Collections
       "SimpleSchema": false,
@@ -221,6 +223,7 @@
       "saveImageFolderSync": true,
       "rebuildImageSync": true,
       "saveImageFolder": true,
+      "getFromImage": true,
 
       // Forms
       "showFormErrors": true,

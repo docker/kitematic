@@ -1,3 +1,71 @@
+deleteApp = function (app, callback) {
+  if (!app.docker) {
+    callback(null);
+    return;
+  }
+  try {
+    Docker.removeContainerSync(app.docker.Id);
+  } catch (e) {
+    console.error(e);
+  }
+  callback(null);
+};
+
+deleteAppSync = function (app) {
+  return Meteor._wrapAsync(deleteApp)(app);
+};
+
+restartApp = function (app, callback) {
+  if (app.docker && app.docker.Id) {
+    try {
+      Docker.restartContainerSync(app.docker.Id);
+    } catch (e) {
+      console.error(e);
+    }
+    var containerData = Docker.getContainerDataSync(app.docker.Id);
+    Fiber(function () {
+      Apps.update(app._id, {$set: {
+        status: 'READY',
+        docker: containerData
+      }});
+    }).run();
+    callback(null);
+    // Use dig to refresh the DNS
+    exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function() {});
+  } else {
+    callback(null);
+  }
+};
+
+getAppLogs = function (app) {
+  if (app.docker && app.docker.Id) {
+    var container = docker.getContainer(app.docker.Id);
+    container.logs({follow: false, stdout: true, stderr: true, timestamps: true, tail: 300}, function (err, response) {
+      if (err) { throw err; }
+      Fiber(function () {
+        Apps.update(app._id, {
+          $set: {
+            logs: []
+          }
+        });
+      }).run();
+      var logs = [];
+      response.setEncoding('utf8');
+      response.on('data', function (line) {
+        logs.push(convert.toHtml(line.slice(8)));
+        Fiber(function () {
+          Apps.update(app._id, {
+            $set: {
+              logs: logs
+            }
+          });
+        }).run();
+      });
+      response.on('end', function () {});
+    });
+  }
+};
+
 removeBindFolder = function (name, callback) {
   exec(path.join(Util.getBinDir(), 'boot2docker') + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function(err, stdout) {
     callback(err, stdout);

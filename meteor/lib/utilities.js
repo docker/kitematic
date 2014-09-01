@@ -8,7 +8,11 @@ Util.getBinDir = function () {
   if (process.env.NODE_ENV === 'development') {
     return path.join(path.join(process.env.PWD, '..'), 'resources');
   } else {
-    return path.join(process.cwd(), '../../../resources');
+    if (Meteor.isClient) {
+      return path.join(process.cwd(), 'resources');
+    } else {
+      return path.join(process.cwd(), '../../../resources');
+    }
   }
 };
 
