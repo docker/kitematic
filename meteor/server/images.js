@@ -1,3 +1,14 @@
+getFromImage = function (dockerfile) {
+  var patternString = "(FROM)(.*)";
+  var regex = new RegExp(patternString, "g");
+  var fromInstruction = dockerfile.match(regex);
+  if (fromInstruction && fromInstruction.length > 0) {
+    return fromInstruction[0].replace('FROM', '').trim();
+  } else {
+    return null;
+  }
+};
+
 getImageJSON = function (directory) {
   var KITE_JSON_PATH = path.join(directory, 'image.json');
   if (fs.existsSync(KITE_JSON_PATH)) {
@@ -38,6 +49,23 @@ getImageMetaData = function (directory) {
   return kiteJSON;
 };
 
+deleteImage = function (image, callback) {
+  if (!image.docker) {
+    callback(null, {});
+    return;
+  }
+  try {
+    Docker.removeImageSync(image.docker.Id);
+  } catch (e) {
+    console.error(e);
+  }
+  callback(null);
+};
+
+deleteImageSync = function (image) {
+  return Meteor._wrapAsync(deleteImage)(image);
+};
+
 rebuildImage = function (image, callback) {
   Util.deleteFolder(image.path);
   var imageMetaData = getImageMetaData(image.originPath);
@@ -73,6 +101,132 @@ rebuildImage = function (image, callback) {
 
 rebuildImageSync = function (image) {
   return Meteor._wrapAsync(rebuildImage)(image);
+};
+
+pullImageFromDockerfile = function (dockerfile, imageId, callback) {
+  var fromImage = getFromImage(dockerfile);
+  console.log('From image: ' + fromImage);
+  var installedImage = null;
+  try {
+    installedImage = Docker.getImageDataSync(fromImage);
+  } catch (e) {
+    console.error(e);
+  }
+  if (fromImage && !installedImage) {
+    Fiber(function () {
+      Images.update(imageId, {
+        $set: {
+          buildLogs: []
+        }
+      });
+    }).run();
+    var logs = [];
+    docker.pull(fromImage, function (err, response) {
+      if (err) { callback(err); return; }
+      response.setEncoding('utf8');
+      response.on('data', function (data) {
+        try {
+          var logData = JSON.parse(data);
+          var logDisplay = '';
+          if (logData.id) {
+            logDisplay += logData.id + ' | ';
+          }
+          logDisplay += logData.status;
+          if (logData.progressDetail && logData.progressDetail.current && logData.progressDetail.total) {
+            logDisplay += ' - ' + Math.round(logData.progressDetail.current / logData.progressDetail.total * 100) + '%';
+          }
+          logs.push(logDisplay);
+          Fiber(function () {
+            Images.update(imageId, {
+              $set: {
+                buildLogs: logs
+              }
+            });
+          }).run();
+        } catch (e) {
+          console.error(e);
+        }
+      });
+      response.on('end', function () {
+        console.log('Finished pulling image: ' + fromImage);
+        callback(null);
+      });
+    });
+  } else {
+    callback(null);
+  }
+};
+
+buildImage = function (image, callback) {
+  Fiber(function () {
+    var tarFilePath = createTarFileSync(image);
+    Images.update(image._id, {
+      $set: {
+        buildLogs: []
+      }
+    });
+    docker.buildImage(tarFilePath, {t: image._id.toLowerCase()}, function (err, response) {
+      if (err) { callback(err); }
+      console.log('Building Docker image...');
+      var logs = [];
+      response.setEncoding('utf8');
+      response.on('data', function (data) {
+        try {
+          var line = JSON.parse(data).stream;
+          logs.push(convert.toHtml(line));
+          Fiber(function () {
+            Images.update(image._id, {
+              $set: {
+                buildLogs: logs
+              }
+            });
+          }).run();
+        } catch (e) {
+          console.error(e);
+        }
+      });
+      response.on('end', function () {
+        console.log('Finished building Docker image.');
+        try {
+          fs.unlinkSync(tarFilePath);
+          console.log('Cleaned up tar file.');
+        } catch (e) {
+          console.error(e);
+        }
+        Fiber(function () {
+          var imageData = null;
+          try {
+            imageData = Docker.getImageDataSync(image._id);
+            Images.update(image._id, {
+              $set: {
+                docker: imageData,
+                status: 'READY'
+              }
+            });
+          } catch (e) {
+            console.log(e);
+            Images.update(image._id, {
+              $set: {
+                status: 'ERROR'
+              }
+            });
+          }
+          var oldImageId = null;
+          if (image.docker && image.docker.Id) {
+            oldImageId = image.docker.Id;
+          }
+          if (oldImageId && imageData && oldImageId !== imageData.Id) {
+            try {
+              Docker.removeImageSync(oldImageId);
+            } catch (e) {
+              console.error(e);
+            }
+          }
+        }).run();
+        callback(null);
+      });
+    });
+  }).run();
 };
 
 Meteor.methods({

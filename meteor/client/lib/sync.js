@@ -75,7 +75,7 @@ addAppWatcher = function (app) {
           exec(cmd, function () {});
         }
       } catch (e) {
-        // console.error(e);
+        //console.error(e);
       }
       syncing = false;
       if (willSyncAgain) {
