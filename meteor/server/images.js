@@ -1,3 +1,16 @@
+createTarFile = function (image, callback) {
+  var TAR_PATH = path.join(KITE_TAR_PATH, image._id + '.tar');
+  exec('tar czf ' + TAR_PATH + ' -C ' + image.path + ' .', function (err) {
+    if (err) { callback(err, null); return; }
+    console.log('Created tar file: ' + TAR_PATH);
+    callback(null, TAR_PATH);
+  });
+};
+
+createTarFileSync = function (image) {
+  return Meteor._wrapAsync(createTarFile)(image);
+};
+
 getFromImage = function (dockerfile) {
   var patternString = "(FROM)(.*)";
   var regex = new RegExp(patternString, "g");
@@ -272,7 +285,13 @@ Meteor.methods({
     if (apps.length > 0) {
       _.each(apps, function (app) {
         console.log('Updating app: ' + app.name);
-        deleteAppSync(app);
+        if (app.docker) {
+          try {
+            Docker.removeContainerSync(app.docker.Id);
+          } catch (e) {
+            console.error(e);
+          }
+        }
         Apps.update(app._id, {
           $set: {
             'docker.Id': null,
@@ -306,7 +325,7 @@ Meteor.methods({
   },
   validateDirectory: function (directory) {
     this.unblock();
-    if (!hasDockerfile(directory)) {
+    if (!Util.hasDockerfile(directory)) {
       throw new Meteor.Error(400, "Only directories with Dockerfiles are supported now.");
     }
   },

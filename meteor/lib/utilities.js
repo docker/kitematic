@@ -66,3 +66,7 @@ Util.copyVolumes = function (directory, appName) {
     console.log('Copied volumes for: ' + appName);
   }
 };
+
+Util.hasDockerfile = function (directory) {
+  return fs.existsSync(path.join(directory, 'Dockerfile'));
+};

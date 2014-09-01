@@ -194,15 +194,9 @@
       "fixInterval": true,
       "stopFixInterval": true,
       "runSetup": true,
-      "removeBindFolder": true,
       "removeAppWatcher": true,
       "addAppWatcher": true,
       "resolveWatchers": true,
-      "recoverApps": true,
-      "restartApp": true,
-      "deleteApp": true,
-      "getAppLogs": true,
-      "hasDockerfile": true,
       "createTarFile": true,
       "createTarFileSync": true,
       "deleteImage": true,
@@ -232,7 +226,6 @@
       "FormSchema": true,
       "showFormSuccess": true,
       "resetForm": true,
-      "deleteAppSync": true,
 
       // Testing
       "require": false,
