@@ -53,7 +53,6 @@ Router.map(function () {
           console.log('No installs detected, running installer again.');
           this.redirect('/setup/intro');
         } else {
-          startFixInterval();
           this.redirect('/apps');
         }
       }

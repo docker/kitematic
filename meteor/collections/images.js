@@ -91,3 +91,43 @@ Images.allow({
 });
 
 Images.attachSchema(schemaImages);
+
+Images.after.insert(function (userId, image) {
+  var imageId = this._id;
+  var imagePath = path.join(KITE_IMAGES_PATH, imageId);
+  Images.update(imageId, {
+    $set: {
+      path: imagePath
+    }
+  });
+  if (image.meta.logo) {
+    Images.update(imageId, {
+      $set: {
+        logoPath: path.join(imagePath, image.meta.logo)
+      }
+    });
+  }
+  image = Images.findOne(imageId);
+  Images.saveFolderSync(image.originPath, imageId);
+  Images.pull(fs.readFileSync(path.join(image.path, 'Dockerfile'), 'utf8'), imageId, function (err) {
+    if (err) { throw err; }
+    Images.build(image, function (err) {
+      if (err) { console.error(err); }
+    });
+  });
+});
+
+Images.after.remove(function (userId, image) {
+  if (image.docker) {
+    try {
+      Docker.removeImageSync(image.docker.Id);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  try {
+    Util.deleteFolder(image.path);
+  } catch (e) {
+    console.error(e);
+  }
+});

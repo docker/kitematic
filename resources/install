@@ -28,9 +28,6 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
     <string>172.17.0.0</string>
     <string>-netmask</string>
     <string>255.255.0.0</string>
-    <string>-iface</string>
-    <string>$IFNAME</string>
-    <string>255.255.0.0</string>
     <string>-gateway</string>
     <string>$GATEWAY</string>
   </array>
@@ -45,4 +42,4 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 
 # Add entries to routing table for Kitematic VM
 /sbin/route delete -net 172.17.0.0 -netmask 255.255.0.0 -gateway $GATEWAY
-/sbin/route -n add -net 172.17.0.0 -netmask 255.255.0.0 -iface $IFNAME -gateway $GATEWAY
+/sbin/route -n add -net 172.17.0.0 -netmask 255.255.0.0 -gateway $GATEWAY
