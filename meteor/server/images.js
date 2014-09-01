@@ -1,3 +1,29 @@
+getImageJSON = function (directory) {
+  var KITE_JSON_PATH = path.join(directory, 'image.json');
+  if (fs.existsSync(KITE_JSON_PATH)) {
+    var data = fs.readFileSync(KITE_JSON_PATH, 'utf8');
+    return JSON.parse(data);
+  } else {
+    return null;
+  }
+};
+
+saveImageFolder = function (directory, imageId, callback) {
+  var destinationPath = path.join(KITE_IMAGES_PATH, imageId);
+  if (!fs.existsSync(destinationPath)) {
+    fs.mkdirSync(destinationPath, function (err) {
+      if (err) { callback(err); return; }
+    });
+    Util.copyFolder(directory, destinationPath);
+    console.log('Copied image folder for: ' + imageId);
+    callback(null);
+  }
+};
+
+saveImageFolderSync = function (directory, imageId) {
+  return Meteor._wrapAsync(saveImageFolder)(directory, imageId);
+};
+
 getImageMetaData = function (directory) {
   var kiteJSON = getImageJSON(directory);
   if (kiteJSON) {
