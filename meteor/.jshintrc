@@ -163,8 +163,8 @@
 
       // Server and Client
       "Docker": true,
+      "Util": true,
       "boot2dockerexec": true,
-      "getBinDir": true,
       "getBoot2DockerIp": true,
       "getBoot2DockerState": true,
       "getBoot2DockerDiskUsage": true,
@@ -172,7 +172,6 @@
       "getBoot2DockerInfo": true,
       "boot2DockerVMExists": true,
       "eraseBoot2DockerVMFiles": true,
-      "getHomePath": true,
       "initBoot2Docker": true,
       "isVirtualBoxInstalled": true,
       "upgradeBoot2Docker": true,
@@ -200,8 +199,6 @@
       "recoverApps": true,
       "restartApp": true,
       "deleteApp": true,
-      "deleteFolder": true,
-      "copyVolumes": true,
       "getAppLogs": true,
       "hasDockerfile": true,
       "createTarFile": true,
@@ -224,7 +221,6 @@
       "saveImageFolderSync": true,
       "rebuildImageSync": true,
       "saveImageFolder": true,
-      "copyFolder": true,
 
       // Forms
       "showFormErrors": true,

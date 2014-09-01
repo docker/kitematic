@@ -13,7 +13,7 @@ getImageMetaData = function (directory) {
 };
 
 rebuildImage = function (image, callback) {
-  deleteFolder(image.path);
+  Util.deleteFolder(image.path);
   var imageMetaData = getImageMetaData(image.originPath);
   if (imageMetaData.logo) {
     Images.update(image._id, {
@@ -141,7 +141,7 @@ Meteor.methods({
       console.log('here');
       try {
         deleteImageSync(image);
-        deleteFolder(image.path);
+        Util.deleteFolder(image.path);
       } catch (e) {
         console.log(e);
       } finally {

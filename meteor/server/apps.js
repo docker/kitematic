@@ -1,5 +1,5 @@
 removeBindFolder = function (name, callback) {
-  exec(path.join(getBinDir(), 'boot2docker') + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function(err, stdout) {
+  exec(path.join(Util.getBinDir(), 'boot2docker') + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function(err, stdout) {
     callback(err, stdout);
   });
 };

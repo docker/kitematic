@@ -306,7 +306,7 @@ resolveDefaultImages = function () {
     image.inspect(function (err) {
       if (err) {
         if (err.reason === 'no such image') {
-          docker.loadImage(path.join(getBinDir(), 'base-images.tar.gz'), {}, function (err) {
+          docker.loadImage(path.join(Util.getBinDir(), 'base-images.tar.gz'), {}, function (err) {
             if (err) {
               innerCallback(err);
               return;
@@ -393,7 +393,7 @@ reloadDefaultContainers = function (callback) {
         return;
       }
       console.log('Loading new Kitematic default images.');
-      docker.loadImage(path.join(getBinDir(), 'base-images.tar.gz'), {}, function (err) {
+      docker.loadImage(path.join(Util.getBinDir(), 'base-images.tar.gz'), {}, function (err) {
         if (err) {
           callback(err);
           return;

@@ -21,8 +21,8 @@ Template.dashboard_single_app.events({
   },
   'click .btn-terminal': function () {
     var app = this;
-    var cmd = path.join(getBinDir(), 'boot2docker') + ' ssh -t "sudo docker-enter ' + app.docker.Id + '"';
-    var terminalCmd = path.join(getBinDir(),  'terminal') + ' ' + cmd;
+    var cmd = path.join(Util.getBinDir(), 'boot2docker') + ' ssh -t "sudo docker-enter ' + app.docker.Id + '"';
+    var terminalCmd = path.join(Util.getBinDir(),  'terminal') + ' ' + cmd;
     var exec = require('child_process').exec;
     console.log(terminalCmd);
     exec(terminalCmd, function (err, stdout) {

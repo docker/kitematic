@@ -1,4 +1,4 @@
-KITE_PATH = path.join(getHomePath(), 'Kitematic');
+KITE_PATH = path.join(Util.getHomePath(), 'Kitematic');
 KITE_TAR_PATH = path.join(KITE_PATH, '.tar');
 KITE_IMAGES_PATH = path.join(KITE_PATH, '.images');
 

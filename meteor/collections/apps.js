@@ -126,7 +126,7 @@ Apps.after.insert(function (userId, app) {
     }
   });
   var image = Images.findOne(app.imageId);
-  copyVolumes(image.path, app.name);
+  Util.copyVolumes(image.path, app.name);
   app = Apps.findOne(appId);
   removeBindFolder(app.name, function (err) {
     if (err) {
@@ -144,7 +144,7 @@ Apps.after.remove(function (userId, app) {
   deleteApp(app, function (err) {
     if (err) { console.error(err); }
     var appPath = path.join(KITE_PATH, app.name);
-    deleteFolder(appPath);
+    Util.deleteFolder(appPath);
     removeBindFolder(app.name, function () {
       console.log('Deleted Kite ' + app.name + ' directory.');
     });
