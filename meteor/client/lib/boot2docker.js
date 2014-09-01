@@ -81,6 +81,7 @@ Boot2Docker.start = function (callback) {
       // Success as well
       if (!err || (err.indexOf('Waiting for VM to be started') !== -1 || err.indexOf('..........') !== -1)) {
         self.correct(function (err) {
+          if (err) { callback(err); return; }
           self.injectUtilities(function (err) {
             callback(err);
           });
@@ -96,17 +97,14 @@ Boot2Docker.correct = function (callback) {
   Boot2Docker.setIp('eth2', Boot2Docker.REQUIRED_IP, function(err) {
     if (err) { callback(err); return; }
     VirtualBox.removeDHCP(function (err) {
-      callback(err);
+      callback();
     });
   });
 };
 
 Boot2Docker.state = function (callback) {
-  this.exec('info', function (err, stdout) {
-    if (err) {
-      callback(err, null);
-      return;
-    }
+  this.exec('info', function (err, stdout, stderr) {
+    if (err) { callback(err, null); return; }
     try {
       var info = JSON.parse(stdout);
       callback(null, info.State);
@@ -177,23 +175,21 @@ Boot2Docker.memoryUsage = function (callback) {
 };
 
 Boot2Docker.stats = function (callback) {
-  this.state(function (err, state) {
-    if (err) {
-      callback(err, null);
-      return;
-    }
+  var self = this;
+  self.state(function (err, state) {
+    if (err) { callback(err, null); return; }
     if (state === 'poweroff') {
       callback(null, {state: state});
       return;
     }
-    this.memoryUsage(function (err, mem) {
+    self.memoryUsage(function (err, mem) {
       if (err) {
         callback(null, {state: state});
         return;
       }
-      this.diskUsage(function (err, disk) {
+      self.diskUsage(function (err, disk) {
         if (err) {
-          callback(null, {state: state});
+          callback(null, {state: state, memory: mem});
           return;
         }
         callback(null, {

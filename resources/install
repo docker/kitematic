@@ -1,13 +1,13 @@
 #!/bin/sh
 
-# This script must be run as root and sets up Mac OS X to route all .dev domains to the virtual box VM with the name
+# This script must be run as root and sets up Mac OS X to route all .kite domains to the virtual box VM with the name
 # 'boot2docker-vm'. It does the following:
-# 1) Adds a file under /etc/resolver/dev
+# 1) Adds a file under /etc/resolver/kite
 # 2) Sets up a LaunchAgent for adding entries to the route table to route all requests to the Docker subnet (172.17.0.0/16)
 # And expects the $IFNAME variable to contain the interface on which to send traffic to the boot2docker VM.
 
 mkdir -p /etc/resolver
-echo "nameserver 172.17.42.1" > /etc/resolver/dev
+echo "nameserver 172.17.42.1" > /etc/resolver/kite
 
 DIR=$(dirname "$0")
 USER=`w -h | sort -u -t' ' -k1,1 | awk '{print $1}'`

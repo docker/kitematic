@@ -24,7 +24,7 @@ Installer.steps = [
             callback(err);
             return;
           }
-          var needsUpdate = Utilities.compareVersions(installedVersion, VirtualBox.REQUIRED_VERSION) < 0;
+          var needsUpdate = Util.compareVersions(installedVersion, VirtualBox.REQUIRED_VERSION) < 0;
           if (needsUpdate) {
             VirtualBox.install(function (err) {
               callback(err);
@@ -44,16 +44,14 @@ Installer.steps = [
   {
     run: function (callback) {
       Boot2Docker.exists(function (err, exists) {
-        if (err) {
-          callback(err);
-          return;
-        }
+        if (err) { callback(err); return; }
         if (!exists) {
           Boot2Docker.init(function (err) {
             callback(err);
           });
         } else {
           Boot2Docker.stop(function (err) {
+            if (err) { callback(err); return; }
             Boot2Docker.upgrade(function (err) {
               callback(err);
             });
@@ -66,24 +64,24 @@ Installer.steps = [
     futureMessage: 'Set up the Boot2Docker VM(if required)'
   },
 
-  // Set up the routing.
   {
     run: function (callback) {
-      VirtualBox.setupRouting('boot2docker-vm', function (err, ifname) {
+      VirtualBox.addCustomHostAdapter('boot2docker-vm', function (err, ifname) {
         callback(err);
       });
     },
-    pastMessage: 'Container routing set up.',
-    message: 'Setting up container routing (root required).',
-    subMessage: '(This may take a few minutes)',
-    futureMessage: 'Set up container routing to VM (root required).'
+    pastMessage: 'Added custom host adapter to the Boot2Docker VM',
+    message: 'Adding custom host adapter to the Boot2Docker VM',
+    futureMessage: 'Add custom host adapter to the Boot2Docker VM'
   },
 
   // Start the Kitematic VM
   {
     run: function (callback) {
       Boot2Docker.state(function (err, state) {
+        if (err) { callback(err); return; }
         if (state !== 'running') {
+          console.log('starting');
           Boot2Docker.start(function (err) {
             callback(err);
           });
@@ -96,8 +94,18 @@ Installer.steps = [
     },
     pastMessage: 'Started the Boot2Docker VM',
     message: 'Starting the Boot2Docker VM',
-    subMessage: '(This may take a few minutes)',
     futureMessage: 'Start the Kitematic VM',
+  },
+
+  {
+    run: function (callback) {
+      VirtualBox.setupRouting('boot2docker-vm', function (err, ifname) {
+        callback(err);
+      });
+    },
+    pastMessage: 'Container routing set up',
+    message: 'Setting up container routing (root required)',
+    futureMessage: 'Set up container routing to VM (root required)'
   },
 
   // Set up the default Kitematic images
