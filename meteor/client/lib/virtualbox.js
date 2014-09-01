@@ -25,8 +25,8 @@ isResolverSetup = function (callback) {
 };
 
 setupResolver = function (callback) {
-  var installFile = path.join(getBinDir(), 'install');
-  var cocoaSudo = path.join(getBinDir(), 'cocoasudo');
+  var installFile = path.join(Util.getBinDir(), 'install');
+  var cocoaSudo = path.join(Util.getBinDir(), 'cocoasudo');
   var execCommand = cocoaSudo + ' --prompt="Kitematic Setup wants to make changes. Type your password to allow this." ' + installFile;
   child_process.exec(execCommand, function (error, stdout, stderr) {
     console.log(stdout);
@@ -41,7 +41,7 @@ setupResolver = function (callback) {
 };
 
 setupVirtualBox = function (callback) {
-  child_process.exec('open -W ' + path.join(getBinDir(), 'virtualbox-4.3.12.pkg'), function (error, stdout, stderr) {
+  child_process.exec('open -W ' + path.join(Util.getBinDir(), 'virtualbox-4.3.12.pkg'), function (error, stdout, stderr) {
     console.log(stdout);
     if (error) {
       console.log(error);
@@ -52,4 +52,3 @@ setupVirtualBox = function (callback) {
     callback();
   });
 };
-

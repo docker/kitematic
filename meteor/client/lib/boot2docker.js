@@ -2,7 +2,7 @@ var exec = require('exec');
 var path = require('path');
 
 boot2dockerexec = function (command, callback) {
-  exec(path.join(getBinDir(), 'boot2docker') + ' ' + command, function(err, stdout) {
+  exec(path.join(Util.getBinDir(), 'boot2docker') + ' ' + command, function(err, stdout) {
     callback(err, stdout);
   });
 };
@@ -131,7 +131,7 @@ boot2DockerVMExists = function (callback) {
 };
 
 eraseBoot2DockerVMFiles = function (callback) {
-  var VMFileLocation = path.join(getHomePath(), 'VirtualBox\\ VMs/boot2docker-vm');
+  var VMFileLocation = path.join(Util.getHomePath(), 'VirtualBox\\ VMs/boot2docker-vm');
   exec('rm -rf ' + VMFileLocation, function (err) {
     callback(err);
   });
@@ -174,7 +174,7 @@ upgradeBoot2Docker = function (callback) {
 };
 
 installBoot2DockerAddons = function (callback) {
-  exec('/bin/cat ' + path.join(getBinDir(), 'kite-binaries.tar.gz') + ' | ' +  path.join(getBinDir(), 'boot2docker') + ' ssh "tar zx -C /usr/local/bin"', function (err, stdout) {
+  exec('/bin/cat ' + path.join(Util.getBinDir(), 'kite-binaries.tar.gz') + ' | ' +  path.join(Util.getBinDir(), 'boot2docker') + ' ssh "tar zx -C /usr/local/bin"', function (err, stdout) {
     console.log(stdout);
     callback(err);
   });
