@@ -201,7 +201,7 @@
       "restartApp": true,
       "deleteApp": true,
       "deleteFolder": true,
-      "loadKiteVolumes": true,
+      "copyVolumes": true,
       "getAppLogs": true,
       "hasDockerfile": true,
       "createTarFile": true,
