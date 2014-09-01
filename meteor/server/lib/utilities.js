@@ -51,3 +51,38 @@ copyFolder = function (src, dest) {
     }
   }
 };
+
+getImageJSON = function (directory) {
+  var KITE_JSON_PATH = path.join(directory, 'image.json');
+  if (fs.existsSync(KITE_JSON_PATH)) {
+    var data = fs.readFileSync(KITE_JSON_PATH, 'utf8');
+    return JSON.parse(data);
+  } else {
+    return null;
+  }
+};
+
+loadKiteVolumes = function (directory, appName) {
+  var KITE_VOLUMES_PATH = path.join(directory, 'volumes');
+  if (fs.existsSync(KITE_VOLUMES_PATH)) {
+    var destinationPath = path.join(KITE_PATH, appName);
+    copyFolder(KITE_VOLUMES_PATH, destinationPath);
+    console.log('Copied volumes for: ' + appName);
+  }
+};
+
+saveImageFolder = function (directory, imageId, callback) {
+  var destinationPath = path.join(KITE_IMAGES_PATH, imageId);
+  if (!fs.existsSync(destinationPath)) {
+    fs.mkdirSync(destinationPath, function (err) {
+      if (err) { callback(err); return; }
+    });
+    copyFolder(directory, destinationPath);
+    console.log('Copied image folder for: ' + imageId);
+    callback(null);
+  }
+};
+
+saveImageFolderSync = function (directory, imageId) {
+  return Meteor._wrapAsync(saveImageFolder)(directory, imageId);
+};

@@ -29,6 +29,7 @@ recoverApps = function (callback) {
 
 Meteor.methods({
   recoverApps: function () {
+    this.unblock();
     return Meteor._wrapAsync(recoverApps)();
   },
   configVar: function (appId, configVars) {
@@ -48,19 +49,10 @@ Meteor.methods({
     if (!app) {
       throw new Meteor.Error(403, 'No app found with this ID');
     }
-    deleteApp(app, function (err) {
-      if (err) { console.error(err); }
-      var appPath = path.join(KITE_PATH, app.name);
-      deleteFolder(appPath);
-      removeBindFolder(app.name, function () {
-        console.log('Deleted Kite ' + app.name + ' directory.');
-        Fiber(function () {
-          Apps.remove({_id: app._id});
-        }).run();
-      });
-    });
+    Apps.remove({_id: app._id});
   },
   createApp: function (formData) {
+    this.unblock();
     var validationResult = formValidate(formData, FormSchema.formCreateApp);
     if (validationResult.errors) {
       throw new Meteor.Error(400, 'Validation Failed.', validationResult.errors);
@@ -123,6 +115,7 @@ Meteor.methods({
     }
   },
   resolveWatchers: function () {
+    this.unblock();
     return Meteor._wrapAsync(resolveWatchers)();
   }
 });

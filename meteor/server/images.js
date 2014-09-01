@@ -125,6 +125,7 @@ Meteor.methods({
     });
   },
   validateDirectory: function (directory) {
+    this.unblock();
     if (!hasDockerfile(directory)) {
       throw new Meteor.Error(400, "Only directories with Dockerfiles are supported now.");
     }
