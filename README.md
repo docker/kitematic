@@ -74,7 +74,7 @@ Keep track of development and community news.
 
 ## Versioning
 
-For transparency into our release cycle and in striving to maintain backward compatibility, Kitematic is maintained under the [Semantic Versioning Guidelines](http://semver.org/). We'll try very hard adhere to those rules whenever possible.
+For transparency into our release cycle and in striving to maintain backward compatibility, Kitematic is maintained under the [Semantic Versioning Guidelines](http://semver.org/). We'll try very hard to adhere to those rules whenever possible.
 
 ## Creators
 
