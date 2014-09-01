@@ -8,7 +8,6 @@ Template.setup_install.rendered = function() {
         console.log(err);
       } else {
         Installs.insert({});
-        startFixInterval();
         Router.go('dashboard_apps');
       }
     });

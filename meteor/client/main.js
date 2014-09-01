@@ -69,10 +69,10 @@ Meteor.call('getDockerHost', function (err, host) {
 });
 
 fixBoot2DockerVM = function (callback) {
-  checkBoot2DockerVM(function (err) {
+  Boot2Docker.check(function (err) {
     if (err) {
       Session.set('available', false);
-      resolveBoot2DockerVM(function (err) {
+      Boot2Docker.resolve(function (err) {
         if (err) {
           callback(err);
         } else {
@@ -145,13 +145,12 @@ Meteor.setInterval(function () {
   });
 }, 5000);
 
-fixInterval = null;
-startFixInterval = function () {
-  stopFixInterval();
-  fixInterval = Meteor.setInterval(function () {
+Meteor.setInterval(function () {
+  if (Installs.findOne()) {
     resolveWatchers(function () {});
     fixBoot2DockerVM(function (err) {
       if (err) { console.log(err); return; }
+      Meteor.call('recoverApps');
       fixDefaultImages(function (err) {
         if (err) { console.log(err); return; }
         fixDefaultContainers(function (err) {
@@ -159,10 +158,6 @@ startFixInterval = function () {
         });
       });
     });
-  }, 5000);
-};
+  }
+}, 5000);
 
-stopFixInterval = function () {
-  Meteor.clearInterval(fixInterval);
-  fixInterval = null;
-};

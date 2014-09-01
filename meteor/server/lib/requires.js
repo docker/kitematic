@@ -7,3 +7,5 @@ exec = Meteor.require('child_process').exec;
 async = Meteor.require('async');
 Fiber = Meteor.require('fibers');
 child_process = Meteor.require('child_process');
+Convert = Meteor.require('ansi-to-html');
+convert = new Convert();

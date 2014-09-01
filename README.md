@@ -1,5 +1,10 @@
 # [Kitematic](https://kitematic.com)
 
+**Note:** If the installer gets stuck at any step for more than 1 minute, there is probably an error. Please help us troubleshoot by running it from the command line, and submit the logs to [contact@kitematic.com](mailto:contact@kitematic.com).
+
+1. `cd <dir with Kitematic.app>`
+2. Run `./Kitematic.app/Contents/MacOS/node-webkit` 
+
 Kitematic is still in Beta. Any effort in helping us find issues and improving the experience is greatly appreciated!
 
 [Fixes for Known Issues](http://kitematic.com/docs/known-issue-fixes)
@@ -73,20 +78,28 @@ For transparency into our release cycle and in striving to maintain backward com
 
 ## Creators
 
+Team E-mail: [contact@kitematic.com](mailto:contact@kitematic.com)
+
 **Sean Li**
 
 - <https://twitter.com/lisean106>
 - <https://github.com/Elesant>
+- Email: [sean@kitematic.com](mailto:sean@kitematic.com)
+- [LinkedIn](https://www.linkedin.com/in/lishang)
 
 **Jeffrey Morgan**
 
 - <https://twitter.com/jmorgan>
 - <https://github.com/jeffdm>
+- Email: [jeff@kitematic.com](mailto:jeff@kitematic.com)
+- [LinkedIn](https://www.linkedin.com/in/jeffdmorgan)
 
 **Michael Chiang**
 
 - <https://twitter.com/mchiang0610>
 - <https://github.com/mk101>
+- Email: [mike@kitematic.com](mailto:mike@kitematic.com)
+- [LinkedIn](https://www.linkedin.com/in/mchiang0610)
 
 ## Copyright and License
 

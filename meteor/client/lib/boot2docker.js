@@ -6,7 +6,7 @@ Boot2Docker = {};
 Boot2Docker.REQUIRED_IP = '192.168.60.103';
 
 Boot2Docker.exec = function (command, callback) {
-  exec(path.join(getBinDir(), 'boot2docker') + ' ' + command, function(err, stdout, stderr) {
+  exec(path.join(Util.getBinDir(), 'boot2docker') + ' ' + command, function(err, stdout, stderr) {
     callback(err, stdout, stderr);
   });
 };
@@ -77,25 +77,26 @@ Boot2Docker.start = function (callback) {
       return;
     }
     self.exec('up -v', function (err, stdout) {
-      console.log('here0');
-      console.log('here1');
       // Sometimes boot2docker returns an error code even though it's working / waiting, so treat that as
       // Success as well
       if (!err || (err.indexOf('Waiting for VM to be started') !== -1 || err.indexOf('..........') !== -1)) {
-        Boot2Docker.setIp('eth2', Boot2Docker.REQUIRED_IP, function(err) {
-          console.log('here1');
-          if (err) { callback(err); return; }
-          VirtualBox.removeDHCP(function (err) {
-            console.log('here2');
-            self.injectUtilities(function (err) {
-              console.log('here3');
-              callback(err);
-            });
+        self.correct(function (err) {
+          self.injectUtilities(function (err) {
+            callback(err);
           });
-        });
+        })
       } else {
         callback(err);
       }
+    });
+  });
+};
+
+Boot2Docker.correct = function (callback) {
+  Boot2Docker.setIp('eth2', Boot2Docker.REQUIRED_IP, function(err) {
+    if (err) { callback(err); return; }
+    VirtualBox.removeDHCP(function (err) {
+      callback(err);
     });
   });
 };
@@ -228,7 +229,7 @@ Boot2Docker.version = function (callback) {
     }
     var match = stdout.match(/Client version: v(\d\.\d\.\d)/);
     if (!match || match.length < 2) {
-      callback('Could not parse the boot2docker cli version.')
+      callback('Could not parse the boot2docker cli version.');
     } else {
       callback(null, match[1]);
     }
@@ -236,14 +237,14 @@ Boot2Docker.version = function (callback) {
 };
 
 Boot2Docker.injectUtilities = function (callback) {
-  exec('/bin/cat ' + path.join(getBinDir(), 'kite-binaries.tar.gz') + ' | ' +  path.join(getBinDir(), 'boot2docker') + ' ssh "tar zx -C /usr/local/bin"', function (err, stdout) {
+  exec('/bin/cat ' + path.join(Util.getBinDir(), 'kite-binaries.tar.gz') + ' | ' +  path.join(Util.getBinDir(), 'boot2docker') + ' ssh "tar zx -C /usr/local/bin"', function (err, stdout) {
     callback(err);
   });
 };
 
 Boot2Docker.check = function (callback) {
   var self = this;
-  self.exists(function (err) {
+  self.exists(function (err, exists) {
     if (err) {
       callback(err);
       return;
@@ -252,7 +253,9 @@ Boot2Docker.check = function (callback) {
         if (state !== 'running') {
           callback('boot2docker not running');
         } else {
-          callback();
+          self.correct(function (err) {
+            callback(err);
+          });
         }
       });
     }
@@ -264,8 +267,8 @@ Boot2Docker.resolve = function (callback) {
   self.exists(function (err, exists) {
     // If somehow the boot2docker VM doesn't exist anymor then re-create it.
     if (!exists) {
-      initBoot2Docker(function () {
-        startBoot2Docker(function (err) {
+      self.init(function () {
+        self.start(function (err) {
           callback(err);
         });
       });
@@ -273,7 +276,7 @@ Boot2Docker.resolve = function (callback) {
       // If it exists but it's not running.. restart it.
       self.state(function (err, state) {
         if (state !== 'running') {
-          startBoot2Docker(function (err) {
+          self.start(function (err) {
             callback(err);
           });
         } else {
