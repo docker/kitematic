@@ -5,10 +5,6 @@ docker = new Dockerode({host: '192.168.59.103', port: '2375'});
 
 Docker = {};
 
-hasDockerfile = function (directory) {
-  return fs.existsSync(path.join(directory, 'Dockerfile'));
-};
-
 Docker.removeContainer = function (containerId, callback) {
   var container = docker.getContainer(containerId);
   container.kill(function (err) {
@@ -103,19 +99,6 @@ Docker.restartContainerSync = function (containerId) {
   return Meteor._wrapAsync(Docker.restartContainer)(containerId);
 };
 
-createTarFile = function (image, callback) {
-  var TAR_PATH = path.join(KITE_TAR_PATH, image._id + '.tar');
-  exec('tar czf ' + TAR_PATH + ' -C ' + image.path + ' .', function (err) {
-    if (err) { callback(err, null); return; }
-    console.log('Created tar file: ' + TAR_PATH);
-    callback(null, TAR_PATH);
-  });
-};
-
-createTarFileSync = function (image) {
-  return Meteor._wrapAsync(createTarFile)(image);
-};
-
 var convertVolumeObjToArray = function (obj) {
   var result = [];
   if (obj !== null && typeof obj === 'object') {
@@ -159,6 +142,12 @@ Docker.removeImage = function (imageId, callback) {
 
 Docker.removeImageSync = function (imageId) {
   return Meteor._wrapAsync(Docker.removeImage)(imageId);
+};
+
+Docker.removeBindFolder = function (name, callback) {
+  exec(path.join(Util.getBinDir(), 'boot2docker') + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function (err, stdout) {
+    callback(err, stdout);
+  });
 };
 
 var defaultContainerOptions = function () {

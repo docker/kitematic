@@ -148,7 +148,7 @@ startFixInterval = function () {
     resolveWatchers(function () {});
     fixBoot2DockerVM(function (err) {
       if (err) { console.log(err); return; }
-      // Meteor.call('recoverApps');
+      Meteor.call('recoverApps');
       fixDefaultImages(function (err) {
         if (err) { console.log(err); return; }
         fixDefaultContainers(function (err) {

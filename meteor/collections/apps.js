@@ -128,7 +128,7 @@ Apps.after.insert(function (userId, app) {
   var image = Images.findOne(app.imageId);
   Util.copyVolumes(image.path, app.name);
   app = Apps.findOne(appId);
-  removeBindFolder(app.name, function (err) {
+  Docker.removeBindFolder(app.name, function (err) {
     if (err) {
       console.error(err);
     }
@@ -141,12 +141,16 @@ Apps.after.insert(function (userId, app) {
 });
 
 Apps.after.remove(function (userId, app) {
-  deleteApp(app, function (err) {
-    if (err) { console.error(err); }
-    var appPath = path.join(KITE_PATH, app.name);
-    Util.deleteFolder(appPath);
-    removeBindFolder(app.name, function () {
-      console.log('Deleted Kite ' + app.name + ' directory.');
-    });
+  if (app.docker) {
+    try {
+      Docker.removeContainerSync(app.docker.Id);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  var appPath = path.join(KITE_PATH, app.name);
+  Util.deleteFolder(appPath);
+  Docker.removeBindFolder(app.name, function () {
+    console.log('Deleted Kite ' + app.name + ' directory.');
   });
 });

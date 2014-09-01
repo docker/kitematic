@@ -1,21 +1,4 @@
-deleteApp = function (app, callback) {
-  if (!app.docker) {
-    callback(null);
-    return;
-  }
-  try {
-    Docker.removeContainerSync(app.docker.Id);
-  } catch (e) {
-    console.error(e);
-  }
-  callback(null);
-};
-
-deleteAppSync = function (app) {
-  return Meteor._wrapAsync(deleteApp)(app);
-};
-
-restartApp = function (app, callback) {
+Apps.restart = function (app, callback) {
   if (app.docker && app.docker.Id) {
     try {
       Docker.restartContainerSync(app.docker.Id);
@@ -37,7 +20,7 @@ restartApp = function (app, callback) {
   }
 };
 
-getAppLogs = function (app) {
+Apps.logs = function (app) {
   if (app.docker && app.docker.Id) {
     var container = docker.getContainer(app.docker.Id);
     container.logs({follow: false, stdout: true, stderr: true, timestamps: true, tail: 300}, function (err, response) {
@@ -66,13 +49,7 @@ getAppLogs = function (app) {
   }
 };
 
-removeBindFolder = function (name, callback) {
-  exec(path.join(Util.getBinDir(), 'boot2docker') + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function(err, stdout) {
-    callback(err, stdout);
-  });
-};
-
-recoverApps = function (callback) {
+Apps.recover = function (callback) {
   var apps = Apps.find({}).fetch();
   _.each(apps, function (app) {
     // Update the app with the latest container info
@@ -85,7 +62,7 @@ recoverApps = function (callback) {
         console.log('restarting: ' + app.name);
         console.log(app.docker.Id);
         Fiber(function () {
-          restartApp(app, function (err) {
+          Apps.restart(app, function (err) {
             if (err) { console.error(err); }
           });
         }).run();
@@ -98,7 +75,7 @@ recoverApps = function (callback) {
 Meteor.methods({
   recoverApps: function () {
     this.unblock();
-    return Meteor._wrapAsync(recoverApps)();
+    return Meteor._wrapAsync(Apps.recover)();
   },
   configVar: function (appId, configVars) {
     this.unblock();
@@ -148,7 +125,7 @@ Meteor.methods({
     this.unblock();
     var app = Apps.findOne(appId);
     if (app) {
-      getAppLogs(app, function (err) {
+      Apps.logs(app, function (err) {
         if (err) { throw err; }
       });
     }
@@ -160,7 +137,7 @@ Meteor.methods({
       Apps.update(app._id, {$set: {
         status: 'STARTING'
       }});
-      restartApp(app, function (err) {
+      Apps.restart(app, function (err) {
         if (err) { console.error(err); }
       });
     }
