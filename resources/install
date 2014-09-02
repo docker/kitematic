@@ -21,15 +21,9 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
   <string>com.kitematic.route</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/sbin/route</string>
-    <string>-n</string>
-    <string>add</string>
-    <string>-net</string>
-    <string>172.17.0.0</string>
-    <string>-netmask</string>
-    <string>255.255.0.0</string>
-    <string>-gateway</string>
-    <string>$GATEWAY</string>
+    <string>bash</string>
+    <string>-c</string>
+    <string>/usr/sbin/scutil -w State:/Network/Interface/$IFACE/IPv4;/sbin/route -n add -net 172.17.0.0 -netmask 255.255.0.0 -gateway $GATEWAY</string>
   </array>
   <key>KeepAlive</key>
   <false/>
