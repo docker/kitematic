@@ -146,7 +146,7 @@ Meteor.setInterval(function () {
 }, 5000);
 
 Meteor.setInterval(function () {
-  if (Installs.findOne()) {
+  if (Installer.isUpToDate()) {
     resolveWatchers(function () {});
     if (!Session.get('boot2dockerOff')) {
       fixBoot2DockerVM(function (err) {

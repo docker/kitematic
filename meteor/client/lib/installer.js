@@ -2,6 +2,12 @@ var async = require('async');
 
 Installer = {};
 
+Installer.CURRENT_VERSION = '0.0.2';
+
+Installer.isUpToDate = function () {
+  return !!Installs.findOne({version: Installer.CURRENT_VERSION});
+};
+
 /**
  * Install steps. A step is a function that accepts a function (err) callback and returns once that step is complete.keys:
  * - run: Function that runs the installation step and calls the callback with an error if failed.

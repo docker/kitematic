@@ -7,7 +7,7 @@ Template.setup_install.rendered = function() {
         console.log('Setup failed.');
         console.log(err);
       } else {
-        Installs.insert({});
+        Installs.insert({version: Installer.CURRENT_VERSION});
         Router.go('dashboard_apps');
       }
     });
