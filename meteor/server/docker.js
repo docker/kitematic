@@ -72,7 +72,7 @@ Docker.runContainer = function (app, image, callback) {
       if (err) { callback(err, null); return; }
       console.log('Started container: ' + container.id);
       // Use dig to refresh the DNS
-      exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function() {});
+      exec('/usr/bin/dig dig ' + app.name + '.kite @172.17.42.1 ', function() {});
       callback(null, container);
     });
   });
