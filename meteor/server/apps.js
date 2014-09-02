@@ -14,7 +14,7 @@ Apps.restart = function (app, callback) {
     }).run();
     callback(null);
     // Use dig to refresh the DNS
-    exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function() {});
+    exec('/usr/bin/dig dig ' + app.name + '.kite @172.17.42.1 ', function() {});
   } else {
     callback(null);
   }
