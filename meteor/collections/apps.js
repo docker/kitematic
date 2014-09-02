@@ -60,7 +60,7 @@ Apps.helpers({
     return Images.findOne(this.imageId);
   },
   hostUrl: function () {
-    return this.name + '.dev';
+    return this.name + '.kite';
   },
   ports: function () {
     var app = this;
@@ -78,7 +78,7 @@ Apps.helpers({
     var app = this;
     var image = Images.findOne(app.imageId);
     if (image && image.meta.app && image.meta.app.webPort) {
-      return 'http://' + app.name + '.dev:' + image.meta.app.webPort;
+      return 'http://' + app.name + '.kite:' + image.meta.app.webPort;
     } else if (image && image.meta.app && image.meta.app.webPort === false) {
       return null;
     } else {
@@ -93,14 +93,14 @@ Apps.helpers({
           }
         });
         if (pickedPort) {
-          return 'http://' + app.name + '.dev:' + pickedPort;
+          return 'http://' + app.name + '.kite:' + pickedPort;
         } else {
           if (keys.length > 0) {
             // Picks the first port that's not SSH
             for (var i = 0; i < keys.length; i++) {
               var port = parseInt(keys[i].split('/')[0], 10);
               if (port !== 22) {
-                return 'http://' + app.name + '.dev:' + port;
+                return 'http://' + app.name + '.kite:' + port;
               }
             }
             return null;
@@ -116,3 +116,41 @@ Apps.helpers({
 });
 
 Apps.attachSchema(schemaApps);
+
+Apps.after.insert(function (userId, app) {
+  // Give app an unique environment variable
+  var appId = this._id;
+  Apps.update(appId, {
+    $set: {
+      'config.APP_ID': appId
+    }
+  });
+  var image = Images.findOne(app.imageId);
+  Util.copyVolumes(image.path, app.name);
+  app = Apps.findOne(appId);
+  Docker.removeBindFolder(app.name, function (err) {
+    if (err) {
+      console.error(err);
+    }
+    Fiber(function () {
+      Meteor.call('runApp', app, function (err) {
+        if (err) { throw err; }
+      });
+    }).run();
+  });
+});
+
+Apps.after.remove(function (userId, app) {
+  if (app.docker) {
+    try {
+      Docker.removeContainerSync(app.docker.Id);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  var appPath = path.join(KITE_PATH, app.name);
+  Util.deleteFolder(appPath);
+  Docker.removeBindFolder(app.name, function () {
+    console.log('Deleted Kite ' + app.name + ' directory.');
+  });
+});

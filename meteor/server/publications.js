@@ -7,5 +7,5 @@ Meteor.publish('images', function () {
 });
 
 Meteor.publish('installs', function () {
-  return Installs.find({}, {sort: {createdAt: -1}});
+  return Installs.find({});
 });

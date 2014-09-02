@@ -1,45 +1,39 @@
 #!/bin/sh
 
-# Lookup the Kitematic VM resolver for .dev domains
+# This script must be run as root and sets up Mac OS X to route all .kite domains to the virtual box VM with the name
+# 'boot2docker-vm'. It does the following:
+# 1) Adds a file under /etc/resolver/kite
+# 2) Sets up a LaunchAgent for adding entries to the route table to route all requests to the Docker subnet (172.17.0.0/16)
+# And expects the $IFNAME variable to contain the interface on which to send traffic to the boot2docker VM.
+
 mkdir -p /etc/resolver
-echo "nameserver 172.17.42.1" > /etc/resolver/dev
+echo "nameserver 172.17.42.1" > /etc/resolver/kite
 
 DIR=$(dirname "$0")
 USER=`w -h | sort -u -t' ' -k1,1 | awk '{print $1}'`
 
 /bin/rm -rf /Library/LaunchAgents/com.kitematic.route.plist
-
-echo '<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<plist version="1.0">
+echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
   <key>Label</key>
   <string>com.kitematic.route</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/sbin/route</string>
-    <string>-n</string>
-    <string>add</string>
-    <string>172.17.0.0/16</string>
-    <string>192.168.59.103</string>
+    <string>bash</string>
+    <string>-c</string>
+    <string>/usr/sbin/scutil -w State:/Network/Interface/$IFACE/IPv4;/sbin/route -n add -net 172.17.0.0 -netmask 255.255.0.0 -gateway $GATEWAY</string>
   </array>
   <key>KeepAlive</key>
   <false/>
   <key>RunAtLoad</key>
   <true/>
-  <key>ServiceIPC</key>
-  <false/>
-  <key>UserName</key>
-  <string>root</string>
   <key>LaunchOnlyOnce</key>
   <true/>
 </dict>
-</plist>' > /Library/LaunchAgents/com.kitematic.route.plist
-
-sudo -u $USER $DIR/boot2docker init
-VBoxManage modifyvm boot2docker-vm --nic2 hostonly --nictype2 virtio --cableconnected2 on --hostonlyadapter2 vboxnet0
-VBoxManage dhcpserver add --netname=vboxnet0 --ip=192.168.59.99 --netmask=255.255.255.0 --lowerip=192.168.59.103 --upperip=192.168.59.103
+</plist>" > /Library/LaunchAgents/com.kitematic.route.plist
 
 # Add entries to routing table for Kitematic VM
-/sbin/route delete 172.17.0.0/16 192.168.59.103
-/sbin/route -n add 172.17.0.0/16 192.168.59.103
+/sbin/route delete -net 172.17.0.0 -netmask 255.255.0.0 -gateway $GATEWAY
+/sbin/route -n add -net 172.17.0.0 -netmask 255.255.0.0 -gateway $GATEWAY
