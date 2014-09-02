@@ -35,5 +35,5 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 </plist>" > /Library/LaunchAgents/com.kitematic.route.plist
 
 # Add entries to routing table for Kitematic VM
-/sbin/route delete -net 172.17.0.0 -netmask 255.255.0.0 -gateway $GATEWAY
+/sbin/route delete -net 172.17.0.0 -netmask 255.255.0.0 -gateway $GATEWAY > /dev/null 2>&1 || true
 /sbin/route -n add -net 172.17.0.0 -netmask 255.255.0.0 -gateway $GATEWAY
