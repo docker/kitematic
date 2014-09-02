@@ -15,6 +15,7 @@ pushd cache
 if [ ! -f $BASE_IMAGE_VERSION_FILE ]; then
   cecho "-----> Downloading Kitematic base images..." $purple
   curl -L --progress-bar -o $BASE_IMAGE_VERSION_FILE https://s3.amazonaws.com/kite-installer/$BASE_IMAGE_VERSION_FILE
+  cp $BASE_IMAGE_VERSION_FILE ../resources/$BASE_IMAGE_FILE
 fi
 
 if [ ! -f $BOOT2DOCKER_CLI_VERSION_FILE ]; then
@@ -58,11 +59,6 @@ if [ ! -f $COCOASUDO_FILE ]; then
   cecho "-----> Downloading Cocoasudo binary..." $purple
   curl -L -o $COCOASUDO_FILE https://github.com/performantdesign/cocoasudo/blob/master/build/Release/cocoasudo
   chmod +x $COCOASUDO_FILE
-fi
-
-
-if [ ! -f $BASE_IMAGE_FILE ]; then
-  cp ../cache/$BASE_IMAGE_VERSION_FILE $BASE_IMAGE_FILE
 fi
 
 cp ../cache/$BOOT2DOCKER_CLI_VERSION_FILE $BOOT2DOCKER_CLI_FILE
