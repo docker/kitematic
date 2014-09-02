@@ -1,16 +1,11 @@
-Docker = Meteor.require('dockerode');
+Dockerode = Meteor.require('dockerode');
 
-var Convert = Meteor.require('ansi-to-html');
-var convert = new Convert();
+var DOCKER_HOST='192.168.60.103';
+docker = new Dockerode({host: DOCKER_HOST, port: '2375'});
 
-var DOCKER_HOST='192.168.59.103';
-docker = new Docker({host: '192.168.59.103', port: '2375'});
+Docker = {};
 
-hasDockerfile = function (directory) {
-  return fs.existsSync(path.join(directory, 'Dockerfile'));
-};
-
-removeContainer = function (containerId, callback) {
+Docker.removeContainer = function (containerId, callback) {
   var container = docker.getContainer(containerId);
   container.kill(function (err) {
     if (err) { callback(err); return; }
@@ -22,28 +17,11 @@ removeContainer = function (containerId, callback) {
   });
 };
 
-removeContainerSync = function (containerId) {
-  return Meteor._wrapAsync(removeContainer)(containerId);
+Docker.removeContainerSync = function (containerId) {
+  return Meteor._wrapAsync(Docker.removeContainer)(containerId);
 };
 
-deleteApp = function (app, callback) {
-  if (!app.docker) {
-    callback(null);
-    return;
-  }
-  try {
-    removeContainerSync(app.docker.Id);
-  } catch (e) {
-    console.error(e);
-  }
-  callback(null);
-};
-
-deleteAppSync = function (app) {
-  return Meteor._wrapAsync(deleteApp)(app);
-};
-
-getContainerData = function (containerId, callback) {
+Docker.getContainerData = function (containerId, callback) {
   var container = docker.getContainer(containerId);
   container.inspect(function (err, data) {
     if (err) {
@@ -59,11 +37,11 @@ getContainerData = function (containerId, callback) {
   });
 };
 
-getContainerDataSync = function (containerId) {
-  return Meteor._wrapAsync(getContainerData)(containerId);
+Docker.getContainerDataSync = function (containerId) {
+  return Meteor._wrapAsync(Docker.getContainerData)(containerId);
 };
 
-runContainer = function (app, image, callback) {
+Docker.runContainer = function (app, image, callback) {
   var envParam = [];
   _.each(_.keys(app.config), function (key) {
     var builtStr = key + '=' + app.config[key];
@@ -100,11 +78,11 @@ runContainer = function (app, image, callback) {
   });
 };
 
-runContainerSync = function (app, image) {
-  return Meteor._wrapAsync(runContainer)(app, image);
+Docker.runContainerSync = function (app, image) {
+  return Meteor._wrapAsync(Docker.runContainer)(app, image);
 };
 
-restartContainer = function (containerId, callback) {
+Docker.restartContainer = function (containerId, callback) {
   var container = docker.getContainer(containerId);
   container.restart(function (err) {
     if (err) {
@@ -117,83 +95,8 @@ restartContainer = function (containerId, callback) {
   });
 };
 
-restartContainerSync = function (containerId) {
-  return Meteor._wrapAsync(restartContainer)(containerId);
-};
-
-var getFromImage = function (dockerfile) {
-  var patternString = "(FROM)(.*)";
-  var regex = new RegExp(patternString, "g");
-  var fromInstruction = dockerfile.match(regex);
-  if (fromInstruction && fromInstruction.length > 0) {
-    return fromInstruction[0].replace('FROM', '').trim();
-  } else {
-    return null;
-  }
-};
-
-restartApp = function (app, callback) {
-  if (app.docker && app.docker.Id) {
-    try {
-      restartContainerSync(app.docker.Id);
-    } catch (e) {
-      console.error(e);
-    }
-    var containerData = getContainerDataSync(app.docker.Id);
-    Fiber(function () {
-      Apps.update(app._id, {$set: {
-        status: 'READY',
-        docker: containerData
-      }});
-    }).run();
-    callback(null);
-    // Use dig to refresh the DNS
-    exec('/usr/bin/dig dig ' + app.name + '.dev @172.17.42.1 ', function() {});
-  } else {
-    callback(null);
-  }
-};
-
-getAppLogs = function (app) {
-  if (app.docker && app.docker.Id) {
-    var container = docker.getContainer(app.docker.Id);
-    container.logs({follow: false, stdout: true, stderr: true, timestamps: true, tail: 300}, function (err, response) {
-      if (err) { throw err; }
-      Fiber(function () {
-        Apps.update(app._id, {
-          $set: {
-            logs: []
-          }
-        });
-      }).run();
-      var logs = [];
-      response.setEncoding('utf8');
-      response.on('data', function (line) {
-        logs.push(convert.toHtml(line.slice(8)));
-        Fiber(function () {
-          Apps.update(app._id, {
-            $set: {
-              logs: logs
-            }
-          });
-        }).run();
-      });
-      response.on('end', function () {});
-    });
-  }
-};
-
-createTarFile = function (image, callback) {
-  var TAR_PATH = path.join(KITE_TAR_PATH, image._id + '.tar');
-  exec('tar czf ' + TAR_PATH + ' -C ' + image.path + ' .', function (err) {
-    if (err) { callback(err, null); return; }
-    console.log('Created tar file: ' + TAR_PATH);
-    callback(null, TAR_PATH);
-  });
-};
-
-createTarFileSync = function (image) {
-  return Meteor._wrapAsync(createTarFile)(image);
+Docker.restartContainerSync = function (containerId) {
+  return Meteor._wrapAsync(Docker.restartContainer)(containerId);
 };
 
 var convertVolumeObjToArray = function (obj) {
@@ -209,7 +112,7 @@ var convertVolumeObjToArray = function (obj) {
   return result;
 };
 
-getImageData = function (imageId, callback) {
+Docker.getImageData = function (imageId, callback) {
   var image = docker.getImage(imageId.toLowerCase());
   image.inspect(function (err, data) {
     if (err) {
@@ -224,11 +127,11 @@ getImageData = function (imageId, callback) {
   });
 };
 
-getImageDataSync = function (imageId) {
-  return Meteor._wrapAsync(getImageData)(imageId);
+Docker.getImageDataSync = function (imageId) {
+  return Meteor._wrapAsync(Docker.getImageData)(imageId);
 };
 
-removeImage = function (imageId, callback) {
+Docker.removeImage = function (imageId, callback) {
   var image = docker.getImage(imageId.toLowerCase());
   image.remove({force: true}, function (err) {
     if (err) { callback(err); return; }
@@ -237,25 +140,14 @@ removeImage = function (imageId, callback) {
   });
 };
 
-removeImageSync = function (imageId) {
-  return Meteor._wrapAsync(removeImage)(imageId);
+Docker.removeImageSync = function (imageId) {
+  return Meteor._wrapAsync(Docker.removeImage)(imageId);
 };
 
-deleteImage = function (image, callback) {
-  if (!image.docker) {
-    callback(null, {});
-    return;
-  }
-  try {
-    removeImageSync(image.docker.Id);
-  } catch (e) {
-    console.error(e);
-  }
-  callback(null);
-};
-
-deleteImageSync = function (image) {
-  return Meteor._wrapAsync(deleteImage)(image);
+Docker.removeBindFolder = function (name, callback) {
+  exec(path.join(Util.getBinDir(), 'boot2docker') + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function (err, stdout) {
+    callback(err, stdout);
+  });
 };
 
 var defaultContainerOptions = function () {
@@ -304,7 +196,7 @@ resolveDefaultImages = function () {
     image.inspect(function (err) {
       if (err) {
         if (err.reason === 'no such image') {
-          docker.loadImage(path.join(getBinDir(), 'base-images.tar.gz'), {}, function (err) {
+          docker.loadImage(path.join(Util.getBinDir(), 'base-images.tar.gz'), {}, function (err) {
             if (err) {
               innerCallback(err);
               return;
@@ -374,7 +266,7 @@ reloadDefaultContainers = function (callback) {
   async.until(function () {
     return ready;
   }, function (callback) {
-    docker.listContainers(function (err, containers) {
+    docker.listContainers(function (err) {
       if (!err) {
         ready = true;
       }
@@ -391,7 +283,7 @@ reloadDefaultContainers = function (callback) {
         return;
       }
       console.log('Loading new Kitematic default images.');
-      docker.loadImage(path.join(getBinDir(), 'base-images.tar.gz'), {}, function (err) {
+      docker.loadImage(path.join(Util.getBinDir(), 'base-images.tar.gz'), {}, function (err) {
         if (err) {
           callback(err);
           return;
@@ -500,142 +392,18 @@ killAndRemoveContainers = function (names, callback) {
   });
 };
 
-pullImageFromDockerfile = function (dockerfile, imageId, callback) {
-  var fromImage = getFromImage(dockerfile);
-  console.log('From image: ' + fromImage);
-  var installedImage = null;
-  try {
-    installedImage = getImageDataSync(fromImage);
-  } catch (e) {
-    console.error(e);
-  }
-  if (fromImage && !installedImage) {
-    Fiber(function () {
-      Images.update(imageId, {
-        $set: {
-          buildLogs: []
-        }
-      });
-    }).run();
-    var logs = [];
-    docker.pull(fromImage, function (err, response) {
-      if (err) { callback(err); return; }
-      response.setEncoding('utf8');
-      response.on('data', function (data) {
-        try {
-          var logData = JSON.parse(data);
-          var logDisplay = '';
-          if (logData.id) {
-            logDisplay += logData.id + ' | ';
-          }
-          logDisplay += logData.status;
-          if (logData.progressDetail && logData.progressDetail.current && logData.progressDetail.total) {
-            logDisplay += ' - ' + Math.round(logData.progressDetail.current / logData.progressDetail.total * 100) + '%';
-          }
-          logs.push(logDisplay);
-          Fiber(function () {
-            Images.update(imageId, {
-              $set: {
-                buildLogs: logs
-              }
-            });
-          }).run();
-        } catch (e) {
-          console.error(e);
-        }
-      });
-      response.on('end', function () {
-        console.log('Finished pulling image: ' + fromImage);
-        callback(null);
-      });
-    });
-  } else {
-    callback(null);
-  }
-};
-
-buildImage = function (image, callback) {
-  Fiber(function () {
-    var tarFilePath = createTarFileSync(image);
-    Images.update(image._id, {
-      $set: {
-        buildLogs: []
-      }
-    });
-    docker.buildImage(tarFilePath, {t: image._id.toLowerCase()}, function (err, response) {
-      if (err) { callback(err); }
-      console.log('Building Docker image...');
-      var logs = [];
-      response.setEncoding('utf8');
-      response.on('data', function (data) {
-        try {
-          var line = JSON.parse(data).stream;
-          logs.push(convert.toHtml(line));
-          Fiber(function () {
-            Images.update(image._id, {
-              $set: {
-                buildLogs: logs
-              }
-            });
-          }).run();
-        } catch (e) {
-          console.error(e);
-        }
-      });
-      response.on('end', function () {
-        console.log('Finished building Docker image.');
-        try {
-          fs.unlinkSync(tarFilePath);
-          console.log('Cleaned up tar file.');
-        } catch (e) {
-          console.error(e);
-        }
-        Fiber(function () {
-          var imageData = null;
-          try {
-            imageData = getImageDataSync(image._id);
-            Images.update(image._id, {
-              $set: {
-                docker: imageData,
-                status: 'READY'
-              }
-            });
-          } catch (e) {
-            console.log(e);
-            Images.update(image._id, {
-              $set: {
-                status: 'ERROR'
-              }
-            });
-          }
-          var oldImageId = null;
-          if (image.docker && image.docker.Id) {
-            oldImageId = image.docker.Id;
-          }
-          if (oldImageId && imageData && oldImageId !== imageData.Id) {
-            try {
-              removeImageSync(oldImageId);
-            } catch (e) {
-              console.error(e);
-            }
-          }
-        }).run();
-        callback(null);
-      });
-    });
-  }).run();
-};
-
 Meteor.methods({
   runApp: function (app) {
     this.unblock();
     var image = Images.findOne({_id: app.imageId});
+    // Delete old container if one already exists
     try {
-      removeContainerSync(app.name);
+      Docker.removeContainerSync(app.name);
     } catch (e) {}
     try {
-      var container = runContainerSync(app, image);
-      var containerData = getContainerDataSync(container.id);
+      var container = Docker.runContainerSync(app, image);
+      var containerData = Docker.getContainerDataSync(container.id);
+      // Set a delay for app to spin up
       Meteor.setTimeout(function () {
         Apps.update(app._id, {$set: {
           docker: containerData,
@@ -650,18 +418,23 @@ Meteor.methods({
     return DOCKER_HOST;
   },
   reloadDefaultContainers: function () {
+    this.unblock();
     return Meteor._wrapAsync(reloadDefaultContainers)();
   },
   checkDefaultImages: function () {
+    this.unblock();
     return Meteor._wrapAsync(checkDefaultImages)();
   },
   resolveDefaultImages: function () {
+    this.unblock();
     return Meteor._wrapAsync(resolveDefaultImages)();
   },
   checkDefaultContainers: function () {
+    this.unblock();
     return Meteor._wrapAsync(checkDefaultContainers)();
   },
   resolveDefaultContainers: function () {
+    this.unblock();
     return Meteor._wrapAsync(resolveDefaultContainers)();
   }
 });

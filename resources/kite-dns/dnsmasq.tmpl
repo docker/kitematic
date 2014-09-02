@@ -1,6 +1,6 @@
 user=root
 {{ range $index, $value := $ }}
   {{ with $address := index $value.Addresses 0 }}
-address=/{{$value.Name}}.dev/{{$address.IP}}
+address=/{{$value.Name}}.kite/{{$address.IP}}
   {{ end }}
 {{ end }}
