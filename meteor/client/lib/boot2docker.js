@@ -32,7 +32,7 @@ Boot2Docker.stop = function (callback) {
 };
 
 Boot2Docker.erase = function (callback) {
-  var VMFileLocation = path.join(getHomePath(), 'VirtualBox\\ VMs/boot2docker-vm');
+  var VMFileLocation = path.join(Util.getHomePath(), 'VirtualBox\\ VMs/boot2docker-vm');
   exec('rm -rf ' + VMFileLocation, function (err) {
     callback(err);
   });
@@ -85,7 +85,7 @@ Boot2Docker.start = function (callback) {
           self.injectUtilities(function (err) {
             callback(err);
           });
-        })
+        });
       } else {
         callback(err);
       }
