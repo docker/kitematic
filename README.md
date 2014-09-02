@@ -3,7 +3,7 @@
 **Note:** If the installer gets stuck at any step for more than 1 minute, there is probably an error. Please help us troubleshoot by running it from the command line, and submit the logs to [contact@kitematic.com](mailto:contact@kitematic.com).
 
 1. `cd <dir with Kitematic.app>`
-2. Run `./Kitematic.app/Contents/MacOS/node-webkit` 
+2. Run `./Kitematic.app/Contents/MacOS/node-webkit`
 
 Kitematic is still in Beta. Any effort in helping us find issues and improving the experience is greatly appreciated!
 
@@ -61,7 +61,7 @@ Kitematic's documentation and other information can be found at [http://kitemati
 
 Please read through our [Contributing Guidelines](https://github.com/kitematic/kitematic/blob/master/CONTRIBUTING.md). Included are directions for opening issues, coding standards, and notes on development.
 
-Development [Roadmap](https://trello.com/b/xea5AHRk/kitematic-roadmap) can be found on our Trello board.
+Development [Roadmap](https://trello.com/b/G5Aw0Rqc/kitematic-roadmap) can be found on our Trello board.
 
 ## Community
 
