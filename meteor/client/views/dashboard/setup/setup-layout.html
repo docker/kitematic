@@ -1,8 +1,13 @@
 <template name="setup_layout">
   {{setTitle}}
   <div class="setup content text-center">
-    <h2>Welcome to Kitematic</h2>
-    <p>This will set up everything needed to run Kitematic on your Mac.</p>
+    {{#if isUpdating}}
+      <h2>Welcome Back</h2>
+      <p>Kitematic needs to update itself to continue.</p>
+    {{else}}
+      <h2>Welcome to Kitematic</h2>
+      <p>This will set up everything needed to run Kitematic on your Mac.</p>
+    {{/if}}
     {{> yield}}
   </div>
 </template>

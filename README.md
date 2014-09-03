@@ -3,7 +3,7 @@
 **Note:** If the installer gets stuck at any step for more than 1 minute, there is probably an error. Please help us troubleshoot by running it from the command line, and submit the logs to [contact@kitematic.com](mailto:contact@kitematic.com).
 
 1. `cd <dir with Kitematic.app>`
-2. Run `./Kitematic.app/Contents/MacOS/node-webkit` 
+2. Run `./Kitematic.app/Contents/MacOS/node-webkit`
 
 Kitematic is still in Beta. Any effort in helping us find issues and improving the experience is greatly appreciated!
 
@@ -45,7 +45,7 @@ Kitematic is still in Beta. Any effort in helping us find issues and improving t
 
 - Remove VirtualBox
 - rm /usr/local/bin/boot2docker
-- sudo route delete 172.17.0.0/16 192.168.59.103 (disable routing to containers through VM)
+- sudo route delete -net 172.17.0.0 -netmask 255.255.0.0 -gateway 192.168.60.103 (disable routing to containers through VM)
 - rm -rf ~/Library/Application\ Support/Kitematic (remove app data)
 - rm /Library/LaunchAgents/com.kitematic.route.plist (remove launch job that sets up routing to the containers)
 
@@ -61,7 +61,7 @@ Kitematic's documentation and other information can be found at [http://kitemati
 
 Please read through our [Contributing Guidelines](https://github.com/kitematic/kitematic/blob/master/CONTRIBUTING.md). Included are directions for opening issues, coding standards, and notes on development.
 
-Development [Roadmap](https://trello.com/b/xea5AHRk/kitematic-roadmap) can be found on our Trello board.
+Development [Roadmap](https://trello.com/b/G5Aw0Rqc/kitematic-roadmap) can be found on our Trello board.
 
 ## Community
 
@@ -74,7 +74,7 @@ Keep track of development and community news.
 
 ## Versioning
 
-For transparency into our release cycle and in striving to maintain backward compatibility, Kitematic is maintained under the [Semantic Versioning Guidelines](http://semver.org/). We'll try very hard adhere to those rules whenever possible.
+For transparency into our release cycle and in striving to maintain backward compatibility, Kitematic is maintained under the [Semantic Versioning Guidelines](http://semver.org/). We'll try very hard to adhere to those rules whenever possible.
 
 ## Creators
 

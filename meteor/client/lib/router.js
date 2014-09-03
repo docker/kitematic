@@ -48,12 +48,16 @@ Router.map(function () {
     controller: 'SetupController',
     action: function () {
       if (this.ready()) {
-        var install = Installs.findOne();
-        if (!install) {
-          console.log('No installs detected, running installer again.');
-          this.redirect('/setup/intro');
+        if (!Installer.isUpToDate()) {
+          if (!Installs.findOne()) {
+            console.log('No installs detected, running installer again.');
+            this.redirect('/setup/intro');
+          } else {
+            // There's an install but it's lower than the current version, re-run as an 'update'.
+            Session.set('isUpdating', true);
+            this.redirect('/setup/intro');
+          }
         } else {
-          startFixInterval();
           this.redirect('/apps');
         }
       }
