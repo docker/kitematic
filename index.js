@@ -43,10 +43,7 @@ var start = function (callback) {
       freeport(function(err, mongoPort) {
         console.log('MongoDB: ' + mongoPort);
         console.log('webPort: ' + webPort);
-        child_process.exec('kill $(ps aux -e | grep PURPOSE=KITEMATIC | awk \'{print $2}\')', function (error, stdout, stderr) {
-          console.log(error);
-          console.log(stdout);
-          console.log(stderr);
+        child_process.exec('kill $(ps aux -e | grep PURPOSE=KITEMATIC | awk \'{print $2}\') && rm ' + path.join(dataPath, 'mongod.lock'), function (error, stdout, stderr) {
           var mongoChild = child_process.spawn(path.join(process.cwd(), 'resources', 'mongod'), ['--bind_ip', '127.0.0.1', '--dbpath', dataPath, '--port', mongoPort, '--unixSocketPrefix', dataPath], {
             env: {
               PURPOSE: 'KITEMATIC'
@@ -54,7 +51,12 @@ var start = function (callback) {
           });
           var started = false;
           mongoChild.stdout.setEncoding('utf8');
+          mongoChild.stderr.setEncoding('utf8');
+          mongoChild.stderr.on('data', function (data) {
+            console.log(data);
+          });
           mongoChild.stdout.on('data', function (data) {
+            console.log(data);
             if (data.indexOf('waiting for connections on port ' + mongoPort)) {
               if (!started) {
                 started = true;

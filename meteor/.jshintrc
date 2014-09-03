@@ -166,6 +166,10 @@
       // Server and Client
       "Docker": true,
       "Util": true,
+      "Boot2Docker": true,
+      "Installer": true,
+      "VirtualBox": true,
+      
       "boot2dockerexec": true,
       "getBoot2DockerIp": true,
       "getBoot2DockerState": true,

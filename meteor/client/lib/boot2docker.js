@@ -1,14 +1,54 @@
 var exec = require('exec');
 var path = require('path');
 
-boot2dockerexec = function (command, callback) {
-  exec(path.join(Util.getBinDir(), 'boot2docker') + ' ' + command, function(err, stdout) {
-    callback(err, stdout);
+Boot2Docker = {};
+
+Boot2Docker.REQUIRED_IP = '192.168.60.103';
+
+Boot2Docker.exec = function (command, callback) {
+  exec(path.join(Util.getBinDir(), 'boot2docker') + ' ' + command, function(err, stdout, stderr) {
+    callback(err, stdout, stderr);
   });
 };
 
-getBoot2DockerIp = function (callback) {
-  boot2dockerexec('ip', function (err, stdout) {
+Boot2Docker.exists = function (callback) {
+  this.exec('info', function (err) {
+    if (err) {
+      callback(null, false);
+    } else {
+      callback(null, true);
+    }
+  });
+};
+
+Boot2Docker.stop = function (callback) {
+  this.exec('stop', function (err, stdout) {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null);
+    }
+  });
+};
+
+Boot2Docker.erase = function (callback) {
+  var VMFileLocation = path.join(Util.getHomePath(), 'VirtualBox\\ VMs/boot2docker-vm');
+  exec('rm -rf ' + VMFileLocation, function (err) {
+    callback(err);
+  });
+};
+
+Boot2Docker.upgrade = function (callback) {
+  var self = this;
+  self.stop(function (err) {
+    self.exec('upgrade', function (err, stdout) {
+      callback(err);
+    });
+  });
+};
+
+Boot2Docker.ip = function (callback) {
+  this.exec('ip', function (err, stdout) {
     if (err) {
       callback(err, null);
     } else {
@@ -17,12 +57,54 @@ getBoot2DockerIp = function (callback) {
   });
 };
 
-getBoot2DockerState = function (callback) {
-  boot2dockerexec(' info', function (err, stdout) {
-    if (err) {
-      callback(err, null);
+Boot2Docker.setIp = function (ifname, ip, callback) {
+  this.exec('ssh "sudo ifconfig ' + ifname + ' ' + ip + ' netmask 255.255.255.0"', function (err, stdout) {
+    callback(err);
+  });
+};
+
+Boot2Docker.init = function (callback) {
+  this.exec('init', function (err) {
+    callback(err);
+  });
+};
+
+Boot2Docker.start = function (callback) {
+  var self = this;
+  self.exists(function (err, exists) {
+    if (!exists) {
+      callback('Cannot start if the boot2docker VM doesn\'t exist');
       return;
     }
+    self.exec('up -v', function (err, stdout) {
+      // Sometimes boot2docker returns an error code even though it's working / waiting, so treat that as
+      // Success as well
+      if (!err || (err.indexOf('Waiting for VM to be started') !== -1 || err.indexOf('..........') !== -1)) {
+        self.correct(function (err) {
+          if (err) { callback(err); return; }
+          self.injectUtilities(function (err) {
+            callback(err);
+          });
+        });
+      } else {
+        callback(err);
+      }
+    });
+  });
+};
+
+Boot2Docker.correct = function (callback) {
+  Boot2Docker.setIp('eth2', Boot2Docker.REQUIRED_IP, function(err) {
+    if (err) { callback(err); return; }
+    VirtualBox.removeDHCP(function (err) {
+      callback();
+    });
+  });
+};
+
+Boot2Docker.state = function (callback) {
+  this.exec('info', function (err, stdout, stderr) {
+    if (err) { callback(err, null); return; }
     try {
       var info = JSON.parse(stdout);
       callback(null, info.State);
@@ -32,8 +114,8 @@ getBoot2DockerState = function (callback) {
   });
 };
 
-getBoot2DockerDiskUsage = function (callback) {
-  boot2dockerexec('ssh "df"', function (err, stdout) {
+Boot2Docker.diskUsage = function (callback) {
+  this.exec('ssh "df"', function (err, stdout) {
     if (err) {
       callback(err, null);
       return;
@@ -61,8 +143,8 @@ getBoot2DockerDiskUsage = function (callback) {
   });
 };
 
-getBoot2DockerMemoryUsage = function (callback) {
-  boot2dockerexec('ssh "free -m"', function (err, stdout) {
+Boot2Docker.memoryUsage = function (callback) {
+  this.exec('ssh "free -m"', function (err, stdout) {
     if (err) {
       callback(err, null);
       return;
@@ -92,178 +174,105 @@ getBoot2DockerMemoryUsage = function (callback) {
   });
 };
 
-getBoot2DockerInfo = function (callback) {
-  boot2dockerexec('ssh "sudo ifconfig eth1 192.168.59.103 netmask 255.255.255.0"', function (err, stdout) {
-    exec('VBoxManage dhcpserver remove --netname HostInterfaceNetworking-vboxnet0', function (err, stdout) {
-      getBoot2DockerState(function (err, state) {
+Boot2Docker.stats = function (callback) {
+  var self = this;
+  self.state(function (err, state) {
+    if (err) { callback(err, null); return; }
+    if (state === 'poweroff') {
+      callback(null, {state: state});
+      return;
+    }
+    self.memoryUsage(function (err, mem) {
       if (err) {
-        callback(err, null);
+        callback(null, {state: state});
         return;
       }
-      if (state === 'poweroff') {
-        callback(null, {state: state});
-      } else {
-        getBoot2DockerMemoryUsage(function (err, mem) {
-          if (err) { callback(null, {state: state}); }
-          getBoot2DockerDiskUsage(function (err, disk) {
-            if (err) { callback(null, {state: state}); }
-            callback(null, {
-              state: state,
-              memory: mem,
-              disk: disk
-            });
-          });
-        });
-      }
-    });
-    });
-  });
-};
-
-boot2DockerVMExists = function (callback) {
-  boot2dockerexec('info', function (err) {
-    if (err) {
-      callback(null, false);
-    } else {
-      callback(null, true);
-    }
-  });
-};
-
-eraseBoot2DockerVMFiles = function (callback) {
-  var VMFileLocation = path.join(Util.getHomePath(), 'VirtualBox\\ VMs/boot2docker-vm');
-  exec('rm -rf ' + VMFileLocation, function (err) {
-    callback(err);
-  });
-};
-
-initBoot2Docker = function (callback) {
-  isVirtualBoxInstalled(function (err, installed) {
-    if (err) {
-      callback(err);
-      return;
-    }
-    if (installed) {
-      boot2dockerexec('init', function (err) {
-        console.log(err);
+      self.diskUsage(function (err, disk) {
         if (err) {
-          if (err.indexOf('exit status 1') !== -1) {
-            eraseBoot2DockerVMFiles(function () {
-              boot2dockerexec('init', function (err) {
-                callback(err);
-              });
-            });
-          } else {
-            callback(err);
-          }
-        } else {
-          callback();
+          callback(null, {state: state, memory: mem});
+          return;
         }
+        callback(null, {
+          state: state,
+          memory: mem,
+          disk: disk
+        });
       });
+    });
+  });
+};
+
+/**
+ * Get the VM's version.
+ * Node that this only works if the VM is up and running.
+ */
+Boot2Docker.vmVersion = function (callback) {
+  this.exec('ssh "cat /etc/version', function (err, stdout, stderr) {
+    if (err) {
+      callback(err);
+      return;
     } else {
-      callback(new Error('initBoot2Docker called but VirtualBox isn\'t installed.'));
+      callback(null, stdout);
     }
   });
 };
 
-upgradeBoot2Docker = function (callback) {
-  boot2dockerexec('upgrade', function (err, stdout) {
-    console.log(stdout);
-    callback(err);
+Boot2Docker.version = function (callback) {
+  this.exec('version', function (err, stdout, stderr) {
+    if (err) {
+      callback(err);
+      return;
+    }
+    var match = stdout.match(/Client version: v(\d\.\d\.\d)/);
+    if (!match || match.length < 2) {
+      callback('Could not parse the boot2docker cli version.');
+    } else {
+      callback(null, match[1]);
+    }
   });
 };
 
-installBoot2DockerAddons = function (callback) {
+Boot2Docker.injectUtilities = function (callback) {
   exec('/bin/cat ' + path.join(Util.getBinDir(), 'kite-binaries.tar.gz') + ' | ' +  path.join(Util.getBinDir(), 'boot2docker') + ' ssh "tar zx -C /usr/local/bin"', function (err, stdout) {
-    console.log(stdout);
     callback(err);
   });
-  boot2dockerexec('ssh "sudo ifconfig eth1 192.168.59.103 netmask 255.255.255.0"', function (err, stdout) {});
-  exec('VBoxManage dhcpserver remove --netname HostInterfaceNetworking-vboxnet0', function (err, stdout) {});
 };
 
-startBoot2Docker = function (callback) {
-  isVirtualBoxInstalled(function (err, installed) {
-    if (err) {
-      callback(err);
-      return;
-    }
-    if (installed) {
-      boot2DockerVMExists(function (err, exists) {
-        if (exists) {
-          boot2dockerexec('up -v', function (err, stdout) {
-            console.log(err);
-            console.log(stdout);
-            if (err) {
-              if (err.indexOf('Waiting for VM to be started') !== -1 || err.indexOf('..........') !== -1) {
-                installBoot2DockerAddons(function (err) {
-                  callback(err);
-                });
-              } else {
-                callback(err);
-              }
-            } else {
-              installBoot2DockerAddons(function (err) {
-                callback(err);
-              });
-            }
-          });
-        } else {
-          callback(new Error('startBoot2Docker called but boot2docker-vm doesn\'t exist.'));
-        }
-      });
-    } else {
-      callback(new Error('startBoot2Docker called but VirtualBox isn\'t installed.'));
-    }
-  });
-};
-
-stopBoot2Docker = function (callback) {
-  boot2dockerexec('stop', function (err, stdout) {
-    console.log(stdout);
-    console.log(err);
-    if (err) {
-      callback(err);
-      return;
-    }
-    callback(null);
-  });
-};
-
-checkBoot2DockerVM = function (callback) {
-  boot2DockerVMExists(function (err) {
+Boot2Docker.check = function (callback) {
+  var self = this;
+  self.exists(function (err, exists) {
     if (err) {
       callback(err);
       return;
     } else {
-      getBoot2DockerState(function (err, state) {
+      self.state(function (err, state) {
         if (state !== 'running') {
           callback('boot2docker not running');
         } else {
-          callback();
+          self.correct(function (err) {
+            callback(err);
+          });
         }
       });
     }
   });
 };
 
-// Make sure the VM exists, is up and is running.
-resolveBoot2DockerVM = function (callback) {
-  boot2DockerVMExists(function (err, exists) {
-
+Boot2Docker.resolve = function (callback) {
+  var self = this;
+  self.exists(function (err, exists) {
     // If somehow the boot2docker VM doesn't exist anymor then re-create it.
     if (!exists) {
-      initBoot2Docker(function () {
-        startBoot2Docker(function (err) {
+      self.init(function () {
+        self.start(function (err) {
           callback(err);
         });
       });
     } else {
-
       // If it exists but it's not running.. restart it.
-      getBoot2DockerState(function (err, state) {
+      self.state(function (err, state) {
         if (state !== 'running') {
-          startBoot2Docker(function (err) {
+          self.start(function (err) {
             callback(err);
           });
         } else {
