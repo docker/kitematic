@@ -27,15 +27,15 @@ AppUtil.restartHelper = function (app) {
       if (err) { console.error(err); }
       Docker.getContainerData(app.docker.Id, function (err, data) {
         if (err) { console.error(err); }
-        Apps.update(app._id, {$set: {
-          status: 'READY',
-          docker: data
-        }});
         // Use dig to refresh the DNS
         exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function(err, stdout, stderr) {
           console.log(err);
           console.log(stdout);
           console.log(stderr);
+          Apps.update(app._id, {$set: {
+            status: 'READY',
+            docker: data
+          }});
         });
       });
     });
