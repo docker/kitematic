@@ -1,3 +1,6 @@
+var fs = require('fs');
+var path = require('path');
+
 Template.modal_create_app.helpers({
   images: function () {
     return Images.find({status: 'READY'}, {sort: {createdAt: -1}});
@@ -8,24 +11,53 @@ Template.modal_create_app.events({
   'submit #form-create-app': function (e) {
     var $form = $(e.currentTarget);
     var formData = $form.serializeObject();
-    Meteor.call('formCreateApp', formData, function (errors, cleaned) {
-      if (errors) {
-        clearFormErrors($form);
-        showFormErrors($form, errors.details);
-      } else {
-        clearFormErrors($form);
-        Meteor.call('createApp', cleaned, function (err) {
+    var validationResult = formValidate(formData, FormSchema.formCreateApp);
+    if (validationResult.errors) {
+      clearFormErrors($form);
+      showFormErrors($form, validationResult.errors.details);
+    } else {
+      clearFormErrors($form);
+      var cleaned = validationResult.cleaned;
+      var appName = cleaned.name;
+      var appPath = path.join(Util.KITE_PATH, appName);
+      if (!fs.existsSync(appPath)) {
+        console.log('Created Kite ' + appName + ' directory.');
+        fs.mkdirSync(appPath, function (err) {
           if (err) { throw err; }
         });
-        $('#modal-create-app').bind('hidden.bs.modal', function () {
-          $('#slug-create-app-name').html('');
-          resetForm($form);
-          $('#image-picker').find('.fa-check-square-o').hide();
-          $('#image-picker').find('.fa-square-o').show();
-          Router.go('dashboard_apps');
-        }).modal('hide');
       }
-    });
+      var appObj = {
+        name: appName,
+        imageId: cleaned.imageId,
+        status: 'STARTING',
+        config: {},
+        path: appPath,
+        logs: [],
+        createdAt: new Date()
+      };
+      var appId = Apps.insert(appObj);
+      Apps.update(appId, {
+        $set: {
+          'config.APP_ID': appId
+        }
+      });
+      var app = Apps.findOne(appId);
+      var image = Images.findOne(app.imageId);
+      Util.copyVolumes(image.path, app.name);
+      Docker.removeBindFolder(app.name, function (err) {
+        if (err) { console.error(err); }
+        AppUtil.run(app, function (err) {
+          if (err) { console.error(err); }
+        });
+      });
+      $('#modal-create-app').bind('hidden.bs.modal', function () {
+        $('#slug-create-app-name').html('');
+        resetForm($form);
+        $('#image-picker').find('.fa-check-square-o').hide();
+        $('#image-picker').find('.fa-square-o').show();
+        Router.go('dashboard_apps');
+      }).modal('hide');
+    }
     e.preventDefault();
     e.stopPropagation();
     return false;

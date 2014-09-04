@@ -19,6 +19,9 @@
     "chokidar": "git+https://github.com/usekite/chokidar.git",
     "exec": "^0.1.2",
     "moment": "2.8.1",
-    "open": "0.0.5"
+    "open": "0.0.5",
+    "dockerode": "2.0.3",
+    "tar": "0.1.20",
+    "ansi-to-html": "0.2.0"
   }
 }

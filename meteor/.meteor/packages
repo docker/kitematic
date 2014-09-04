@@ -6,13 +6,8 @@
 standard-app-packages
 less
 bootstrap3-less
-npm
 iron-router
-headers
 handlebar-helpers
-collection2
-collection-hooks
-moment
 underscore-string-latest
 collection-helpers
 octicons

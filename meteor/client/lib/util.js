@@ -1,3 +1,6 @@
+var path = require('path');
+var fs = require('fs');
+
 Util = {};
 
 Util.getHomePath = function () {
@@ -15,6 +18,10 @@ Util.getBinDir = function () {
     }
   }
 };
+
+Util.KITE_PATH = path.join(Util.getHomePath(), 'Kitematic');
+Util.KITE_TAR_PATH = path.join(Util.KITE_PATH, '.tar');
+Util.KITE_IMAGES_PATH = path.join(Util.KITE_PATH, '.images');
 
 Util.deleteFolder = function (directory) {
   if (fs.existsSync(directory)) {
@@ -59,10 +66,10 @@ Util.copyFolder = function (src, dest) {
 };
 
 Util.copyVolumes = function (directory, appName) {
-  var KITE_VOLUMES_PATH = path.join(directory, 'volumes');
-  if (fs.existsSync(KITE_VOLUMES_PATH)) {
-    var destinationPath = path.join(KITE_PATH, appName);
-    Util.copyFolder(KITE_VOLUMES_PATH, destinationPath);
+  var volumesPath = path.join(directory, 'volumes');
+  if (fs.existsSync(volumesPath)) {
+    var destinationPath = path.join(Util.KITE_PATH, appName);
+    Util.copyFolder(volumesPath, destinationPath);
     console.log('Copied volumes for: ' + appName);
   }
 };
@@ -112,8 +119,12 @@ Util.compareVersions = function (v1, v2, options) {
   }
 
   if (zeroExtend) {
-    while (v1parts.length < v2parts.length) v1parts.push('0');
-    while (v2parts.length < v1parts.length) v2parts.push('0');
+    while (v1parts.length < v2parts.length) {
+      v1parts.push('0');
+    }
+    while (v2parts.length < v1parts.length) {
+      v2parts.push('0');
+    }
   }
 
   if (!lexicographical) {
@@ -122,11 +133,11 @@ Util.compareVersions = function (v1, v2, options) {
   }
 
   for (var i = 0; i < v1parts.length; ++i) {
-    if (v2parts.length == i) {
+    if (v2parts.length === i) {
       return 1;
     }
 
-    if (v1parts[i] == v2parts[i]) {
+    if (v1parts[i] === v2parts[i]) {
       continue;
     }
     else if (v1parts[i] > v2parts[i]) {
@@ -137,10 +148,16 @@ Util.compareVersions = function (v1, v2, options) {
     }
   }
 
-  if (v1parts.length != v2parts.length) {
+  if (v1parts.length !== v2parts.length) {
     return -1;
   }
 
   return 0;
 };
 
+trackLink = function (trackLabel) {
+  if (trackLabel) {
+    console.log(trackLabel);
+    ga('send', 'event', 'link', 'click', trackLabel);
+  }
+};

@@ -19,9 +19,8 @@ Template.dashboard_apps_settings.events({
     var envKey = $button.data('key');
     var configVars = getConfigVars($form);
     delete configVars[envKey];
-    Meteor.call('configVar', appId, configVars, function () {
-      $button.removeAttr('disabled');
-    });
+    AppUtil.configVar(appId, configVars);
+    $button.removeAttr('disabled');
   },
   'submit .form-env-vars': function (e) {
     var $form = $(e.currentTarget);
@@ -31,10 +30,9 @@ Template.dashboard_apps_settings.events({
     var newVal = $form.find('input[name="env-var-value"]').val().trim();
     if (newKey && newVal) {
       configVars[newKey] = newVal;
-      Meteor.call('configVar', appId, configVars, function () {
-        $form.find('input[name="env-var-key"]').val('');
-        $form.find('input[name="env-var-value"]').val('');
-      });
+      AppUtil.configVar(appId, configVars);
+      $form.find('input[name="env-var-key"]').val('');
+      $form.find('input[name="env-var-value"]').val('');
     }
     e.preventDefault();
     e.stopPropagation();
@@ -43,9 +41,7 @@ Template.dashboard_apps_settings.events({
   'click .btn-delete-app': function () {
     var result = confirm("Are you sure you want to delete this app?");
     if (result === true) {
-      Meteor.call('deleteApp', this._id, function (err) {
-        if (err) { throw err; }
-      });
+      AppUtil.remove(this._id);
       Router.go('dashboard_apps');
     }
   }

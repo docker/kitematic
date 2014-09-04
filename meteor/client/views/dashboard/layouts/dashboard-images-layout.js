@@ -18,8 +18,8 @@ Template.dashboard_images_layout.events({
   },
   'click .btn-rebuild': function () {
     $('.header .icons a').tooltip('hide');
-    Meteor.call('rebuildImage', this._id, function (err) {
-      if (err) { throw err; }
+    ImageUtil.rebuild(this._id, function (err) {
+      if (err) { console.error(err); }
     });
   }
 });

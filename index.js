@@ -51,10 +51,6 @@ var start = function (callback) {
           });
           var started = false;
           mongoChild.stdout.setEncoding('utf8');
-          mongoChild.stderr.setEncoding('utf8');
-          mongoChild.stderr.on('data', function (data) {
-            console.log(data);
-          });
           mongoChild.stdout.on('data', function (data) {
             console.log(data);
             if (data.indexOf('waiting for connections on port ' + mongoPort)) {
@@ -124,6 +120,7 @@ start(function (url, nodeChild, mongoChild) {
   }, 400);
   mainWindow.on('close', function (type) {
     this.hide();
+    console.log('closed');
     if (type === 'quit') {
       console.log('here');
       if (nodeChild && mongoChild) {

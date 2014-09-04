@@ -146,16 +146,6 @@
       "convert": true,
       "Convert": true,
 
-      // Collections
-      "SimpleSchema": false,
-      "ServiceConfiguration": false,
-      "Apps": true,
-      "schemaApps": true,
-      "Images": true,
-      "schemaImages": true,
-      "Installs": true,
-      "schemaInstalls": true,
-
       // Controllers
       "RouteController": true,
       "DashboardController": true,
@@ -164,51 +154,17 @@
       "SetupController": true,
 
       // Server and Client
+      "Images": true,
+      "Apps": true,
+      "Installs": true,
       "Docker": true,
       "Util": true,
+      "Sync": true,
       "Boot2Docker": true,
       "Installer": true,
       "VirtualBox": true,
-      
-      "boot2dockerexec": true,
-      "getBoot2DockerIp": true,
-      "getBoot2DockerState": true,
-      "getBoot2DockerDiskUsage": true,
-      "getBoot2DockerMemoryUsage": true,
-      "getBoot2DockerInfo": true,
-      "boot2DockerVMExists": true,
-      "eraseBoot2DockerVMFiles": true,
-      "initBoot2Docker": true,
-      "isVirtualBoxInstalled": true,
-      "upgradeBoot2Docker": true,
-      "installBoot2DockerAddons": true,
-      "startBoot2Docker": true,
-      "stopBoot2Docker": true,
-      "checkBoot2DockerVM": true,
-      "resolveBoot2DockerVM": true,
-      "startFixInterval": true,
-      "trackLink": true,
-      "isResolverSetup": true,
-      "setupVirtualBoxAndResolver": true,
-      "setupVirtualBoxSharedFolder": true,
-      "updateBoot2DockerInfo": true,
-      "fixBoot2DockerVM": true,
-      "fixDefaultImages": true,
-      "fixDefaultContainers": true,
-      "fixInterval": true,
-      "stopFixInterval": true,
-      "runSetup": true,
-      "removeAppWatcher": true,
-      "addAppWatcher": true,
-      "resolveWatchers": true,
-      "checkDefaultImages": true,
-      "resolveDefaultImages": true,
-      "checkDefaultContainers": true,
-      "resolveDefaultContainers": true,
-      "killAndRemoveContainers": true,
-      "upContainers": true,
-      "reloadDefaultContainers": true,
-      "removeImages": true,
+      "ImageUtil": true,
+      "AppUtil": true,
 
       // Forms
       "showFormErrors": true,
@@ -217,18 +173,13 @@
       "FormSchema": true,
       "showFormSuccess": true,
       "resetForm": true,
+      "trackLink": true,
 
       // Testing
       "require": false,
       "suite": false,
       "test": false,
-      "emit": false,
-
-      // Constants
-      "KITE_PATH": true,
-      "KITE_TAR_PATH": true,
-      "KITE_IMAGES_PATH": true,
-      "COMMON_WEB_PORTS": true
+      "emit": false
 
     }
 }
