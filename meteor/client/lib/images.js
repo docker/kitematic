@@ -56,7 +56,7 @@ ImageUtil.saveFolder = function (directory, imageId, callback) {
   }
 };
 
-ImageUtil.rebuild = function (image, callback) {
+ImageUtil.rebuildHelper = function (image, callback) {
   Util.deleteFolder(image.path);
   var imageMetaData = ImageUtil.getMetaData(image.originPath);
   if (imageMetaData.logo) {
@@ -91,7 +91,7 @@ ImageUtil.rebuild = function (image, callback) {
   });
 };
 
-ImageUtil.rebuildImage = function (imageId) {
+ImageUtil.rebuild = function (imageId) {
   var image = Images.findOne(imageId);
   if (!image) {
     throw new Meteor.Error(403, "No image found with this ID.");
@@ -113,7 +113,7 @@ ImageUtil.rebuildImage = function (imageId) {
         }
       });
     });
-    ImageUtil.rebuild(image, function (err) {
+    ImageUtil.rebuildHelper(image, function (err) {
       if (err) { console.error(err); }
     });
     _.each(apps, function (app) {
@@ -123,7 +123,7 @@ ImageUtil.rebuildImage = function (imageId) {
       });
     });
   } else {
-    ImageUtil.rebuild(image, function (err) {
+    ImageUtil.rebuildHelper(image, function (err) {
       if (err) { console.error(err); }
     });
   }

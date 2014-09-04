@@ -18,7 +18,7 @@ Template.dashboard_single_image.events({
   },
   'click .btn-rebuild': function () {
     $('.btn-icon').tooltip('hide');
-    ImageUtil.rebuildImage(this._id, function (err) {
+    ImageUtil.rebuild(this._id, function (err) {
       if (err) { console.error(err); }
     });
   }
