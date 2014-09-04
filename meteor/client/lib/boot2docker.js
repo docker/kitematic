@@ -6,7 +6,7 @@ Boot2Docker = {};
 Boot2Docker.REQUIRED_IP = '192.168.60.103';
 
 Boot2Docker.exec = function (command, callback) {
-  exec(path.join(Util.getBinDir(), 'boot2docker') + ' ' + command, function(err, stdout, stderr) {
+  exec(path.join(getBinDir(), 'boot2docker') + ' ' + command, function(err, stdout, stderr) {
     callback(err, stdout, stderr);
   });
 };
@@ -32,7 +32,7 @@ Boot2Docker.stop = function (callback) {
 };
 
 Boot2Docker.erase = function (callback) {
-  var VMFileLocation = path.join(Util.getHomePath(), 'VirtualBox\\ VMs/boot2docker-vm');
+  var VMFileLocation = path.join(getHomePath(), 'VirtualBox\\ VMs/boot2docker-vm');
   exec('rm -rf ' + VMFileLocation, function (err) {
     callback(err);
   });
@@ -233,7 +233,7 @@ Boot2Docker.version = function (callback) {
 };
 
 Boot2Docker.injectUtilities = function (callback) {
-  exec('/bin/cat ' + path.join(Util.getBinDir(), 'kite-binaries.tar.gz') + ' | ' +  path.join(Util.getBinDir(), 'boot2docker') + ' ssh "tar zx -C /usr/local/bin"', function (err, stdout) {
+  exec('/bin/cat ' + path.join(getBinDir(), 'kite-binaries.tar.gz') + ' | ' +  path.join(getBinDir(), 'boot2docker') + ' ssh "tar zx -C /usr/local/bin"', function (err, stdout) {
     callback(err);
   });
 };

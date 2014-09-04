@@ -24,7 +24,7 @@ VirtualBox.exec = function (command, callback) {
 
 VirtualBox.install = function (callback) {
   // -W waits for the process to close before finishing.
-  exec('open -W ' + path.join(Util.getBinDir(), this.INSTALLER_FILENAME), function (error, stdout, stderr) {
+  exec('open -W ' + path.join(getBinDir(), this.INSTALLER_FILENAME), function (error, stdout, stderr) {
     if (error) {
       callback(error);
       return;
@@ -73,7 +73,7 @@ VirtualBox.hostOnlyIfs = function (callback) {
         currentIf = value;
         hostOnlyIfs[value] = {};
       }
-      hostOnlyIfs[currentIf][key] = value; 
+      hostOnlyIfs[currentIf][key] = value;
     });
     callback(null, hostOnlyIfs);
   });
@@ -134,8 +134,8 @@ VirtualBox.addCustomHostAdapter = function (vm, callback) {
 VirtualBox.setupRouting = function (vm, callback) {
   // Get the host only adapter or create it if it doesn't exist
   this.addCustomHostAdapter(vm, function (err, ifname) {
-    var installFile = path.join(Util.getBinDir(), 'install');
-    var cocoaSudo = path.join(Util.getBinDir(), 'cocoasudo');
+    var installFile = path.join(getBinDir(), 'install');
+    var cocoaSudo = path.join(getBinDir(), 'cocoasudo');
     var execCommand = cocoaSudo + ' --prompt="Kitematic needs your password to allow routing *.kite requests to containers." ' + installFile;
     exec(execCommand, {env: {IFNAME: ifname, GATEWAY: Boot2Docker.REQUIRED_IP}}, function (error, stdout, stderr) {
       if (error) {

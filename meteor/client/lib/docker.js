@@ -1,6 +1,5 @@
-Dockerode = Meteor.require('dockerode');
+Dockerode = require('dockerode');
 
-var DOCKER_HOST='192.168.60.103';
 docker = new Dockerode({host: DOCKER_HOST, port: '2375'});
 
 Docker = {};
@@ -17,10 +16,6 @@ Docker.removeContainer = function (containerId, callback) {
   });
 };
 
-Docker.removeContainerSync = function (containerId) {
-  return Meteor._wrapAsync(Docker.removeContainer)(containerId);
-};
-
 Docker.getContainerData = function (containerId, callback) {
   var container = docker.getContainer(containerId);
   container.inspect(function (err, data) {
@@ -35,10 +30,6 @@ Docker.getContainerData = function (containerId, callback) {
       return;
     }
   });
-};
-
-Docker.getContainerDataSync = function (containerId) {
-  return Meteor._wrapAsync(Docker.getContainerData)(containerId);
 };
 
 Docker.runContainer = function (app, image, callback) {
@@ -78,10 +69,6 @@ Docker.runContainer = function (app, image, callback) {
   });
 };
 
-Docker.runContainerSync = function (app, image) {
-  return Meteor._wrapAsync(Docker.runContainer)(app, image);
-};
-
 Docker.restartContainer = function (containerId, callback) {
   var container = docker.getContainer(containerId);
   container.restart(function (err) {
@@ -93,10 +80,6 @@ Docker.restartContainer = function (containerId, callback) {
     console.log('Restarted container: ' + containerId);
     callback(null);
   });
-};
-
-Docker.restartContainerSync = function (containerId) {
-  return Meteor._wrapAsync(Docker.restartContainer)(containerId);
 };
 
 var convertVolumeObjToArray = function (obj) {
@@ -127,10 +110,6 @@ Docker.getImageData = function (imageId, callback) {
   });
 };
 
-Docker.getImageDataSync = function (imageId) {
-  return Meteor._wrapAsync(Docker.getImageData)(imageId);
-};
-
 Docker.removeImage = function (imageId, callback) {
   var image = docker.getImage(imageId.toLowerCase());
   image.remove({force: true}, function (err) {
@@ -140,12 +119,8 @@ Docker.removeImage = function (imageId, callback) {
   });
 };
 
-Docker.removeImageSync = function (imageId) {
-  return Meteor._wrapAsync(Docker.removeImage)(imageId);
-};
-
 Docker.removeBindFolder = function (name, callback) {
-  exec(path.join(Util.getBinDir(), 'boot2docker') + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function (err, stdout) {
+  exec(path.join(getBinDir(), 'boot2docker') + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function (err, stdout) {
     callback(err, stdout);
   });
 };
@@ -196,7 +171,7 @@ resolveDefaultImages = function () {
     image.inspect(function (err) {
       if (err) {
         if (err.reason === 'no such image') {
-          docker.loadImage(path.join(Util.getBinDir(), 'base-images.tar.gz'), {}, function (err) {
+          docker.loadImage(path.join(getBinDir(), 'base-images.tar.gz'), {}, function (err) {
             if (err) {
               innerCallback(err);
               return;
@@ -283,7 +258,7 @@ reloadDefaultContainers = function (callback) {
         return;
       }
       console.log('Loading new Kitematic default images.');
-      docker.loadImage(path.join(Util.getBinDir(), 'base-images.tar.gz'), {}, function (err) {
+      docker.loadImage(path.join(getBinDir(), 'base-images.tar.gz'), {}, function (err) {
         if (err) {
           callback(err);
           return;
@@ -391,50 +366,3 @@ killAndRemoveContainers = function (names, callback) {
     callback(err);
   });
 };
-
-Meteor.methods({
-  runApp: function (app) {
-    this.unblock();
-    var image = Images.findOne({_id: app.imageId});
-    // Delete old container if one already exists
-    try {
-      Docker.removeContainerSync(app.name);
-    } catch (e) {}
-    try {
-      var container = Docker.runContainerSync(app, image);
-      var containerData = Docker.getContainerDataSync(container.id);
-      // Set a delay for app to spin up
-      Meteor.setTimeout(function () {
-        Apps.update(app._id, {$set: {
-          docker: containerData,
-          status: 'READY'
-        }});
-      }, 2500);
-    } catch (e) {
-      console.error(e);
-    }
-  },
-  getDockerHost: function () {
-    return DOCKER_HOST;
-  },
-  reloadDefaultContainers: function () {
-    this.unblock();
-    return Meteor._wrapAsync(reloadDefaultContainers)();
-  },
-  checkDefaultImages: function () {
-    this.unblock();
-    return Meteor._wrapAsync(checkDefaultImages)();
-  },
-  resolveDefaultImages: function () {
-    this.unblock();
-    return Meteor._wrapAsync(resolveDefaultImages)();
-  },
-  checkDefaultContainers: function () {
-    this.unblock();
-    return Meteor._wrapAsync(checkDefaultContainers)();
-  },
-  resolveDefaultContainers: function () {
-    this.unblock();
-    return Meteor._wrapAsync(resolveDefaultContainers)();
-  }
-});

@@ -1,57 +1,14 @@
 Apps = new Meteor.Collection('apps');
 
-schemaApps = new SimpleSchema({
-  imageId: {
-    type: Meteor.ObjectID,
-    label: "ID of the image used by the app",
-    max: 200
+Apps.allow({
+  'update': function () {
+    return true;
   },
-  docker: {
-    type: Object,
-    label: "Docker container data",
-    blackbox: true,
-    optional: true
+  'insert': function () {
+    return true;
   },
-  status: {
-    type: String,
-    allowedValues: ['STARTING', 'READY', 'ERROR'],
-    label: "App current status",
-    max: 200
-  },
-  config: {
-    type: Object,
-    label: "App environment variables",
-    blackbox: true
-  },
-  name: {
-    type: String,
-    label: "App name",
-    max: 200
-  },
-  logs: {
-    type: [String],
-    label: "Logs",
-    defaultValue: []
-  },
-  path: {
-    type: String,
-    label: "Path to the app directory",
-    optional: true
-  },
-  createdAt: {
-    type: Date,
-    autoValue: function() {
-      var now = new Date();
-      if (this.isInsert) {
-        return now;
-      } else if (this.isUpsert) {
-        return {$setOnInsert: now};
-      } else {
-        this.unset();
-      }
-    },
-    denyUpdate: true,
-    label: "Time of app created"
+  'remove': function () {
+    return true;
   }
 });
 
@@ -113,44 +70,4 @@ Apps.helpers({
       }
     }
   }
-});
-
-Apps.attachSchema(schemaApps);
-
-Apps.after.insert(function (userId, app) {
-  // Give app an unique environment variable
-  var appId = this._id;
-  Apps.update(appId, {
-    $set: {
-      'config.APP_ID': appId
-    }
-  });
-  var image = Images.findOne(app.imageId);
-  Util.copyVolumes(image.path, app.name);
-  app = Apps.findOne(appId);
-  Docker.removeBindFolder(app.name, function (err) {
-    if (err) {
-      console.error(err);
-    }
-    Fiber(function () {
-      Meteor.call('runApp', app, function (err) {
-        if (err) { throw err; }
-      });
-    }).run();
-  });
-});
-
-Apps.after.remove(function (userId, app) {
-  if (app.docker) {
-    try {
-      Docker.removeContainerSync(app.docker.Id);
-    } catch (e) {
-      console.error(e);
-    }
-  }
-  var appPath = path.join(KITE_PATH, app.name);
-  Util.deleteFolder(appPath);
-  Docker.removeBindFolder(app.name, function () {
-    console.log('Deleted Kite ' + app.name + ' directory.');
-  });
 });
