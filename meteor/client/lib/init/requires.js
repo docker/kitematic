@@ -1,0 +1,10 @@
+https = require('https');
+tar = require('tar');
+zlib = require('zlib');
+fs = require('fs');
+path = require('path');
+exec = require('child_process').exec;
+async = require('async');
+child_process = require('child_process');
+Convert = require('ansi-to-html');
+convert = new Convert();

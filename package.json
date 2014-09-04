@@ -5,8 +5,8 @@
   "version": "0.1.0",
   "window": {
     "show": false,
-    "toolbar": false,
-    "frame": false,
+    "toolbar": true,
+    "frame": true,
     "width": 800,
     "height": 600,
     "resizable": false
@@ -19,6 +19,9 @@
     "chokidar": "git+https://github.com/usekite/chokidar.git",
     "exec": "^0.1.2",
     "moment": "2.8.1",
-    "open": "0.0.5"
+    "open": "0.0.5",
+    "dockerode": "2.0.3",
+    "tar": "0.1.20",
+    "ansi-to-html": "0.2.0"
   }
 }

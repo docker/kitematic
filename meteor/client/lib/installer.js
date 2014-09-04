@@ -100,7 +100,7 @@ Installer.steps = [
     },
     pastMessage: 'Started the Boot2Docker VM',
     message: 'Starting the Boot2Docker VM',
-    futureMessage: 'Start the Kitematic VM',
+    futureMessage: 'Start the Kitematic VM'
   },
 
   {
@@ -117,14 +117,14 @@ Installer.steps = [
   // Set up the default Kitematic images
   {
     run: function (callback) {
-      Meteor.call('reloadDefaultContainers', function (err) {
-        callback(err);
+      reloadDefaultContainers(function (err) {
+        if (err) { console.error(err); }
       });
     },
     pastMessage: 'Started the Boot2Docker VM',
     message: 'Setting up the default Kitematic images...',
     subMessage: '(This may take a few minutes)',
-    futureMessage: 'Set up the default Kitematic images',
+    futureMessage: 'Set up the default Kitematic images'
   }
 ];
 

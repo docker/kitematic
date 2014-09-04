@@ -169,7 +169,11 @@
       "Boot2Docker": true,
       "Installer": true,
       "VirtualBox": true,
-      
+      "ImageUtil": true,
+      "AppUtil": true,
+
+      "getBinDir": true,
+      "getHomePath": true,
       "boot2dockerexec": true,
       "getBoot2DockerIp": true,
       "getBoot2DockerState": true,
@@ -228,7 +232,8 @@
       "KITE_PATH": true,
       "KITE_TAR_PATH": true,
       "KITE_IMAGES_PATH": true,
-      "COMMON_WEB_PORTS": true
+      "COMMON_WEB_PORTS": true,
+      "DOCKER_HOST": true
 
     }
 }

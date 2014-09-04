@@ -15,7 +15,7 @@ removeAppWatcher = function (id) {
 
 addAppWatcher = function (app) {
   removeAppWatcher(app._id);
-  var appPath = path.join(path.join(Util.getHomePath(), 'Kitematic'), app.name);
+  var appPath = path.join(path.join(getHomePath(), 'Kitematic'), app.name);
   var vmDir = path.join('/var/lib/docker/binds', app.name);
   var vmPath = 'ssh://docker@localhost:2022/' + vmDir;
   var watcher = chokidar.watch(appPath, {ignored: /.*\.DS_Store/});
@@ -30,7 +30,7 @@ addAppWatcher = function (app) {
     syncing = true;
     var errorPattern = /The\sfile\s(.*)\son\shost/g;
     var archiveErrorPattern = /Archive\s(.*)\son\shost\s.*\sshould\sbe\sDELETED/g;
-    var cmd = path.join(Util.getBinDir(), 'unison');
+    var cmd = path.join(getBinDir(), 'unison');
     var args = [
       cmd,
       vmPath,
@@ -46,7 +46,7 @@ addAppWatcher = function (app) {
       'Name\ {*.tmp,*.unison,*.swp,*.pyc,.DS_Store}',
       '-auto',
       '-sshargs',
-      '-o\ UserKnownHostsFile=/dev/null\ -o\ StrictHostKeyChecking=no\ -o PreferredAuthentications=publickey\ -i\ ' + path.join(Util.getHomePath(), '.ssh/id_boot2docker')
+      '-o\ UserKnownHostsFile=/dev/null\ -o\ StrictHostKeyChecking=no\ -o PreferredAuthentications=publickey\ -i\ ' + path.join(getHomePath(), '.ssh/id_boot2docker')
     ];
 
     if (!fs.existsSync(appPath)) {
@@ -70,7 +70,7 @@ addAppWatcher = function (app) {
         if (err.indexOf('The archive file is missing on some hosts') !== -1) {
           var results = archiveErrorPattern.exec(err);
           var location = results[1].replace(' ', '\\ ');
-          var fullLocation = path.join(Util.getHomePath(), 'Library/Application\\ Support/Unison', location);
+          var fullLocation = path.join(getHomePath(), 'Library/Application\\ Support/Unison', location);
           var cmd = '/bin/rm -rf ' + fullLocation;
           exec(cmd, function () {});
         }

@@ -63,11 +63,6 @@ Handlebars.registerHelper('timeSince', function (date) {
   return moment(date).fromNow();
 });
 
-Meteor.call('getDockerHost', function (err, host) {
-  if (err) { throw err; }
-  Session.set('dockerHost', host);
-});
-
 fixBoot2DockerVM = function (callback) {
   Boot2Docker.check(function (err) {
     if (err) {
@@ -87,10 +82,10 @@ fixBoot2DockerVM = function (callback) {
 };
 
 fixDefaultImages = function (callback) {
-  Meteor.call('checkDefaultImages', function (err) {
+  checkDefaultImages(function (err) {
     if (err) {
       Session.set('available', false);
-      Meteor.call('resolveDefaultImages', function (err) {
+      resolveDefaultImages(function (err) {
         if (err) {
           callback();
         } else {
@@ -106,10 +101,10 @@ fixDefaultImages = function (callback) {
 };
 
 fixDefaultContainers = function (callback) {
-  Meteor.call('checkDefaultContainers', function (err) {
+  checkDefaultContainers(function (err) {
     if (err) {
       Session.set('available', false);
-      Meteor.call('resolveDefaultContainers', function (err) {
+      resolveDefaultContainers(function (err) {
         if (err) {
           callback(err);
         } else {
@@ -151,7 +146,7 @@ Meteor.setInterval(function () {
     if (!Session.get('boot2dockerOff')) {
       fixBoot2DockerVM(function (err) {
         if (err) { console.log(err); return; }
-        Meteor.call('recoverApps');
+        AppUtil.recover();
         fixDefaultImages(function (err) {
           if (err) { console.log(err); return; }
           fixDefaultContainers(function (err) {
@@ -162,4 +157,3 @@ Meteor.setInterval(function () {
     }
   }
 }, 5000);
-
