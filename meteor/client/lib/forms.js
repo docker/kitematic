@@ -21,10 +21,3 @@ clearFormErrors = function ($form) {
 resetForm = function ($form) {
   $form.find('input').val('');
 };
-
-trackLink = function (trackLabel) {
-  if (trackLabel) {
-    console.log(trackLabel);
-    ga('send', 'event', 'link', 'click', trackLabel);
-  }
-};

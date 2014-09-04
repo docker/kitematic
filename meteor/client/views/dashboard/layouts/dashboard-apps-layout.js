@@ -21,9 +21,7 @@ Template.dashboard_apps_layout.events({
     $('.header .icons a').tooltip('hide');
   },
   'click .btn-logs': function () {
-    Meteor.call('getAppLogs', this._id, function (err) {
-      if (err) { throw err; }
-    });
+    AppUtil.logs(this._id);
   },
   'click .btn-terminal': function () {
     var buildCmd = function (dockerId, termApp) {
@@ -42,9 +40,7 @@ Template.dashboard_apps_layout.events({
     });
   },
   'click .btn-restart': function () {
-    Meteor.call('restartApp', this._id, function (err) {
-      if (err) { throw err; }
-    });
+    AppUtil.restart(this._id);
   },
   'click .btn-folder': function () {
     var exec = require('child_process').exec;
