@@ -1,5 +1,6 @@
 var exec = require('exec');
 var path = require('path');
+var fs = require('fs');
 
 Boot2Docker = {};
 
@@ -23,11 +24,8 @@ Boot2Docker.exists = function (callback) {
 
 Boot2Docker.stop = function (callback) {
   this.exec('stop', function (err, stdout) {
-    if (err) {
-      callback(err);
-    } else {
-      callback(null);
-    }
+    // Sometimes stop returns an error even though it worked
+    callback(null);
   });
 };
 
@@ -200,6 +198,10 @@ Boot2Docker.stats = function (callback) {
       });
     });
   });
+};
+
+Boot2Docker.sshKeyExists = function () {
+  return fs.existsSync(path.join(Util.getHomePath(), '.ssh', 'id_boot2docker'));
 };
 
 /**

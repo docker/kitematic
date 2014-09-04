@@ -75,7 +75,7 @@ VirtualBox.hostOnlyIfs = function (callback) {
         currentIf = value;
         hostOnlyIfs[value] = {};
       }
-      hostOnlyIfs[currentIf][key] = value; 
+      hostOnlyIfs[currentIf][key] = value;
     });
     callback(null, hostOnlyIfs);
   });

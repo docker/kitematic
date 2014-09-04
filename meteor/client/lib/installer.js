@@ -1,4 +1,6 @@
 var async = require('async');
+var fs = require('fs');
+var path = require('path');
 
 Installer = {};
 
@@ -30,10 +32,13 @@ Installer.steps = [
             callback(err);
             return;
           }
-          var needsUpdate = Util.compareVersions(installedVersion, VirtualBox.REQUIRED_VERSION) < 0;
-          if (needsUpdate) {
+          if (Util.compareVersions(installedVersion, VirtualBox.REQUIRED_VERSION) < 0) {
             VirtualBox.install(function (err) {
-              callback(err);
+              if (Util.compareVersions(installedVersion, VirtualBox.REQUIRED_VERSION) < 0) {
+                callback('VirtualBox could not be installed. The installation either failed or was cancelled. Please try closing all VirtualBox instances and try again.');
+              } else {
+                callback(err);
+              }
             });
           } else {
             callback();
@@ -52,10 +57,17 @@ Installer.steps = [
       Boot2Docker.exists(function (err, exists) {
         if (err) { callback(err); return; }
         if (!exists) {
+          var vmFilesPath = path.join(Util.getHomePath(), 'VirtualBox\ VMs', 'boot2docker-vm');
+          if (fs.existsSync(vmFilesPath)) {
+            Util.deleteFolder(vmFilesPath);
+          }
           Boot2Docker.init(function (err) {
             callback(err);
           });
         } else {
+          if (!Boot2Docker.sshKeyExists()) {
+            callback('Boot2Docker SSH key doesn\'t exist. Fix by deleting the existing Boot2Docker VM and re-run the installer. This usually occurs because an old version of Boot2Docker is installed.');
+          }
           Boot2Docker.stop(function (err) {
             if (err) { callback(err); return; }
             Boot2Docker.upgrade(function (err) {
@@ -100,7 +112,7 @@ Installer.steps = [
     },
     pastMessage: 'Started the Boot2Docker VM',
     message: 'Starting the Boot2Docker VM',
-    futureMessage: 'Start the Kitematic VM',
+    futureMessage: 'Start the Kitematic VM'
   },
 
   {
@@ -117,14 +129,14 @@ Installer.steps = [
   // Set up the default Kitematic images
   {
     run: function (callback) {
-      Meteor.call('reloadDefaultContainers', function (err) {
+      Docker.reloadDefaultContainers(function (err) {
         callback(err);
       });
     },
     pastMessage: 'Started the Boot2Docker VM',
     message: 'Setting up the default Kitematic images...',
     subMessage: '(This may take a few minutes)',
-    futureMessage: 'Set up the default Kitematic images',
+    futureMessage: 'Set up the default Kitematic images'
   }
 ];
 

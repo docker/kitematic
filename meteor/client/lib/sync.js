@@ -4,18 +4,19 @@ var fs = require('fs');
 var child_process = require('child_process');
 var exec = require('exec');
 
-var watchers = {};
+Sync = {};
+Sync.watchers = {};
 
-removeAppWatcher = function (id) {
-  if (watchers[id]) {
-    watchers[id].watcher.close();
-    delete watchers[id];
+Sync.removeAppWatcher = function (id) {
+  if (Sync.watchers[id]) {
+    Sync.watchers[id].watcher.close();
+    delete Sync.watchers[id];
   }
 };
 
-addAppWatcher = function (app) {
-  removeAppWatcher(app._id);
-  var appPath = path.join(path.join(Util.getHomePath(), 'Kitematic'), app.name);
+Sync.addAppWatcher = function (app) {
+  Sync.removeAppWatcher(app._id);
+  var appPath = path.join(Util.getHomePath(), 'Kitematic', app.name);
   var vmDir = path.join('/var/lib/docker/binds', app.name);
   var vmPath = 'ssh://docker@localhost:2022/' + vmDir;
   var watcher = chokidar.watch(appPath, {ignored: /.*\.DS_Store/});
@@ -85,7 +86,7 @@ addAppWatcher = function (app) {
     });
   };
 
-  watchers[app._id] = {
+  Sync.watchers[app._id] = {
     watcher: watcher,
     sync: syncFunc
   };
@@ -95,25 +96,25 @@ addAppWatcher = function (app) {
   watcher.on('all', syncFunc);
 };
 
-resolveWatchers = function (callback) {
+Sync.resolveWatchers = function (callback) {
   var apps = Apps.find({}).fetch();
   var ids = _.map(apps, function(app) {
     return app._id;
   });
-  var watcherKeys = _.keys(watchers);
+  var watcherKeys = _.keys(Sync.watchers);
   var toAdd = _.difference(ids, watcherKeys);
   var toRemove = _.difference(watcherKeys, ids);
 
   _.each(toAdd, function (id) {
-    addAppWatcher(Apps.findOne(id), function () {});
+    Sync.addAppWatcher(Apps.findOne(id), function () {});
   });
 
   _.each(toRemove, function (id) {
-    removeAppWatcher(id);
+    Sync.removeAppWatcher(id);
   });
 
   // Run a sync for 'pulling' changes in the volumes.
-  _.each(watchers, function (watcher) {
+  _.each(Sync.watchers, function (watcher) {
     watcher.sync();
   });
 
