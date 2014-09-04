@@ -2,15 +2,27 @@ Template.dashboard_images_settings.events({
   'click .btn-delete-image': function () {
     var result = confirm("Are you sure you want to delete this image?");
     if (result === true) {
-      Meteor.call('deleteImage', this._id, function (err) {
-        if (err) {
-          $('#error-delete-image').html('<small class="error">' + err.reason + '</small>');
-          $('#error-delete-image').fadeIn();
-        } else {
-          removeAppWatcher(this._id);
-          Router.go('dashboard_images');
+      var imageId = this._id;
+      var image = Images.findOne(imageId);
+      var app = Apps.findOne({imageId: imageId});
+      if (!app) {
+        Images.remove({_id: image._id});
+        if (image.docker) {
+          Docker.removeImage(image.docker.Id, function (err) {
+            if (err) { console.error(err); }
+          });
         }
-      });
+        try {
+          Util.deleteFolder(image.path);
+        } catch (e) {
+          console.error(e);
+        }
+        Sync.removeAppWatcher(imageId);
+        Router.go('dashboard_images');
+      } else {
+        $('#error-delete-image').html('<small class="error">This image is currently being used by <a href="/apps/' + app.name + '">' + app.name + '</a>.</small>');
+        $('#error-delete-image').fadeIn();
+      }
     }
   },
   'click #btn-pick-directory': function () {
@@ -22,15 +34,15 @@ Template.dashboard_images_settings.events({
     var pickedDirectory = $picker.val();
     $('#picked-directory-error').html('');
     if (pickedDirectory) {
-      Meteor.call('validateDirectory', pickedDirectory, function (err) {
-        if (err) {
-          $('#picked-directory-error').html(err.reason);
-        } else {
-          Meteor.call('changeDirectory', imageId, pickedDirectory, function (err) {
-            if (err) { throw err; }
-          });
-        }
-      });
+      if (!Util.hasDockerfile(pickedDirectory)) {
+        $('#picked-directory-error').html('Only directories with Dockerfiles are supported now.');
+      } else {
+        Images.update(imageId, {
+          $set: {
+            originPath: pickedDirectory
+          }
+        });
+      }
     }
   }
 });

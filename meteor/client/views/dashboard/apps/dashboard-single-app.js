@@ -33,9 +33,7 @@ Template.dashboard_single_app.events({
     });
   },
   'click .btn-restart': function () {
-    Meteor.call('restartApp', this._id, function (err) {
-      if (err) { throw err; }
-    });
+    AppUtil.restart(this._id);
   },
   'click .btn-folder': function () {
     var exec = require('child_process').exec;
@@ -44,8 +42,6 @@ Template.dashboard_single_app.events({
     });
   },
   'click .btn-logs': function () {
-    Meteor.call('getAppLogs', this._id, function (err) {
-      if (err) { throw err; }
-    });
+    AppUtil.logs(this._id);
   }
 });

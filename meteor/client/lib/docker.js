@@ -1,9 +1,16 @@
-Dockerode = Meteor.require('dockerode');
-
-var DOCKER_HOST='192.168.60.103';
-docker = new Dockerode({host: DOCKER_HOST, port: '2375'});
+var Dockerode = require('dockerode');
+var async = require('async');
+var exec = require('exec');
+var path = require('path');
 
 Docker = {};
+Docker.DOCKER_HOST = '192.168.60.103';
+
+Docker.client = function () {
+  return new Dockerode({host: Docker.DOCKER_HOST, port: '2375'});
+};
+
+var docker = Docker.client();
 
 Docker.removeContainer = function (containerId, callback) {
   var container = docker.getContainer(containerId);
@@ -15,10 +22,6 @@ Docker.removeContainer = function (containerId, callback) {
       callback(null);
     });
   });
-};
-
-Docker.removeContainerSync = function (containerId) {
-  return Meteor._wrapAsync(Docker.removeContainer)(containerId);
 };
 
 Docker.getContainerData = function (containerId, callback) {
@@ -35,10 +38,6 @@ Docker.getContainerData = function (containerId, callback) {
       return;
     }
   });
-};
-
-Docker.getContainerDataSync = function (containerId) {
-  return Meteor._wrapAsync(Docker.getContainerData)(containerId);
 };
 
 Docker.runContainer = function (app, image, callback) {
@@ -72,14 +71,14 @@ Docker.runContainer = function (app, image, callback) {
       if (err) { callback(err, null); return; }
       console.log('Started container: ' + container.id);
       // Use dig to refresh the DNS
-      exec('/usr/bin/dig dig ' + app.name + '.kite @172.17.42.1 ', function() {});
-      callback(null, container);
+      exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function(err, stdout, stderr) {
+        console.log(err);
+        console.log(stdout);
+        console.log(stderr);
+        callback(null, container);
+      });
     });
   });
-};
-
-Docker.runContainerSync = function (app, image) {
-  return Meteor._wrapAsync(Docker.runContainer)(app, image);
 };
 
 Docker.restartContainer = function (containerId, callback) {
@@ -93,10 +92,6 @@ Docker.restartContainer = function (containerId, callback) {
     console.log('Restarted container: ' + containerId);
     callback(null);
   });
-};
-
-Docker.restartContainerSync = function (containerId) {
-  return Meteor._wrapAsync(Docker.restartContainer)(containerId);
 };
 
 var convertVolumeObjToArray = function (obj) {
@@ -127,10 +122,6 @@ Docker.getImageData = function (imageId, callback) {
   });
 };
 
-Docker.getImageDataSync = function (imageId) {
-  return Meteor._wrapAsync(Docker.getImageData)(imageId);
-};
-
 Docker.removeImage = function (imageId, callback) {
   var image = docker.getImage(imageId.toLowerCase());
   image.remove({force: true}, function (err) {
@@ -140,17 +131,13 @@ Docker.removeImage = function (imageId, callback) {
   });
 };
 
-Docker.removeImageSync = function (imageId) {
-  return Meteor._wrapAsync(Docker.removeImage)(imageId);
-};
-
 Docker.removeBindFolder = function (name, callback) {
   exec(path.join(Util.getBinDir(), 'boot2docker') + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function (err, stdout) {
     callback(err, stdout);
   });
 };
 
-var defaultContainerOptions = function () {
+Docker.defaultContainerOptions = function () {
   return [
     {
       Image: 'kite-dns',
@@ -161,10 +148,12 @@ var defaultContainerOptions = function () {
   ];
 };
 
-checkDefaultImages = function (callback) {
-  var defaultNames = defaultContainerOptions().map(function (container) {
-    return container.name;
-  });
+Docker.defaultContainerNames = Docker.defaultContainerOptions().map(function (container) {
+  return container.name;
+});
+
+Docker.checkDefaultImages = function (callback) {
+  var defaultNames = Docker.defaultContainerNames;
   async.each(defaultNames, function (name, innerCallback) {
     var image = docker.getImage(name);
     image.inspect(function (err) {
@@ -187,11 +176,8 @@ checkDefaultImages = function (callback) {
   });
 };
 
-resolveDefaultImages = function () {
-  var defaultNames = defaultContainerOptions().map(function (container) {
-    return container.name;
-  });
-  async.each(defaultNames, function (name, innerCallback) {
+Docker.resolveDefaultImages = function () {
+  async.each(Docker.defaultContainerNames, function (name, innerCallback) {
     var image = docker.getImage(name);
     image.inspect(function (err) {
       if (err) {
@@ -214,11 +200,8 @@ resolveDefaultImages = function () {
   });
 };
 
-checkDefaultContainers = function(callback) {
-  var defaultNames = defaultContainerOptions().map(function (container) {
-    return container.name;
-  });
-  async.each(defaultNames, function (name, innerCallback) {
+Docker.checkDefaultContainers = function(callback) {
+  async.each(Docker.defaultContainerNames, function (name, innerCallback) {
     var container = docker.getContainer(name);
     container.inspect(function (err, data) {
       if (err) {
@@ -240,42 +223,33 @@ checkDefaultContainers = function(callback) {
   });
 };
 
-resolveDefaultContainers = function (callback) {
-  var defaultNames = defaultContainerOptions().map(function (container) {
-    return container.name;
-  });
-  killAndRemoveContainers(defaultNames, function (err) {
+Docker.resolveDefaultContainers = function (callback) {
+  Docker.killAndRemoveContainers(Docker.defaultContainerNames, function (err) {
     if (err) {
       callback(err);
       return;
     }
-    upContainers(defaultContainerOptions(), function (err) {
+    Docker.upContainers(Docker.defaultContainerOptions(), function (err) {
       callback(err);
     });
   });
 };
 
-reloadDefaultContainers = function (callback) {
+Docker.reloadDefaultContainers = function (callback) {
   console.log('Reloading default containers.');
-
-  var defaultNames = defaultContainerOptions().map(function (container) {
-    return container.name;
-  });
-
   var ready = false;
   async.until(function () {
     return ready;
   }, function (callback) {
-    docker.listContainers(function (err) {
+    docker.listContainers(function (err, containers) {
       if (!err) {
         ready = true;
       }
       callback();
     });
   }, function (err) {
-    console.log(err);
     console.log('Removing old Kitematic default containers.');
-    killAndRemoveContainers(defaultNames, function (err) {
+    Docker.killAndRemoveContainers(Docker.defaultContainerNames, function (err) {
       console.log('Removed old Kitematic default containers.');
       if (err) {
         console.log('Removing old Kitematic default containers ERROR.');
@@ -289,7 +263,7 @@ reloadDefaultContainers = function (callback) {
           return;
         }
         console.log('Starting new Kitematic default containers.');
-        upContainers(defaultContainerOptions(), function (err) {
+        Docker.upContainers(Docker.defaultContainerOptions(), function (err) {
           callback(err);
         });
       });
@@ -297,7 +271,7 @@ reloadDefaultContainers = function (callback) {
   });
 };
 
-upContainers = function (optionsList, callback) {
+Docker.upContainers = function (optionsList, callback) {
    var createDefaultContainer = function (options, innerCallback) {
     docker.createContainer(options, function (err, container) {
       if (err) {
@@ -340,7 +314,7 @@ upContainers = function (optionsList, callback) {
   });
 };
 
-removeImages = function (names, callback) {
+Docker.removeImages = function (names, callback) {
   async.each(names, function (name, innerCallback) {
     var image = docker.getImage(name);
     image.remove(function (err) {
@@ -361,7 +335,7 @@ removeImages = function (names, callback) {
   });
 };
 
-killAndRemoveContainers = function (names, callback) {
+Docker.killAndRemoveContainers = function (names, callback) {
   async.each(names, function (name, innerCallback) {
     var container = docker.getContainer(name);
     container.inspect(function (err, data) {
@@ -391,50 +365,3 @@ killAndRemoveContainers = function (names, callback) {
     callback(err);
   });
 };
-
-Meteor.methods({
-  runApp: function (app) {
-    this.unblock();
-    var image = Images.findOne({_id: app.imageId});
-    // Delete old container if one already exists
-    try {
-      Docker.removeContainerSync(app.name);
-    } catch (e) {}
-    try {
-      var container = Docker.runContainerSync(app, image);
-      var containerData = Docker.getContainerDataSync(container.id);
-      // Set a delay for app to spin up
-      Meteor.setTimeout(function () {
-        Apps.update(app._id, {$set: {
-          docker: containerData,
-          status: 'READY'
-        }});
-      }, 2500);
-    } catch (e) {
-      console.error(e);
-    }
-  },
-  getDockerHost: function () {
-    return DOCKER_HOST;
-  },
-  reloadDefaultContainers: function () {
-    this.unblock();
-    return Meteor._wrapAsync(reloadDefaultContainers)();
-  },
-  checkDefaultImages: function () {
-    this.unblock();
-    return Meteor._wrapAsync(checkDefaultImages)();
-  },
-  resolveDefaultImages: function () {
-    this.unblock();
-    return Meteor._wrapAsync(resolveDefaultImages)();
-  },
-  checkDefaultContainers: function () {
-    this.unblock();
-    return Meteor._wrapAsync(checkDefaultContainers)();
-  },
-  resolveDefaultContainers: function () {
-    this.unblock();
-    return Meteor._wrapAsync(resolveDefaultContainers)();
-  }
-});
