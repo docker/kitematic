@@ -5,8 +5,8 @@
   "version": "0.1.0",
   "window": {
     "show": false,
-    "toolbar": true,
-    "frame": true,
+    "toolbar": false,
+    "frame": false,
     "width": 800,
     "height": 600,
     "resizable": false
