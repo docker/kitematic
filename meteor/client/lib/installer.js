@@ -118,7 +118,7 @@ Installer.steps = [
   {
     run: function (callback) {
       reloadDefaultContainers(function (err) {
-        if (err) { console.error(err); }
+        callback(err);
       });
     },
     pastMessage: 'Started the Boot2Docker VM',
