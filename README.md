@@ -44,7 +44,6 @@ Kitematic is still in Beta. Any effort in helping us find issues and improving t
 (This will improve over time.)
 
 - Remove VirtualBox
-- rm /usr/local/bin/boot2docker
 - sudo route delete -net 172.17.0.0 -netmask 255.255.0.0 -gateway 192.168.60.103 (disable routing to containers through VM)
 - rm -rf ~/Library/Application\ Support/Kitematic (remove app data)
 - rm /Library/LaunchAgents/com.kitematic.route.plist (remove launch job that sets up routing to the containers)
