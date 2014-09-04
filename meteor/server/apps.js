@@ -1,55 +1,10 @@
-Apps.restart = function (app, callback) {
-  if (app.docker && app.docker.Id) {
-    try {
-      Docker.restartContainerSync(app.docker.Id);
-    } catch (e) {
-      console.error(e);
-    }
-    var containerData = Docker.getContainerDataSync(app.docker.Id);
-    Fiber(function () {
-      Apps.update(app._id, {$set: {
-        status: 'READY',
-        docker: containerData
-      }});
-    }).run();
-    callback(null);
-    // Use dig to refresh the DNS
-    exec('/usr/bin/dig dig ' + app.name + '.kite @172.17.42.1 ', function() {});
-  } else {
-    callback(null);
-  }
+removeBindFolder = function (name, callback) {
+  exec(path.join(getBinDir(), 'boot2docker') + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function(err, stdout) {
+    callback(err, stdout);
+  });
 };
 
-Apps.logs = function (app) {
-  if (app.docker && app.docker.Id) {
-    var container = docker.getContainer(app.docker.Id);
-    container.logs({follow: false, stdout: true, stderr: true, timestamps: true, tail: 300}, function (err, response) {
-      if (err) { throw err; }
-      Fiber(function () {
-        Apps.update(app._id, {
-          $set: {
-            logs: []
-          }
-        });
-      }).run();
-      var logs = [];
-      response.setEncoding('utf8');
-      response.on('data', function (line) {
-        logs.push(convert.toHtml(line.slice(8)));
-        Fiber(function () {
-          Apps.update(app._id, {
-            $set: {
-              logs: logs
-            }
-          });
-        }).run();
-      });
-      response.on('end', function () {});
-    });
-  }
-};
-
-Apps.recover = function (callback) {
+recoverApps = function (callback) {
   var apps = Apps.find({}).fetch();
   _.each(apps, function (app) {
     // Update the app with the latest container info
@@ -62,7 +17,7 @@ Apps.recover = function (callback) {
         console.log('restarting: ' + app.name);
         console.log(app.docker.Id);
         Fiber(function () {
-          Apps.restart(app, function (err) {
+          restartApp(app, function (err) {
             if (err) { console.error(err); }
           });
         }).run();
@@ -74,8 +29,7 @@ Apps.recover = function (callback) {
 
 Meteor.methods({
   recoverApps: function () {
-    this.unblock();
-    return Meteor._wrapAsync(Apps.recover)();
+    return Meteor._wrapAsync(recoverApps)();
   },
   configVar: function (appId, configVars) {
     this.unblock();
@@ -94,38 +48,64 @@ Meteor.methods({
     if (!app) {
       throw new Meteor.Error(403, 'No app found with this ID');
     }
-    Apps.remove({_id: app._id});
+    deleteApp(app, function (err) {
+      if (err) { console.error(err); }
+      var appPath = path.join(KITE_PATH, app.name);
+      deleteFolder(appPath);
+      removeBindFolder(app.name, function () {
+        console.log('Deleted Kite ' + app.name + ' directory.');
+        Fiber(function () {
+          Apps.remove({_id: app._id});
+        }).run();
+      });
+    });
   },
   createApp: function (formData) {
-    this.unblock();
     var validationResult = formValidate(formData, FormSchema.formCreateApp);
     if (validationResult.errors) {
       throw new Meteor.Error(400, 'Validation Failed.', validationResult.errors);
     } else {
       var cleaned = validationResult.cleaned;
-      var appName = cleaned.name;
-      var appPath = path.join(KITE_PATH, appName);
+      var appObj = {
+        name: cleaned.name,
+        imageId: cleaned.imageId,
+        status: 'STARTING',
+        config: {}
+      };
+      var appId = Apps.insert(appObj);
+      var appPath = path.join(KITE_PATH, appObj.name);
       if (!fs.existsSync(appPath)) {
-        console.log('Created Kite ' + appName + ' directory.');
+        console.log('Created Kite ' + appObj.name + ' directory.');
         fs.mkdirSync(appPath, function (err) {
           if (err) { throw err; }
         });
       }
-      var appObj = {
-        name: appName,
-        imageId: cleaned.imageId,
-        status: 'STARTING',
-        config: {},
-        path: appPath
-      };
-      Apps.insert(appObj);
+      Apps.update(appId, {
+        $set: {
+          'config.APP_ID': appId,
+          path: appPath
+        }
+      });
+      var image = Images.findOne(appObj.imageId);
+      loadKiteVolumes(image.path, appObj.name);
+      var app = Apps.findOne(appId);
+      removeBindFolder(app.name, function (err) {
+        if (err) {
+          console.error(err);
+        }
+        Fiber(function () {
+          Meteor.call('runApp', app, function (err) {
+            if (err) { throw err; }
+          });
+        }).run();
+      });
     }
   },
   getAppLogs: function (appId) {
     this.unblock();
     var app = Apps.findOne(appId);
     if (app) {
-      Apps.logs(app, function (err) {
+      getAppLogs(app, function (err) {
         if (err) { throw err; }
       });
     }
@@ -137,13 +117,12 @@ Meteor.methods({
       Apps.update(app._id, {$set: {
         status: 'STARTING'
       }});
-      Apps.restart(app, function (err) {
+      restartApp(app, function (err) {
         if (err) { console.error(err); }
       });
     }
   },
   resolveWatchers: function () {
-    this.unblock();
     return Meteor._wrapAsync(resolveWatchers)();
   }
 });
