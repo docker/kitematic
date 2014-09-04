@@ -80,7 +80,7 @@ AppUtil.logs = function (appId) {
   var app = Apps.findOne(appId);
   if (app.docker && app.docker.Id) {
     var container = docker.getContainer(app.docker.Id);
-    container.logs({follow: false, stdout: true, stderr: true, timestamps: true, tail: 300}, function (err, response) {
+    container.logs({follow: false, stdout: true, stderr: true, timestamps: false, tail: 300}, function (err, response) {
       if (err) { throw err; }
       Apps.update(app._id, {
         $set: {
