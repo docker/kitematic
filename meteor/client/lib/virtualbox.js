@@ -4,9 +4,9 @@ var path = require('path');
 
 VirtualBox = {};
 
-VirtualBox.REQUIRED_VERSION = '4.3.12';
-VirtualBox.INCLUDED_VERSION = '4.3.12';
-VirtualBox.INSTALLER_FILENAME = 'virtualbox-4.3.12.pkg';
+VirtualBox.REQUIRED_VERSION = '4.3.14';
+VirtualBox.INCLUDED_VERSION = '4.3.14';
+VirtualBox.INSTALLER_FILENAME = 'virtualbox-4.3.14.pkg';
 
 // Info for the hostonly interface we add to the VM.
 VirtualBox.HOSTONLY_HOSTIP = '192.168.60.3';
@@ -25,6 +25,8 @@ VirtualBox.exec = function (command, callback) {
 VirtualBox.install = function (callback) {
   // -W waits for the process to close before finishing.
   exec('open -W ' + path.join(Util.getBinDir(), this.INSTALLER_FILENAME), function (error, stdout, stderr) {
+    console.log(stdout);
+    console.log(stderr);
     if (error) {
       callback(error);
       return;
