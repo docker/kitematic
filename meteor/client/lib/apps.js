@@ -32,7 +32,11 @@ AppUtil.restartHelper = function (app) {
           docker: data
         }});
         // Use dig to refresh the DNS
-        exec('/usr/bin/dig dig ' + app.name + '.kite @172.17.42.1', function() {});
+        exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function(err, stdout, stderr) {
+          console.log(err);
+          console.log(stdout);
+          console.log(stderr);
+        });
       });
     });
   }
