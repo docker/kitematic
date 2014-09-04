@@ -118,9 +118,9 @@ ImageUtil.rebuildImage = function (imageId) {
     });
     _.each(apps, function (app) {
       app = Apps.findOne(app._id);
-      /*Meteor.call('runApp', app, function (err) {
+      AppUtil.run(app, function (err) {
         if (err) { console.error(err); }
-      });*/
+      });
     });
   } else {
     ImageUtil.rebuild(image, function (err) {
