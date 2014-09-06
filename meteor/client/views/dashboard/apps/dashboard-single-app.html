@@ -7,10 +7,14 @@
         {{#if $eq status 'STARTING'}}
           <span style="color: #D6D6D6;" class="status starting"><i class="fa fa-circle-o-notch fa-spin"></i></span>
         {{else}}
-          {{#if $eq status 'ERROR'}}
-            <span style="color: #F74B1F;" class="status"><i class="fa fa-circle-o"></i></span>
+          {{#if $eq status 'STOPPING'}}
+            <span style="color: #D6D6D6;" class="status stopping"><i class="fa fa-circle-o-notch fa-spin"></i></span>
           {{else}}
-            <span style="color: #D6D6D6;" class="status"><i class="fa fa-circle-o"></i></span>
+            {{#if $eq status 'ERROR'}}
+              <span style="color: #F74B1F;" class="status"><i class="fa fa-circle-o"></i></span>
+            {{else}}
+              <span style="color: #D6D6D6;" class="status"><i class="fa fa-circle-o"></i></span>
+            {{/if}}
           {{/if}}
         {{/if}}
       {{/if}}
@@ -18,7 +22,11 @@
       <small><a onclick="trackLink('app image detail')" href="/images/{{image._id}}">{{image.meta.name}}</a></small>
     </h5>
     <div class="options">
+      {{#if $eq status 'STOPPED'}}
+      <a href="#" onclick="trackLink('start app')" class="btn-icon btn-start" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Start App"><span class="typcn typcn-media-play-outline"></span></a>
+      {{/if}}
       {{#if $eq status 'READY'}}
+        <a href="#" onclick="trackLink('stop app')" class="btn-icon btn-stop" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Stop App"><span class="typcn typcn-media-stop"></span></a>
         {{#if url}}
           <a href="{{url}}" onclick="trackLink('view app')" class="btn-icon btn-view" target="_blank" data-toggle="tooltip" data-placement="bottom" title="View App"><span class="typcn typcn-eye-outline"></span></a>
         {{/if}}
