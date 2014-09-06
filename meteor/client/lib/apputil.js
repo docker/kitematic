@@ -47,6 +47,45 @@ AppUtil.restartHelper = function (app) {
   }
 };
 
+AppUtil.start = function (appId) {
+  var app = Apps.findOne(appId);
+  if (app && app.docker) {
+    Apps.update(app._id, {$set: {
+      status: 'STARTING'
+    }});
+    Docker.getContainerData(app.docker.Id, function (err, data) {
+      if (err) { console.error(err); }
+      // Use dig to refresh the DNS
+      exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function(err, stdout, stderr) {
+        console.log(err);
+        console.log(stdout);
+        console.log(stderr);
+        Apps.update(app._id, {$set: {
+          status: 'READY',
+          docker: data
+        }});
+      });
+    });
+  }
+};
+
+AppUtil.stop = function (appId) {
+  var app = Apps.findOne(appId);
+  if (app && app.docker) {
+    Apps.update(app._id, {$set: {
+      status: 'STOPPING'
+    }});
+    Docker.stopContainer(app.docker.Id, function (err) {
+      if (err) { console.error(err); }
+      Meteor.setTimeout(function () {
+        Apps.update(app._id, {$set: {
+          status: 'STOPPED'
+        }});
+      }, 2500);
+    });
+  }
+};
+
 AppUtil.restart = function (appId) {
   var app = Apps.findOne(appId);
   if (app && app.docker) {
@@ -115,7 +154,7 @@ AppUtil.recover = function () {
     }
     var container = Docker.client().getContainer(app.docker.Id);
     container.inspect(function (err, data) {
-      if (app.status !== 'STARTING' && data && data.State && !data.State.Running) {
+      if (app.status !== 'STARTING' && app.status !== 'STOPPING' && app.status !== 'STOPPED' && data && data.State && !data.State.Running) {
         console.log('Restarting: ' + app.name);
         console.log(app.docker.Id);
         AppUtil.restartHelper(app, function (err) {
