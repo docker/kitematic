@@ -156,8 +156,11 @@ Util.compareVersions = function (v1, v2, options) {
 };
 
 trackLink = function (trackLabel) {
-  if (trackLabel) {
-    console.log(trackLabel);
-    ga('send', 'event', 'link', 'click', trackLabel);
+  var install = Installs.findOne({});
+  if (install && install.tracking) {
+    if (trackLabel) {
+      console.log(trackLabel);
+      ga('send', 'event', 'link', 'click', trackLabel);
+    }
   }
 };

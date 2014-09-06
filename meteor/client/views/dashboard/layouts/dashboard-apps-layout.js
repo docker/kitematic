@@ -1,3 +1,5 @@
+var path = require('path');
+
 Template.dashboard_apps_layout.rendered = function () {
   Meteor.setInterval(function () {
     $('.header .icons a').tooltip();
@@ -24,18 +26,15 @@ Template.dashboard_apps_layout.events({
     AppUtil.logs(this._id);
   },
   'click .btn-terminal': function () {
-    var buildCmd = function (dockerId, termApp) {
-      return "echo 'boot2docker --vm=\"boot2docker-vm\" ssh -t \"sudo docker-enter " + dockerId + "\"' > /tmp/nsenter-start && chmod +x /tmp/nsenter-start && open -a " + termApp + " /tmp/nsenter-start";
-    };
     var app = this;
-    var nsenterCmd = buildCmd(app.docker.Id, 'iTerm.app');
+    var cmd = path.join(Util.getBinDir(), 'boot2docker') + ' ssh -t "sudo docker-enter ' + app.docker.Id + '"';
+    var terminalCmd = path.join(Util.getBinDir(),  'terminal') + ' ' + cmd;
     var exec = require('child_process').exec;
-    exec(nsenterCmd, function (err) {
+    console.log(terminalCmd);
+    exec(terminalCmd, function (err, stdout) {
+      console.log(stdout);
       if (err) {
-        nsenterCmd = buildCmd(app.docker.Id, 'Terminal.app');
-        exec(nsenterCmd, function (err) {
-          if (err) { throw err; }
-        });
+        console.log(err);
       }
     });
   },
