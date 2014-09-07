@@ -81,6 +81,32 @@ Docker.runContainer = function (app, image, callback) {
   });
 };
 
+Docker.startContainer = function (containerId, callback) {
+  var container = docker.getContainer(containerId);
+  container.stop(function (err) {
+    if (err) {
+      console.log(err);
+      callback(err);
+      return;
+    }
+    console.log('Started container: ' + containerId);
+    callback(null);
+  });
+};
+
+Docker.stopContainer = function (containerId, callback) {
+  var container = docker.getContainer(containerId);
+  container.stop(function (err) {
+    if (err) {
+      console.log(err);
+      callback(err);
+      return;
+    }
+    console.log('Stopped container: ' + containerId);
+    callback(null);
+  });
+};
+
 Docker.restartContainer = function (containerId, callback) {
   var container = docker.getContainer(containerId);
   container.restart(function (err) {
