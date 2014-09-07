@@ -267,13 +267,13 @@ Docker.reloadDefaultContainers = function (callback) {
   async.until(function () {
     return ready;
   }, function (callback) {
-    docker.listContainers(function (err, containers) {
+    docker.listContainers(function (err) {
       if (!err) {
         ready = true;
       }
       callback();
     });
-  }, function (err) {
+  }, function () {
     console.log('Removing old Kitematic default containers.');
     Docker.killAndRemoveContainers(Docker.defaultContainerNames, function (err) {
       console.log('Removed old Kitematic default containers.');
