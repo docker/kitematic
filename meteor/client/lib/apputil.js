@@ -53,17 +53,20 @@ AppUtil.start = function (appId) {
     Apps.update(app._id, {$set: {
       status: 'STARTING'
     }});
-    Docker.getContainerData(app.docker.Id, function (err, data) {
+    Docker.startContainer(app.docker.Id, function (err) {
       if (err) { console.error(err); }
-      // Use dig to refresh the DNS
-      exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function(err, stdout, stderr) {
-        console.log(err);
-        console.log(stdout);
-        console.log(stderr);
-        Apps.update(app._id, {$set: {
-          status: 'READY',
-          docker: data
-        }});
+      Docker.getContainerData(app.docker.Id, function (err, data) {
+        if (err) { console.error(err); }
+        // Use dig to refresh the DNS
+        exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function(err, stdout, stderr) {
+          console.log(err);
+          console.log(stdout);
+          console.log(stderr);
+          Apps.update(app._id, {$set: {
+            status: 'READY',
+            docker: data
+          }});
+        });
       });
     });
   }

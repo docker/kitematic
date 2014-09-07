@@ -83,7 +83,7 @@ Docker.runContainer = function (app, image, callback) {
 
 Docker.startContainer = function (containerId, callback) {
   var container = docker.getContainer(containerId);
-  container.stop(function (err) {
+  container.start(function (err) {
     if (err) {
       console.log(err);
       callback(err);
