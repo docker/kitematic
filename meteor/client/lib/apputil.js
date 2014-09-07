@@ -131,7 +131,6 @@ AppUtil.logs = function (appId) {
           logs: []
         }
       });
-      var logs = [];
       response.setEncoding('utf8');
       response.on('data', function (line) {
         Apps.update(app._id, {

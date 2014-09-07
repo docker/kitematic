@@ -27,7 +27,7 @@ Template.dashboard_settings.events({
       $set: {
         tracking: true
       }
-    })
+    });
   },
   'click .btn-usage-analytics-off': function () {
     var install = Installs.findOne({});
@@ -35,7 +35,7 @@ Template.dashboard_settings.events({
       $set: {
         tracking: false
       }
-    })
+    });
   }
 });
 
