@@ -19,6 +19,12 @@
                   <a onclick="trackLink('go to app image')" href="/images/{{image._id}}" class="btn-image" data-toggle="tooltip" data-placement="bottom" title="Image" data-container="body"><span class="typcn typcn-camera-outline"></span></a>
                 {{/if}}
                 <a onclick="trackLink('open app folder')" href="#" class="btn-folder" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Folder" data-container="body"><span class="typcn typcn-folder-open"></span></a>
+                {{#if $eq status 'READY'}}
+                  <a href="#" onclick="trackLink('stop app')" class="btn-icon btn-stop" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Stop App"><span class="typcn typcn-media-pause-outline"></span></a>
+                {{/if}}
+                {{#if $eq status 'STOPPED'}}
+                <a href="#" onclick="trackLink('start app')" class="btn-icon btn-start" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Start App"><span class="typcn typcn-media-play-outline"></span></a>
+                {{/if}}
                 <a onclick="trackLink('restart app')" href="#" class="btn-restart" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Restart" data-container="body"><span class="typcn typcn-refresh-outline"></span></a>
               </span>
             </h3>

@@ -1,3 +1,5 @@
+var path = require('path');
+
 Template.dashboard_apps_layout.rendered = function () {
   Meteor.setInterval(function () {
     $('.header .icons a').tooltip();
@@ -35,5 +37,13 @@ Template.dashboard_apps_layout.events({
     exec('open ' + this.path, function (err) {
       if (err) { throw err; }
     });
+  },
+  'click .btn-start': function () {
+    AppUtil.start(this._id);
+    $('.btn-icon').tooltip('hide');
+  },
+  'click .btn-stop': function () {
+    AppUtil.stop(this._id);
+    $('.btn-icon').tooltip('hide');
   }
 });

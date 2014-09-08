@@ -81,6 +81,32 @@ Docker.runContainer = function (app, image, callback) {
   });
 };
 
+Docker.startContainer = function (containerId, callback) {
+  var container = docker.getContainer(containerId);
+  container.start(function (err) {
+    if (err) {
+      console.log(err);
+      callback(err);
+      return;
+    }
+    console.log('Started container: ' + containerId);
+    callback(null);
+  });
+};
+
+Docker.stopContainer = function (containerId, callback) {
+  var container = docker.getContainer(containerId);
+  container.stop(function (err) {
+    if (err) {
+      console.log(err);
+      callback(err);
+      return;
+    }
+    console.log('Stopped container: ' + containerId);
+    callback(null);
+  });
+};
+
 Docker.restartContainer = function (containerId, callback) {
   var container = docker.getContainer(containerId);
   container.restart(function (err) {
@@ -241,13 +267,13 @@ Docker.reloadDefaultContainers = function (callback) {
   async.until(function () {
     return ready;
   }, function (callback) {
-    docker.listContainers(function (err, containers) {
+    docker.listContainers(function (err) {
       if (!err) {
         ready = true;
       }
       callback();
     });
-  }, function (err) {
+  }, function () {
     console.log('Removing old Kitematic default containers.');
     Docker.killAndRemoveContainers(Docker.defaultContainerNames, function (err) {
       console.log('Removed old Kitematic default containers.');

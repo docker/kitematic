@@ -39,4 +39,17 @@
       {{/if}}
     </div>
   </div>
+  <div class="section dashboard-settings">
+    <div class="left-section">
+      <h4>Usage Analytics</h4>
+      <p class="help-block">Send usage analytics to help us improve the developer experience. No sensitive data will be tracked. We really appreciate the help.</p>
+    </div>
+    <div class="right-section">
+      {{#if install.tracking}}
+        <a onclick="trackLink('turn off usage analytics')" class="btn btn-negative btn-usage-analytics-off">Turn Off Usage Analytics</a>
+      {{else}}
+        <a onclick="trackLink('turn on usage analytics')" class="btn btn-positive btn-usage-analytics-on">Turn On Usage Analytics</a>
+      {{/if}}
+    </div>
+  </div>
 </template>
