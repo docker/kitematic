@@ -1,19 +1,7 @@
 {
   "name": "Kitematic",
-  "main": "index.html",
-  "node-remote": "<local>",
-  "version": "0.1.0",
-  "window": {
-    "show": false,
-    "toolbar": false,
-    "frame": false,
-    "width": 800,
-    "height": 600,
-    "resizable": false
-  },
-  "engines": {
-    "node": "0.11.13"
-  },
+  "main": "index.js",
+  "version": "0.2.0",
   "dependencies": {
     "async": "^0.9.0",
     "chokidar": "git+https://github.com/usekite/chokidar.git",

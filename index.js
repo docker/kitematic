@@ -4,6 +4,9 @@ var os = require('os');
 var fs = require('fs');
 var path = require('path');
 
+var app = require('app');
+var BrowserWindow = require('browser-window');
+
 var freeport = function (callback) {
   var server = net.createServer();
   var port = 0;
@@ -52,7 +55,6 @@ var start = function (callback) {
           var started = false;
           mongoChild.stdout.setEncoding('utf8');
           mongoChild.stdout.on('data', function (data) {
-            console.log(data);
             if (data.indexOf('waiting for connections on port ' + mongoPort)) {
               if (!started) {
                 started = true;
@@ -68,7 +70,6 @@ var start = function (callback) {
               user_env.BIND_IP = '127.0.0.1';
               user_env.DB_PATH = dataPath;
               user_env.MONGO_URL = 'mongodb://localhost:' + mongoPort + '/meteor';
-              console.log(path.join(process.cwd(), 'resources', 'node'));
               var nodeChild = child_process.spawn(path.join(process.cwd(), 'resources', 'node'), ['./bundle/main.js'], {
                 env: user_env
               });
@@ -94,40 +95,33 @@ var start = function (callback) {
   }
 };
 
-start(function (url, nodeChild, mongoChild) {
-  var cleanUpChildren = function () {
-    console.log('Cleaning up children.')
-    mongoChild.kill();
-    nodeChild.kill();
-  };
-  if (nodeChild && mongoChild) {
-    process.on('exit', cleanUpChildren);
-    process.on('uncaughtException', cleanUpChildren);
-    process.on('SIGINT', cleanUpChildren);
-    process.on('SIGTERM', cleanUpChildren);
-  }
+app.on('activate-with-no-open-windows', function () {
+  mainWindow.show();
+  return false;
+});
 
-  var gui = require('nw.gui');
-  var mainWindow = gui.Window.get();
-  gui.App.on('reopen', function () {
-    mainWindow.show();
-  });
-  setTimeout(function () {
-    mainWindow.window.location = url;
-    mainWindow.on('loaded', function () {
-      mainWindow.show();
-    });
-  }, 400);
-  mainWindow.on('close', function (type) {
-    this.hide();
-    console.log('closed');
-    if (type === 'quit') {
-      console.log('here');
-      if (nodeChild && mongoChild) {
-        cleanUpChildren();
-      }
-      this.close(true);
+app.on('ready', function() {
+  start(function (url, nodeChild, mongoChild) {
+    var cleanUpChildren = function () {
+      console.log('Cleaning up children.')
+      mongoChild.kill();
+      nodeChild.kill();
+      app.quit();
+      process.exit();
+    };
+
+    if (nodeChild && mongoChild) {
+      process.on('exit', cleanUpChildren);
+      process.on('uncaughtException', cleanUpChildren);
+      process.on('SIGINT', cleanUpChildren);
+      process.on('SIGTERM', cleanUpChildren);
     }
-    console.log('Window Closed.');
+
+    // Create the browser window.
+    mainWindow = new BrowserWindow({width: 800, height: 578, frame:false, resizable: false});
+
+    // and load the index.html of the app.
+    mainWindow.loadUrl(url);
+    mainWindow.show();
   });
 });

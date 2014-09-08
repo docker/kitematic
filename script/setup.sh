@@ -67,6 +67,10 @@ chmod +x $BOOT2DOCKER_CLI_FILE
 popd
 
 NPM="$BASE/cache/node/bin/npm"
-$NPM install
+
+export npm_config_disturl=https://gh-contractor-zcbenz.s3.amazonaws.com/atom-shell/dist
+export npm_config_target=0.16.0
+export npm_config_arch=ia32
+HOME=~/.atom-shell-gyp $NPM install
 
 popd

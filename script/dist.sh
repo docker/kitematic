@@ -6,45 +6,57 @@ source $DIR/colors.sh
 source $DIR/versions.sh
 
 BASE=$DIR/..
+NPM="$BASE/cache/node/bin/npm"
+
+pushd $BASE/meteor
+
+$BASE/script/setup.sh
+rm -rf ../bundle
+
+cecho "-----> Building bundle from Meteor app, this may take a few minutes..." $blue
+meteor bundle --directory ../bundle
+
+cd ../bundle
+
+cecho "-----> Installing bundle npm packages." $blue
+pushd programs/server
+$NPM install
+popd
+
+cecho "Bundle created." $green
+
+popd
 
 pushd $BASE
-
-if [ ! -d bundle ]; then
-  cecho "No bundle, run script/bundle.sh first." $red
-  exit 1
-fi
 
 rm -rf dist/osx/Kitematic.app
 rm -rf dist/osx/Kitematic.zip
 mkdir -p dist/osx/
 
 cecho "-----> Creating Kitematic.app..." $blue
-find cache/node-webkit -name "debug\.log" -print0 | xargs -0 rm -rf
-cp -R cache/node-webkit/node-webkit.app dist/osx/
-mv dist/osx/node-webkit.app dist/osx/Kitematic.app
-mkdir -p dist/osx/Kitematic.app/Contents/Resources/app.nw
+find cache/atom-shell -name "debug\.log" -print0 | xargs -0 rm -rf
+cp -R cache/atom-shell/Atom.app dist/osx/
+mv dist/osx/Atom.app dist/osx/Kitematic.app
+mkdir -p dist/osx/Kitematic.app/Contents/Resources/app
 
 cecho "-----> Copying meteor bundle into Kitematic.app..." $blue
-cp -R bundle dist/osx/Kitematic.app/Contents/Resources/app.nw/
+cp -R bundle dist/osx/Kitematic.app/Contents/Resources/app/
 
 cecho "-----> Copying node-webkit app into Kitematic.app..." $blue
-cp index.html dist/osx/Kitematic.app/Contents/Resources/app.nw/
-cp index.js dist/osx/Kitematic.app/Contents/Resources/app.nw/
-cp package.json dist/osx/Kitematic.app/Contents/Resources/app.nw/
-cp -R node_modules dist/osx/Kitematic.app/Contents/Resources/app.nw/
-
-$DIR/setup.sh
+cp index.js dist/osx/Kitematic.app/Contents/Resources/app/
+cp package.json dist/osx/Kitematic.app/Contents/Resources/app/
+cp -R node_modules dist/osx/Kitematic.app/Contents/Resources/app/
 
 cecho "-----> Copying binary files to Kitematic.app" $blue
-mkdir -p dist/osx/Kitematic.app/Contents/Resources/app.nw/resources
-cp -v resources/* dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/ || :
+mkdir -p dist/osx/Kitematic.app/Contents/Resources/app/resources
+cp -v resources/* dist/osx/Kitematic.app/Contents/Resources/app/resources/ || :
 
-chmod +x dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/$BOOT2DOCKER_CLI_FILE
-chmod +x dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/$COCOASUDO_FILE
-chmod +x dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/install
-chmod +x dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/terminal
-chmod +x dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/unison
-chmod +x dist/osx/Kitematic.app/Contents/Resources/app.nw/resources/node
+chmod +x dist/osx/Kitematic.app/Contents/Resources/app/resources/$BOOT2DOCKER_CLI_FILE
+chmod +x dist/osx/Kitematic.app/Contents/Resources/app/resources/$COCOASUDO_FILE
+chmod +x dist/osx/Kitematic.app/Contents/Resources/app/resources/install
+chmod +x dist/osx/Kitematic.app/Contents/Resources/app/resources/terminal
+chmod +x dist/osx/Kitematic.app/Contents/Resources/app/resources/unison
+chmod +x dist/osx/Kitematic.app/Contents/Resources/app/resources/node
 
 if [ -f $DIR/sign.sh ]; then
   cecho "-----> Signing app file...." $blue
@@ -55,6 +67,10 @@ pushd dist/osx
   cecho "-----> Creating disributable zip file...." $blue
   ditto -c -k --sequesterRsrc --keepParent Kitematic.app Kitematic.zip
 popd
+
+VERSION=$(node -pe 'JSON.parse(process.argv[1]).version' "$(cat package.json)")
+cecho "Updating Info.plist version to $VERSION"
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion 0.3.0" $BASE/dist/osx/Kitematic.app/Contents/Info.plist
 
 cecho "Done." $green
 cecho "Kitematic app available at dist/osx/Kitematic.app" $green
