@@ -70,6 +70,7 @@ var start = function (callback) {
               user_env.BIND_IP = '127.0.0.1';
               user_env.DB_PATH = dataPath;
               user_env.MONGO_URL = 'mongodb://localhost:' + mongoPort + '/meteor';
+              user_env.METEOR_SETTINGS = fs.readFileSync(path.join(process.cwd(), 'resources', 'settings.json'), 'utf8');
               var nodeChild = child_process.spawn(path.join(process.cwd(), 'resources', 'node'), ['./bundle/main.js'], {
                 env: user_env
               });

@@ -1,6 +1,13 @@
 Router.configure({
   layoutTemplate: 'layout',
-  trackPageView: true
+  onBeforeAction: function () {
+    var install = Installs.findOne({});
+    if (install && install.tracking) {
+      var currentPath = Router.current().path;
+      console.log(currentPath);
+      ga('send', 'pageview', currentPath);
+    }
+  }
 });
 
 SetupController = RouteController.extend({
