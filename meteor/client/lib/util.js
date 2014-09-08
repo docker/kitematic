@@ -1,5 +1,7 @@
 var path = require('path');
 var fs = require('fs');
+var https = require('https');
+var nodeCrypto = require('crypto');
 
 Util = {};
 
@@ -17,6 +19,10 @@ Util.getBinDir = function () {
       return path.join(process.cwd(), '../../../resources');
     }
   }
+};
+
+Util.getResourceDir = function () {
+  return path.join(Util.getHomePath(), 'Library/Application\ Support/Kitematic/Resources');
 };
 
 Util.KITE_PATH = path.join(Util.getHomePath(), 'Kitematic');
@@ -76,6 +82,51 @@ Util.copyVolumes = function (directory, appName) {
 
 Util.hasDockerfile = function (directory) {
   return fs.existsSync(path.join(directory, 'Dockerfile'));
+};
+
+Util.openTerminal = function (command) {
+  var terminalCmd = path.join(Util.getBinDir(),  'terminal') + ' ' + command;
+  var exec = require('child_process').exec;
+  exec(terminalCmd, function (err, stdout) {
+    console.log(stdout);
+    if (err) {
+      console.log(err);
+    }
+  });
+};
+
+Util.downloadFile = function (url, filename, checksum, progressCallback, callback) {
+  var doDownload = function () {
+    var file = fs.createWriteStream(filename);
+    https.get(url, function(res) {
+      var len = 0;
+      res.on('data', function(chunk) {
+        file.write(chunk);
+        len += chunk.length;
+
+        // percentage downloaded is as follows
+        var percent = (len / res.headers['content-length']) * 100;
+        progressCallback(percent);
+      });
+      res.on('end', function() {
+        file.close();
+      });
+      file.on('close', function() {
+        callback();
+      });
+    });
+  };
+
+  // Compare checksum to see if it already exists first
+  if (fs.existsSync(filename)) {
+    var existingChecksum = nodeCrypto.createHash('sha256').update(fs.readFileSync(filename), 'utf8').digest('hex');
+    console.log(existingChecksum);
+    if (existingChecksum !== checksum) {
+      doDownload();
+    } else {
+      callback();
+    }
+  }
 };
 
 /**

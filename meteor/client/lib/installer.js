@@ -1,10 +1,13 @@
 var async = require('async');
 var fs = require('fs');
 var path = require('path');
+var remote = require('remote');
+var app = remote.require('app');
 
 Installer = {};
 
-Installer.CURRENT_VERSION = '0.0.2';
+Installer.CURRENT_VERSION = app.getVersion();
+Installer.baseURL = 'https://s3.amazonaws.com/kite-installer/';
 
 Installer.isUpToDate = function () {
   return !!Installs.findOne({version: Installer.CURRENT_VERSION});
@@ -57,7 +60,7 @@ Installer.steps = [
       Boot2Docker.exists(function (err, exists) {
         if (err) { callback(err); return; }
         if (!exists) {
-          var vmFilesPath = path.join(Util.getHomePath(), 'VirtualBox\ VMs', 'boot2docker-vm');
+          var vmFilesPath = path.join(Util.getHomePath(), 'VirtualBox\ VMs', 'kitematic-vm');
           if (fs.existsSync(vmFilesPath)) {
             Util.deleteFolder(vmFilesPath);
           }
@@ -67,13 +70,11 @@ Installer.steps = [
         } else {
           if (!Boot2Docker.sshKeyExists()) {
             callback('Boot2Docker SSH key doesn\'t exist. Fix by deleting the existing Boot2Docker VM and re-run the installer. This usually occurs because an old version of Boot2Docker is installed.');
-          }
-          Boot2Docker.stop(function (err) {
-            if (err) { callback(err); return; }
-            Boot2Docker.upgrade(function (err) {
-              callback(err);
+          } else {
+            Boot2Docker.stop(function(err) {
+              callback();
             });
-          });
+          }
         }
       });
     },
@@ -84,7 +85,7 @@ Installer.steps = [
 
   {
     run: function (callback) {
-      VirtualBox.addCustomHostAdapter('boot2docker-vm', function (err, ifname) {
+      VirtualBox.addCustomHostAdapter('kitematic-vm', function (err, ifname) {
         callback(err);
       });
     },
@@ -117,7 +118,7 @@ Installer.steps = [
 
   {
     run: function (callback) {
-      VirtualBox.setupRouting('boot2docker-vm', function (err, ifname) {
+      VirtualBox.setupRouting('kitematic-vm', function (err, ifname) {
         callback(err);
       });
     },
