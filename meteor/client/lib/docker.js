@@ -6,6 +6,9 @@ var path = require('path');
 Docker = {};
 Docker.DOCKER_HOST = '192.168.60.103';
 
+Docker.DEFAULT_IMAGES_FILENAME = 'base-images-0.0.2.tar.gz';
+Docker.DEFAULT_IMAGES_CHECKSUM = '67e7c7562991a4208c90007461ec14bc184a52ad6048e6bed3e8a8c2b306cee7'; // Sha256 Checksum
+
 Docker.client = function () {
   return new Dockerode({host: Docker.DOCKER_HOST, port: '2375'});
 };
@@ -283,7 +286,7 @@ Docker.reloadDefaultContainers = function (callback) {
         return;
       }
       console.log('Loading new Kitematic default images.');
-      docker.loadImage(path.join(Util.getBinDir(), 'base-images.tar.gz'), {}, function (err) {
+      docker.loadImage(path.join(Util.getResourceDir(), Docker.DEFAULT_IMAGES_FILENAME), {}, function (err) {
         if (err) {
           callback(err);
           return;

@@ -1,6 +1,6 @@
 var path = require('path');
 var fs = require('fs');
-var https = require('https');
+var wget = require('wget');
 var nodeCrypto = require('crypto');
 
 Util = {};
@@ -95,25 +95,24 @@ Util.openTerminal = function (command) {
   });
 };
 
-Util.downloadFile = function (url, filename, checksum, progressCallback, callback) {
+Util.downloadFile = function (url, filename, checksum, callback, progressCallback) {
   var doDownload = function () {
-    var file = fs.createWriteStream(filename);
-    https.get(url, function(res) {
-      var len = 0;
-      res.on('data', function(chunk) {
-        file.write(chunk);
-        len += chunk.length;
-
-        // percentage downloaded is as follows
-        var percent = (len / res.headers['content-length']) * 100;
-        progressCallback(percent);
-      });
-      res.on('end', function() {
-        file.close();
-      });
-      file.on('close', function() {
-        callback();
-      });
+    var percent = 0;
+    var interval = setInterval(function () {
+      progressCallback(percent);
+    }, 250);
+    var download = wget.download(url, filename);
+    download.on('error', function (err) {
+      console.log(err);
+      clearInterval(interval);
+    });
+    download.on('end', function (output) {
+      console.log(output);
+      callback();
+      clearInterval(interval);
+    });
+    download.on('progress', function (progress) {
+      percent = Math.round(progress * 100.0);
     });
   };
 
@@ -122,10 +121,13 @@ Util.downloadFile = function (url, filename, checksum, progressCallback, callbac
     var existingChecksum = nodeCrypto.createHash('sha256').update(fs.readFileSync(filename), 'utf8').digest('hex');
     console.log(existingChecksum);
     if (existingChecksum !== checksum) {
+      fs.unlinkSync(filename);
       doDownload();
     } else {
       callback();
     }
+  } else {
+    doDownload();
   }
 };
 

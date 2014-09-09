@@ -24,7 +24,11 @@
               {{#if $eq this.index failedStep}}
                 <img src="/step_failed.png">
               {{else}}
-                {{> spinner}}
+                {{#if currentInstallStepProgress}}
+                  {{> radial_progress progress=currentInstallStepProgress}}
+                {{else}}
+                  {{> spinner}}
+                {{/if}}
               {{/if}}
             </span>
             <div class="media-body">

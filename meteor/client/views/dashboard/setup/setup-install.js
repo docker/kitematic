@@ -25,6 +25,9 @@ Template.setup_install.helpers({
   currentInstallStep: function () {
     return Session.get('currentInstallStep');
   },
+  currentInstallStepProgress: function () {
+    return Session.get('currentInstallStepProgress');
+  },
   installComplete: function () {
     return Session.get('currentInstallStep') === Installer.steps.length;
   },

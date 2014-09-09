@@ -22,26 +22,42 @@ Installer.isUpToDate = function () {
  */
 Installer.steps = [
   {
-    run: function (callback) {
+    run: function (callback, progressCallback) {
       var installed = VirtualBox.installed();
       if (!installed) {
-        VirtualBox.install(function (err) {
-          callback(err);
+        Util.downloadFile(Installer.baseURL + VirtualBox.INSTALLER_FILENAME, path.join(Util.getResourceDir(), VirtualBox.INSTALLER_FILENAME), VirtualBox.INSTALLER_CHECKSUM, function (err) {
+          if (err) {callback(err); return;}
+          VirtualBox.install(function (err) {
+            if (!VirtualBox.installed()) {
+              callback('VirtualBox could not be installed. The installation either failed or was cancelled. Please try closing all VirtualBox instances and try again.');
+            } else {
+              callback(err);
+            }
+          });
+        }, function (progress) {
+          progressCallback(progress);
         });
       } else {
         // Version 4.3.12 is required.
         VirtualBox.version(function (err, installedVersion) {
-          if (err) {
-            callback(err);
-            return;
-          }
+          if (err) {callback(err); return;}
           if (Util.compareVersions(installedVersion, VirtualBox.REQUIRED_VERSION) < 0) {
-            VirtualBox.install(function (err) {
-              if (Util.compareVersions(installedVersion, VirtualBox.REQUIRED_VERSION) < 0) {
-                callback('VirtualBox could not be installed. The installation either failed or was cancelled. Please try closing all VirtualBox instances and try again.');
-              } else {
-                callback(err);
-              }
+            // Download a newer version of Virtualbox
+            Util.downloadFile(Installer.baseURL + VirtualBox.INSTALLER_FILENAME, path.join(Util.getResourceDir(), VirtualBox.INSTALLER_FILENAME), VirtualBox.INSTALLER_CHECKSUM, function (err) {
+              if (err) {callback(err); return;}
+              VirtualBox.install(function (err) {
+                if (err) {callback(err); return;}
+                VirtualBox.version(function (err, installedVersion) {
+                  if (err) {callback(err); return;}
+                  if (Util.compareVersions(installedVersion, VirtualBox.REQUIRED_VERSION) < 0) {
+                    callback('VirtualBox could not be installed. The installation either failed or was cancelled. Please try closing all VirtualBox instances and try again.');
+                  } else {
+                    callback(err);
+                  }
+                });
+              }, function (progress) {
+                progressCallback(progress);
+              });
             });
           } else {
             callback();
@@ -50,8 +66,8 @@ Installer.steps = [
       }
     },
     pastMessage: 'VirtualBox installed',
-    message: 'Installing VirtualBox',
-    futureMessage: 'Install VirtualBox if necessary'
+    message: 'Downloading & Installing VirtualBox',
+    futureMessage: 'Download & Install VirtualBox if necessary'
   },
 
   // Initialize Boot2Docker if necessary.
@@ -78,9 +94,9 @@ Installer.steps = [
         }
       });
     },
-    pastMessage: 'Setup the Boot2Docker VM (if required)',
-    message: 'Setting up the Boot2Docker VM',
-    futureMessage: 'Set up the Boot2Docker VM(if required)'
+    pastMessage: 'Setup the Kitematic VM (if required)',
+    message: 'Setting up the Kitematic VM',
+    futureMessage: 'Set up the Kitematic VM(if required)'
   },
 
   {
@@ -89,9 +105,9 @@ Installer.steps = [
         callback(err);
       });
     },
-    pastMessage: 'Added custom host adapter to the Boot2Docker VM',
-    message: 'Adding custom host adapter to the Boot2Docker VM',
-    futureMessage: 'Add custom host adapter to the Boot2Docker VM'
+    pastMessage: 'Added custom host adapter to the Kitematic VM',
+    message: 'Adding custom host adapter to the Kitematic VM',
+    futureMessage: 'Add custom host adapter to the Kitematic VM'
   },
 
   // Start the Kitematic VM
@@ -111,8 +127,8 @@ Installer.steps = [
         }
       });
     },
-    pastMessage: 'Started the Boot2Docker VM',
-    message: 'Starting the Boot2Docker VM',
+    pastMessage: 'Started the Kitematic VM',
+    message: 'Starting the Kitematic VM',
     futureMessage: 'Start the Kitematic VM'
   },
 
@@ -129,12 +145,16 @@ Installer.steps = [
 
   // Set up the default Kitematic images
   {
-    run: function (callback) {
-      Docker.reloadDefaultContainers(function (err) {
-        callback(err);
+    run: function (callback, progressCallback) {
+      Util.downloadFile(Installer.baseURL + Docker.DEFAULT_IMAGES_FILENAME, path.join(Util.getResourceDir(), Docker.DEFAULT_IMAGES_FILENAME), Docker.DEFAULT_IMAGES_CHECKSUM, function (err) {
+        Docker.reloadDefaultContainers(function (err) {
+          callback(err);
+        });
+      }, function (progress) {
+        progressCallback(progress);
       });
     },
-    pastMessage: 'Started the Boot2Docker VM',
+    pastMessage: 'Set up the default Kitematic images.',
     message: 'Setting up the default Kitematic images...',
     subMessage: '(This may take a few minutes)',
     futureMessage: 'Set up the default Kitematic images'
@@ -147,6 +167,7 @@ Installer.run = function (callback) {
   Session.set('numberOfInstallSteps', this.steps.length);
   async.eachSeries(this.steps, function (step, callback) {
     console.log('Performing step ' + currentStep);
+    Session.set('currentInstallStepProgress', 0);
     step.run(function (err) {
       if (err) {
         callback(err);
@@ -155,6 +176,8 @@ Installer.run = function (callback) {
         Session.set('currentInstallStep', currentStep);
         callback();
       }
+    }, function (progress) {
+      Session.set('currentInstallStepProgress', progress);
     });
   }, function (err) {
     if (err) {
