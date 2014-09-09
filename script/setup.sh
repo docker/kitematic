@@ -12,11 +12,9 @@ mkdir -p cache
 
 pushd cache
 
-if [ ! -f $BASE_IMAGE_VERSION_FILE ]; then
-  cecho "-----> Downloading Kitematic base images..." $purple
-  curl -L --progress-bar -o $BASE_IMAGE_VERSION_FILE https://s3.amazonaws.com/kite-installer/$BASE_IMAGE_VERSION_FILE
-  cp $BASE_IMAGE_VERSION_FILE ../resources/$BASE_IMAGE_FILE
-fi
+BOOT2DOCKER_CLI_VERSION=1.2.0
+BOOT2DOCKER_CLI_VERSION_FILE=boot2docker-$BOOT2DOCKER_CLI_VERSION
+BOOT2DOCKER_CLI_FILE=boot2docker
 
 if [ ! -f $BOOT2DOCKER_CLI_VERSION_FILE ]; then
   cecho "-----> Downloading Boot2docker CLI..." $purple
@@ -49,11 +47,6 @@ fi
 popd
 
 pushd resources
-
-if [ ! -f $VIRTUALBOX_FILE ]; then
-  cecho "-----> Downloading virtualbox installer..." $purple
-  curl -L --progress-bar -o $VIRTUALBOX_FILE https://s3.amazonaws.com/kite-installer/$VIRTUALBOX_FILE
-fi
 
 cp ../cache/$BOOT2DOCKER_CLI_VERSION_FILE $BOOT2DOCKER_CLI_FILE
 chmod +x $BOOT2DOCKER_CLI_FILE
