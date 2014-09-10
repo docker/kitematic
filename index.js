@@ -96,8 +96,12 @@ var start = function (callback) {
   }
 };
 
+mainWindow = null;
+
 app.on('activate-with-no-open-windows', function () {
-  mainWindow.show();
+  if (!mainWindow) {
+    mainWindow.show();
+  }
   return false;
 });
 
