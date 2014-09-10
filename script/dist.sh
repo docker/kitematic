@@ -3,7 +3,6 @@ set -e # Auto exit on error
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $DIR/colors.sh
-source $DIR/versions.sh
 
 BASE=$DIR/..
 NPM="$BASE/cache/node/bin/npm"
