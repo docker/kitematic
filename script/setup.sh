@@ -19,15 +19,10 @@ ATOM_SHELL_VERSION=0.16.2
 ATOM_SHELL_FILE=atom-shell-v$ATOM_SHELL_VERSION-darwin-x64.zip
 
 if [ ! -f $ATOM_SHELL_FILE ]; then
-  cecho "-----> Downloading Boot2docker CLI..." $purple
+  cecho "-----> Downloading Atom Shell..." $purple
   curl -L -o $ATOM_SHELL_FILE https://github.com/atom/atom-shell/releases/download/v$ATOM_SHELL_VERSION/$ATOM_SHELL_FILE
   mkdir -p atom-shell
   unzip -d atom-shell $ATOM_SHELL_FILE
-fi
-
-if [ ! -f $BOOT2DOCKER_CLI_VERSION_FILE ]; then
-  cecho "-----> Downloading Boot2docker CLI..." $purple
-  curl -L -o $BOOT2DOCKER_CLI_VERSION_FILE https://s3.amazonaws.com/kite-installer/boot2docker-v$BOOT2DOCKER_CLI_VERSION
 fi
 
 if [ ! -f kite-node-webkit.tar.gz ]; then
@@ -57,8 +52,12 @@ popd
 
 pushd resources
 
-cp ../cache/$BOOT2DOCKER_CLI_VERSION_FILE $BOOT2DOCKER_CLI_FILE
-chmod +x $BOOT2DOCKER_CLI_FILE
+if [ ! -f $BOOT2DOCKER_CLI_VERSION_FILE ]; then
+  cecho "-----> Downloading Boot2docker CLI..." $purple
+  curl -L -o $BOOT2DOCKER_CLI_VERSION_FILE https://s3.amazonaws.com/kite-installer/boot2docker-v$BOOT2DOCKER_CLI_VERSION
+fi
+
+chmod +x $BOOT2DOCKER_CLI_VERSION_FILE
 
 popd
 

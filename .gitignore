@@ -12,7 +12,7 @@ bin
 resources/cache
 resources/base-images.tar.gz
 resources/virtualbox-*.pkg
-resources/boot2docker
+resources/boot2docker*
 resources/node-webkit
 resources/mongod
 resources/MONGOD_LICENSE.txt
