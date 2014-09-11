@@ -23,7 +23,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
   <array>
     <string>bash</string>
     <string>-c</string>
-    <string>/usr/sbin/scutil -w State:/Network/Interface/$IFNAME/IPv4;/sbin/route -n add -net 172.17.0.0 -netmask 255.255.0.0 -gateway $GATEWAY</string>
+    <string>/usr/sbin/scutil -w State:/Network/Interface/$IFNAME/IPv4;sudo /sbin/route -n add -net 172.17.0.0 -netmask 255.255.0.0 -gateway $GATEWAY</string>
   </array>
   <key>KeepAlive</key>
   <false/>
