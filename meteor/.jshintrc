@@ -157,6 +157,7 @@
       "Images": true,
       "Apps": true,
       "Installs": true,
+      "Settings": true,
       "Docker": true,
       "Util": true,
       "Sync": true,

@@ -4,6 +4,9 @@ var os = require('os');
 var fs = require('fs');
 var path = require('path');
 
+var app = require('app');
+var BrowserWindow = require('browser-window');
+
 var freeport = function (callback) {
   var server = net.createServer();
   var port = 0;
@@ -44,7 +47,7 @@ var start = function (callback) {
         console.log('MongoDB: ' + mongoPort);
         console.log('webPort: ' + webPort);
         child_process.exec('kill $(ps aux -e | grep PURPOSE=KITEMATIC | awk \'{print $2}\') && rm ' + path.join(dataPath, 'mongod.lock'), function (error, stdout, stderr) {
-          var mongoChild = child_process.spawn(path.join(process.cwd(), 'resources', 'mongod'), ['--bind_ip', '127.0.0.1', '--dbpath', dataPath, '--port', mongoPort, '--unixSocketPrefix', dataPath], {
+          var mongoChild = child_process.spawn(path.join(__dirname, 'resources', 'mongod'), ['--bind_ip', '127.0.0.1', '--dbpath', dataPath, '--port', mongoPort, '--unixSocketPrefix', dataPath], {
             env: {
               PURPOSE: 'KITEMATIC'
             }
@@ -68,8 +71,11 @@ var start = function (callback) {
               user_env.BIND_IP = '127.0.0.1';
               user_env.DB_PATH = dataPath;
               user_env.MONGO_URL = 'mongodb://localhost:' + mongoPort + '/meteor';
-              console.log(path.join(process.cwd(), 'resources', 'node'));
-              var nodeChild = child_process.spawn(path.join(process.cwd(), 'resources', 'node'), ['./bundle/main.js'], {
+              user_env.METEOR_SETTINGS = fs.readFileSync(path.join(__dirname, 'resources', 'settings.json'), 'utf8');
+              user_env.DIR = __dirname;
+              user_env.NODE_ENV = 'production';
+              user_env.NODE_PATH = path.join(__dirname, 'node_modules');
+              var nodeChild = child_process.spawn(path.join(__dirname, 'resources', 'node'), [path.join(__dirname, 'bundle', 'main.js')], {
                 env: user_env
               });
 
@@ -94,40 +100,47 @@ var start = function (callback) {
   }
 };
 
-start(function (url, nodeChild, mongoChild) {
-  var cleanUpChildren = function () {
-    console.log('Cleaning up children.')
-    mongoChild.kill();
-    nodeChild.kill();
-  };
-  if (nodeChild && mongoChild) {
-    process.on('exit', cleanUpChildren);
-    process.on('uncaughtException', cleanUpChildren);
-    process.on('SIGINT', cleanUpChildren);
-    process.on('SIGTERM', cleanUpChildren);
-  }
+mainWindow = null;
 
-  var gui = require('nw.gui');
-  var mainWindow = gui.Window.get();
-  gui.App.on('reopen', function () {
+app.on('activate-with-no-open-windows', function () {
+  if (mainWindow) {
     mainWindow.show();
-  });
-  setTimeout(function () {
-    mainWindow.window.location = url;
-    mainWindow.on('loaded', function () {
-      mainWindow.show();
-    });
-  }, 400);
-  mainWindow.on('close', function (type) {
-    this.hide();
-    console.log('closed');
-    if (type === 'quit') {
-      console.log('here');
-      if (nodeChild && mongoChild) {
-        cleanUpChildren();
-      }
-      this.close(true);
+  }
+  return false;
+});
+
+app.on('ready', function() {
+  start(function (url, nodeChild, mongoChild) {
+    var cleanUpChildren = function () {
+      console.log('Cleaning up children.')
+      mongoChild.kill();
+      nodeChild.kill();
+      app.quit();
+      process.exit();
+    };
+
+    if (nodeChild && mongoChild) {
+      process.on('exit', cleanUpChildren);
+      process.on('uncaughtException', cleanUpChildren);
+      process.on('SIGINT', cleanUpChildren);
+      process.on('SIGTERM', cleanUpChildren);
     }
-    console.log('Window Closed.');
+
+    // Create the browser window.
+    var windowOptions = {
+      width: 800,
+      height: 578,
+      frame: false,
+      resizable: false,
+      'web-preferences': {
+        'web-security': false
+      }
+    };
+    mainWindow = new BrowserWindow(windowOptions);
+
+    // and load the index.html of the app.
+    mainWindow.loadUrl(url);
+    mainWindow.show();
+    mainWindow.focus();
   });
 });

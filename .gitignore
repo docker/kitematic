@@ -11,8 +11,8 @@ bin
 # Resources
 resources/cache
 resources/base-images.tar.gz
-resources/virtualbox-4.3.12.pkg
-resources/boot2docker
+resources/virtualbox-*.pkg
+resources/boot2docker*
 resources/node-webkit
 resources/mongod
 resources/MONGOD_LICENSE.txt

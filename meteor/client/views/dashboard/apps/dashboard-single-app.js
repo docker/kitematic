@@ -1,5 +1,3 @@
-var path = require('path');
-
 Template.dashboard_single_app.rendered = function () {
   Meteor.setInterval(function () {
     $('.btn-icon').tooltip();
@@ -21,16 +19,8 @@ Template.dashboard_single_app.events({
   },
   'click .btn-terminal': function () {
     var app = this;
-    var cmd = path.join(Util.getBinDir(), 'boot2docker') + ' ssh -t "sudo docker-enter ' + app.docker.Id + '"';
-    var terminalCmd = path.join(Util.getBinDir(),  'terminal') + ' ' + cmd;
-    var exec = require('child_process').exec;
-    console.log(terminalCmd);
-    exec(terminalCmd, function (err, stdout) {
-      console.log(stdout);
-      if (err) {
-        console.log(err);
-      }
-    });
+    var cmd = Boot2Docker.command() + ' ssh -t "sudo docker-enter ' + app.docker.Id + '"';
+    Util.openTerminal(cmd);
   },
   'click .btn-start': function () {
     AppUtil.start(this._id);

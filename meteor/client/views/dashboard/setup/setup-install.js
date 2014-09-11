@@ -7,8 +7,7 @@ Template.setup_install.rendered = function() {
         console.log('Setup failed.');
         console.log(err);
       } else {
-        Installs.insert({version: Installer.CURRENT_VERSION});
-        Router.go('dashboard_apps');
+        Router.go('setup_finish');
       }
     });
   }
@@ -24,6 +23,9 @@ Template.setup_install.steps = function () {
 Template.setup_install.helpers({
   currentInstallStep: function () {
     return Session.get('currentInstallStep');
+  },
+  currentInstallStepProgress: function () {
+    return Session.get('currentInstallStepProgress');
   },
   installComplete: function () {
     return Session.get('currentInstallStep') === Installer.steps.length;

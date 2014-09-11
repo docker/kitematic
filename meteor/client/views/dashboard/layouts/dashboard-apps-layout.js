@@ -24,20 +24,8 @@ Template.dashboard_apps_layout.events({
     AppUtil.logs(this._id);
   },
   'click .btn-terminal': function () {
-    var buildCmd = function (dockerId, termApp) {
-      return "echo 'boot2docker --vm=\"boot2docker-vm\" ssh -t \"sudo docker-enter " + dockerId + "\"' > /tmp/nsenter-start && chmod +x /tmp/nsenter-start && open -a " + termApp + " /tmp/nsenter-start";
-    };
-    var app = this;
-    var nsenterCmd = buildCmd(app.docker.Id, 'iTerm.app');
-    var exec = require('child_process').exec;
-    exec(nsenterCmd, function (err) {
-      if (err) {
-        nsenterCmd = buildCmd(app.docker.Id, 'Terminal.app');
-        exec(nsenterCmd, function (err) {
-          if (err) { throw err; }
-        });
-      }
-    });
+    var cmd = Boot2Docker.command() + ' ssh -t "sudo docker-enter ' + this.docker.Id + '"';
+    Util.openTerminal(cmd);
   },
   'click .btn-restart': function () {
     AppUtil.restart(this._id);
@@ -47,5 +35,13 @@ Template.dashboard_apps_layout.events({
     exec('open ' + this.path, function (err) {
       if (err) { throw err; }
     });
+  },
+  'click .btn-start': function () {
+    AppUtil.start(this._id);
+    $('.btn-icon').tooltip('hide');
+  },
+  'click .btn-stop': function () {
+    AppUtil.stop(this._id);
+    $('.btn-icon').tooltip('hide');
   }
 });

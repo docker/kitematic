@@ -53,17 +53,20 @@ AppUtil.start = function (appId) {
     Apps.update(app._id, {$set: {
       status: 'STARTING'
     }});
-    Docker.getContainerData(app.docker.Id, function (err, data) {
+    Docker.startContainer(app.docker.Id, function (err) {
       if (err) { console.error(err); }
-      // Use dig to refresh the DNS
-      exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function(err, stdout, stderr) {
-        console.log(err);
-        console.log(stdout);
-        console.log(stderr);
-        Apps.update(app._id, {$set: {
-          status: 'READY',
-          docker: data
-        }});
+      Docker.getContainerData(app.docker.Id, function (err, data) {
+        if (err) { console.error(err); }
+        // Use dig to refresh the DNS
+        exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function(err, stdout, stderr) {
+          console.log(err);
+          console.log(stdout);
+          console.log(stderr);
+          Apps.update(app._id, {$set: {
+            status: 'READY',
+            docker: data
+          }});
+        });
       });
     });
   }
@@ -98,8 +101,8 @@ AppUtil.restart = function (appId) {
 
 AppUtil.remove = function (appId) {
   var app = Apps.findOne(appId);
+  Apps.remove({_id: appId});
   if (app.docker) {
-    Apps.remove({_id: appId});
     Docker.removeContainer(app.docker.Id, function (err) {
       if (err) { console.error(err); }
       var appPath = path.join(Util.KITE_PATH, app.name);
@@ -131,7 +134,6 @@ AppUtil.logs = function (appId) {
           logs: []
         }
       });
-      var logs = [];
       response.setEncoding('utf8');
       response.on('data', function (line) {
         Apps.update(app._id, {

@@ -3,7 +3,6 @@ set -e # Auto exit on error
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $DIR/colors.sh
-source $DIR/versions.sh
 
 BASE=$DIR/..
 pushd $BASE
@@ -12,15 +11,18 @@ mkdir -p cache
 
 pushd cache
 
-if [ ! -f $BASE_IMAGE_VERSION_FILE ]; then
-  cecho "-----> Downloading Kitematic base images..." $purple
-  curl -L --progress-bar -o $BASE_IMAGE_VERSION_FILE https://s3.amazonaws.com/kite-installer/$BASE_IMAGE_VERSION_FILE
-  cp $BASE_IMAGE_VERSION_FILE ../resources/$BASE_IMAGE_FILE
-fi
+BOOT2DOCKER_CLI_VERSION=1.2.0
+BOOT2DOCKER_CLI_VERSION_FILE=boot2docker-$BOOT2DOCKER_CLI_VERSION
+BOOT2DOCKER_CLI_FILE=boot2docker
 
-if [ ! -f $BOOT2DOCKER_CLI_VERSION_FILE ]; then
-  cecho "-----> Downloading Boot2docker CLI..." $purple
-  curl -L -o $BOOT2DOCKER_CLI_VERSION_FILE https://github.com/boot2docker/boot2docker-cli/releases/download/v${BOOT2DOCKER_CLI_VERSION}/boot2docker-v${BOOT2DOCKER_CLI_VERSION}-darwin-amd64
+ATOM_SHELL_VERSION=0.16.2
+ATOM_SHELL_FILE=atom-shell-v$ATOM_SHELL_VERSION-darwin-x64.zip
+
+if [ ! -f $ATOM_SHELL_FILE ]; then
+  cecho "-----> Downloading Atom Shell..." $purple
+  curl -L -o $ATOM_SHELL_FILE https://github.com/atom/atom-shell/releases/download/v$ATOM_SHELL_VERSION/$ATOM_SHELL_FILE
+  mkdir -p atom-shell
+  unzip -d atom-shell $ATOM_SHELL_FILE
 fi
 
 if [ ! -f kite-node-webkit.tar.gz ]; then
@@ -50,23 +52,20 @@ popd
 
 pushd resources
 
-if [ ! -f $VIRTUALBOX_FILE ]; then
-  cecho "-----> Downloading virtualbox installer..." $purple
-  curl -L --progress-bar -o $VIRTUALBOX_FILE https://s3.amazonaws.com/kite-installer/$VIRTUALBOX_FILE
+if [ ! -f $BOOT2DOCKER_CLI_VERSION_FILE ]; then
+  cecho "-----> Downloading Boot2docker CLI..." $purple
+  curl -L -o $BOOT2DOCKER_CLI_VERSION_FILE https://s3.amazonaws.com/kite-installer/boot2docker-v$BOOT2DOCKER_CLI_VERSION
 fi
 
-if [ ! -f $COCOASUDO_FILE ]; then
-  cecho "-----> Downloading Cocoasudo binary..." $purple
-  curl -L -o $COCOASUDO_FILE https://github.com/performantdesign/cocoasudo/blob/master/build/Release/cocoasudo
-  chmod +x $COCOASUDO_FILE
-fi
-
-cp ../cache/$BOOT2DOCKER_CLI_VERSION_FILE $BOOT2DOCKER_CLI_FILE
-chmod +x $BOOT2DOCKER_CLI_FILE
+chmod +x $BOOT2DOCKER_CLI_VERSION_FILE
 
 popd
 
 NPM="$BASE/cache/node/bin/npm"
-$NPM install
+
+export npm_config_disturl=https://gh-contractor-zcbenz.s3.amazonaws.com/atom-shell/dist
+export npm_config_target=0.16.2
+export npm_config_arch=ia32
+HOME=~/.atom-shell-gyp $NPM install
 
 popd

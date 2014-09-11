@@ -1,5 +1,8 @@
 var path = require('path');
 var fs = require('fs');
+var nodeCrypto = require('crypto');
+var request = require('request');
+var progress = require('request-progress');
 
 Util = {};
 
@@ -8,15 +11,11 @@ Util.getHomePath = function () {
 };
 
 Util.getBinDir = function () {
-  if (process.env.NODE_ENV === 'development') {
-    return path.join(path.join(process.env.PWD, '..'), 'resources');
-  } else {
-    if (Meteor.isClient) {
-      return path.join(process.cwd(), 'resources');
-    } else {
-      return path.join(process.cwd(), '../../../resources');
-    }
-  }
+  return path.join(process.env.DIR, 'resources');
+};
+
+Util.getResourceDir = function () {
+  return path.join(Util.getHomePath(), 'Library/Application\ Support/Kitematic/Resources');
 };
 
 Util.KITE_PATH = path.join(Util.getHomePath(), 'Kitematic');
@@ -76,6 +75,47 @@ Util.copyVolumes = function (directory, appName) {
 
 Util.hasDockerfile = function (directory) {
   return fs.existsSync(path.join(directory, 'Dockerfile'));
+};
+
+Util.openTerminal = function (command) {
+  var terminalCmd = path.join(Util.getBinDir(),  'terminal') + ' ' + command;
+  var exec = require('child_process').exec;
+  exec(terminalCmd, function (err, stdout) {
+    console.log(stdout);
+    if (err) {
+      console.log(err);
+    }
+  });
+};
+
+Util.downloadFile = function (url, filename, checksum, callback, progressCallback) {
+  var doDownload = function () {
+    progress(request(url), {
+      throttle: 250
+    }).on('progress', function (state) {
+      progressCallback(state.percent);
+    }).on('error', function (err) {
+      callback(err);
+    }).pipe(fs.createWriteStream(filename)).on('error', function (err) {
+      callback(err);
+    }).on('close', function (err) {
+      callback(err);
+    });
+  };
+
+  // Compare checksum to see if it already exists first
+  if (fs.existsSync(filename)) {
+    var existingChecksum = nodeCrypto.createHash('sha256').update(fs.readFileSync(filename), 'utf8').digest('hex');
+    console.log(existingChecksum);
+    if (existingChecksum !== checksum) {
+      fs.unlinkSync(filename);
+      doDownload();
+    } else {
+      callback();
+    }
+  } else {
+    doDownload();
+  }
 };
 
 /**
@@ -156,8 +196,11 @@ Util.compareVersions = function (v1, v2, options) {
 };
 
 trackLink = function (trackLabel) {
-  if (trackLabel) {
-    console.log(trackLabel);
-    ga('send', 'event', 'link', 'click', trackLabel);
+  var setting = Settings.findOne({});
+  if (setting && setting.tracking) {
+    if (trackLabel) {
+      console.log(trackLabel);
+      ga('send', 'event', 'link', 'click', trackLabel);
+    }
   }
 };
