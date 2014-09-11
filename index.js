@@ -140,7 +140,10 @@ app.on('ready', function() {
 
     // and load the index.html of the app.
     mainWindow.loadUrl(url);
-    mainWindow.show();
-    mainWindow.focus();
+
+    mainWindow.webContents.on('did-finish-load', function () {
+      mainWindow.show();
+      mainWindow.focus();
+    });
   });
 });

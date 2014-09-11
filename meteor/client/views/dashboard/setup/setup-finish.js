@@ -6,7 +6,7 @@ Template.setup_finish.events({
     if (!settings) {
       Settings.insert({tracking: enableDiagnostics});
     } else {
-      settings.update(settings._id, {
+      Settings.update(settings._id, {
         $set: {
           tracking: enableDiagnostics
         }

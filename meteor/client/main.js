@@ -63,6 +63,10 @@ Handlebars.registerHelper('timeSince', function (date) {
   return moment(date).fromNow();
 });
 
+Handlebars.registerHelper('isUpdating', function (date) {
+  return Session.get('isUpdating');
+});
+
 var fixBoot2DockerVM = function (callback) {
   Boot2Docker.check(function (err) {
     if (err) {
