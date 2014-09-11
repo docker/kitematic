@@ -1,8 +1,8 @@
 Router.configure({
   layoutTemplate: 'layout',
   onBeforeAction: function () {
-    var install = Installs.findOne({});
-    if (install && install.tracking) {
+    var setting = Settings.findOne({});
+    if (setting && setting.tracking) {
       var currentPath = Router.current().path;
       console.log(currentPath);
       ga('send', 'pageview', currentPath);
