@@ -43,11 +43,13 @@ Template.modal_create_app.events({
       });
       var app = Apps.findOne(appId);
       var image = Images.findOne(app.imageId);
-      Util.copyVolumes(image.path, app.name);
-      Docker.removeBindFolder(app.name, function (err) {
+      Util.copyVolumes(image.path, app.name, function (err) {
         if (err) { console.error(err); }
-        AppUtil.run(app, function (err) {
+        Docker.removeBindFolder(app.name, function (err) {
           if (err) { console.error(err); }
+          AppUtil.run(app, function (err) {
+            if (err) { console.error(err); }
+          });
         });
       });
       $('#modal-create-app').bind('hidden.bs.modal', function () {

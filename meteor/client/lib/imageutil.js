@@ -58,9 +58,11 @@ ImageUtil.saveFolder = function (directory, imageId, callback) {
     fs.mkdirSync(destinationPath, function (err) {
       if (err) { callback(err); return; }
     });
-    Util.copyFolder(directory, destinationPath);
-    console.log('Copied image folder for: ' + imageId);
-    callback(null);
+    Util.copyFolder(directory, destinationPath, function (err) {
+      if (err) { callback(err); return; }
+      console.log('Copied image folder for: ' + imageId);
+      callback(null);
+    });
   }
 };
 
