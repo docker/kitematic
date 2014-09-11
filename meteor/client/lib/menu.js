@@ -1,7 +1,6 @@
 var remote = require('remote');
 var app = remote.require('app');
 var Menu = remote.require('menu');
-var MenuItem = remote.require('menu-item');
 
 // main.js
 var template = [
@@ -43,7 +42,7 @@ var template = [
         label: 'Quit',
         accelerator: 'Command+Q',
         click: function() { app.quit(); }
-      },
+      }
     ]
   },
   {
@@ -81,7 +80,7 @@ var template = [
         label: 'Select All',
         accelerator: 'Command+A',
         selector: 'selectAll:'
-      },
+      }
     ]
   },
   {
@@ -96,7 +95,7 @@ var template = [
         label: 'Toggle DevTools',
         accelerator: 'Alt+Command+I',
         click: function() { remote.getCurrentWindow().toggleDevTools(); }
-      },
+      }
     ]
   },
   {
@@ -118,13 +117,13 @@ var template = [
       {
         label: 'Bring All to Front',
         selector: 'arrangeInFront:'
-      },
+      }
     ]
   },
   {
     label: 'Help',
     submenu: []
-  },
+  }
 ];
 
 var menu = Menu.buildFromTemplate(template);
