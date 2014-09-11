@@ -1,19 +1,26 @@
 Router.configure({
   layoutTemplate: 'layout',
-  trackPageView: true
+  onBeforeAction: function () {
+    var setting = Settings.findOne({});
+    if (setting && setting.tracking) {
+      var currentPath = Router.current().path;
+      console.log(currentPath);
+      ga('send', 'pageview', currentPath);
+    }
+  }
 });
 
 SetupController = RouteController.extend({
   layoutTemplate: 'setup_layout',
   waitOn: function () {
-    return [Meteor.subscribe('installs')];
+    return [Meteor.subscribe('installs'), Meteor.subscribe('settings')];
   }
 });
 
 DashboardController = RouteController.extend({
   layoutTemplate: 'dashboard_layout',
   waitOn: function () {
-    return [Meteor.subscribe('apps'), Meteor.subscribe('images'), Meteor.subscribe('installs')];
+    return [Meteor.subscribe('apps'), Meteor.subscribe('images'), Meteor.subscribe('installs'), Meteor.subscribe('settings')];
   }
 });
 
@@ -43,6 +50,11 @@ Router.map(function () {
     controller: 'SetupController'
   });
 
+  this.route('setup_finish', {
+    path: '/setup/finish',
+    controller: 'SetupController'
+  });
+
   this.route('setup', {
     path: '/',
     controller: 'SetupController',
@@ -51,12 +63,11 @@ Router.map(function () {
         if (!Installer.isUpToDate()) {
           if (!Installs.findOne()) {
             console.log('No installs detected, running installer again.');
-            this.redirect('/setup/intro');
           } else {
             // There's an install but it's lower than the current version, re-run as an 'update'.
             Session.set('isUpdating', true);
-            this.redirect('/setup/intro');
           }
+          this.redirect('/setup/intro');
         } else {
           this.redirect('/apps');
         }

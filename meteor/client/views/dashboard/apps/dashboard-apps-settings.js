@@ -1,3 +1,6 @@
+var remote = require('remote');
+var dialog = remote.require('dialog');
+
 var getConfigVars = function ($form) {
   var configVars = {};
   $form.find('.env-var-pair').each(function () {
@@ -39,10 +42,15 @@ Template.dashboard_apps_settings.events({
     return false;
   },
   'click .btn-delete-app': function () {
-    var result = confirm("Are you sure you want to delete this app?");
-    if (result === true) {
-      AppUtil.remove(this._id);
-      Router.go('dashboard_apps');
-    }
+    var appId = this._id;
+    dialog.showMessageBox({
+      message: 'Are you sure you want to delete this app?',
+      buttons: ['Delete', 'Cancel']
+    }, function (index) {
+      if (index === 0) {
+        AppUtil.remove(appId);
+        Router.go('dashboard_apps');
+      }
+    });
   }
 });

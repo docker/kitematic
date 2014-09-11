@@ -1,0 +1,21 @@
+<template name="setup_finish">
+  <h2>Installation Complete</h2>
+  <div class="container text-center">
+    <div class="install_logo">
+      <img src="/install_finished.png">
+    </div>
+    <div class="install-diagonistics">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" checked> Enable anonymous usage diagnostics to help us improve Kitematic.
+        </label>
+      </div>
+    </div>
+    <div class="install-finish">
+      <a onclick="trackLink('finish install')" class="finish-button">
+        <img src="/continue.png">
+        <p>Finish</p>
+      </a>
+    </div>
+  </div>
+</template>

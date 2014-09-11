@@ -1,5 +1,7 @@
 var path = require('path');
 var fs = require('fs');
+var remote = require('remote');
+var dialog = remote.require('dialog');
 
 Template.modal_create_image.rendered = function () {
   $('#modal-create-image').bind('hidden.bs.modal', function () {
@@ -9,27 +11,31 @@ Template.modal_create_image.rendered = function () {
 
 Template.modal_create_image.events({
   'click #btn-pick-directory': function () {
-    $('#directory-picker').click();
-  },
-  'change #directory-picker': function (e) {
-    var $picker = $(e.currentTarget);
-    var pickedDirectory = $picker.val();
-    $('#picked-directory-error').html('');
-    if (pickedDirectory) {
-      $('#picked-directory').html('<strong>' + pickedDirectory + '<strong>');
-      if (!Util.hasDockerfile(pickedDirectory)) {
-        $('#picked-directory-error').html('Only directories with Dockerfiles are supported now.');
-        $('#btn-create-image').attr('disabled', 'disabled');
-      } else {
-        $('#btn-create-image').removeAttr('disabled');
+    dialog.showOpenDialog({properties: ['openDirectory']}, function (filenames) {
+      if (!filenames) {
+        return;
       }
-    } else {
-      $('#picked-directory').html('');
-      $('#btn-create-image').attr('disabled', 'disabled');
-    }
+      var directory = filenames[0];
+      if (directory) {
+        $('#picked-directory').html('<strong>' + directory + '<strong>');
+        if (!Util.hasDockerfile(directory)) {
+          $('#picked-directory-error').html('Only directories with Dockerfiles are supported now.');
+          $('#btn-create-image').attr('disabled', 'disabled');
+        } else {
+          Session.set('createImagePickedDirectory', directory);
+          $('#btn-create-image').removeAttr('disabled');
+        }
+      } else {
+        $('#picked-directory').html('');
+        $('#btn-create-image').attr('disabled', 'disabled');
+      }
+    });
   },
   'click #btn-create-image': function () {
-    var directory = $('#directory-picker').val();
+    var directory = Session.get('createImagePickedDirectory');
+    if (!directory) {
+      return;
+    }
     $('#directory-picker').val('');
     $('#picked-directory-error').html('');
     $('#picked-directory').html('');
