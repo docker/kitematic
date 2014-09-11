@@ -9,3 +9,7 @@ Meteor.publish('images', function () {
 Meteor.publish('installs', function () {
   return Installs.find({});
 });
+
+Meteor.publish('settings', function () {
+  return Settings.find({});
+});

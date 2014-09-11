@@ -1,4 +1,11 @@
 <template name="setup_install">
+  {{#if isUpdating}}
+    <h2>Updating</h2>
+    <p>This may take a few minutes.</p>
+  {{else}}
+    <h2>Installing</h2>
+    <p>This may take a few minutes.</p>
+  {{/if}}
   <div class="container text-left">
     <div class="steps">
       {{#each steps}}

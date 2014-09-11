@@ -1,7 +1,8 @@
 var path = require('path');
 var fs = require('fs');
-var wget = require('wget');
 var nodeCrypto = require('crypto');
+var request = require('request');
+var progress = require('request-progress');
 
 Util = {};
 
@@ -10,15 +11,7 @@ Util.getHomePath = function () {
 };
 
 Util.getBinDir = function () {
-  if (process.env.NODE_ENV === 'development') {
-    return path.join(path.join(process.env.PWD, '..'), 'resources');
-  } else {
-    if (Meteor.isClient) {
-      return path.join(process.cwd(), 'resources');
-    } else {
-      return path.join(process.cwd(), '../../../resources');
-    }
-  }
+  return path.join(process.env.DIR, 'resources');
 };
 
 Util.getResourceDir = function () {
@@ -97,22 +90,16 @@ Util.openTerminal = function (command) {
 
 Util.downloadFile = function (url, filename, checksum, callback, progressCallback) {
   var doDownload = function () {
-    var percent = 0;
-    var interval = setInterval(function () {
-      progressCallback(percent);
-    }, 250);
-    var download = wget.download(url, filename);
-    download.on('error', function (err) {
-      console.log(err);
-      clearInterval(interval);
-    });
-    download.on('end', function (output) {
-      console.log(output);
-      callback();
-      clearInterval(interval);
-    });
-    download.on('progress', function (progress) {
-      percent = Math.round(progress * 100.0);
+    progress(request(url), {
+      throttle: 250,
+    }).on('progress', function (state) {
+      progressCallback(state.percent);
+    }).on('error', function (err) {  
+      callback(err);
+    }).pipe(fs.createWriteStream(filename)).on('error', function (err) {
+      callback(err);
+    }).on('close', function (err) {
+      callback(err);
     });
   };
 

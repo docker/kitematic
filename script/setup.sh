@@ -15,6 +15,16 @@ BOOT2DOCKER_CLI_VERSION=1.2.0
 BOOT2DOCKER_CLI_VERSION_FILE=boot2docker-$BOOT2DOCKER_CLI_VERSION
 BOOT2DOCKER_CLI_FILE=boot2docker
 
+ATOM_SHELL_VERSION=0.16.2
+ATOM_SHELL_FILE=atom-shell-v$ATOM_SHELL_VERSION-darwin-x64.zip
+
+if [ ! -f $ATOM_SHELL_FILE ]; then
+  cecho "-----> Downloading Boot2docker CLI..." $purple
+  curl -L -o $ATOM_SHELL_FILE https://github.com/atom/atom-shell/releases/download/v$ATOM_SHELL_VERSION/$ATOM_SHELL_FILE
+  mkdir -p atom-shell
+  unzip -d atom-shell $ATOM_SHELL_FILE
+fi
+
 if [ ! -f $BOOT2DOCKER_CLI_VERSION_FILE ]; then
   cecho "-----> Downloading Boot2docker CLI..." $purple
   curl -L -o $BOOT2DOCKER_CLI_VERSION_FILE https://s3.amazonaws.com/kite-installer/boot2docker-v$BOOT2DOCKER_CLI_VERSION
@@ -55,7 +65,7 @@ popd
 NPM="$BASE/cache/node/bin/npm"
 
 export npm_config_disturl=https://gh-contractor-zcbenz.s3.amazonaws.com/atom-shell/dist
-export npm_config_target=0.16.0
+export npm_config_target=0.16.2
 export npm_config_arch=ia32
 HOME=~/.atom-shell-gyp $NPM install
 
