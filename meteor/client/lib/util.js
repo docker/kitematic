@@ -196,8 +196,8 @@ Util.compareVersions = function (v1, v2, options) {
 };
 
 trackLink = function (trackLabel) {
-  var install = Installs.findOne({});
-  if (install && install.tracking) {
+  var setting = Settings.findOne({});
+  if (setting && setting.tracking) {
     if (trackLabel) {
       console.log(trackLabel);
       ga('send', 'event', 'link', 'click', trackLabel);
