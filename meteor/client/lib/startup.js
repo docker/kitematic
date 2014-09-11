@@ -13,7 +13,6 @@ Meteor.startup(function () {
     console.log('Created Kitematic .images directory.');
     fs.mkdirSync(Util.KITE_IMAGES_PATH);
   }
-
   if (!fs.existsSync(Util.getResourceDir())) {
     fs.mkdirSync(Util.getResourceDir());
   }
