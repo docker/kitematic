@@ -3,6 +3,8 @@ var fs = require('fs');
 var nodeCrypto = require('crypto');
 var request = require('request');
 var progress = require('request-progress');
+var ncp = require('ncp').ncp;
+ncp.limit = 16;
 
 Util = {};
 
@@ -42,34 +44,29 @@ Util.deleteFolder = function (directory) {
   }
 };
 
-Util.copyFolder = function (src, dest) {
-  var exists = fs.existsSync(src);
-  var stats = exists && fs.statSync(src);
-  var isDirectory = exists && stats.isDirectory();
-  if (exists && isDirectory) {
-    try {
-      fs.mkdirSync(dest);
-    } catch (e) {
-      console.error(e);
-    }
-    fs.readdirSync(src).forEach(function (childItemName) {
-      Util.copyFolder(path.join(src, childItemName), path.join(dest, childItemName));
-    });
-  } else {
-    try {
-      fs.linkSync(src, dest);
-    } catch (e) {
-      console.error(e);
-    }
-  }
+Util.copyFolder = function (src, dest, callback) {
+  ncp(src, dest, function (err) {
+   if (err) {
+     callback(err);
+     return;
+   }
+   console.log('Copied ' + src + ' to ' + dest);
+   callback(null);
+  });
 };
 
-Util.copyVolumes = function (directory, appName) {
+Util.copyVolumes = function (directory, appName, callback) {
   var volumesPath = path.join(directory, 'volumes');
   if (fs.existsSync(volumesPath)) {
     var destinationPath = path.join(Util.KITE_PATH, appName);
-    Util.copyFolder(volumesPath, destinationPath);
-    console.log('Copied volumes for: ' + appName);
+    Util.copyFolder(volumesPath, destinationPath, function (err) {
+      if (err) {
+        callback(err);
+        return;
+      }
+      console.log('Copied volumes for: ' + appName);
+      callback(null);
+    });
   }
 };
 
