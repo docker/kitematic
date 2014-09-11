@@ -20,6 +20,28 @@ Template.dashboard_settings.events({
         console.log(err);
       }
     });
+  },
+  'click .btn-usage-analytics-on': function () {
+    var settings = Settings.findOne();
+    Settings.update(settings._id, {
+      $set: {
+        tracking: true
+      }
+    });
+  },
+  'click .btn-usage-analytics-off': function () {
+    var settings = Settings.findOne();
+    Settings.update(settings._id, {
+      $set: {
+        tracking: false
+      }
+    });
+  }
+});
+
+Template.dashboard_settings.helpers({
+  settings: function () {
+    return Settings.findOne({});
   }
 });
 

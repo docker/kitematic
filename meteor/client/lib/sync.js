@@ -59,18 +59,20 @@ Sync.addAppWatcher = function (app) {
     }
 
     exec(args, function (err, out, code) {
+      var results = null;
+      var location = null;
       try {
         if (err.indexOf('the archives are locked.') !== -1) {
-          var results = errorPattern.exec(err);
-          var location = results[1].replace(' ', '\\ ');
+          results = errorPattern.exec(err);
+          location = results[1].replace(' ', '\\ ');
           exec('/bin/rm -rf ' + location, function () {
             console.log('Removed unison file.');
             console.log(location);
           });
         }
         if (err.indexOf('The archive file is missing on some hosts') !== -1) {
-          var results = archiveErrorPattern.exec(err);
-          var location = results[1].replace(' ', '\\ ');
+          results = archiveErrorPattern.exec(err);
+          location = results[1].replace(' ', '\\ ');
           var fullLocation = path.join(Util.getHomePath(), 'Library/Application\\ Support/Unison', location);
           var cmd = '/bin/rm -rf ' + fullLocation;
           exec(cmd, function () {});

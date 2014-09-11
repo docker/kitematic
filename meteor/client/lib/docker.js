@@ -6,6 +6,9 @@ var path = require('path');
 Docker = {};
 Docker.DOCKER_HOST = '192.168.60.103';
 
+Docker.DEFAULT_IMAGES_FILENAME = 'base-images-0.0.2.tar.gz';
+Docker.DEFAULT_IMAGES_CHECKSUM = 'a3517ac21034a1969d9ff15e3c41b1e2f1aa83c67b16a8bd0bc378ffefaf573b'; // Sha256 Checksum
+
 Docker.client = function () {
   return new Dockerode({host: Docker.DOCKER_HOST, port: '2375'});
 };
@@ -83,7 +86,7 @@ Docker.runContainer = function (app, image, callback) {
 
 Docker.startContainer = function (containerId, callback) {
   var container = docker.getContainer(containerId);
-  container.stop(function (err) {
+  container.start(function (err) {
     if (err) {
       console.log(err);
       callback(err);
@@ -158,7 +161,7 @@ Docker.removeImage = function (imageId, callback) {
 };
 
 Docker.removeBindFolder = function (name, callback) {
-  exec(path.join(Util.getBinDir(), 'boot2docker') + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function (err, stdout) {
+  exec(Boot2Docker.command() + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function (err, stdout) {
     callback(err, stdout);
   });
 };
@@ -267,13 +270,13 @@ Docker.reloadDefaultContainers = function (callback) {
   async.until(function () {
     return ready;
   }, function (callback) {
-    docker.listContainers(function (err, containers) {
+    docker.listContainers(function (err) {
       if (!err) {
         ready = true;
       }
       callback();
     });
-  }, function (err) {
+  }, function () {
     console.log('Removing old Kitematic default containers.');
     Docker.killAndRemoveContainers(Docker.defaultContainerNames, function (err) {
       console.log('Removed old Kitematic default containers.');
@@ -283,7 +286,7 @@ Docker.reloadDefaultContainers = function (callback) {
         return;
       }
       console.log('Loading new Kitematic default images.');
-      docker.loadImage(path.join(Util.getBinDir(), 'base-images.tar.gz'), {}, function (err) {
+      docker.loadImage(path.join(Util.getResourceDir(), Docker.DEFAULT_IMAGES_FILENAME), {}, function (err) {
         if (err) {
           callback(err);
           return;

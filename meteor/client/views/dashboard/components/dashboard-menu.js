@@ -1,9 +1,11 @@
+var remote = require('remote');
+
 Template.dashboard_menu.events({
   'click .mac-close': function () {
-    win.close();
+    remote.getCurrentWindow().hide();
   },
   'click .mac-minimize': function () {
-    win.minimize();
+    remote.getCurrentWindow().minimize();
   },
   'mouseover .mac-window-options': function () {
     $('.mac-close i').show();

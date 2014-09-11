@@ -1,0 +1,91 @@
+.radial-progress {
+  @circle-size: 34px;
+  @circle-background: #d6dadc;
+  @circle-color: #3FD899;
+  @inset-size: 28px;
+  @inset-color: #fbfbfb;
+  @transition-length: 1s;
+  @shadow: 0px 1px 3px rgba(0,0,0,0.2);
+  @percentage-color: #3FD899;
+  @percentage-font-size: 11px;
+  @percentage-text-width: 57px;
+
+  width:  @circle-size;
+  height: @circle-size;
+
+  background-color: @circle-background;
+  border-radius: 50%;
+  .circle {
+    .mask, .fill, .shadow {
+      width:    @circle-size;
+      height:   @circle-size;
+      position: absolute;
+      border-radius: 50%;
+    }
+    .shadow {
+      box-shadow: @shadow inset;
+    }
+    .mask, .fill {
+      -webkit-backface-visibility: hidden;
+      transition: -webkit-transform @transition-length;
+      transition: -ms-transform @transition-length;
+      transition: transform @transition-length;
+      border-radius: 50%;
+    }
+    .mask {
+      clip: rect(0px, @circle-size, @circle-size, @circle-size/2);
+      .fill {
+        clip: rect(0px, @circle-size/2, @circle-size, 0px);
+        background-color: @circle-color;
+      }
+    }
+  }
+  .inset {
+    width:       @inset-size;
+    height:      @inset-size;
+    position:    absolute;
+    margin-left: (@circle-size - @inset-size)/2;
+    margin-top:  (@circle-size - @inset-size)/2;
+
+    background-color: @inset-color;
+    border-radius: 50%;
+    box-shadow: @shadow;
+    .percentage {
+      width:       @percentage-text-width;
+      position:    absolute;
+      top:         (@inset-size - @percentage-font-size) / 2;
+      left:        (@inset-size - @percentage-text-width) / 2;
+
+      line-height: 1;
+      text-align:  center;
+
+      color:       @percentage-color;
+      font-weight: 800;
+      font-size:   @percentage-font-size;
+    }
+  }
+
+  @i: 0;
+  @increment: 180deg / 100;
+  .loop (@i) when (@i <= 100) {
+    &[data-progress="@{i}"] {
+      .circle {
+        .mask.full, .fill {
+          -webkit-transform: rotate(@increment * @i);
+          -ms-transform: rotate(@increment * @i);
+          transform: rotate(@increment * @i);
+        } 
+        .fill.fix {
+          -webkit-transform: rotate(@increment * @i * 2);
+          -ms-transform: rotate(@increment * @i * 2);
+          transform: rotate(@increment * @i * 2);
+        }
+      }
+      .inset .percentage:before {
+        content: "@{i}%"
+      }
+    }
+    .loop(@i + 1);
+  }
+  .loop(@i);
+}

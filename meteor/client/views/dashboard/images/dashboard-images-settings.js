@@ -1,8 +1,16 @@
+var remote = require('remote');
+var dialog = remote.require('dialog');
+
 Template.dashboard_images_settings.events({
   'click .btn-delete-image': function () {
-    var result = confirm("Are you sure you want to delete this image?");
-    if (result === true) {
-      var imageId = this._id;
+    var imageId = this._id;
+    dialog.showMessageBox({
+      message: 'Are you sure you want to delete this image?',
+      buttons: ['Delete', 'Cancel']
+    }, function (index) {
+      if (index !== 0) {
+        return;
+      }
       var image = Images.findOne(imageId);
       var app = Apps.findOne({imageId: imageId});
       if (!app) {
@@ -23,26 +31,27 @@ Template.dashboard_images_settings.events({
         $('#error-delete-image').html('<small class="error">This image is currently being used by <a href="/apps/' + app.name + '">' + app.name + '</a>.</small>');
         $('#error-delete-image').fadeIn();
       }
-    }
+    });
   },
   'click #btn-pick-directory': function () {
-    $('#directory-picker').click();
-  },
-  'change #directory-picker': function (e) {
     var imageId = this._id;
-    var $picker = $(e.currentTarget);
-    var pickedDirectory = $picker.val();
     $('#picked-directory-error').html('');
-    if (pickedDirectory) {
-      if (!Util.hasDockerfile(pickedDirectory)) {
-        $('#picked-directory-error').html('Only directories with Dockerfiles are supported now.');
-      } else {
-        Images.update(imageId, {
-          $set: {
-            originPath: pickedDirectory
-          }
-        });
+    dialog.showOpenDialog({properties: ['openDirectory']}, function (filenames) {
+     if (!filenames) {
+        return;
       }
-    }
+      var directory = filenames[0];
+      if (directory) {
+        if (!Util.hasDockerfile(directory)) {
+          $('#picked-directory-error').html('Only directories with Dockerfiles are supported now.');
+        } else {
+          Images.update(imageId, {
+            $set: {
+              originPath: directory
+            }
+          });
+        }
+      }
+    });
   }
 });

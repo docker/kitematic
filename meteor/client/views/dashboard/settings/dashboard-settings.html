@@ -39,4 +39,17 @@
       {{/if}}
     </div>
   </div>
+  <div class="section dashboard-settings">
+    <div class="left-section">
+      <h4>Usage Diagnostics</h4>
+      <p class="help-block">Send anonymized usage diagnostics to help us improve Kitematic.</p>
+    </div>
+    <div class="right-section">
+      {{#if settings.tracking}}
+        <a onclick="trackLink('turn off usage analytics')" class="btn btn-negative btn-usage-analytics-off">Turn Off Usage Diagnostics</a>
+      {{else}}
+        <a onclick="trackLink('turn on usage analytics')" class="btn btn-positive btn-usage-analytics-on">Turn On Usage Diagnostics</a>
+      {{/if}}
+    </div>
+  </div>
 </template>
