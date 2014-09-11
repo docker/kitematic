@@ -127,7 +127,16 @@ app.on('ready', function() {
     }
 
     // Create the browser window.
-    mainWindow = new BrowserWindow({width: 800, height: 578, frame:false, resizable: false});
+    var windowOptions = {
+      width: 800,
+      height: 578,
+      frame: false,
+      resizable: false,
+      'web-preferences': {
+        'web-security': false
+      }
+    };
+    mainWindow = new BrowserWindow(windowOptions);
 
     // and load the index.html of the app.
     mainWindow.loadUrl(url);
@@ -135,4 +144,3 @@ app.on('ready', function() {
     mainWindow.focus();
   });
 });
-
