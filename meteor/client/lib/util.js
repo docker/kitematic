@@ -67,6 +67,8 @@ Util.copyVolumes = function (directory, appName, callback) {
       console.log('Copied volumes for: ' + appName);
       callback(null);
     });
+  } else {
+    callback(null);
   }
 };
 
