@@ -14,7 +14,7 @@ Template.modal_create_app.events({
     var validationResult = formValidate(formData, FormSchema.formCreateApp);
     if (validationResult.errors) {
       clearFormErrors($form);
-      showFormErrors($form, validationResult.errors.details);
+      showFormErrors($form, validationResult.errors);
     } else {
       clearFormErrors($form);
       var cleaned = validationResult.cleaned;
