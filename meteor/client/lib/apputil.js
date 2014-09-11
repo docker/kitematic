@@ -101,8 +101,8 @@ AppUtil.restart = function (appId) {
 
 AppUtil.remove = function (appId) {
   var app = Apps.findOne(appId);
+  Apps.remove({_id: appId});
   if (app.docker) {
-    Apps.remove({_id: appId});
     Docker.removeContainer(app.docker.Id, function (err) {
       if (err) { console.error(err); }
       var appPath = path.join(Util.KITE_PATH, app.name);
