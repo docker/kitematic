@@ -12,7 +12,7 @@ echo "nameserver 172.17.42.1" > /etc/resolver/kite
 DIR=$(dirname "$0")
 USER=`w -h | sort -u -t' ' -k1,1 | awk '{print $1}'`
 
-/bin/rm -rf /Library/LaunchAgents/com.kitematic.route.plist
+/bin/rm -rf /Library/LaunchDaemons/com.kitematic.route.plist
 echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 <!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
 <plist version=\"1.0\">
@@ -23,7 +23,7 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
   <array>
     <string>bash</string>
     <string>-c</string>
-    <string>/usr/sbin/scutil -w State:/Network/Interface/$IFNAME/IPv4;sudo /sbin/route -n add -net 172.17.0.0 -netmask 255.255.0.0 -gateway $GATEWAY</string>
+    <string>/usr/sbin/scutil -w State:/Network/Interface/$IFNAME/IPv4 -t 0;sudo /sbin/route -n add -net 172.17.0.0 -netmask 255.255.0.0 -gateway $GATEWAY</string>
   </array>
   <key>KeepAlive</key>
   <false/>
@@ -34,6 +34,6 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
 </dict>
 </plist>" > /Library/LaunchAgents/com.kitematic.route.plist
 
-# Add entries to routing table for Kitematic VM
+# Add entries to routing table for Kitematic boot2docker-vms
 /sbin/route delete -net 172.17.0.0 -netmask 255.255.0.0 -gateway $GATEWAY > /dev/null 2>&1 || true
 /sbin/route -n add -net 172.17.0.0 -netmask 255.255.0.0 -gateway $GATEWAY
