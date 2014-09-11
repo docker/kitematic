@@ -91,10 +91,10 @@ Util.openTerminal = function (command) {
 Util.downloadFile = function (url, filename, checksum, callback, progressCallback) {
   var doDownload = function () {
     progress(request(url), {
-      throttle: 250,
+      throttle: 250
     }).on('progress', function (state) {
       progressCallback(state.percent);
-    }).on('error', function (err) {  
+    }).on('error', function (err) {
       callback(err);
     }).pipe(fs.createWriteStream(filename)).on('error', function (err) {
       callback(err);
