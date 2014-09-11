@@ -1,5 +1,17 @@
 {
   "name": "Kitematic",
+  "author": "Kitematic",
+  "description": "Simple Docker App management for Mac OS X.",
+  "homepage": "https://kitematic.com/",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:kitematic/kitematic.git"
+  },
+  "bugs": "https://github.com/kitematic/kitematic/issues",
+  "licenses": [{
+    "type": "GNU",
+    "url": "https://raw.githubusercontent.com/kitematic/kitematic/master/LICENSE"
+  }],
   "main": "index.js",
   "version": "0.2.0",
   "dependencies": {
