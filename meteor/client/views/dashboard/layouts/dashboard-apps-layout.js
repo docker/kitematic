@@ -1,5 +1,3 @@
-var path = require('path');
-
 Template.dashboard_apps_layout.rendered = function () {
   Meteor.setInterval(function () {
     $('.header .icons a').tooltip();
@@ -26,7 +24,7 @@ Template.dashboard_apps_layout.events({
     AppUtil.logs(this._id);
   },
   'click .btn-terminal': function () {
-    var cmd = Boot2Docker.command() + ' ssh -t "sudo docker-enter ' + app.docker.Id + '"';
+    var cmd = Boot2Docker.command() + ' ssh -t "sudo docker-enter ' + this.docker.Id + '"';
     Util.openTerminal(cmd);
   },
   'click .btn-restart': function () {

@@ -47,7 +47,7 @@ var start = function (callback) {
         console.log('MongoDB: ' + mongoPort);
         console.log('webPort: ' + webPort);
         child_process.exec('kill $(ps aux -e | grep PURPOSE=KITEMATIC | awk \'{print $2}\') && rm ' + path.join(dataPath, 'mongod.lock'), function (error, stdout, stderr) {
-          var mongoChild = child_process.spawn(path.join(process.cwd(), 'resources', 'mongod'), ['--bind_ip', '127.0.0.1', '--dbpath', dataPath, '--port', mongoPort, '--unixSocketPrefix', dataPath], {
+          var mongoChild = child_process.spawn(path.join(__dirname, 'resources', 'mongod'), ['--bind_ip', '127.0.0.1', '--dbpath', dataPath, '--port', mongoPort, '--unixSocketPrefix', dataPath], {
             env: {
               PURPOSE: 'KITEMATIC'
             }
@@ -65,29 +65,16 @@ var start = function (callback) {
               console.log('Starting node child...');
               var rootURL = 'http://localhost:' + webPort;
               var user_env = process.env;
-              user_env.ROOT_URL = rootURL;
-              user_env.PORT = webPort;
-              user_env.BIND_IP = '127.0.0.1';
-              user_env.DB_PATH = dataPath;
-              user_env.MONGO_URL = 'mongodb://localhost:' + mongoPort + '/meteor';
-              user_env.METEOR_SETTINGS = fs.readFileSync(path.join(process.cwd(), 'resources', 'settings.json'), 'utf8');
-              var nodeChild = child_process.spawn(path.join(process.cwd(), 'resources', 'node'), ['./bundle/main.js'], {
-                env: user_env
-              });
-
-              var opened = false;
-              nodeChild.stdout.setEncoding('utf8');
-              nodeChild.stdout.on('data', function (data) {
-                console.log(data);
-                if (data.indexOf('Kitematic started.') !== -1) {
-                  if (!opened) {
-                    opened = true;
-                  } else {
-                    return;
-                  }
-                  callback(rootURL, nodeChild, mongoChild);
-                }
-              });
+              process.env.ROOT_URL = rootURL;
+              process.env.PORT = webPort;
+              process.env.BIND_IP = '127.0.0.1';
+              process.env.DB_PATH = dataPath;
+              process.env.MONGO_URL = 'mongodb://localhost:' + mongoPort + '/meteor';
+              process.env.METEOR_SETTINGS = fs.readFileSync(path.join(__dirname, 'resources', 'settings.json'), 'utf8');
+              process.env.DIR = __dirname;
+              process.env.NODE_ENV = 'production';
+              process.env.NODE_PATH = path.join(__dirname, 'node_modules');
+              require('./bundle/main.js');
             }
           });
         });
@@ -128,5 +115,7 @@ app.on('ready', function() {
     // and load the index.html of the app.
     mainWindow.loadUrl(url);
     mainWindow.show();
+    mainWindow.focus();
   });
 });
+

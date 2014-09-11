@@ -1,7 +1,6 @@
 var fs = require('fs');
 var exec = require('exec');
 var path = require('path');
-var crypto = require('crypto');
 
 VirtualBox = {};
 

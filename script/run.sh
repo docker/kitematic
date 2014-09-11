@@ -3,9 +3,12 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE=$DIR/..
 
+source $BASE/script/setup.sh
+
 export ROOT_URL=https://localhost:3000
 export DOCKER_HOST=http://192.168.59.103
 export DOCKER_PORT=2375
+export DIR=$BASE
 
 cd $BASE/meteor
 exec 3< <(meteor --settings $BASE/meteor/settings_dev.json)

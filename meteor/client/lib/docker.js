@@ -7,7 +7,7 @@ Docker = {};
 Docker.DOCKER_HOST = '192.168.60.103';
 
 Docker.DEFAULT_IMAGES_FILENAME = 'base-images-0.0.2.tar.gz';
-Docker.DEFAULT_IMAGES_CHECKSUM = '67e7c7562991a4208c90007461ec14bc184a52ad6048e6bed3e8a8c2b306cee7'; // Sha256 Checksum
+Docker.DEFAULT_IMAGES_CHECKSUM = 'a3517ac21034a1969d9ff15e3c41b1e2f1aa83c67b16a8bd0bc378ffefaf573b'; // Sha256 Checksum
 
 Docker.client = function () {
   return new Dockerode({host: Docker.DOCKER_HOST, port: '2375'});
