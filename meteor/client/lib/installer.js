@@ -7,7 +7,7 @@ var app = remote.require('app');
 Installer = {};
 
 Installer.CURRENT_VERSION = app.getVersion();
-Installer.baseURL = 'https://s3.amazonaws.com/kite-installer/';
+Installer.BASE_URL = 'https://s3.amazonaws.com/kite-installer/';
 
 Installer.isUpToDate = function () {
   return !!Installs.findOne({version: Installer.CURRENT_VERSION});
@@ -25,7 +25,7 @@ Installer.steps = [
     run: function (callback, progressCallback) {
       var installed = VirtualBox.installed();
       if (!installed) {
-        Util.downloadFile(Installer.baseURL + VirtualBox.INSTALLER_FILENAME, path.join(Util.getResourceDir(), VirtualBox.INSTALLER_FILENAME), VirtualBox.INSTALLER_CHECKSUM, function (err) {
+        Util.downloadFile(Installer.BASE_URL + VirtualBox.INSTALLER_FILENAME, path.join(Util.getResourceDir(), VirtualBox.INSTALLER_FILENAME), VirtualBox.INSTALLER_CHECKSUM, function (err) {
           if (err) {callback(err); return;}
           VirtualBox.install(function (err) {
             if (!VirtualBox.installed()) {
@@ -43,7 +43,7 @@ Installer.steps = [
           if (err) {callback(err); return;}
           if (Util.compareVersions(installedVersion, VirtualBox.REQUIRED_VERSION) < 0) {
             // Download a newer version of Virtualbox
-            Util.downloadFile(Installer.baseURL + VirtualBox.INSTALLER_FILENAME, path.join(Util.getResourceDir(), VirtualBox.INSTALLER_FILENAME), VirtualBox.INSTALLER_CHECKSUM, function (err) {
+            Util.downloadFile(Installer.BASE_URL + VirtualBox.INSTALLER_FILENAME, path.join(Util.getResourceDir(), VirtualBox.INSTALLER_FILENAME), VirtualBox.INSTALLER_CHECKSUM, function (err) {
               if (err) {callback(err); return;}
               VirtualBox.install(function (err) {
                 if (err) {callback(err); return;}
@@ -148,7 +148,7 @@ Installer.steps = [
   // Set up the default Kitematic images
   {
     run: function (callback, progressCallback) {
-      Util.downloadFile(Installer.baseURL + Docker.DEFAULT_IMAGES_FILENAME, path.join(Util.getResourceDir(), Docker.DEFAULT_IMAGES_FILENAME), Docker.DEFAULT_IMAGES_CHECKSUM, function (err) {
+      Util.downloadFile(Installer.BASE_URL + Docker.DEFAULT_IMAGES_FILENAME, path.join(Util.getResourceDir(), Docker.DEFAULT_IMAGES_FILENAME), Docker.DEFAULT_IMAGES_CHECKSUM, function (err) {
         Docker.reloadDefaultContainers(function (err) {
           callback(err);
         });
