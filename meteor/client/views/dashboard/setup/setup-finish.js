@@ -8,7 +8,7 @@ Template.setup_finish.events({
     } else {
       settings.update(settings._id, {
         $set: {
-          tracking: true
+          tracking: enableDiagnostics
         }
       });
     }
