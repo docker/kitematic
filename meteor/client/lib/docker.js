@@ -161,7 +161,7 @@ Docker.removeImage = function (imageId, callback) {
 };
 
 Docker.removeBindFolder = function (name, callback) {
-  exec(path.join(Util.getBinDir(), 'boot2docker') + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function (err, stdout) {
+  exec(Boot2Docker.command() + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function (err, stdout) {
     callback(err, stdout);
   });
 };
