@@ -7,7 +7,7 @@ var path = require('path');
 var app = require('app');
 var BrowserWindow = require('browser-window');
 
-var dirname = __dirname.replace(' ', '\\ ');
+var dirname = __dirname;
 console.log(dirname);
 
 var freeport = function (callback) {
@@ -29,7 +29,7 @@ var start = function (callback) {
   } else {
     process.stdout.write('Starting production server\n');
     if (os.platform() === 'darwin') {
-      var kitePath = path.join(process.env.HOME, 'Library/Application\\ Support/Kitematic/');
+      var kitePath = path.join(process.env.HOME, 'Library/Application Support/Kitematic/');
       var dataPath = path.join(kitePath, 'data');
       console.log(dataPath);
       var bundlePath = path.join(kitePath, 'bundle');
