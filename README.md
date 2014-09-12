@@ -1,13 +1,8 @@
 # [Kitematic](https://kitematic.com)
 
-**Note:** If the installer gets stuck at any step for more than 1 minute, there is probably an error. Please help us troubleshoot by running it from the command line, and submit the logs to [contact@kitematic.com](mailto:contact@kitematic.com).
-
-1. `cd <dir with Kitematic.app>`
-2. Run `./Kitematic.app/Contents/MacOS/node-webkit`
+**Note:** If you get a blank screen when running the installer, please quit the app and try it again. 
 
 Kitematic is still in Beta. Any effort in helping us find issues and improving the experience is greatly appreciated!
-
-[Fixes for Known Issues](http://kitematic.com/docs/known-issue-fixes)
 
 ![Kitematic Screenshot](https://s3.amazonaws.com/kite-installer/screenshot.5843.png)
 
