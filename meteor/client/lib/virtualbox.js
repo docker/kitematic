@@ -14,7 +14,8 @@ VirtualBox.HOSTONLY_HOSTIP = '192.168.60.3';
 VirtualBox.HOSTONLY_NETWORKMASK = '255.255.255.0';
 
 VirtualBox.installed = function () {
-  return fs.existsSync('/usr/bin/VBoxManage');
+  return fs.existsSync('/usr/bin/VBoxManage') &&
+    fs.existsSync('/Applications/VirtualBox.app/Contents/MacOS/VirtualBox');
 };
 
 VirtualBox.exec = function (command, callback) {
