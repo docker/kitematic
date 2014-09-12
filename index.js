@@ -112,7 +112,7 @@ app.on('activate-with-no-open-windows', function () {
 app.on('ready', function() {
   start(function (url, nodeChild, mongoChild) {
     var cleanUpChildren = function () {
-      console.log('Cleaning up children.')
+      console.log('Cleaning up children.');
       mongoChild.kill();
       nodeChild.kill();
       app.quit();
@@ -137,13 +137,7 @@ app.on('ready', function() {
       }
     };
     mainWindow = new BrowserWindow(windowOptions);
-
-    // and load the index.html of the app.
+    mainWindow.focus();
     mainWindow.loadUrl(url);
-
-    mainWindow.webContents.on('did-finish-load', function () {
-      mainWindow.show();
-      mainWindow.focus();
-    });
   });
 });
