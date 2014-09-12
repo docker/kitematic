@@ -98,7 +98,7 @@ Installer.steps = [
     },
     pastMessage: 'Setup the Kitematic VM (if required)',
     message: 'Setting up the Kitematic VM',
-    futureMessage: 'Set up the Kitematic VM(if required)'
+    futureMessage: 'Set up the Kitematic VM (if required)'
   },
 
   {
