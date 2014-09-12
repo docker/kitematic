@@ -55,9 +55,9 @@ Installer.steps = [
                     callback(err);
                   }
                 });
-              }, function (progress) {
-                progressCallback(progress);
               });
+            }, function (progress) {
+              progressCallback(progress);
             });
           } else {
             callback();

@@ -43,6 +43,7 @@ retry@1.0.0
 reywood:iron-router-ga@0.3.2
 routepolicy@1.0.0
 session@1.0.1
+simison:bootstrap3-less@0.3.0
 spacebars-compiler@1.0.2
 spacebars@1.0.1
 standard-app-packages@1.0.1
