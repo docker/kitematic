@@ -91,7 +91,7 @@ var start = function (callback) {
                   }
                   setTimeout(function () {
                     callback(rootURL, nodeChild, mongoChild);
-                  }, 300);
+                  }, 100);
                 }
               });
             }
