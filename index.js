@@ -89,7 +89,9 @@ var start = function (callback) {
                   } else {
                     return;
                   }
-                  callback(rootURL, nodeChild, mongoChild);
+                  setTimeout(function () {
+                    callback(rootURL, nodeChild, mongoChild);
+                  }, 300);
                 }
               });
             }
