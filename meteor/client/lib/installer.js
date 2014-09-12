@@ -76,7 +76,7 @@ Installer.steps = [
       Boot2Docker.exists(function (err, exists) {
         if (err) { callback(err); return; }
         if (!exists) {
-          var vmFilesPath = path.join(Util.getHomePath(), 'VirtualBox\ VMs', 'kitematic-vm');
+          var vmFilesPath = path.join(Util.getHomePath(), 'VirtualBox\\ VMs', 'kitematic-vm');
           if (fs.existsSync(vmFilesPath)) {
             Util.deleteFolder(vmFilesPath);
           }
@@ -98,7 +98,7 @@ Installer.steps = [
     },
     pastMessage: 'Setup the Kitematic VM (if required)',
     message: 'Setting up the Kitematic VM',
-    futureMessage: 'Set up the Kitematic VM(if required)'
+    futureMessage: 'Set up the Kitematic VM (if required)'
   },
 
   {

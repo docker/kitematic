@@ -17,7 +17,7 @@ Util.getBinDir = function () {
 };
 
 Util.getResourceDir = function () {
-  return path.join(Util.getHomePath(), 'Library/Application\ Support/Kitematic/Resources');
+  return path.join(Util.getHomePath(), 'Library/Application\\ Support/Kitematic/Resources');
 };
 
 Util.KITE_PATH = path.join(Util.getHomePath(), 'Kitematic');
