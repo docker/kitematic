@@ -5,9 +5,9 @@
 
 standard-app-packages
 less
-bootstrap3-less
-handlebar-helpers
-underscore-string-latest
-collection-helpers
+raix:handlebar-helpers
+mrt:underscore-string-latest
+dburles:collection-helpers
 iron:router
 reywood:iron-router-ga
+simison:bootstrap3-less
