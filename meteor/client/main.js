@@ -63,7 +63,7 @@ Handlebars.registerHelper('timeSince', function (date) {
   return moment(date).fromNow();
 });
 
-Handlebars.registerHelper('isUpdating', function (date) {
+Handlebars.registerHelper('isUpdating', function () {
   return Session.get('isUpdating');
 });
 
@@ -145,7 +145,7 @@ Meteor.setInterval(function () {
 }, 5000);
 
 Meteor.setInterval(function () {
-  if (Installer.isUpToDate()) {
+  if (!Session.get('installing')) {
     Sync.resolveWatchers(function () {});
     if (!Session.get('boot2dockerOff')) {
       fixBoot2DockerVM(function (err) {

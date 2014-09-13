@@ -1,3 +1,6 @@
+var remote = require('remote');
+var dialog = remote.require('dialog');
+
 Template.dashboard_settings.events({
   'click .btn-start-boot2docker': function (e) {
     var $btn = $(e.currentTarget);
@@ -35,6 +38,17 @@ Template.dashboard_settings.events({
       $set: {
         tracking: false
       }
+    });
+  },
+  'click .btn-repair': function () {
+    dialog.showMessageBox({
+      message: 'Repairing Kitematic will clear your current Docker VM and the state of the app. Please make sure your work is backed up. Do you wish to continue?',
+      buttons: ['Repair', 'Cancel']
+    }, function (index) {
+      if (index !== 0) {
+        return;
+      }
+      Router.go('setup_intro');
     });
   }
 });
