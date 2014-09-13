@@ -1,18 +1,3 @@
-var installStarted = false;
-Template.setup_install.rendered = function() {
-  if(!installStarted) {
-    installStarted = true;
-    Installer.run(function (err) {
-      if (err) {
-        console.log('Setup failed.');
-        console.log(err);
-      } else {
-        Router.go('setup_finish');
-      }
-    });
-  }
-};
-
 Template.setup_install.steps = function () {
   return Installer.steps.map(function (step, index) {
     step.index = index;
@@ -26,9 +11,6 @@ Template.setup_install.helpers({
   },
   currentInstallStepProgress: function () {
     return Session.get('currentInstallStepProgress');
-  },
-  installComplete: function () {
-    return Session.get('currentInstallStep') === Installer.steps.length;
   },
   failedStep: function () {
     return Session.get('failedStep');
