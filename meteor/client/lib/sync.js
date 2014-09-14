@@ -73,7 +73,7 @@ Sync.addAppWatcher = function (app) {
         if (err.indexOf('The archive file is missing on some hosts') !== -1) {
           results = archiveErrorPattern.exec(err);
           location = results[1].replace(' ', '\\ ');
-          var fullLocation = path.join(Util.getHomePath(), 'Library/Application\\ Support/Unison', location);
+          var fullLocation = path.join(Util.getHomePath(), 'Library/Application Support/Unison', location);
           var cmd = '/bin/rm -rf ' + fullLocation;
           exec(cmd, function () {});
         }
