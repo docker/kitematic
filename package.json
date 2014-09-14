@@ -1,7 +1,7 @@
 {
   "name": "Kitematic",
   "main": "index.js",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "dependencies": {
     "async": "^0.9.0",
     "chokidar": "git+https://github.com/usekite/chokidar.git",
