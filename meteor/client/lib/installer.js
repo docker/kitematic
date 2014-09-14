@@ -76,7 +76,7 @@ Installer.steps = [
       Boot2Docker.exists(function (err, exists) {
         if (err) { callback(err); return; }
         if (!exists) {
-          var vmFilesPath = path.join(Util.getHomePath(), 'VirtualBox\ VMs', 'kitematic-vm');
+          var vmFilesPath = path.join(Util.getHomePath(), 'VirtualBox VMs', 'kitematic-vm');
           if (fs.existsSync(vmFilesPath)) {
             Util.deleteFolder(vmFilesPath);
           }
@@ -131,6 +131,7 @@ Installer.steps = [
     },
     pastMessage: 'Started the Kitematic VM',
     message: 'Starting the Kitematic VM',
+    subMessage: '(This may take a few minutes)',
     futureMessage: 'Start the Kitematic VM'
   },
 
@@ -164,6 +165,7 @@ Installer.steps = [
 ];
 
 Installer.run = function (callback) {
+  Session.set('installing', true);
   var currentStep = 0;
   Session.set('currentInstallStep', currentStep);
   Session.set('numberOfInstallSteps', this.steps.length);
@@ -191,6 +193,7 @@ Installer.run = function (callback) {
       callback(err);
     } else {
       // Setup Finished
+      Session.set('installing', false);
       console.log('Setup finished.');
       callback();
     }

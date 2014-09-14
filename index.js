@@ -7,6 +7,9 @@ var path = require('path');
 var app = require('app');
 var BrowserWindow = require('browser-window');
 
+var dirname = __dirname;
+console.log(dirname);
+
 var freeport = function (callback) {
   var server = net.createServer();
   var port = 0;
@@ -47,7 +50,7 @@ var start = function (callback) {
         console.log('MongoDB: ' + mongoPort);
         console.log('webPort: ' + webPort);
         child_process.exec('kill $(ps aux -e | grep PURPOSE=KITEMATIC | awk \'{print $2}\') && rm ' + path.join(dataPath, 'mongod.lock'), function (error, stdout, stderr) {
-          var mongoChild = child_process.spawn(path.join(__dirname, 'resources', 'mongod'), ['--bind_ip', '127.0.0.1', '--dbpath', dataPath, '--port', mongoPort, '--unixSocketPrefix', dataPath], {
+          var mongoChild = child_process.spawn(path.join(dirname, 'resources', 'mongod'), ['--bind_ip', '127.0.0.1', '--dbpath', dataPath, '--port', mongoPort, '--unixSocketPrefix', dataPath], {
             env: {
               PURPOSE: 'KITEMATIC'
             }
@@ -71,11 +74,11 @@ var start = function (callback) {
               user_env.BIND_IP = '127.0.0.1';
               user_env.DB_PATH = dataPath;
               user_env.MONGO_URL = 'mongodb://localhost:' + mongoPort + '/meteor';
-              user_env.METEOR_SETTINGS = fs.readFileSync(path.join(__dirname, 'resources', 'settings.json'), 'utf8');
-              user_env.DIR = __dirname;
+              user_env.METEOR_SETTINGS = fs.readFileSync(path.join(dirname, 'resources', 'settings.json'), 'utf8');
+              user_env.DIR = dirname;
               user_env.NODE_ENV = 'production';
-              user_env.NODE_PATH = path.join(__dirname, 'node_modules');
-              var nodeChild = child_process.spawn(path.join(__dirname, 'resources', 'node'), [path.join(__dirname, 'bundle', 'main.js')], {
+              user_env.NODE_PATH = path.join(dirname, 'node_modules');
+              var nodeChild = child_process.spawn(path.join(dirname, 'resources', 'node'), [path.join(dirname, 'bundle', 'main.js')], {
                 env: user_env
               });
 
