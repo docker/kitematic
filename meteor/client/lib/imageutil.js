@@ -125,11 +125,11 @@ ImageUtil.rebuild = function (imageId) {
     });
     ImageUtil.rebuildHelper(image, function (err) {
       if (err) { console.error(err); }
-    });
-    _.each(apps, function (app) {
-      app = Apps.findOne(app._id);
-      AppUtil.run(app, function (err) {
-        if (err) { console.error(err); }
+      _.each(apps, function (app) {
+        app = Apps.findOne(app._id);
+        AppUtil.run(app, function (err) {
+          if (err) { console.error(err); }
+        });
       });
     });
   } else {
