@@ -42,7 +42,10 @@ Router.map(function () {
 
   this.route('setup_intro', {
     path: '/setup/intro',
-    controller: 'SetupController'
+    controller: 'SetupController',
+    onBeforeAction: function () {
+      Session.set('installing', true);
+    }
   });
 
   this.route('setup_install', {
