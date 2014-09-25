@@ -1,9 +1,5 @@
 # [Kitematic](https://kitematic.com)
 
-**Note:** If you get a blank screen when running the installer, please try refreshing the app ( cmd+r ). 
-
-Kitematic is still in Beta. Any effort in helping us find issues and improving the experience is greatly appreciated!
-
 ![Kitematic Screenshot](https://s3.amazonaws.com/kite-installer/screenshot.5843.png)
 
 ## Table of Contents
