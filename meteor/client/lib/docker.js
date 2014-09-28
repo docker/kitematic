@@ -27,6 +27,33 @@ Docker.removeContainer = function (containerId, callback) {
   });
 };
 
+Docker.listContainers = function (callback) {
+  docker.listContainers(function (err, containers) {
+    if (err) {
+      callback(err, null);
+    } else {
+      var cbList = _.map(containers, function (container) {
+        return function (cb) {
+          Docker.getContainerData(container.Id, function (err, data) {
+            if (err) {
+              cb(err, null);
+            } else {
+              cb(null, data);
+            }
+          });
+        }
+      });
+      async.parallel(cbList, function (err, results) {
+        if (err) {
+          callback(err, null);
+        } else {
+          callback(null, results);
+        }
+      });
+    }
+  });
+};
+
 Docker.getContainerData = function (containerId, callback) {
   var container = docker.getContainer(containerId);
   container.inspect(function (err, data) {
