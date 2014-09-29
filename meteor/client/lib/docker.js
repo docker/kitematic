@@ -28,7 +28,7 @@ Docker.removeContainer = function (containerId, callback) {
 };
 
 Docker.listContainers = function (callback) {
-  docker.listContainers(function (err, containers) {
+  docker.listContainers({all: true}, function (err, containers) {
     if (err) {
       callback(err, null);
     } else {
@@ -168,12 +168,42 @@ Docker.getImageData = function (imageId, callback) {
   image.inspect(function (err, data) {
     if (err) {
       callback(err, null);
-      return;
     } else {
-      data.Config.Volumes = convertVolumeObjToArray(data.Config.Volumes);
-      data.ContainerConfig.Volumes = convertVolumeObjToArray(data.ContainerConfig.Volumes);
+      if (data.Config && data.Config.Volumes) {
+        data.Config.Volumes = convertVolumeObjToArray(data.Config.Volumes);
+      }
+      if (data.ContainerConfig && data.ContainerConfig.Volumes) {
+        data.ContainerConfig.Volumes = convertVolumeObjToArray(data.ContainerConfig.Volumes);
+      }
       callback(null, data);
-      return;
+    }
+  });
+};
+
+Docker.listImages = function (callback) {
+  docker.listImages({all: false}, function (err, images) {
+    if (err) {
+      callback(err, null);
+    } else {
+      var cbList = _.map(images, function (image) {
+        return function (cb) {
+          Docker.getImageData(image.Id, function (err, data) {
+            if (err) {
+              cb(err, null);
+            } else {
+              var mergedData = _.extend(image, data);
+              cb(null, mergedData);
+            }
+          });
+        }
+      });
+      async.parallel(cbList, function (err, results) {
+        if (err) {
+          callback(err, null);
+        } else {
+          callback(null, results);
+        }
+      });
     }
   });
 };
