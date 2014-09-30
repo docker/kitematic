@@ -1,5 +1,5 @@
 Template.dashboard_apps.helpers({
   apps: function () {
-    return Apps.find({}, {sort: {createdAt: -1}});
+    return Apps.find({name: {$ne: 'kite-dns'}}, {sort: {createdAt: -1}});
   }
 });
