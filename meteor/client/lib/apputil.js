@@ -1,12 +1,17 @@
 var exec = require('exec');
 var path = require('path');
+var fs = require('fs');
 var Convert = require('ansi-to-html');
 var convert = new Convert();
 
 AppUtil = {};
 
+AppUtil.create = function () {
+
+};
+
 AppUtil.run = function (app) {
-  var image = Images.findOne({_id: app.imageId});
+  var image = Images.findOne({'docker.Id': app.docker.Image});
   // Delete old container if one already exists
   Docker.removeContainer(app.name, function (err) {
     if (err) { console.error(err); }
@@ -164,5 +169,85 @@ AppUtil.recover = function () {
         });
       }
     });
+  });
+};
+
+AppUtil.sync = function () {
+  Docker.listContainers(function (err, containers) {
+    if (err) {
+      console.error(err);
+    } else {
+      var apps = Apps.find({}).fetch();
+      _.each(apps, function (app) {
+        if (app.docker && app.docker.Id) {
+          Docker.getContainerData(app.docker.Id, function (err, data) {
+            console.log(data);
+            var status = 'STARTING';
+            if (data.State.Running) {
+              status = 'READY';
+            } else {
+              status = 'ERROR';
+            }
+            Apps.update(app._id, {
+              $set: {
+                docker: data,
+                status: status
+              }
+            })
+          });
+        }
+      });
+      var dockerIds = _.map(apps, function (app) {
+        return app.docker.Id;
+      });
+      var containerIds = _.map(containers, function (container) {
+        return container.Id;
+      });
+      var diffApps = _.difference(dockerIds, containerIds);
+      _.each(diffApps, function (appContainerId) {
+        var app = Apps.findOne({'docker.Id': appContainerId});
+        if (app) {
+          AppUtil.remove(app._id);
+        }
+      });
+      var diffContainers = _.reject(containers, function (container) {
+        return _.contains(dockerIds, container.Id);
+      });
+      _.each(diffContainers, function (container) {
+        var appName = container.Name.substring(1);
+        var appPath = path.join(Util.KITE_PATH, appName);
+        if (!fs.existsSync(appPath)) {
+          console.log('Created Kite ' + appName + ' directory.');
+          fs.mkdirSync(appPath, function (err) {
+            if (err) { throw err; }
+          });
+        }
+        var envVars = container.Config.Env;
+        var config = {};
+        _.each(envVars, function (envVar) {
+          var eqPos = envVar.indexOf('=');
+          var envKey = envVar.substring(0, eqPos);
+          var envVal = envVar.substring(eqPos + 1);
+          config[envKey] = envVal;
+        });
+        var status = 'STARTING';
+        if (container.State.Running) {
+          status = 'READY';
+        } else {
+          status = 'ERROR';
+        }
+        var appObj = {
+          name: appName,
+          docker: container,
+          status: status,
+          config: config,
+          path: appPath,
+          logs: [],
+          createdAt: new Date()
+        };
+        console.log(appObj);
+        Apps.insert(appObj);
+      });
+    }
   });
 };

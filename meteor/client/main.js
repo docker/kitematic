@@ -150,7 +150,7 @@ Meteor.setInterval(function () {
     if (!Session.get('boot2dockerOff')) {
       fixBoot2DockerVM(function (err) {
         if (err) { console.log(err); return; }
-        AppUtil.recover();
+        //AppUtil.recover();
         fixDefaultImages(function (err) {
           if (err) { console.log(err); return; }
           fixDefaultContainers(function (err) {
@@ -159,5 +159,11 @@ Meteor.setInterval(function () {
         });
       });
     }
+  }
+}, 5000);
+
+Meteor.setInterval(function () {
+  if (!Session.get('installing')) {
+    AppUtil.sync();
   }
 }, 5000);
