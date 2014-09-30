@@ -9,24 +9,26 @@
       {{/if}}
     </div>
   </div>
-  <div class="padded">
-    {{#if hasItem images}}
-      <div class="images line-item-collection">
-        {{#each images}}
-          {{> dashboard_single_image}}
-        {{/each}}
-      </div>
-    {{else}}
-      <div class="empty-placeholder">
-        <div class="big-icon"><i class="fa fa-camera"></i></div>
-        <h4>There are no images yet.</h4>
-        {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
-          <a href="#" data-toggle="modal" data-target="#modal-create-image" class="btn btn-action" disabled="disabled"><span class="typcn typcn-plus-outline"></span> Create Image</a>
-        {{else}}
-          <a href="#" onclick="trackLink('create image')" data-toggle="modal" data-target="#modal-create-image" class="btn btn-action"><span class="typcn typcn-plus-outline"></span>Create Image</a>
-        {{/if}}
-      </div>
-    {{/if}}
+  <div class="content">
+    <div class="padded">
+      {{#if hasItem images}}
+        <div class="images line-item-collection">
+          {{#each images}}
+            {{> dashboard_single_image}}
+          {{/each}}
+        </div>
+      {{else}}
+        <div class="empty-placeholder">
+          <div class="big-icon"><i class="fa fa-camera"></i></div>
+          <h4>There are no images yet.</h4>
+          {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
+            <a href="#" data-toggle="modal" data-target="#modal-create-image" class="btn btn-action" disabled="disabled"><span class="typcn typcn-plus-outline"></span> Create Image</a>
+          {{else}}
+            <a href="#" onclick="trackLink('create image')" data-toggle="modal" data-target="#modal-create-image" class="btn btn-action"><span class="typcn typcn-plus-outline"></span>Create Image</a>
+          {{/if}}
+        </div>
+      {{/if}}
+    </div>
   </div>
   {{> modal_create_app}}
   {{> modal_create_image}}

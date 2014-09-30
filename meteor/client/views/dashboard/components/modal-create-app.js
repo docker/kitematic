@@ -36,11 +36,6 @@ Template.modal_create_app.events({
         createdAt: new Date()
       };
       var appId = Apps.insert(appObj);
-      Apps.update(appId, {
-        $set: {
-          'config.APP_ID': appId
-        }
-      });
       var app = Apps.findOne(appId);
       var image = Images.findOne(app.imageId);
       Util.copyVolumes(image.path, app.name, function (err) {

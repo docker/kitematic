@@ -61,9 +61,15 @@ Docker.getContainerData = function (containerId, callback) {
       callback(err, null);
       return;
     } else {
-      data.Config.Volumes = convertVolumeObjToArray(data.Config.Volumes);
-      data.Volumes = convertVolumeObjToArray(data.Volumes);
-      data.VolumesRW = convertVolumeObjToArray(data.VolumesRW);
+      if (data.Config && data.Config.Volumes) {
+        data.Config.Volumes = convertVolumeObjToArray(data.Config.Volumes);
+      }
+      if (data.Volumes) {
+        data.Volumes = convertVolumeObjToArray(data.Volumes);
+      }
+      if (data.VolumesRW) {
+        data.VolumesRW = convertVolumeObjToArray(data.VolumesRW);
+      }
       callback(null, data);
       return;
     }
