@@ -291,16 +291,10 @@ ImageUtil.sync = function () {
           return image.docker.Id;
         }
       });
-      console.log('Doc Ids');
-      console.log(dockerIds);
       var imageIds = _.map(dockerImages, function (image) {
         return image.Id;
       });
-      console.log('Host Ids');
-      console.log(imageIds);
       var diffImages = _.difference(dockerIds, imageIds);
-      console.log('Dangling Ids');
-      console.log(diffImages);
       _.each(diffImages, function (imageId) {
         var image = Images.findOne({'docker.Id': imageId});
         if (image && image.status !== 'BUILDING') {
@@ -310,8 +304,6 @@ ImageUtil.sync = function () {
       var diffDockerImages = _.reject(dockerImages, function (image) {
         return _.contains(dockerIds, image.Id);
       });
-      console.log('To be added:');
-      console.log(diffDockerImages);
       _.each(diffDockerImages, function (image) {
         var repoTag = _.first(image.RepoTags);
         var repoTagTokens = repoTag.split(':');
