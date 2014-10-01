@@ -277,10 +277,25 @@ ImageUtil.sync = function () {
       var images = Images.find({}).fetch();
       _.each(images, function (image) {
         if (image.docker && image.docker.Id) {
+          var imageData = _.find(dockerImages, function (dockerImage) {
+            return dockerImage.Id === image.docker.Id;
+          });
+          if (imageData && imageData.RepoTags) {
+            var repoTag = _.first(imageData.RepoTags);
+            var repoTagTokens = repoTag.split(':');
+            var name = repoTagTokens[0];
+            var version = repoTagTokens[1];
+            Images.update(image._id, {
+              $set: {
+                'meta.name': name,
+                'meta.version': version
+              }
+            });
+          }
           Docker.getImageData(image.docker.Id, function (err, data) {
             Images.update(image._id, {
               $set: {
-                docker: data,
+                docker: data
               }
             })
           });
