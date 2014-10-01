@@ -164,6 +164,7 @@ Meteor.setInterval(function () {
 
 Meteor.setInterval(function () {
   if (!Session.get('installing')) {
+    ImageUtil.sync();
     AppUtil.sync();
   }
 }, 5000);
