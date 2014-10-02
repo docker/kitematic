@@ -196,7 +196,7 @@ ImageUtil.build = function (image, callback) {
         buildLogs: []
       }
     });
-    docker.buildImage(tarFilePath, {t: image._id.toLowerCase()}, function (err, response) {
+    docker.buildImage(tarFilePath, {t: image.meta.name + ':' + image.meta.version}, function (err, response) {
       if (err) { callback(err); }
       console.log('Building Docker image...');
       response.setEncoding('utf8');
@@ -221,8 +221,9 @@ ImageUtil.build = function (image, callback) {
           console.error(e);
         }
         var imageData = null;
-        Docker.getImageData(image._id, function (err, data) {
+        Docker.getImageData(image.meta.name + ':' + image.meta.version, function (err, data) {
           if (err) {
+            console.error(err);
             Images.update(image._id, {
               $set: {
                 status: 'ERROR'
@@ -313,7 +314,7 @@ ImageUtil.sync = function () {
       _.each(diffImages, function (imageId) {
         var image = Images.findOne({'docker.Id': imageId});
         if (image && image.status !== 'BUILDING') {
-          ImageUtil.remove(image._id);
+          //ImageUtil.remove(image._id);
         }
       });
       var diffDockerImages = _.reject(dockerImages, function (image) {

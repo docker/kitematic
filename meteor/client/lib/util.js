@@ -4,9 +4,24 @@ var nodeCrypto = require('crypto');
 var request = require('request');
 var progress = require('request-progress');
 var ncp = require('ncp').ncp;
+var exec = require('exec');
 ncp.limit = 16;
 
 Util = {};
+
+Util.refreshDNS = function (app, callback) {
+  // Use dig to refresh the DNS
+  exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function (err, stdout, stderr) {
+    console.log(err);
+    console.log(stdout);
+    console.log(stderr);
+    if (err) {
+      callback(err);
+    } else {
+      callback(null);
+    }
+  });
+};
 
 Util.getHomePath = function () {
   return process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'];
@@ -56,17 +71,21 @@ Util.copyFolder = function (src, dest, callback) {
 };
 
 Util.copyVolumes = function (directory, appName, callback) {
-  var volumesPath = path.join(directory, 'volumes');
-  if (fs.existsSync(volumesPath)) {
-    var destinationPath = path.join(Util.KITE_PATH, appName);
-    Util.copyFolder(volumesPath, destinationPath, function (err) {
-      if (err) {
-        callback(err);
-        return;
-      }
-      console.log('Copied volumes for: ' + appName);
+  if (directory) {
+    var volumesPath = path.join(directory, 'volumes');
+    if (fs.existsSync(volumesPath)) {
+      var destinationPath = path.join(Util.KITE_PATH, appName);
+      Util.copyFolder(volumesPath, destinationPath, function (err) {
+        if (err) {
+          callback(err);
+          return;
+        }
+        console.log('Copied volumes for: ' + appName);
+        callback(null);
+      });
+    } else {
       callback(null);
-    });
+    }
   } else {
     callback(null);
   }
