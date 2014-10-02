@@ -33,11 +33,10 @@ AppUtil.restartHelper = function (app) {
       if (err) { console.error(err); }
       Docker.getContainerData(app.docker.Id, function (err, data) {
         if (err) { console.error(err); }
-        // Use dig to refresh the DNS
-        exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function(err, stdout, stderr) {
-          console.log(err);
-          console.log(stdout);
-          console.log(stderr);
+        Util.refreshDNS(app, function (err) {
+          if (err) {
+            console.error(err);
+          }
           Apps.update(app._id, {$set: {
             status: 'READY',
             docker: data
@@ -58,11 +57,10 @@ AppUtil.start = function (appId) {
       if (err) { console.error(err); }
       Docker.getContainerData(app.docker.Id, function (err, data) {
         if (err) { console.error(err); }
-        // Use dig to refresh the DNS
-        exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function(err, stdout, stderr) {
-          console.log(err);
-          console.log(stdout);
-          console.log(stderr);
+        Util.refreshDNS(app, function (err) {
+          if (err) {
+            console.error(err);
+          }
           Apps.update(app._id, {$set: {
             status: 'READY',
             docker: data
@@ -178,9 +176,9 @@ AppUtil.sync = function () {
         if (app.docker && app.docker.Id) {
           Docker.getContainerData(app.docker.Id, function (err, data) {
             var status = 'STARTING';
-            if (data.State.Running) {
+            if (data && data.State && data.State.Running) {
               status = 'READY';
-            } else {
+            } else if (data && data.State && !data.State.Running) {
               status = 'ERROR';
             }
             Apps.update(app._id, {

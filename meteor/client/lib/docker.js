@@ -84,7 +84,7 @@ Docker.runContainer = function (app, image, callback) {
   });
   console.log(envParam);
   docker.createContainer({
-    Image: image._id.toLowerCase(),
+    Image: image.docker.Id,
     Tty: false,
     Env: envParam,
     Hostname: app.name,
@@ -94,7 +94,7 @@ Docker.runContainer = function (app, image, callback) {
     console.log('Created container: ' + container.id);
     // Bind volumes
     var binds = [];
-    if (image.docker.Config.Volumes.length > 0) {
+    if (image.docker.Config.Volumes && image.docker.Config.Volumes.length > 0) {
       _.each(image.docker.Config.Volumes, function (vol) {
         binds.push('/var/lib/docker/binds/' + app.name + vol.Path + ':' + vol.Path);
       });
@@ -106,11 +106,10 @@ Docker.runContainer = function (app, image, callback) {
     }, function (err) {
       if (err) { callback(err, null); return; }
       console.log('Started container: ' + container.id);
-      // Use dig to refresh the DNS
-      exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function(err, stdout, stderr) {
-        console.log(err);
-        console.log(stdout);
-        console.log(stderr);
+      Util.refreshDNS(app, function (err) {
+        if (err) {
+          console.error(err);
+        }
         callback(null, container);
       });
     });
@@ -170,7 +169,7 @@ var convertVolumeObjToArray = function (obj) {
 };
 
 Docker.getImageData = function (imageId, callback) {
-  var image = docker.getImage(imageId.toLowerCase());
+  var image = docker.getImage(imageId);
   image.inspect(function (err, data) {
     if (err) {
       callback(err, null);
@@ -215,7 +214,7 @@ Docker.listImages = function (callback) {
 };
 
 Docker.removeImage = function (imageId, callback) {
-  var image = docker.getImage(imageId.toLowerCase());
+  var image = docker.getImage(imageId);
   image.remove({force: true}, function (err) {
     if (err) { callback(err); return; }
     console.log('Deleted image: ' + imageId);
