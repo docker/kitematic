@@ -11,7 +11,7 @@ Util = {};
 
 Util.refreshDNS = function (app, callback) {
   // Use dig to refresh the DNS
-  exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function (err, stdout, stderr) {
+  exec('/usr/bin/dig +time=2 +tries=1 ' + app.name + '.kite @172.17.42.1', function (err, stdout, stderr) {
     console.log(err);
     console.log(stdout);
     console.log(stderr);
