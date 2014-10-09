@@ -44,9 +44,13 @@ ImageUtil.getMetaData = function (directory) {
     if (!kiteJSON.name) {
       kiteJSON.name = _.last(directory.split(path.sep));
     }
+    if (!kiteJSON.version) {
+      kiteJSON.version = 'latest';
+    }
   } else {
     kiteJSON = {
-      name: _.last(directory.split(path.sep))
+      name: _.last(directory.split(path.sep)),
+      version: 'latest'
     };
   }
   return kiteJSON;
@@ -222,6 +226,7 @@ ImageUtil.build = function (image, callback) {
         }
         var imageData = null;
         Docker.getImageData(image.meta.name + ':' + image.meta.version, function (err, data) {
+          console.log(data);
           if (err) {
             console.error(err);
             Images.update(image._id, {
@@ -277,19 +282,19 @@ ImageUtil.sync = function () {
     } else {
       var images = Images.find({}).fetch();
       _.each(images, function (image) {
-        if (image.docker && image.docker.Id) {
+        var image = Images.findOne(image._id);
+        if (image && image.docker && image.docker.Id) {
+          var duplicateImages = Images.find({'docker.Id': image.docker.Id, _id: {$ne: image._id}}).fetch();
+          _.each(duplicateImages, function (duplicateImage) {
+            Images.remove(duplicateImage._id);
+          });
           var imageData = _.find(dockerImages, function (dockerImage) {
             return dockerImage.Id === image.docker.Id;
           });
           if (imageData && imageData.RepoTags) {
-            var repoTag = _.first(imageData.RepoTags);
-            var repoTagTokens = repoTag.split(':');
-            var name = repoTagTokens[0];
-            var version = repoTagTokens[1];
             Images.update(image._id, {
               $set: {
-                'meta.name': name,
-                'meta.version': version
+                tags: imageData.RepoTags
               }
             });
           }
@@ -314,7 +319,7 @@ ImageUtil.sync = function () {
       _.each(diffImages, function (imageId) {
         var image = Images.findOne({'docker.Id': imageId});
         if (image && image.status !== 'BUILDING') {
-          //ImageUtil.remove(image._id);
+          ImageUtil.remove(image._id);
         }
       });
       var diffDockerImages = _.reject(dockerImages, function (image) {
@@ -328,17 +333,19 @@ ImageUtil.sync = function () {
         var buildingImage = _.find(images, function (image) {
           return image.status === 'BUILDING' && image.meta.name === name && image.meta.version === version;
         });
-        if (!buildingImage) {
+        if (!buildingImage && name !== '<none>' && version !== '<none>') {
           var imageObj = {
             status: 'READY',
             docker: image,
             buildLogs: [],
             createdAt: new Date(),
+            tags: image.RepoTags,
             meta: {
               name: name,
               version: version
             }
           };
+          console.log(imageObj);
           Images.insert(imageObj);
         }
       });

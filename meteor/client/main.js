@@ -67,6 +67,10 @@ Handlebars.registerHelper('isUpdating', function () {
   return Session.get('isUpdating');
 });
 
+Handlebars.registerHelper('displayTags', function (tags, delimiter) {
+  return tags.join(delimiter);
+});
+
 var fixBoot2DockerVM = function (callback) {
   Boot2Docker.check(function (err) {
     if (err) {
