@@ -49,6 +49,7 @@ Template.modal_create_image.events({
     };
     var imageMetaData = ImageUtil.getMetaData(directory);
     imageObj.meta = imageMetaData;
+    imageObj.tags = [imageMetaData.name + ':' + imageMetaData.version];
     var imageId = Images.insert(imageObj);
     var imagePath = path.join(Util.KITE_IMAGES_PATH, imageId);
     Images.update(imageId, {

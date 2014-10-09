@@ -169,18 +169,37 @@ var convertVolumeObjToArray = function (obj) {
 };
 
 Docker.getImageData = function (imageId, callback) {
-  var image = docker.getImage(imageId);
-  image.inspect(function (err, data) {
+  docker.listImages({all: false}, function (err, images) {
     if (err) {
       callback(err, null);
     } else {
-      if (data.Config && data.Config.Volumes) {
-        data.Config.Volumes = convertVolumeObjToArray(data.Config.Volumes);
-      }
-      if (data.ContainerConfig && data.ContainerConfig.Volumes) {
-        data.ContainerConfig.Volumes = convertVolumeObjToArray(data.ContainerConfig.Volumes);
-      }
-      callback(null, data);
+      var dockerImage = _.find(images, function (image) {
+        return image.Id === imageId;
+      });
+      var image = docker.getImage(imageId);
+      image.inspect(function (err, data) {
+        if (err) {
+          callback(err, null);
+        } else {
+          if (data.Config && data.Config.Volumes) {
+            data.Config.Volumes = convertVolumeObjToArray(data.Config.Volumes);
+          }
+          if (data.ContainerConfig && data.ContainerConfig.Volumes) {
+            data.ContainerConfig.Volumes = convertVolumeObjToArray(data.ContainerConfig.Volumes);
+          }
+          /*console.log('Image ID');
+          console.log(imageId);
+          console.log('Raw Docker Data:');
+          console.log(dockerImage);
+          console.log('Inspected Data:');
+          console.log(data);*/
+          if (!dockerImage) {
+            callback(null, data);
+          } else {
+            callback(null, _.extend(dockerImage, data));
+          }
+        }
+      });
     }
   });
 };
@@ -196,8 +215,7 @@ Docker.listImages = function (callback) {
             if (err) {
               cb(err, null);
             } else {
-              var mergedData = _.extend(image, data);
-              cb(null, mergedData);
+              cb(null, data);
             }
           });
         }
@@ -273,7 +291,7 @@ Docker.resolveDefaultImages = function () {
     image.inspect(function (err) {
       if (err) {
         if (err.reason === 'no such image') {
-          docker.loadImage(path.join(Util.getBinDir(), 'base-images.tar.gz'), {}, function (err) {
+          docker.loadImage(path.join(Util.getBinDir(), Docker.DEFAULT_IMAGES_FILENAME), {}, function (err) {
             if (err) {
               innerCallback(err);
               return;
