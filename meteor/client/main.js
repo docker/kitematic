@@ -154,7 +154,7 @@ Meteor.setInterval(function () {
     if (!Session.get('boot2dockerOff')) {
       fixBoot2DockerVM(function (err) {
         if (err) { console.log(err); return; }
-        //AppUtil.recover();
+        AppUtil.recover();
         fixDefaultImages(function (err) {
           if (err) { console.log(err); return; }
           fixDefaultContainers(function (err) {
