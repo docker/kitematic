@@ -187,12 +187,6 @@ Docker.getImageData = function (imageId, callback) {
           if (data.ContainerConfig && data.ContainerConfig.Volumes) {
             data.ContainerConfig.Volumes = convertVolumeObjToArray(data.ContainerConfig.Volumes);
           }
-          /*console.log('Image ID');
-          console.log(imageId);
-          console.log('Raw Docker Data:');
-          console.log(dockerImage);
-          console.log('Inspected Data:');
-          console.log(data);*/
           if (!dockerImage) {
             callback(null, data);
           } else {
