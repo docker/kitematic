@@ -173,7 +173,12 @@ AppUtil.sync = function () {
     } else {
       var apps = Apps.find({}).fetch();
       _.each(apps, function (app) {
-        if (app.docker && app.docker.Id) {
+        var app = Apps.findOne(app._id);
+        if (app && app.docker && app.docker.Id) {
+          var duplicateApps = Apps.find({'docker.Id': app.docker.Id, _id: {$ne: app._id}}).fetch();
+          _.each(duplicateApps, function (duplicateApp) {
+            Apps.remove(duplicateApp._id);
+          });
           Docker.getContainerData(app.docker.Id, function (err, data) {
             var status = 'STARTING';
             if (data && data.State && data.State.Running) {
