@@ -333,7 +333,7 @@ ImageUtil.sync = function () {
         var buildingImage = _.find(images, function (image) {
           return image.status === 'BUILDING' && image.meta.name === name && image.meta.version === version;
         });
-        if (!buildingImage && name !== '<none>' && version !== '<none>') {
+        if (!buildingImage && name !== '<none>' && version !== '<none>' && name !== 'kite-dns') {
           var imageObj = {
             status: 'READY',
             docker: image,
