@@ -218,7 +218,7 @@ AppUtil.sync = function () {
         var startingApp = _.find(apps, function (app) {
           return app.status === 'STARTING' && app.name === appName;
         });
-        if (!startingApp) {
+        if (!startingApp && appName !== 'kite-dns') {
           var appPath = path.join(Util.KITE_PATH, appName);
           if (!fs.existsSync(appPath)) {
             console.log('Created Kite ' + appName + ' directory.');
