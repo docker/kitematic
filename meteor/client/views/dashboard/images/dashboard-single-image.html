@@ -27,7 +27,9 @@
     </h5>
     <div class="options">
       {{#if $eq status 'READY'}}
-        <a onclick="trackLink('create app from image')" href="#" class="btn-icon btn-create-app" data-toggle="tooltip" data-placement="bottom" title="Create App"><span class="typcn typcn-plus-outline"></span></a>
+        {{#if hasExposedPort}}
+          <a onclick="trackLink('create app from image')" href="#" class="btn-icon btn-create-app" data-toggle="tooltip" data-placement="bottom" title="Create App"><span class="typcn typcn-plus-outline"></span></a>
+        {{/if}}
       {{/if}}
       {{#if originPath}}
         <a onclick="trackLink('open image folder')" href="#" class="btn-icon btn-folder" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Folder"><span class="typcn typcn-folder-open"></span></a>
