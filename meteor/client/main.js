@@ -68,7 +68,11 @@ Handlebars.registerHelper('isUpdating', function () {
 });
 
 Handlebars.registerHelper('displayTags', function (tags, delimiter) {
-  return tags.join(delimiter);
+  if (tags) {
+    return tags.join(delimiter);
+  } else {
+    return '';
+  }
 });
 
 var fixBoot2DockerVM = function (callback) {
