@@ -11,21 +11,9 @@ Template.dashboard_images_settings.events({
       if (index !== 0) {
         return;
       }
-      var image = Images.findOne(imageId);
       var app = Apps.findOne({imageId: imageId});
       if (!app) {
-        Images.remove({_id: image._id});
-        if (image.docker) {
-          Docker.removeImage(image.docker.Id, function (err) {
-            if (err) { console.error(err); }
-          });
-        }
-        try {
-          Util.deleteFolder(image.path);
-        } catch (e) {
-          console.error(e);
-        }
-        Sync.removeAppWatcher(imageId);
+        ImageUtil.remove(imageId);
         Router.go('dashboard_images');
       } else {
         $('#error-delete-image').html('<small class="error">This image is currently being used by <a href="/apps/' + app.name + '">' + app.name + '</a>.</small>');

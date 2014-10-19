@@ -1,9 +1,11 @@
-Template.setup_install.steps = function () {
-  return Installer.steps.map(function (step, index) {
-    step.index = index;
-    return step;
-  });
-};
+Template.setup_install.helpers({
+  steps: function () {
+    return Installer.steps.map(function (step, index) {
+      step.index = index;
+      return step;
+    });
+  }
+});
 
 Template.setup_install.helpers({
   currentInstallStep: function () {
