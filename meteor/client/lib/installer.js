@@ -38,7 +38,6 @@ Installer.steps = [
           progressCallback(progress);
         });
       } else {
-        // Version 4.3.12 is required.
         VirtualBox.version(function (err, installedVersion) {
           if (err) {callback(err); return;}
           if (Util.compareVersions(installedVersion, VirtualBox.REQUIRED_VERSION) < 0) {
@@ -65,7 +64,7 @@ Installer.steps = [
         });
       }
     },
-    pastMessage: 'VirtualBox installed',
+    pastMessage: 'VirtualBox Installed',
     message: 'Downloading & Installing VirtualBox',
     futureMessage: 'Download & Install VirtualBox if necessary'
   },
@@ -76,7 +75,7 @@ Installer.steps = [
       Boot2Docker.exists(function (err, exists) {
         if (err) { callback(err); return; }
         if (!exists) {
-          var vmFilesPath = path.join(Util.getHomePath(), 'VirtualBox VMs', 'kitematic-vm');
+          var vmFilesPath = path.join(Util.getHomePath(), 'VirtualBox\ VMs', 'kitematic-vm');
           if (fs.existsSync(vmFilesPath)) {
             Util.deleteFolder(vmFilesPath);
           }
@@ -92,7 +91,7 @@ Installer.steps = [
                 callback(err);
               });
             });
-          }
+          } 
         }
       });
     },
@@ -123,7 +122,7 @@ Installer.steps = [
             callback(err);
           });
         } else {
-          Boot2Docker.setIp('eth2', Boot2Docker.REQUIRED_IP, function(err) {
+          Boot2Docker.setIp('eth1', Boot2Docker.REQUIRED_IP, function(err) {
             callback(err);
           });
         }

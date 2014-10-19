@@ -124,24 +124,26 @@ var fixDefaultContainers = function (callback) {
 };
 
 Meteor.setInterval(function () {
-  Boot2Docker.exists(function (err, exists) {
-    if (err) { console.log(err); return; }
-    if (exists) {
-      Boot2Docker.state(function (err, state) {
-        if (err) { console.log(err); return; }
-        Session.set('boot2dockerState', state);
-        if (state === 'running') {
-          Boot2Docker.stats(function (err, stats) {
-            if (err) { console.log(err); return; }
-            if (stats.state !== 'poweroff' && stats.memory && stats.disk) {
-              Session.set('boot2dockerMemoryUsage', stats.memory);
-              Session.set('boot2dockerDiskUsage', stats.disk);
-            }
-          });
-        }
-      });
-    }
-  });
+  if (!Session.get('installing')) {
+    Boot2Docker.exists(function (err, exists) {
+      if (err) { console.log(err); return; }
+      if (exists) {
+        Boot2Docker.state(function (err, state) {
+          if (err) { console.log(err); return; }
+          Session.set('boot2dockerState', state);
+          if (state === 'running') {
+            Boot2Docker.stats(function (err, stats) {
+              if (err) { console.log(err); return; }
+              if (stats.state !== 'poweroff' && stats.memory && stats.disk) {
+                Session.set('boot2dockerMemoryUsage', stats.memory);
+                Session.set('boot2dockerDiskUsage', stats.disk);
+              }
+            });
+          }
+        });
+      }
+    });
+  }
 }, 5000);
 
 Meteor.setInterval(function () {
