@@ -56,13 +56,11 @@ Template.dashboard_settings.events({
 Template.dashboard_settings.helpers({
   settings: function () {
     return Settings.findOne({});
+  },
+  memory: function () {
+    return Session.get('boot2dockerMemoryUsage');
+  },
+  disk: function () {
+    return Session.get('boot2dockerDiskUsage');
   }
 });
-
-Template.dashboard_settings.memory = function () {
-  return Session.get('boot2dockerMemoryUsage');
-};
-
-Template.dashboard_settings.disk = function () {
-  return Session.get('boot2dockerDiskUsage');
-};

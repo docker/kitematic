@@ -7,7 +7,7 @@ Boot2Docker = {};
 Boot2Docker.REQUIRED_IP = '192.168.60.103';
 
 Boot2Docker.command = function () {
-  return path.join(Util.getBinDir().replace(' ', '\\ '), 'boot2docker-1.2.0') + ' --vm="kitematic-vm"';
+  return path.join(Util.getBinDir(), 'boot2docker-1.2.0') + ' --vm="kitematic-vm"';
 };
 
 Boot2Docker.exec = function (command, callback) {
