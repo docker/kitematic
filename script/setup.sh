@@ -11,7 +11,7 @@ mkdir -p cache
 
 pushd cache
 
-BOOT2DOCKER_CLI_VERSION=1.2.0
+BOOT2DOCKER_CLI_VERSION=1.3.0
 BOOT2DOCKER_CLI_VERSION_FILE=boot2docker-$BOOT2DOCKER_CLI_VERSION
 BOOT2DOCKER_CLI_FILE=boot2docker
 
@@ -54,7 +54,7 @@ pushd resources
 
 if [ ! -f $BOOT2DOCKER_CLI_VERSION_FILE ]; then
   cecho "-----> Downloading Boot2docker CLI..." $purple
-  curl -L -o $BOOT2DOCKER_CLI_VERSION_FILE https://s3.amazonaws.com/kite-installer/boot2docker-v$BOOT2DOCKER_CLI_VERSION
+  curl -L -o $BOOT2DOCKER_CLI_VERSION_FILE https://github.com/boot2docker/boot2docker-cli/releases/download/v${BOOT2DOCKER_CLI_VERSION}/boot2docker-v${BOOT2DOCKER_CLI_VERSION}-darwin-amd64
 fi
 
 chmod +x $BOOT2DOCKER_CLI_VERSION_FILE

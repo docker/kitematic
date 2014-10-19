@@ -3,16 +3,16 @@
   "main": "index.js",
   "version": "0.2.3",
   "dependencies": {
+    "ansi-to-html": "0.2.0",
     "async": "^0.9.0",
     "chokidar": "git+https://github.com/usekite/chokidar.git",
+    "dockerode": "2.0.3",
     "exec": "^0.1.2",
     "moment": "2.8.1",
+    "ncp": "0.6.0",
     "open": "0.0.5",
-    "dockerode": "2.0.3",
-    "tar": "0.1.20",
-    "ansi-to-html": "0.2.0",
     "request": "2.42.0",
     "request-progress": "0.3.1",
-    "ncp": "0.6.0"
+    "tar": "0.1.20"
   }
 }
