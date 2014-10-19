@@ -10,7 +10,7 @@ bin
 
 # Resources
 resources/cache
-resources/base-images.tar.gz
+resources/base-images-*.tar.gz
 resources/virtualbox-*.pkg
 resources/boot2docker*
 resources/node-webkit

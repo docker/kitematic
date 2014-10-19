@@ -19,7 +19,7 @@
         {{/if}}
       {{/if}}
       <a onclick="trackLink('app detail')" href="/apps/{{name}}" class="name">{{name}}</a>
-      <small><a onclick="trackLink('app image detail')" href="/images/{{image._id}}">{{image.meta.name}}</a></small>
+      <small><a onclick="trackLink('app image detail')" href="/images/{{image._id}}">{{displayTags image.tags}}</a></small>
     </h5>
     <div class="options">
       {{#if $eq status 'READY'}}

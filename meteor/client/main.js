@@ -67,6 +67,14 @@ Handlebars.registerHelper('isUpdating', function () {
   return Session.get('isUpdating');
 });
 
+Handlebars.registerHelper('displayTags', function (tags, delimiter) {
+  if (tags) {
+    return tags.join(delimiter);
+  } else {
+    return '';
+  }
+});
+
 var fixBoot2DockerVM = function (callback) {
   Boot2Docker.check(function (err) {
     if (err) {
@@ -161,5 +169,12 @@ Meteor.setInterval(function () {
         });
       });
     }
+  }
+}, 5000);
+
+Meteor.setInterval(function () {
+  if (!Session.get('installing')) {
+    ImageUtil.sync();
+    AppUtil.sync();
   }
 }, 5000);

@@ -16,7 +16,9 @@
                     <a onclick="trackLink('view app')" href="{{url}}" class="btn-view" target="_blank" data-toggle="tooltip" data-placement="bottom" title="View App" data-container="body"><span class="typcn typcn-eye-outline"></span></a>
                   {{/if}}
                   <a onclick="trackLink('terminal into app')" href="#" class="btn-terminal" data-toggle="tooltip" data-placement="bottom" title="Terminal" data-container="body"><span class="typcn typcn-device-laptop"></span></a>
-                  <a onclick="trackLink('go to app image')" href="/images/{{image._id}}" class="btn-image" data-toggle="tooltip" data-placement="bottom" title="Image" data-container="body"><span class="typcn typcn-camera-outline"></span></a>
+                  {{#if image}}
+                    <a onclick="trackLink('go to app image')" href="/images/{{image._id}}" class="btn-image" data-toggle="tooltip" data-placement="bottom" title="Image" data-container="body"><span class="typcn typcn-camera-outline"></span></a>
+                  {{/if}}
                 {{/if}}
                 <a onclick="trackLink('open app folder')" href="#" class="btn-folder" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Folder" data-container="body"><span class="typcn typcn-folder-open"></span></a>
                 {{#if $eq status 'READY'}}
