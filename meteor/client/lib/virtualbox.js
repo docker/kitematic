@@ -4,10 +4,10 @@ var path = require('path');
 
 VirtualBox = {};
 
-VirtualBox.REQUIRED_VERSION = '4.3.14';
-VirtualBox.INCLUDED_VERSION = '4.3.14';
-VirtualBox.INSTALLER_FILENAME = 'virtualbox-4.3.14.pkg';
-VirtualBox.INSTALLER_CHECKSUM = '486348a5336539728ca20dcd9674cf3d37e5c7f32255d90f1edc7391b54bd5dd'; // Sha256 Checksum
+VirtualBox.REQUIRED_VERSION = '4.3.18';
+VirtualBox.INCLUDED_VERSION = '4.3.18';
+VirtualBox.INSTALLER_FILENAME = 'virtualbox-4.3.18.pkg';
+VirtualBox.INSTALLER_CHECKSUM = '5836c94481c460c648b9216386591a2915293ac86b9bb6c57746637796af6af2'; // Sha256 Checksum
 
 // Info for the hostonly interface we add to the VM.
 VirtualBox.HOSTONLY_HOSTIP = '192.168.60.3';
@@ -129,7 +129,7 @@ VirtualBox.addCustomHostAdapter = function (vm, callback) {
   var self = this;
   self.hostOnlyAdapter(function (err, ifname) {
     if (err) { callback(err); return; }
-    self.exec('modifyvm ' + vm + ' --nic3 hostonly --nictype3 virtio --cableconnected3 on --hostonlyadapter3 ' + ifname, function (err, stdout, stderr) {
+    self.exec('modifyvm ' + vm + ' --nic2 hostonly --nictype2 virtio --cableconnected2 on --hostonlyadapter2 ' + ifname, function (err, stdout, stderr) {
       callback(err, ifname);
     });
   });

@@ -2,15 +2,25 @@ var Dockerode = require('dockerode');
 var async = require('async');
 var exec = require('exec');
 var path = require('path');
+var fs = require('fs');
 
 Docker = {};
-Docker.DOCKER_HOST = '192.168.60.103';
 
 Docker.DEFAULT_IMAGES_FILENAME = 'base-images-0.0.2.tar.gz';
 Docker.DEFAULT_IMAGES_CHECKSUM = 'a3517ac21034a1969d9ff15e3c41b1e2f1aa83c67b16a8bd0bc378ffefaf573b'; // Sha256 Checksum
+Docker.CERT_DIR = path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], '.boot2docker/certs/kitematic-vm');
+Docker.HOST_IP = '192.168.60.103';
+Docker.HOST_PORT = '2376';
 
 Docker.client = function () {
-  return new Dockerode({host: Docker.DOCKER_HOST, port: '2375'});
+  return new Dockerode({
+    protocol: 'https',
+    host: Docker.HOST_IP,
+    port: Docker.HOST_PORT,
+    ca: fs.readFileSync(path.join(Docker.CERT_DIR, 'ca.pem')),
+    cert: fs.readFileSync(path.join(Docker.CERT_DIR, 'cert.pem')),
+    key: fs.readFileSync(path.join(Docker.CERT_DIR, 'key.pem'))
+  });
 };
 
 var docker = Docker.client();
@@ -27,6 +37,33 @@ Docker.removeContainer = function (containerId, callback) {
   });
 };
 
+Docker.listContainers = function (callback) {
+  docker.listContainers({all: true}, function (err, containers) {
+    if (err) {
+      callback(err, null);
+    } else {
+      var cbList = _.map(containers, function (container) {
+        return function (cb) {
+          Docker.getContainerData(container.Id, function (err, data) {
+            if (err) {
+              cb(err, null);
+            } else {
+              cb(null, data);
+            }
+          });
+        }
+      });
+      async.parallel(cbList, function (err, results) {
+        if (err) {
+          callback(err, null);
+        } else {
+          callback(null, results);
+        }
+      });
+    }
+  });
+};
+
 Docker.getContainerData = function (containerId, callback) {
   var container = docker.getContainer(containerId);
   container.inspect(function (err, data) {
@@ -34,9 +71,15 @@ Docker.getContainerData = function (containerId, callback) {
       callback(err, null);
       return;
     } else {
-      data.Config.Volumes = convertVolumeObjToArray(data.Config.Volumes);
-      data.Volumes = convertVolumeObjToArray(data.Volumes);
-      data.VolumesRW = convertVolumeObjToArray(data.VolumesRW);
+      if (data.Config && data.Config.Volumes) {
+        data.Config.Volumes = convertVolumeObjToArray(data.Config.Volumes);
+      }
+      if (data.Volumes) {
+        data.Volumes = convertVolumeObjToArray(data.Volumes);
+      }
+      if (data.VolumesRW) {
+        data.VolumesRW = convertVolumeObjToArray(data.VolumesRW);
+      }
       callback(null, data);
       return;
     }
@@ -51,7 +94,7 @@ Docker.runContainer = function (app, image, callback) {
   });
   console.log(envParam);
   docker.createContainer({
-    Image: image._id.toLowerCase(),
+    Image: image.docker.Id,
     Tty: false,
     Env: envParam,
     Hostname: app.name,
@@ -61,7 +104,7 @@ Docker.runContainer = function (app, image, callback) {
     console.log('Created container: ' + container.id);
     // Bind volumes
     var binds = [];
-    if (image.docker.Config.Volumes.length > 0) {
+    if (image.docker.Config.Volumes && image.docker.Config.Volumes.length > 0) {
       _.each(image.docker.Config.Volumes, function (vol) {
         binds.push('/var/lib/docker/binds/' + app.name + vol.Path + ':' + vol.Path);
       });
@@ -73,11 +116,10 @@ Docker.runContainer = function (app, image, callback) {
     }, function (err) {
       if (err) { callback(err, null); return; }
       console.log('Started container: ' + container.id);
-      // Use dig to refresh the DNS
-      exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function(err, stdout, stderr) {
-        console.log(err);
-        console.log(stdout);
-        console.log(stderr);
+      Util.refreshDNS(app, function (err) {
+        if (err) {
+          console.error(err);
+        }
         callback(null, container);
       });
     });
@@ -137,22 +179,64 @@ var convertVolumeObjToArray = function (obj) {
 };
 
 Docker.getImageData = function (imageId, callback) {
-  var image = docker.getImage(imageId.toLowerCase());
-  image.inspect(function (err, data) {
+  docker.listImages({all: false}, function (err, images) {
     if (err) {
       callback(err, null);
-      return;
     } else {
-      data.Config.Volumes = convertVolumeObjToArray(data.Config.Volumes);
-      data.ContainerConfig.Volumes = convertVolumeObjToArray(data.ContainerConfig.Volumes);
-      callback(null, data);
-      return;
+      var dockerImage = _.find(images, function (image) {
+        return image.Id === imageId;
+      });
+      var image = docker.getImage(imageId);
+      image.inspect(function (err, data) {
+        if (err) {
+          callback(err, null);
+        } else {
+          if (data.Config && data.Config.Volumes) {
+            data.Config.Volumes = convertVolumeObjToArray(data.Config.Volumes);
+          }
+          if (data.ContainerConfig && data.ContainerConfig.Volumes) {
+            data.ContainerConfig.Volumes = convertVolumeObjToArray(data.ContainerConfig.Volumes);
+          }
+          if (!dockerImage) {
+            callback(null, data);
+          } else {
+            callback(null, _.extend(dockerImage, data));
+          }
+        }
+      });
+    }
+  });
+};
+
+Docker.listImages = function (callback) {
+  docker.listImages({all: false}, function (err, images) {
+    if (err) {
+      callback(err, null);
+    } else {
+      var cbList = _.map(images, function (image) {
+        return function (cb) {
+          Docker.getImageData(image.Id, function (err, data) {
+            if (err) {
+              cb(err, null);
+            } else {
+              cb(null, data);
+            }
+          });
+        }
+      });
+      async.parallel(cbList, function (err, results) {
+        if (err) {
+          callback(err, null);
+        } else {
+          callback(null, results);
+        }
+      });
     }
   });
 };
 
 Docker.removeImage = function (imageId, callback) {
-  var image = docker.getImage(imageId.toLowerCase());
+  var image = docker.getImage(imageId);
   image.remove({force: true}, function (err) {
     if (err) { callback(err); return; }
     console.log('Deleted image: ' + imageId);
@@ -211,7 +295,7 @@ Docker.resolveDefaultImages = function () {
     image.inspect(function (err) {
       if (err) {
         if (err.reason === 'no such image') {
-          docker.loadImage(path.join(Util.getBinDir(), 'base-images.tar.gz'), {}, function (err) {
+          docker.loadImage(path.join(Util.getBinDir(), Docker.DEFAULT_IMAGES_FILENAME), {}, function (err) {
             if (err) {
               innerCallback(err);
               return;
@@ -270,6 +354,7 @@ Docker.reloadDefaultContainers = function (callback) {
   async.until(function () {
     return ready;
   }, function (callback) {
+    docker = Docker.client();
     docker.listContainers(function (err) {
       if (!err) {
         ready = true;

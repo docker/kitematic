@@ -7,7 +7,7 @@ Boot2Docker = {};
 Boot2Docker.REQUIRED_IP = '192.168.60.103';
 
 Boot2Docker.command = function () {
-  return path.join(Util.getBinDir().replace(' ', '\\ '), 'boot2docker-1.2.0') + ' --vm="kitematic-vm"';
+  return path.join(Util.getBinDir(), 'boot2docker-1.3.0') + ' --vm="kitematic-vm"';
 };
 
 Boot2Docker.exec = function (command, callback) {
@@ -60,8 +60,10 @@ Boot2Docker.ip = function (callback) {
 };
 
 Boot2Docker.setIp = function (ifname, ip, callback) {
-  this.exec('ssh "sudo ifconfig ' + ifname + ' ' + ip + ' netmask 255.255.255.0"', function (err, stdout) {
-    callback(err);
+  Boot2Docker.exec('ssh "sudo ifconfig ' + ifname + ' ' + ip + ' netmask 255.255.255.0"', function (err, stdout) {
+    Boot2Docker.exec('ssh "sudo rm -rf /var/lib/boot2docker/tls/* && sudo /etc/init.d/docker restart"', function (err, stdout) {
+      callback(err);
+    });
   });
 };
 
@@ -78,12 +80,10 @@ Boot2Docker.start = function (callback) {
       callback('Cannot start if the boot2docker VM doesn\'t exist');
       return;
     }
-    self.exec('up -v', function (err, stdout) {
-      // Sometimes boot2docker returns an error code even though it's working / waiting, so treat that as
-      // Success as well
-      if (!err || (err.indexOf('Waiting for VM to be started') !== -1 || err.indexOf('..........') !== -1)) {
+    self.exec('start', function (err, stdout) {
+      // Sometimes boot2docker returns an error code even though it's working / waiting, so treat that as success as well
+      if (!err || (err.indexOf('Waiting') !== -1 || err.indexOf('Writing') !== -1 || err.indexOf('Generating a server cert') !== -1)) {
         self.correct(function (err) {
-          if (err) { callback(err); return; }
           self.injectUtilities(function (err) {
             callback(err);
           });
@@ -96,7 +96,7 @@ Boot2Docker.start = function (callback) {
 };
 
 Boot2Docker.correct = function (callback) {
-  Boot2Docker.setIp('eth2', Boot2Docker.REQUIRED_IP, function(err) {
+  Boot2Docker.setIp('eth1', Boot2Docker.REQUIRED_IP, function(err) {
     if (err) { callback(err); return; }
     VirtualBox.removeDHCP(function (err) {
       callback();
@@ -239,7 +239,7 @@ Boot2Docker.version = function (callback) {
 };
 
 Boot2Docker.injectUtilities = function (callback) {
-  exec('/bin/cat ' + path.join(Util.getBinDir(), 'kite-binaries.tar.gz') + ' | ' +  Boot2Docker.command() + ' ssh "tar zx -C /usr/local/bin"', function (err, stdout) {
+  exec('/bin/cat ' + path.join(Util.getBinDir(), 'kite-binaries.tar.gz') + ' | ' +  Boot2Docker.command() + ' ssh "sudo tar zx -C /usr/local/bin && sudo chown -R root.root /usr/local/bin"', function (err, stdout) {
     callback(err);
   });
 };

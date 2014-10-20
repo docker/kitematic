@@ -24,7 +24,11 @@ Apps.allow({
 
 Apps.helpers({
   image: function () {
-    return Images.findOne(this.imageId);
+    if (this.docker && this.docker.Image) {
+      return Images.findOne({'docker.Id': this.docker.Image});
+    } else {
+      return Images.findOne(this.imageId);
+    }
   },
   hostUrl: function () {
     return this.name + '.kite';

@@ -13,7 +13,7 @@ Router.configure({
 SetupController = RouteController.extend({
   layoutTemplate: 'setup_layout',
   waitOn: function () {
-    return [Meteor.subscribe('installs'), Meteor.subscribe('settings')];
+    return [Meteor.subscribe('apps'), Meteor.subscribe('images'), Meteor.subscribe('installs'), Meteor.subscribe('settings')];
   }
 });
 

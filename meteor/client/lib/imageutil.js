@@ -44,9 +44,13 @@ ImageUtil.getMetaData = function (directory) {
     if (!kiteJSON.name) {
       kiteJSON.name = _.last(directory.split(path.sep));
     }
+    if (!kiteJSON.version) {
+      kiteJSON.version = 'latest';
+    }
   } else {
     kiteJSON = {
-      name: _.last(directory.split(path.sep))
+      name: _.last(directory.split(path.sep)),
+      version: 'latest'
     };
   }
   return kiteJSON;
@@ -196,7 +200,7 @@ ImageUtil.build = function (image, callback) {
         buildLogs: []
       }
     });
-    docker.buildImage(tarFilePath, {t: image._id.toLowerCase()}, function (err, response) {
+    docker.buildImage(tarFilePath, {t: image.meta.name + ':' + image.meta.version}, function (err, response) {
       if (err) { callback(err); }
       console.log('Building Docker image...');
       response.setEncoding('utf8');
@@ -221,8 +225,10 @@ ImageUtil.build = function (image, callback) {
           console.error(e);
         }
         var imageData = null;
-        Docker.getImageData(image._id, function (err, data) {
+        Docker.getImageData(image.meta.name + ':' + image.meta.version, function (err, data) {
+          console.log(data);
           if (err) {
+            console.error(err);
             Images.update(image._id, {
               $set: {
                 status: 'ERROR'
@@ -250,5 +256,99 @@ ImageUtil.build = function (image, callback) {
         });
       });
     });
+  });
+};
+
+ImageUtil.remove = function (imageId) {
+  var image = Images.findOne(imageId);
+  Images.remove({_id: image._id});
+  if (image.docker) {
+    Docker.removeImage(image.docker.Id, function (err) {
+      if (err) { console.error(err); }
+    });
+  }
+  try {
+    Util.deleteFolder(image.path);
+  } catch (e) {
+    console.error(e);
+  }
+  Sync.removeAppWatcher(imageId);
+};
+
+ImageUtil.sync = function () {
+  Docker.listImages(function (err, dockerImages) {
+    if (err) {
+      console.error(err);
+    } else {
+      var images = Images.find({}).fetch();
+      _.each(images, function (image) {
+        var image = Images.findOne(image._id);
+        if (image && image.docker && image.docker.Id) {
+          var duplicateImages = Images.find({'docker.Id': image.docker.Id, _id: {$ne: image._id}}).fetch();
+          _.each(duplicateImages, function (duplicateImage) {
+            Images.remove(duplicateImage._id);
+          });
+          var imageData = _.find(dockerImages, function (dockerImage) {
+            return dockerImage.Id === image.docker.Id;
+          });
+          if (imageData && imageData.RepoTags) {
+            Images.update(image._id, {
+              $set: {
+                tags: imageData.RepoTags
+              }
+            });
+          }
+          Docker.getImageData(image.docker.Id, function (err, data) {
+            Images.update(image._id, {
+              $set: {
+                docker: data
+              }
+            })
+          });
+        }
+      });
+      var dockerIds = _.map(images, function (image) {
+        if (image.docker && image.docker.Id) {
+          return image.docker.Id;
+        }
+      });
+      var imageIds = _.map(dockerImages, function (image) {
+        return image.Id;
+      });
+      var diffImages = _.difference(dockerIds, imageIds);
+      _.each(diffImages, function (imageId) {
+        var image = Images.findOne({'docker.Id': imageId});
+        if (image && image.status !== 'BUILDING') {
+          ImageUtil.remove(image._id);
+        }
+      });
+      var diffDockerImages = _.reject(dockerImages, function (image) {
+        return _.contains(dockerIds, image.Id);
+      });
+      _.each(diffDockerImages, function (image) {
+        var repoTag = _.first(image.RepoTags);
+        var repoTagTokens = repoTag.split(':');
+        var name = repoTagTokens[0];
+        var version = repoTagTokens[1];
+        var buildingImage = _.find(images, function (image) {
+          return image.status === 'BUILDING' && image.meta.name === name && image.meta.version === version;
+        });
+        if (!buildingImage && name !== '<none>' && version !== '<none>' && name !== 'kite-dns') {
+          var imageObj = {
+            status: 'READY',
+            docker: image,
+            buildLogs: [],
+            createdAt: new Date(),
+            tags: image.RepoTags,
+            meta: {
+              name: name,
+              version: version
+            }
+          };
+          console.log(imageObj);
+          Images.insert(imageObj);
+        }
+      });
+    }
   });
 };
