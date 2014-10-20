@@ -119,7 +119,13 @@ Installer.steps = [
         if (state !== 'running') {
           console.log('starting');
           Boot2Docker.start(function (err) {
-            callback(err);
+            if (err) {
+              callback(err);
+              return;
+            }
+            Boot2Docker.setIp('eth1', Boot2Docker.REQUIRED_IP, function(err) {
+              callback(err);
+            });
           });
         } else {
           Boot2Docker.setIp('eth1', Boot2Docker.REQUIRED_IP, function(err) {

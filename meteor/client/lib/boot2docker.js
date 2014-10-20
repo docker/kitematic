@@ -61,10 +61,8 @@ Boot2Docker.ip = function (callback) {
 
 Boot2Docker.setIp = function (ifname, ip, callback) {
   Boot2Docker.exec('ssh "sudo ifconfig ' + ifname + ' ' + ip + ' netmask 255.255.255.0"', function (err, stdout) {
-    Boot2Docker.exec('ssh "sudo awk \'{print $0 \",192.168.60.103\"}\' /var/lib/boot2docker/tls/hostnames > temp && sudo mv temp /var/lib/boot2docker/tls/hostnames && sudo chown root.root /var/lib/boot2docker/tls', function (err, stdout)  {
-      Boot2Docker.exec('ssh "sudo /usr/local/etc/init.d/docker restart"', function (err, stdout) {
-        callback(err);
-      });
+    Boot2Docker.exec('ssh "sudo rm -rf /var/lib/boot2docker/tls/* && sudo /etc/init.d/docker restart"', function (err, stdout) {
+      callback(err);
     });
   });
 };
@@ -83,11 +81,9 @@ Boot2Docker.start = function (callback) {
       return;
     }
     self.exec('start', function (err, stdout) {
-      // Sometimes boot2docker returns an error code even though it's working / waiting, so treat that as
-      // Success as well
-      if (!err || (err.indexOf('Waiting') !== -1 || err.indexOf('Writing') !== -1)) {
+      // Sometimes boot2docker returns an error code even though it's working / waiting, so treat that as success as well
+      if (!err || (err.indexOf('Waiting') !== -1 || err.indexOf('Writing') !== -1 || err.indexOf('Generating a server cert') !== -1)) {
         self.correct(function (err) {
-          if (err) { callback(err); return; }
           self.injectUtilities(function (err) {
             callback(err);
           });

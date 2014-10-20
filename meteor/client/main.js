@@ -157,24 +157,8 @@ Meteor.setInterval(function () {
 Meteor.setInterval(function () {
   if (!Session.get('installing')) {
     Sync.resolveWatchers(function () {});
-    if (!Session.get('boot2dockerOff')) {
-      fixBoot2DockerVM(function (err) {
-        if (err) { console.log(err); return; }
-        AppUtil.recover();
-        fixDefaultImages(function (err) {
-          if (err) { console.log(err); return; }
-          fixDefaultContainers(function (err) {
-            if (err) { console.log(err); }
-          });
-        });
-      });
-    }
-  }
-}, 5000);
-
-Meteor.setInterval(function () {
-  if (!Session.get('installing')) {
     ImageUtil.sync();
     AppUtil.sync();
+    AppUtil.recover();
   }
 }, 5000);
