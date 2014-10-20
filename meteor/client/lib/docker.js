@@ -52,7 +52,7 @@ Docker.listContainers = function (callback) {
               cb(null, data);
             }
           });
-        }
+        };
       });
       async.parallel(cbList, function (err, results) {
         if (err) {
@@ -223,7 +223,7 @@ Docker.listImages = function (callback) {
               cb(null, data);
             }
           });
-        }
+        };
       });
       async.parallel(cbList, function (err, results) {
         if (err) {
