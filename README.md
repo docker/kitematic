@@ -35,9 +35,15 @@
 (This will improve over time.)
 
 - Remove VirtualBox
-- sudo route delete -net 172.17.0.0 -netmask 255.255.0.0 -gateway 192.168.60.103 (disable routing to containers through VM)
-- rm -rf ~/Library/Application\ Support/Kitematic (remove app data)
-- rm /Library/LaunchAgents/com.kitematic.route.plist (remove launch job that sets up routing to the containers)
+```bash
+# disable routing to containers through VM
+sudo route delete -net 172.17.0.0 -netmask 255.255.0.0 -gateway 192.168.60.103
+# remove app data
+rm -rf ~/Library/Application\ Support/Kitematic
+# remove launch job that sets up routing to the containers
+rm /Library/LaunchAgents/com.kitematic.route.plist
+rm /etc/resolver/kite
+```
 
 ## Bugs and Feature Requests
 
