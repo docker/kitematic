@@ -1,5 +1,6 @@
 var exec = require('exec');
 var path = require('path');
+var fs = require('fs');
 var Convert = require('ansi-to-html');
 var convert = new Convert();
 
@@ -32,11 +33,10 @@ AppUtil.restartHelper = function (app) {
       if (err) { console.error(err); }
       Docker.getContainerData(app.docker.Id, function (err, data) {
         if (err) { console.error(err); }
-        // Use dig to refresh the DNS
-        exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function(err, stdout, stderr) {
-          console.log(err);
-          console.log(stdout);
-          console.log(stderr);
+        Util.refreshDNS(app, function (err) {
+          if (err) {
+            console.error(err);
+          }
           Apps.update(app._id, {$set: {
             status: 'READY',
             docker: data
@@ -57,11 +57,10 @@ AppUtil.start = function (appId) {
       if (err) { console.error(err); }
       Docker.getContainerData(app.docker.Id, function (err, data) {
         if (err) { console.error(err); }
-        // Use dig to refresh the DNS
-        exec('/usr/bin/dig ' + app.name + '.kite @172.17.42.1', function(err, stdout, stderr) {
-          console.log(err);
-          console.log(stdout);
-          console.log(stderr);
+        Util.refreshDNS(app, function (err) {
+          if (err) {
+            console.error(err);
+          }
           Apps.update(app._id, {$set: {
             status: 'READY',
             docker: data
@@ -164,5 +163,96 @@ AppUtil.recover = function () {
         });
       }
     });
+  });
+};
+
+AppUtil.sync = function () {
+  Docker.listContainers(function (err, containers) {
+    if (err) {
+      console.error(err);
+    } else {
+      var apps = Apps.find({}).fetch();
+      _.each(apps, function (app) {
+        var app = Apps.findOne(app._id);
+        if (app && app.docker && app.docker.Id) {
+          var duplicateApps = Apps.find({'docker.Id': app.docker.Id, _id: {$ne: app._id}}).fetch();
+          _.each(duplicateApps, function (duplicateApp) {
+            Apps.remove(duplicateApp._id);
+          });
+          Docker.getContainerData(app.docker.Id, function (err, data) {
+            var status = 'STARTING';
+            if (data && data.State && data.State.Running) {
+              status = 'READY';
+            } else if (data && data.State && !data.State.Running) {
+              status = 'ERROR';
+            }
+            Apps.update(app._id, {
+              $set: {
+                docker: data,
+                status: status
+              }
+            })
+          });
+        }
+      });
+      var dockerIds = _.map(apps, function (app) {
+        if (app.docker && app.docker.Id) {
+          return app.docker.Id;
+        }
+      });
+      var containerIds = _.map(containers, function (container) {
+        return container.Id;
+      });
+      var diffApps = _.difference(dockerIds, containerIds);
+      _.each(diffApps, function (appContainerId) {
+        var app = Apps.findOne({'docker.Id': appContainerId});
+        if (app && app.status !== 'STARTING') {
+          AppUtil.remove(app._id);
+        }
+      });
+      var diffContainers = _.reject(containers, function (container) {
+        return _.contains(dockerIds, container.Id);
+      });
+      _.each(diffContainers, function (container) {
+        var appName = container.Name.substring(1);
+        var startingApp = _.find(apps, function (app) {
+          return app.status === 'STARTING' && app.name === appName;
+        });
+        if (!startingApp && appName !== 'kite-dns') {
+          var appPath = path.join(Util.KITE_PATH, appName);
+          if (!fs.existsSync(appPath)) {
+            console.log('Created Kite ' + appName + ' directory.');
+            fs.mkdirSync(appPath, function (err) {
+              if (err) { throw err; }
+            });
+          }
+          var envVars = container.Config.Env;
+          var config = {};
+          _.each(envVars, function (envVar) {
+            var eqPos = envVar.indexOf('=');
+            var envKey = envVar.substring(0, eqPos);
+            var envVal = envVar.substring(eqPos + 1);
+            config[envKey] = envVal;
+          });
+          var status = 'STARTING';
+          if (container.State.Running) {
+            status = 'READY';
+          } else {
+            status = 'ERROR';
+          }
+          var appObj = {
+            name: appName,
+            docker: container,
+            status: status,
+            config: config,
+            path: appPath,
+            logs: [],
+            createdAt: new Date()
+          };
+          console.log(appObj);
+          Apps.insert(appObj);
+        }
+      });
+    }
   });
 };

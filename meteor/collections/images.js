@@ -19,6 +19,9 @@ Images.helpers({
     } else {
       return '100%';
     }
+  },
+  hasExposedPort: function () {
+    return this.docker && this.docker.Config && this.docker.Config.ExposedPorts;
   }
 });
 

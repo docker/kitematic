@@ -67,6 +67,14 @@ Handlebars.registerHelper('isUpdating', function () {
   return Session.get('isUpdating');
 });
 
+Handlebars.registerHelper('displayTags', function (tags, delimiter) {
+  if (tags) {
+    return tags.join(delimiter);
+  } else {
+    return '';
+  }
+});
+
 var fixBoot2DockerVM = function (callback) {
   Boot2Docker.check(function (err) {
     if (err) {
@@ -124,40 +132,33 @@ var fixDefaultContainers = function (callback) {
 };
 
 Meteor.setInterval(function () {
-  Boot2Docker.exists(function (err, exists) {
-    if (err) { console.log(err); return; }
-    if (exists) {
-      Boot2Docker.state(function (err, state) {
-        if (err) { console.log(err); return; }
-        Session.set('boot2dockerState', state);
-        if (state === 'running') {
-          Boot2Docker.stats(function (err, stats) {
-            if (err) { console.log(err); return; }
-            if (stats.state !== 'poweroff' && stats.memory && stats.disk) {
-              Session.set('boot2dockerMemoryUsage', stats.memory);
-              Session.set('boot2dockerDiskUsage', stats.disk);
-            }
-          });
-        }
-      });
-    }
-  });
+  if (!Session.get('installing')) {
+    Boot2Docker.exists(function (err, exists) {
+      if (err) { console.log(err); return; }
+      if (exists) {
+        Boot2Docker.state(function (err, state) {
+          if (err) { console.log(err); return; }
+          Session.set('boot2dockerState', state);
+          if (state === 'running') {
+            Boot2Docker.stats(function (err, stats) {
+              if (err) { console.log(err); return; }
+              if (stats.state !== 'poweroff' && stats.memory && stats.disk) {
+                Session.set('boot2dockerMemoryUsage', stats.memory);
+                Session.set('boot2dockerDiskUsage', stats.disk);
+              }
+            });
+          }
+        });
+      }
+    });
+  }
 }, 5000);
 
 Meteor.setInterval(function () {
   if (!Session.get('installing')) {
     Sync.resolveWatchers(function () {});
-    if (!Session.get('boot2dockerOff')) {
-      fixBoot2DockerVM(function (err) {
-        if (err) { console.log(err); return; }
-        AppUtil.recover();
-        fixDefaultImages(function (err) {
-          if (err) { console.log(err); return; }
-          fixDefaultContainers(function (err) {
-            if (err) { console.log(err); }
-          });
-        });
-      });
-    }
+    ImageUtil.sync();
+    AppUtil.sync();
+    AppUtil.recover();
   }
 }, 5000);

@@ -3,7 +3,7 @@ var path = require('path');
 
 Template.modal_create_app.helpers({
   images: function () {
-    return Images.find({status: 'READY'}, {sort: {createdAt: -1}});
+    return Images.find({status: 'READY', 'docker.Config.ExposedPorts': {$ne: null}}, {sort: {createdAt: -1}});
   }
 });
 
@@ -36,11 +36,6 @@ Template.modal_create_app.events({
         createdAt: new Date()
       };
       var appId = Apps.insert(appObj);
-      Apps.update(appId, {
-        $set: {
-          'config.APP_ID': appId
-        }
-      });
       var app = Apps.findOne(appId);
       var image = Images.findOne(app.imageId);
       Util.copyVolumes(image.path, app.name, function (err) {
