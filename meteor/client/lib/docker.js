@@ -8,18 +8,21 @@ Docker = {};
 
 Docker.DEFAULT_IMAGES_FILENAME = 'base-images-0.0.2.tar.gz';
 Docker.DEFAULT_IMAGES_CHECKSUM = 'a3517ac21034a1969d9ff15e3c41b1e2f1aa83c67b16a8bd0bc378ffefaf573b'; // Sha256 Checksum
-Docker.CERT_DIR = path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], '.boot2docker/certs/kitematic-vm');
 Docker.HOST_IP = '192.168.60.103';
 Docker.HOST_PORT = '2376';
 
 Docker.client = function () {
+  var certDir = path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], '.boot2docker/certs/kitematic-vm');
+  if (!fs.existsSync(certDir)) {
+    return null;
+  }
   return new Dockerode({
     protocol: 'https',
     host: Docker.HOST_IP,
     port: Docker.HOST_PORT,
-    ca: fs.readFileSync(path.join(Docker.CERT_DIR, 'ca.pem')),
-    cert: fs.readFileSync(path.join(Docker.CERT_DIR, 'cert.pem')),
-    key: fs.readFileSync(path.join(Docker.CERT_DIR, 'key.pem'))
+    ca: fs.readFileSync(path.join(certDir, 'ca.pem')),
+    cert: fs.readFileSync(path.join(certDir, 'cert.pem')),
+    key: fs.readFileSync(path.join(certDir, 'key.pem'))
   });
 };
 
