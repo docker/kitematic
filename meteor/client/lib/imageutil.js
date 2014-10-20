@@ -157,7 +157,7 @@ ImageUtil.pull = function (dockerfile, imageId, callback) {
         }
       });
       var logs = [];
-      docker.pull(fromImage, function (err, response) {
+      Docker.client().pull(fromImage, function (err, response) {
         if (err) { callback(err); return; }
         response.setEncoding('utf8');
         response.on('data', function (data) {
@@ -200,7 +200,7 @@ ImageUtil.build = function (image, callback) {
         buildLogs: []
       }
     });
-    docker.buildImage(tarFilePath, {t: image.meta.name + ':' + image.meta.version}, function (err, response) {
+    Docker.client().buildImage(tarFilePath, {t: image.meta.name + ':' + image.meta.version}, function (err, response) {
       if (err) { callback(err); }
       console.log('Building Docker image...');
       response.setEncoding('utf8');

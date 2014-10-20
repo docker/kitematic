@@ -23,10 +23,8 @@ Docker.client = function () {
   });
 };
 
-var docker = Docker.client();
-
 Docker.removeContainer = function (containerId, callback) {
-  var container = docker.getContainer(containerId);
+  var container = Docker.client().getContainer(containerId);
   container.kill(function (err) {
     if (err) { callback(err); return; }
     container.remove({v:1}, function (err) {
@@ -38,7 +36,7 @@ Docker.removeContainer = function (containerId, callback) {
 };
 
 Docker.listContainers = function (callback) {
-  docker.listContainers({all: true}, function (err, containers) {
+  Docker.client().listContainers({all: true}, function (err, containers) {
     if (err) {
       callback(err, null);
     } else {
@@ -65,7 +63,7 @@ Docker.listContainers = function (callback) {
 };
 
 Docker.getContainerData = function (containerId, callback) {
-  var container = docker.getContainer(containerId);
+  var container = Docker.client().getContainer(containerId);
   container.inspect(function (err, data) {
     if (err) {
       callback(err, null);
@@ -93,7 +91,7 @@ Docker.runContainer = function (app, image, callback) {
     envParam.push(builtStr);
   });
   console.log(envParam);
-  docker.createContainer({
+  Docker.client().createContainer({
     Image: image.docker.Id,
     Tty: false,
     Env: envParam,
@@ -127,7 +125,7 @@ Docker.runContainer = function (app, image, callback) {
 };
 
 Docker.startContainer = function (containerId, callback) {
-  var container = docker.getContainer(containerId);
+  var container = Docker.client().getContainer(containerId);
   container.start(function (err) {
     if (err) {
       console.log(err);
@@ -140,7 +138,7 @@ Docker.startContainer = function (containerId, callback) {
 };
 
 Docker.stopContainer = function (containerId, callback) {
-  var container = docker.getContainer(containerId);
+  var container = Docker.client().getContainer(containerId);
   container.stop(function (err) {
     if (err) {
       console.log(err);
@@ -153,7 +151,7 @@ Docker.stopContainer = function (containerId, callback) {
 };
 
 Docker.restartContainer = function (containerId, callback) {
-  var container = docker.getContainer(containerId);
+  var container = Docker.client().getContainer(containerId);
   container.restart(function (err) {
     if (err) {
       console.log(err);
@@ -179,14 +177,14 @@ var convertVolumeObjToArray = function (obj) {
 };
 
 Docker.getImageData = function (imageId, callback) {
-  docker.listImages({all: false}, function (err, images) {
+  Docker.client().listImages({all: false}, function (err, images) {
     if (err) {
       callback(err, null);
     } else {
       var dockerImage = _.find(images, function (image) {
         return image.Id === imageId;
       });
-      var image = docker.getImage(imageId);
+      var image = Docker.client().getImage(imageId);
       image.inspect(function (err, data) {
         if (err) {
           callback(err, null);
@@ -209,7 +207,7 @@ Docker.getImageData = function (imageId, callback) {
 };
 
 Docker.listImages = function (callback) {
-  docker.listImages({all: false}, function (err, images) {
+  Docker.client().listImages({all: false}, function (err, images) {
     if (err) {
       callback(err, null);
     } else {
@@ -236,7 +234,7 @@ Docker.listImages = function (callback) {
 };
 
 Docker.removeImage = function (imageId, callback) {
-  var image = docker.getImage(imageId);
+  var image = Docker.client().getImage(imageId);
   image.remove({force: true}, function (err) {
     if (err) { callback(err); return; }
     console.log('Deleted image: ' + imageId);
@@ -268,7 +266,7 @@ Docker.defaultContainerNames = Docker.defaultContainerOptions().map(function (co
 Docker.checkDefaultImages = function (callback) {
   var defaultNames = Docker.defaultContainerNames;
   async.each(defaultNames, function (name, innerCallback) {
-    var image = docker.getImage(name);
+    var image = Docker.client().getImage(name);
     image.inspect(function (err) {
       if (err) {
         if (err.reason === 'no such image') {
@@ -291,11 +289,11 @@ Docker.checkDefaultImages = function (callback) {
 
 Docker.resolveDefaultImages = function () {
   async.each(Docker.defaultContainerNames, function (name, innerCallback) {
-    var image = docker.getImage(name);
+    var image = Docker.client().getImage(name);
     image.inspect(function (err) {
       if (err) {
         if (err.reason === 'no such image') {
-          docker.loadImage(path.join(Util.getBinDir(), Docker.DEFAULT_IMAGES_FILENAME), {}, function (err) {
+          Docker.client().loadImage(path.join(Util.getBinDir(), Docker.DEFAULT_IMAGES_FILENAME), {}, function (err) {
             if (err) {
               innerCallback(err);
               return;
@@ -315,7 +313,7 @@ Docker.resolveDefaultImages = function () {
 
 Docker.checkDefaultContainers = function(callback) {
   async.each(Docker.defaultContainerNames, function (name, innerCallback) {
-    var container = docker.getContainer(name);
+    var container = Docker.client().getContainer(name);
     container.inspect(function (err, data) {
       if (err) {
         innerCallback(err);
@@ -354,8 +352,7 @@ Docker.reloadDefaultContainers = function (callback) {
   async.until(function () {
     return ready;
   }, function (callback) {
-    docker = Docker.client();
-    docker.listContainers(function (err) {
+    Docker.client().listContainers(function (err) {
       if (!err) {
         ready = true;
       }
@@ -371,7 +368,7 @@ Docker.reloadDefaultContainers = function (callback) {
         return;
       }
       console.log('Loading new Kitematic default images.');
-      docker.loadImage(path.join(Util.getResourceDir(), Docker.DEFAULT_IMAGES_FILENAME), {}, function (err) {
+      Docker.client().loadImage(path.join(Util.getResourceDir(), Docker.DEFAULT_IMAGES_FILENAME), {}, function (err) {
         if (err) {
           callback(err);
           return;
@@ -387,7 +384,7 @@ Docker.reloadDefaultContainers = function (callback) {
 
 Docker.upContainers = function (optionsList, callback) {
    var createDefaultContainer = function (options, innerCallback) {
-    docker.createContainer(options, function (err, container) {
+    Docker.client().createContainer(options, function (err, container) {
       if (err) {
         innerCallback(err);
         return;
@@ -403,7 +400,7 @@ Docker.upContainers = function (optionsList, callback) {
   };
 
   async.each(optionsList, function (options, innerCallback) {
-    var container = docker.getContainer(options.name);
+    var container = Docker.client().getContainer(options.name);
     container.inspect(function (err, data) {
       if (err) {
         if (err.reason.indexOf('no such container') !== -1) {
@@ -430,7 +427,7 @@ Docker.upContainers = function (optionsList, callback) {
 
 Docker.removeImages = function (names, callback) {
   async.each(names, function (name, innerCallback) {
-    var image = docker.getImage(name);
+    var image = Docker.client().getImage(name);
     image.remove(function (err) {
       if (err) {
         console.log('remove image error');
@@ -451,7 +448,7 @@ Docker.removeImages = function (names, callback) {
 
 Docker.killAndRemoveContainers = function (names, callback) {
   async.each(names, function (name, innerCallback) {
-    var container = docker.getContainer(name);
+    var container = Docker.client().getContainer(name);
     container.inspect(function (err, data) {
       if (err) {
         innerCallback();
