@@ -9,7 +9,7 @@ callback-hook@1.0.1
 check@1.0.2
 ctl-helper@1.0.4
 ctl@1.0.2
-dburles:collection-helpers@1.0.0
+dburles:collection-helpers@1.0.1
 ddp@1.0.10
 deps@1.0.5
 ejson@1.0.4
@@ -34,7 +34,6 @@ meteor@1.1.2
 minifiers@1.1.1
 minimongo@1.0.4
 mobile-status-bar@1.0.1
-mongo-livedata@1.0.6
 mongo@1.0.7
 mrt:underscore-string-latest@2.3.3
 observe-sequence@1.0.3

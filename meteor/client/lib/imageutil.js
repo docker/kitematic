@@ -4,8 +4,6 @@ var exec = require('exec');
 var path = require('path');
 var fs = require('fs');
 
-var docker = Docker.client();
-
 ImageUtil = {};
 
 var createTarFile = function (image, callback) {
