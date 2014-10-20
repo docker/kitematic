@@ -14,6 +14,7 @@ Docker.HOST_PORT = '2376';
 
 Docker.client = function () {
   return new Dockerode({
+    protocol: 'https',
     host: Docker.HOST_IP,
     port: Docker.HOST_PORT,
     ca: fs.readFileSync(path.join(Docker.CERT_DIR, 'ca.pem')),
@@ -353,6 +354,7 @@ Docker.reloadDefaultContainers = function (callback) {
   async.until(function () {
     return ready;
   }, function (callback) {
+    docker = Docker.client();
     docker.listContainers(function (err) {
       if (!err) {
         ready = true;
