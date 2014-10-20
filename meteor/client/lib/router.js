@@ -70,6 +70,7 @@ Router.map(function () {
             // There's an install but it's lower than the current version, re-run as an 'update'.
             Session.set('isUpdating', true);
           }
+          Session.set('installing', true);
           this.redirect('/setup/intro');
         } else {
           this.redirect('/apps');

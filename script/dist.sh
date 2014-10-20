@@ -56,8 +56,6 @@ cp -v resources/* dist/osx/$DIST_APP/Contents/Resources/app/resources/ || :
 cecho "-----> Copying icon to $DIST_APP" $blue
 cp kitematic.icns dist/osx/$DIST_APP/Contents/Resources/atom.icns
 
-chmod +x dist/osx/$DIST_APP/Contents/Resources/app/resources/$BOOT2DOCKER_CLI_FILE
-chmod +x dist/osx/$DIST_APP/Contents/Resources/app/resources/$COCOASUDO_FILE
 chmod +x dist/osx/$DIST_APP/Contents/Resources/app/resources/install
 chmod +x dist/osx/$DIST_APP/Contents/Resources/app/resources/terminal
 chmod +x dist/osx/$DIST_APP/Contents/Resources/app/resources/unison
