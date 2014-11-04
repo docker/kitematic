@@ -1,11 +1,11 @@
 <template name="dashboard_apps">
   <div class="header">
-    <h3>Apps</h3>
+    <h3>Containers</h3>
     <div class="options">
       {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
-        <a href="#" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action" disabled="disabled"><span class="typcn typcn-plus-outline"></span> Create App</a>
+        <a href="#" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action" disabled="disabled"><span class="typcn typcn-plus-outline"></span> Create Container</a>
       {{else}}
-        <a href="#" onclick="trackLink('create app')" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action"><span class="typcn typcn-plus-outline"></span> Create App</a>
+        <a href="#" onclick="trackLink('create container')" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action"><span class="typcn typcn-plus-outline"></span> Create Container</a>
       {{/if}}
     </div>
   </div>
@@ -20,11 +20,11 @@
       {{else}}
         <div class="empty-placeholder">
           <div class="big-icon"><i class="fa fa-cube"></i></div>
-          <h4>There are no apps yet.</h4>
+          <h4>There are no containers yet.</h4>
           {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
-            <a href="#" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action" disabled="disabled"><span class="typcn typcn-plus-outline"></span> Create App</a>
+            <a href="#" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action" disabled="disabled"><span class="typcn typcn-plus-outline"></span> Create Container</a>
           {{else}}
-            <a href="#" onclick="trackLink('create app')" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action"><span class="typcn typcn-plus-outline"></span> Create App</a>
+            <a href="#" onclick="trackLink('create container')" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action"><span class="typcn typcn-plus-outline"></span> Create Container</a>
           {{/if}}
         </div>
       {{/if}}
