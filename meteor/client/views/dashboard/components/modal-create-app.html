@@ -4,15 +4,15 @@
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-          <h5 class="modal-title">Create App</h5>
+          <h5 class="modal-title">Create Container</h5>
         </div>
         <form id="form-create-app">
           <div class="modal-body">
             <div class="form-group">
-              <label>App Name</label>
+              <label>Container Name</label>
               <div class="right-inner-addon">
                 <i class="fa fa-cube"></i>
-                <input type="text" name="name" class="form-control" placeholder="my-application">
+                <input type="text" name="name" class="form-control" placeholder="my-container">
                 <p id="slug-create-app-name" class="help-block"></p>
               </div>
               {{#if hasItem images}}
@@ -38,7 +38,7 @@
                 </div>
               {{else}}
                 <div class="center space-top">
-                  <p class="text-muted">You don't have any images to create apps from.</p>
+                  <p class="text-muted">You don't have any images to create containers from.</p>
                   <a href="#" class="btn btn-sm btn-positive btn-create-image">Create Image</a>
                 </div>
               {{/if}}
@@ -47,9 +47,9 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
             {{#if hasItem images}}
-              <button onclick="trackLink('confirm create app')" type="submit" class="btn btn-sm btn-action">Create App</button>
+              <button onclick="trackLink('confirm create app')" type="submit" class="btn btn-sm btn-action">Create Container</button>
             {{else}}
-              <button type="submit" class="btn btn-sm btn-action" disabled="disabled">Create App</button>
+              <button type="submit" class="btn btn-sm btn-action" disabled="disabled">Create Container</button>
             {{/if}}
           </div>
         </form>

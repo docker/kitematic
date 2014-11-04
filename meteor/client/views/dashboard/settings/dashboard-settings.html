@@ -8,7 +8,7 @@
       {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
         <p class="help-block error">Please start Boot2Docker for Kitematic to work properly!</p>
       {{else}}
-        <p class="help-block">All apps run in a Linux VM included with Kitematic. It needs to be turned on to run apps.</p>
+        <p class="help-block">All containers run in a Linux VM included with Kitematic. It needs to be turned on to run containers.</p>
       {{/if}}
     </div>
     <div class="right-section">
@@ -55,7 +55,7 @@
   <div class="section dashboard-settings">
     <div class="left-section">
       <h4>Repair Kitematic</h4>
-      <p class="help-block">You can repair Kitematic installation if the app stops working properly.</p>
+      <p class="help-block">You can repair Kitematic installation if the container stops working properly.</p>
     </div>
     <div class="right-section">
       <a onclick="trackLink('repair kitematic')" class="btn btn-negative btn-repair">Repair Kitematic</a>

@@ -18,26 +18,26 @@
           {{/if}}
         {{/if}}
       {{/if}}
-      <a onclick="trackLink('app detail')" href="/apps/{{name}}" class="name">{{name}}</a>
-      <small><a onclick="trackLink('app image detail')" href="/images/{{image._id}}">{{displayTags image.tags}}</a></small>
+      <a onclick="trackLink('container detail')" href="/apps/{{name}}" class="name">{{name}}</a>
+      <small><a onclick="trackLink('container image detail')" href="/images/{{image._id}}">{{displayTags image.tags}}</a></small>
     </h5>
     <div class="options">
       {{#if $eq status 'READY'}}
         {{#if url}}
-          <a href="{{url}}" onclick="trackLink('view app')" class="btn-icon btn-view" target="_blank" data-toggle="tooltip" data-placement="bottom" title="View App"><span class="typcn typcn-eye-outline"></span></a>
+          <a href="{{url}}" onclick="trackLink('view container')" class="btn-icon btn-view" target="_blank" data-toggle="tooltip" data-placement="bottom" title="View"><span class="typcn typcn-eye-outline"></span></a>
         {{/if}}
-        <a href="#" onclick="trackLink('terminal into app')" class="btn-icon btn-terminal" data-toggle="tooltip" data-placement="bottom" title="Terminal"><span class="typcn typcn-device-laptop"></span></a>
+        <a href="#" onclick="trackLink('terminal into container')" class="btn-icon btn-terminal" data-toggle="tooltip" data-placement="bottom" title="Terminal"><span class="typcn typcn-device-laptop"></span></a>
       {{/if}}
-      <a href="#" onclick="trackLink('open app folder')" class="btn-icon btn-folder" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Folder"><span class="typcn typcn-folder-open"></span></a>
+      <a href="#" onclick="trackLink('open container folder')" class="btn-icon btn-folder" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Folder"><span class="typcn typcn-folder-open"></span></a>
       {{#if $eq status 'READY'}}
-        <a href="#" onclick="trackLink('stop app')" class="btn-icon btn-stop" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Stop App"><span class="typcn typcn-media-pause-outline"></span></a>
+        <a href="#" onclick="trackLink('stop container')" class="btn-icon btn-stop" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Stop"><span class="typcn typcn-media-pause-outline"></span></a>
       {{/if}}
       {{#if $eq status 'STOPPED'}}
-      <a href="#" onclick="trackLink('start app')" class="btn-icon btn-start" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Start App"><span class="typcn typcn-media-play-outline"></span></a>
+      <a href="#" onclick="trackLink('start container')" class="btn-icon btn-start" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Start"><span class="typcn typcn-media-play-outline"></span></a>
       {{/if}}
-      <a href="#" onclick="trackLink('restart app')" class="btn-icon btn-restart" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Restart"><span class="typcn typcn-refresh-outline"></span></a>
-      <a href="/apps/{{name}}/logs" onclick="trackLink('app logs')" class="btn-icon btn-logs" data-toggle="tooltip" data-placement="bottom" title="Logs"><span class="typcn typcn-document-text"></span></a>
-      <a href="/apps/{{name}}/settings" onclick="trackLink('app settings')" class="btn-icon" data-toggle="tooltip" data-placement="bottom" title="Settings"><span class="typcn typcn-cog-outline"></span></a>
+      <a href="#" onclick="trackLink('restart container')" class="btn-icon btn-restart" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Restart"><span class="typcn typcn-refresh-outline"></span></a>
+      <a href="/apps/{{name}}/logs" onclick="trackLink('container logs')" class="btn-icon btn-logs" data-toggle="tooltip" data-placement="bottom" title="Logs"><span class="typcn typcn-document-text"></span></a>
+      <a href="/apps/{{name}}/settings" onclick="trackLink('container settings')" class="btn-icon" data-toggle="tooltip" data-placement="bottom" title="Settings"><span class="typcn typcn-cog-outline"></span></a>
     </div>
   </div>
 </template>
