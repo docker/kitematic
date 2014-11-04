@@ -65,6 +65,7 @@ cecho "-----> Updating Info.plist version to $VERSION" $blue
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" $BASE/dist/osx/$DIST_APP/Contents/Info.plist
 /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName Kitematic" $BASE/dist/osx/$DIST_APP/Contents/Info.plist
 /usr/libexec/PlistBuddy -c "Set :CFBundleName Kitematic" $BASE/dist/osx/$DIST_APP/Contents/Info.plist
+/usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier com.kitematic.kitematic" $BASE/dist/osx/$DIST_APP/Contents/Info.plist
 
 if [ -f $DIR/sign.sh ]; then
   cecho "-----> Signing app file...." $blue
