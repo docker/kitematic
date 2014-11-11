@@ -1,11 +1,5 @@
 try {
   moment = require('moment');
-  // gui = require('nw.gui');
-  // gui.App.clearCache();
-  // win = gui.Window.get();
-  // var nativeMenuBar = new gui.Menu({type: 'menubar'});
-  // nativeMenuBar.createMacBuiltin('Kitematic');
-  // win.menu = nativeMenuBar;
 } catch (e) {
   console.error(e);
 }

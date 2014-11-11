@@ -65,6 +65,28 @@
     }
   }
 
+  .update-alert {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-bottom: 0;
+    padding: 5px;
+    width: 100%;
+    text-align: right;
+    background: white;
+    font-size: 12px;
+    z-index: 2;
+    color: @text-color-less-light;
+    border-top: 1px solid @text-color-lightest;
+    box-shadow: 0 -1px 2px 0 rgba(0, 0, 0, 0.05);
+
+    .update-text {
+      position: relative;
+      top: 2px;
+      right: 5px;
+    }
+  }
+
   .dashboard-row {
     .make-row();
     .dashboard-menu {
@@ -139,8 +161,7 @@
       }
       .content {
         .padded {
-          padding: 1.6em;
-          padding-top: 0;
+          padding: 0 1.6em 2.5em;
         }
         &.longer {
           min-height: @dashboard-content-height + @dashboard-header-height;

@@ -61,10 +61,13 @@ chmod +x dist/osx/$DIST_APP/Contents/Resources/app/resources/terminal
 chmod +x dist/osx/$DIST_APP/Contents/Resources/app/resources/unison
 chmod +x dist/osx/$DIST_APP/Contents/Resources/app/resources/node
 
+chmod -R u+w dist/osx/$DIST_APP/Contents/Resources/app/bundle
+
 cecho "-----> Updating Info.plist version to $VERSION" $blue
 /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" $BASE/dist/osx/$DIST_APP/Contents/Info.plist
 /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName Kitematic" $BASE/dist/osx/$DIST_APP/Contents/Info.plist
 /usr/libexec/PlistBuddy -c "Set :CFBundleName Kitematic" $BASE/dist/osx/$DIST_APP/Contents/Info.plist
+/usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier com.kitematic.kitematic" $BASE/dist/osx/$DIST_APP/Contents/Info.plist
 
 if [ -f $DIR/sign.sh ]; then
   cecho "-----> Signing app file...." $blue

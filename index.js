@@ -4,11 +4,12 @@ var os = require('os');
 var fs = require('fs');
 var path = require('path');
 
+var autoUpdater = require('auto-updater');
 var app = require('app');
 var BrowserWindow = require('browser-window');
+var ipc = require('ipc');
 
 var dirname = __dirname;
-console.log(dirname);
 
 var freeport = function (callback) {
   var server = net.createServer();
@@ -120,15 +121,29 @@ app.on('ready', function() {
       console.log('Cleaning up children.');
       mongoChild.kill();
       nodeChild.kill();
-      app.quit();
-      process.exit();
     };
+
+    var cleanUpChildrenAndQuit = function () {
+      console.log('Cleaning up children and quitting.');
+      cleanUpChildren();
+      app.quit();
+    };
+
 
     if (nodeChild && mongoChild) {
       process.on('exit', cleanUpChildren);
-      process.on('uncaughtException', cleanUpChildren);
-      process.on('SIGINT', cleanUpChildren);
-      process.on('SIGTERM', cleanUpChildren);
+      process.on('uncaughtException', function (err) {
+        console.log(err);
+        cleanUpChildrenAndQuit();
+      });
+      process.on('SIGINT', function () {
+        cleanUpChildrenAndQuit();
+        process.exit();
+      });
+      process.on('SIGTERM', function () {
+        cleanUpChildrenAndQuit();
+        process.exit();
+      });
     }
 
     // Create the browser window.
@@ -144,5 +159,39 @@ app.on('ready', function() {
     mainWindow = new BrowserWindow(windowOptions);
     mainWindow.focus();
     mainWindow.loadUrl(url);
+
+    mainWindow.webContents.on('did-finish-load', function() {
+
+      // Auto Updates
+      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion());
+
+      autoUpdater.on('checking-for-update', function (e) {
+        console.log('Checking for update...');
+      });
+
+      autoUpdater.on('update-available', function (e) {
+        console.log('Update available.');
+        console.log(e);
+      });
+
+      autoUpdater.on('update-not-available', function (e) {
+        console.log('Update not available.');
+      });
+
+      autoUpdater.on('update-downloaded', function (e, releaseNotes, releaseName, releaseDate, updateURL) {
+        console.log('Update downloaded.');
+        mainWindow.webContents.send('notify', 'window:update-available');
+      });
+
+
+      ipc.on('command', function (event, arg) {
+        console.log('Command: ' + arg);
+        if (arg === 'application:quit-install') {
+          autoUpdater.quitAndInstall();
+        }
+      });
+
+      autoUpdater.checkForUpdates();
+    });
   });
 });
