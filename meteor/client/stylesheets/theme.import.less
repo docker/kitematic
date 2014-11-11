@@ -118,6 +118,24 @@ button {
   }
 }
 
+.btn-action-inverse {
+  .btn-styles(@btn-action-color);
+  color: @btn-action-bg;
+  border-color: @btn-action-color;
+  &:hover,
+  &:focus  {
+    border-color: darken(@btn-action-color, 10%);
+    background: darken(@btn-action-color, 10%);
+    color: @btn-action-bg;
+  }
+  &:active,
+  &.active {
+    border-color: darken(@btn-action-color, 10%);
+    background: darken(@btn-action-color, 10%);
+    color: @btn-action-bg;
+  }
+}
+
 .btn-positive {
   .btn-styles(@btn-positive-bg);
   color: @btn-positive-color;

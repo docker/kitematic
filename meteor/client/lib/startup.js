@@ -1,4 +1,5 @@
 var fs = require('fs');
+
 Meteor.startup(function () {
   console.log('Kitematic started.');
   if (!fs.existsSync(Util.KITE_PATH)) {
