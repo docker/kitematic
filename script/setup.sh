@@ -11,7 +11,7 @@ mkdir -p cache
 
 pushd cache
 
-BOOT2DOCKER_CLI_VERSION=1.3.0
+BOOT2DOCKER_CLI_VERSION=1.3.1
 BOOT2DOCKER_CLI_VERSION_FILE=boot2docker-$BOOT2DOCKER_CLI_VERSION
 BOOT2DOCKER_CLI_FILE=boot2docker
 
@@ -23,12 +23,6 @@ if [ ! -f $ATOM_SHELL_FILE ]; then
   curl -L -o $ATOM_SHELL_FILE https://github.com/atom/atom-shell/releases/download/v$ATOM_SHELL_VERSION/$ATOM_SHELL_FILE
   mkdir -p atom-shell
   unzip -d atom-shell $ATOM_SHELL_FILE
-fi
-
-if [ ! -f kite-node-webkit.tar.gz ]; then
-  cecho "-----> Downloading node-webkit..." $purple
-  curl -L -o kite-node-webkit.tar.gz https://s3.amazonaws.com/kite-installer/kite-node-webkit.tar.gz
-  tar -zxf kite-node-webkit.tar.gz -C .
 fi
 
 if [ ! -f mongodb-osx-x86_64-2.6.3.tgz ]; then

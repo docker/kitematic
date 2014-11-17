@@ -1,0 +1,20 @@
+<template name="intro">
+  {{setTitle}}
+  <div class="intro text-center">
+    <div class="container text-left">
+      <div class="content">
+        {{#if currentSetupFailedError}}
+          {{> radial_progress progress=100 class="radial-negative"}}
+          <p>Error: {{currentSetupFailedError}}</p>
+        {{else}}
+          {{#if currentSetupStepProgress}}
+            {{> radial_progress progress=currentSetupStepProgress}}
+          {{else}}
+            {{> radial_spinner }}
+          {{/if}}
+          <p>{{currentSetupStepMessage}}</p>
+        {{/if}}
+      </div>
+    </div>
+  </div>
+</template>

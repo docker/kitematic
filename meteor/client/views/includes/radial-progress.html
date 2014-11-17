@@ -1,5 +1,5 @@
 <template name="radial_progress">
-  <div class="radial-progress" data-progress="{{progress}}">
+  <div class="radial-progress {{class}}" data-progress="{{progress}}">
     <div class="circle">
       <div class="mask full">
         <div class="fill"></div>
@@ -11,7 +11,9 @@
       <div class="shadow"></div>
     </div>
     <div class="inset">
-      <div class="percentage"></div>
+      {{#if showPercentage}}
+        <div class="percentage"></div>
+      {{/if}}
     </div>
   </div>
 </template>

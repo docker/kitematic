@@ -87,46 +87,8 @@ var fixBoot2DockerVM = function (callback) {
   });
 };
 
-var fixDefaultImages = function (callback) {
-  Docker.checkDefaultImages(function (err) {
-    if (err) {
-      Session.set('available', false);
-      Docker.resolveDefaultImages(function (err) {
-        if (err) {
-          callback();
-        } else {
-          Session.set('available', true);
-          callback();
-        }
-      });
-    } else {
-      Session.set('available', true);
-      callback();
-    }
-  });
-};
-
-var fixDefaultContainers = function (callback) {
-  Docker.checkDefaultContainers(function (err) {
-    if (err) {
-      Session.set('available', false);
-      Docker.resolveDefaultContainers(function (err) {
-        if (err) {
-          callback(err);
-        } else {
-          Session.set('available', true);
-          callback();
-        }
-      });
-    } else {
-      Session.set('available', true);
-      callback();
-    }
-  });
-};
-
 Meteor.setInterval(function () {
-  if (!Session.get('installing')) {
+  if (!Session.get('onIntro')) {
     Boot2Docker.exists(function (err, exists) {
       if (err) { console.log(err); return; }
       if (exists) {
@@ -149,10 +111,8 @@ Meteor.setInterval(function () {
 }, 5000);
 
 Meteor.setInterval(function () {
-  if (!Session.get('installing')) {
-    Sync.resolveWatchers(function () {});
+  if (!Session.get('onIntro')) {
     ImageUtil.sync();
     AppUtil.sync();
-    AppUtil.recover();
   }
 }, 5000);

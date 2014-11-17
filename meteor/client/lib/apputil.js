@@ -33,15 +33,10 @@ AppUtil.restartHelper = function (app) {
       if (err) { console.error(err); }
       Docker.getContainerData(app.docker.Id, function (err, data) {
         if (err) { console.error(err); }
-        Util.refreshDNS(app, function (err) {
-          if (err) {
-            console.error(err);
-          }
-          Apps.update(app._id, {$set: {
-            status: 'READY',
-            docker: data
-          }});
-        });
+        Apps.update(app._id, {$set: {
+          status: 'READY',
+          docker: data
+        }});
       });
     });
   }
@@ -57,15 +52,10 @@ AppUtil.start = function (appId) {
       if (err) { console.error(err); }
       Docker.getContainerData(app.docker.Id, function (err, data) {
         if (err) { console.error(err); }
-        Util.refreshDNS(app, function (err) {
-          if (err) {
-            console.error(err);
-          }
-          Apps.update(app._id, {$set: {
-            status: 'READY',
-            docker: data
-          }});
-        });
+        Apps.update(app._id, {$set: {
+          status: 'READY',
+          docker: data
+        }});
       });
     });
   }

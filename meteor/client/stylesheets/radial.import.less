@@ -1,42 +1,52 @@
+@-webkit-keyframes rotating {
+  from{
+    -webkit-transform: rotate(0deg);
+  }
+  to{
+    -webkit-transform: rotate(360deg);
+  }
+}
+
 .radial-progress {
-  @circle-size: 34px;
-  @circle-background: #d6dadc;
-  @circle-color: #3FD899;
-  @inset-size: 28px;
-  @inset-color: #fbfbfb;
+
+  &.radial-spinner {
+    -webkit-animation: rotating 1.2s linear infinite;
+  }
+
+  @circle-size: 96px;
+  @circle-background: transparent;
+  @inset-size: 92px;
+  @inset-color: white;
   @transition-length: 1s;
-  @shadow: 0px 1px 3px rgba(0,0,0,0.2);
-  @percentage-color: #3FD899;
-  @percentage-font-size: 11px;
+  // @percentage-color: #3FD899;
+  @percentage-font-size: 14px;
   @percentage-text-width: 57px;
+  margin: 0 auto;
 
   width:  @circle-size;
   height: @circle-size;
 
   background-color: @circle-background;
-  border-radius: 50%;
+  border-radius: 100%;
   .circle {
     .mask, .fill, .shadow {
       width:    @circle-size;
       height:   @circle-size;
       position: absolute;
-      border-radius: 50%;
-    }
-    .shadow {
-      box-shadow: @shadow inset;
+      border-radius: 100%;
     }
     .mask, .fill {
       -webkit-backface-visibility: hidden;
       transition: -webkit-transform @transition-length;
       transition: -ms-transform @transition-length;
       transition: transform @transition-length;
-      border-radius: 50%;
+      border-radius: 100%;
     }
-    .mask {
-      clip: rect(0px, @circle-size, @circle-size, @circle-size/2);
+    .mask { 
+      clip: rect(0px, @circle-size, @circle-size, @circle-size/2.0);
       .fill {
-        clip: rect(0px, @circle-size/2, @circle-size, 0px);
-        background-color: @circle-color;
+        clip: rect(0px, @circle-size/2.0, @circle-size, 0px);
+        background-color: @brand-action;
       }
     }
   }
@@ -44,25 +54,33 @@
     width:       @inset-size;
     height:      @inset-size;
     position:    absolute;
-    margin-left: (@circle-size - @inset-size)/2;
-    margin-top:  (@circle-size - @inset-size)/2;
+    margin-left: (@circle-size - @inset-size) / 2.0;
+    margin-top:  (@circle-size - @inset-size) / 2.0;
 
     background-color: @inset-color;
-    border-radius: 50%;
-    box-shadow: @shadow;
+    border-radius: 100%;
     .percentage {
       width:       @percentage-text-width;
       position:    absolute;
-      top:         (@inset-size - @percentage-font-size) / 2;
-      left:        (@inset-size - @percentage-text-width) / 2;
+      top:         (@inset-size - @percentage-font-size) / 2.0;
+      left:        (@inset-size - @percentage-text-width) / 2.0;
 
       line-height: 1;
       text-align:  center;
 
-      color:       @percentage-color;
-      font-weight: 800;
+      // color:       @percentage-color;
+      font-weight: 500;
       font-size:   @percentage-font-size;
     }
+  }
+
+
+  &.radial-negative .circle .mask .fill {
+    background-color: @brand-negative;
+  }
+
+  &.radial-positive .circle .mask .fill {
+    background-color: @brand-positive;
   }
 
   @i: 0;

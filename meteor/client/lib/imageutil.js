@@ -270,7 +270,6 @@ ImageUtil.remove = function (imageId) {
   } catch (e) {
     console.error(e);
   }
-  Sync.removeAppWatcher(imageId);
 };
 
 ImageUtil.sync = function () {
