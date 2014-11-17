@@ -9,28 +9,22 @@ VirtualBox.INCLUDED_VERSION = '4.3.18';
 VirtualBox.INSTALLER_FILENAME = 'virtualbox-4.3.18.pkg';
 VirtualBox.INSTALLER_CHECKSUM = '5836c94481c460c648b9216386591a2915293ac86b9bb6c57746637796af6af2'; // Sha256 Checksum
 
-// Info for the hostonly interface we add to the VM.
-VirtualBox.HOSTONLY_HOSTIP = '192.168.60.3';
-VirtualBox.HOSTONLY_NETWORKMASK = '255.255.255.0';
-
 VirtualBox.installed = function () {
   return fs.existsSync('/usr/bin/VBoxManage') &&
     fs.existsSync('/Applications/VirtualBox.app/Contents/MacOS/VirtualBox');
 };
 
 VirtualBox.exec = function (command, callback) {
-  exec('/usr/bin/VBoxManage ' + command, function (error, stdout, stderr) {
-    callback(error, stdout, stderr);
+  exec('/usr/bin/VBoxManage ' + command, function (stderr, stdout, code) {
+    callback(stderr, stdout, code);
   });
 };
 
 VirtualBox.install = function (callback) {
   // -W waits for the process to close before finishing.
-  exec('open -W ' + path.join(Util.getResourceDir(), this.INSTALLER_FILENAME).replace(' ', '\\ '), function (error, stdout, stderr) {
-    console.log(stdout);
-    console.log(stderr);
-    if (error) {
-      callback(error);
+  exec('open -W ' + path.join(Util.getResourceDir(), this.INSTALLER_FILENAME).replace(' ', '\\ '), function (stderr, stdout, code) {
+    if (code) {
+      callback(stderr);
       return;
     }
     callback(null);
@@ -42,9 +36,9 @@ VirtualBox.version = function (callback) {
     callback('VirtualBox not installed.');
     return;
   }
-  this.exec('-v', function (err, stdout, stderr) {
-    if (err) {
-      callback(err);
+  this.exec('-v', function (stderr, stdout, code) {
+    if (code) {
+      callback(stderr);
       return;
     }
     // Output is x.x.xryyyyyy
@@ -57,106 +51,29 @@ VirtualBox.version = function (callback) {
   });
 };
 
-VirtualBox.hostOnlyIfs = function (callback) {
-  this.exec('list hostonlyifs', function (err, stdout, stderr) {
-    if (err) {
-      callback(err);
-      return;
-    }
-    var lines = stdout.split('\n');
-    var hostOnlyIfs = {};
-    var currentIf = null;
-    _.each(lines, function (line) {
-      if (!line.length) {
-        return;
-      }
-      var pieces = line.split(':');
-      var key = pieces[0].trim();
-      var value = pieces[1] ? pieces[1].trim() : null;
-      if (key === 'Name') {
-        currentIf = value;
-        hostOnlyIfs[value] = {};
-      }
-      hostOnlyIfs[currentIf][key] = value;
-    });
-    callback(null, hostOnlyIfs);
-  });
-};
-
-VirtualBox.hostOnlyAdapters = function (vm, callback) {
-  this.exec('showvminfo ' + vm + ' --machinereadable', function (err, stdout, stderr) {
-    if (err) {
-      callback(err);
-      return;
-    }
-    var matches = stdout.match(/(hostonlyadapter\d+)="(vboxnet\d+)"/g);
-    if (!matches.length) {
-      callback(null, {});
+VirtualBox.shutDownRunningVMs = function (callback) {
+  if (!this.installed()) {
+    callback('VirtualBox not installed.');
+    return;
+  }
+  this.exec('list runningvms | sed -E \'s/.*\\{(.*)\\}/\\1/\' | xargs -L1 -I {} VBoxManage controlvm {} savestate', function (stderr, stdout, code) {
+    if (code) {
+      callback(stderr);
     } else {
-      var objs = {};
-      _.each(matches, function (match) {
-        var pieces = match.split('=');
-        objs[pieces[0]] = pieces[1].replace(/"/g, '');
-      });
-      callback(null, objs);
-    }
-  });
-};
-
-VirtualBox.hostOnlyAdapter = function (callback) {
-  var self = this;
-  self.hostOnlyIfs(function (err, ifs) {
-    var iface = _.findWhere(_.toArray(ifs), {IPAddress: VirtualBox.HOSTONLY_HOSTIP});
-    if (!iface) {
-      self.exec('hostonlyif create', function (err, stdout, stderr) {
-        var match = stdout.match(/Interface '(vboxnet\d+)' was successfully created/);
-        if (!match) {
-          callback('Could not parse output of hostonlyif create');
-          return;
-        }
-        self.exec('hostonlyif ipconfig ' + match[1] + ' --ip ' + VirtualBox.HOSTONLY_HOSTIP + ' --netmask ' + VirtualBox.HOSTONLY_NETWORKMASK, function(err, stdout, stderr) {
-          if (err) { callback(err); return; }
-          callback(null, match[1]);
-        });
-      });
-    } else {
-      callback(null, iface.Name);
-    }
-  });
-};
-
-VirtualBox.addCustomHostAdapter = function (vm, callback) {
-  var self = this;
-  self.hostOnlyAdapter(function (err, ifname) {
-    if (err) { callback(err); return; }
-    self.exec('modifyvm ' + vm + ' --nic2 hostonly --nictype2 virtio --cableconnected2 on --hostonlyadapter2 ' + ifname, function (err, stdout, stderr) {
-      callback(err, ifname);
-    });
-  });
-};
-
-VirtualBox.setupRouting = function (vm, callback) {
-  // Get the host only adapter or create it if it doesn't exist
-  this.addCustomHostAdapter(vm, function (err, ifname) {
-    var installFile = path.join(Util.getBinDir(), 'install');
-    var cocoaSudo = path.join(Util.getBinDir(), 'cocoasudo');
-    var execCommand = cocoaSudo + ' --prompt="Kitematic needs your password to allow routing *.kite requests to containers." ' + installFile;
-    exec(execCommand, {env: {IFNAME: ifname, GATEWAY: Boot2Docker.REQUIRED_IP}}, function (error, stdout, stderr) {
-      if (error) {
-        callback(error);
-        return;
-      }
       callback();
-    });
+    }
   });
 };
 
-VirtualBox.removeDHCP = function (callback) {
-  var self = this;
-  self.hostOnlyAdapter(function (err, ifname) {
-    if (err) { callback(err); return; }
-    self.exec('dhcpserver remove --ifname ' + ifname, function (err, stdout, stderr) {
-      callback(err);
+VirtualBox.killAllProcesses = function (callback) {
+  this.shutDownRunningVMs(function (err) {
+    if (err) {callback(err); return;}
+    exec('pkill VirtualBox', function (stderr, stdout, code) {
+      if (code) {callback(stderr); return;}
+      exec('pkill VBox', function (stderr, stdout, code) {
+        if (code) {callback(stderr); return;}
+        callback();
+      });
     });
   });
 };

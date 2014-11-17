@@ -19,7 +19,7 @@ Template.dashboard_single_app.events({
   },
   'click .btn-terminal': function () {
     var app = this;
-    var cmd = Boot2Docker.command() + ' ssh -t "sudo docker-enter ' + app.docker.Id + '"';
+    var cmd = Boot2Docker.command() + ' ssh -t "sudo docker exec -i -t ' + app.docker.Id + ' bash"';
     Util.openTerminal(cmd);
   },
   'click .btn-start': function () {

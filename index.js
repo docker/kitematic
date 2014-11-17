@@ -3,6 +3,7 @@ var net = require('net');
 var os = require('os');
 var fs = require('fs');
 var path = require('path');
+var exec = require('exec');
 
 var autoUpdater = require('auto-updater');
 var app = require('app');
@@ -117,50 +118,37 @@ app.on('activate-with-no-open-windows', function () {
 
 app.on('ready', function() {
   start(function (url, nodeChild, mongoChild) {
-    var cleanUpChildren = function () {
-      console.log('Cleaning up children.');
-      mongoChild.kill();
-      nodeChild.kill();
-    };
-
-    var cleanUpChildrenAndQuit = function () {
-      console.log('Cleaning up children and quitting.');
-      cleanUpChildren();
-      app.quit();
-    };
-
-
-    if (nodeChild && mongoChild) {
-      process.on('exit', cleanUpChildren);
-      process.on('uncaughtException', function (err) {
-        console.log(err);
-        cleanUpChildrenAndQuit();
-      });
-      process.on('SIGINT', function () {
-        cleanUpChildrenAndQuit();
-        process.exit();
-      });
-      process.on('SIGTERM', function () {
-        cleanUpChildrenAndQuit();
-        process.exit();
-      });
-    }
 
     // Create the browser window.
     var windowOptions = {
       width: 800,
       height: 578,
-      frame: false,
       resizable: false,
+      frame: false,
       'web-preferences': {
         'web-security': false
       }
     };
     mainWindow = new BrowserWindow(windowOptions);
-    mainWindow.focus();
+    mainWindow.hide();
     mainWindow.loadUrl(url);
 
+    process.on('uncaughtException', app.quit);
+
+    app.on('will-quit', function (e) {
+      console.log('Cleaning up children.');
+      if (nodeChild) {
+        nodeChild.kill();
+      }
+      if (mongoChild) {
+        mongoChild.kill();
+      }
+      exec('VBoxManage controlvm boot2docker-vm savestate', function (stderr, stdout, code) {});
+    });
+
     mainWindow.webContents.on('did-finish-load', function() {
+      mainWindow.show();
+      mainWindow.focus();
 
       // Auto Updates
       autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion());
@@ -182,7 +170,6 @@ app.on('ready', function() {
         console.log('Update downloaded.');
         mainWindow.webContents.send('notify', 'window:update-available');
       });
-
 
       ipc.on('command', function (event, arg) {
         console.log('Command: ' + arg);

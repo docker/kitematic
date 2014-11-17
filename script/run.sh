@@ -3,8 +3,6 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE=$DIR/..
 
-source $BASE/script/setup.sh
-
 export ROOT_URL=https://localhost:3000
 export DOCKER_HOST=http://192.168.59.103
 export DOCKER_PORT=2375
