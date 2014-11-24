@@ -7,6 +7,7 @@ Apps.COMMON_WEB_PORTS = [
   3000,
   5000,
   2368,
+  443
 ];
 
 Apps.allow({
@@ -31,17 +32,37 @@ Apps.helpers({
   },
   ports: function () {
     var app = this;
-    if (app.docker && app.docker.NetworkSettings.Ports) {
-      var ports = _.map(_.keys(app.docker.NetworkSettings.Ports), function (portObj) {
-        var port = parseInt(portObj.split('/')[0], 10);
-        return port;
-      });
-      return ports.join(', ');
-    } else {
-      return null;
+    if (!app.docker || !app.docker.NetworkSettings.Ports) {
+      return [];
     }
-  },
-  url: function () {
-    return 'http://localhost:80'; // CHANGE ME
+    var results = _.map(app.docker.NetworkSettings.Ports, function (value, key) {
+      var portProtocolPair = key.split('/');
+      var res = {
+        'port': parseInt(portProtocolPair[0]),
+        'protocol': portProtocolPair[1]
+      };
+      if (value.length) {
+        var port = value[0].HostPort;
+        res['hostIp'] = Docker.hostIp;
+        res['hostPort'] = port;
+        res['web'] = Apps.COMMON_WEB_PORTS.indexOf(res.port) !== -1;
+        res['url'] = 'http://' + Docker.hostIp + ':' + port;
+      }
+      return res;
+    });
+
+    results.sort(function (a, b) {
+      // prefer lower ports
+      if (a.web && b.web) {
+        return b.port - a.port;
+      }
+
+      if (a.web) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+    return results;
   }
 });

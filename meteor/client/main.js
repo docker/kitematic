@@ -69,50 +69,41 @@ Handlebars.registerHelper('displayTags', function (tags, delimiter) {
   }
 });
 
-var fixBoot2DockerVM = function (callback) {
-  Boot2Docker.check(function (err) {
-    if (err) {
-      Session.set('available', false);
-      Boot2Docker.resolve(function (err) {
-        if (err) {
-          callback(err);
+updateBoot2DockerUtilization = function (callback) {
+  Boot2Docker.exists(function (err, exists) {
+    if (err) { callback(err); return; }
+    if (exists) {
+      Boot2Docker.state(function (err, state) {
+        if (err) { callback(err); return; }
+        Session.set('boot2dockerState', state);
+        if (state === 'running') {
+          Boot2Docker.stats(function (err, stats) {
+            if (err) { callback(err); return; }
+            if (stats.state !== 'poweroff' && stats.memory && stats.disk) {
+              Session.set('boot2dockerMemoryUsage', stats.memory);
+              Session.set('boot2dockerDiskUsage', stats.disk);
+              callback();
+            }
+          });
         } else {
-          Session.set('available', true);
           callback();
         }
       });
-    } else {
-      callback();
     }
   });
 };
 
-Meteor.setInterval(function () {
-  if (!Session.get('onIntro')) {
-    Boot2Docker.exists(function (err, exists) {
-      if (err) { console.log(err); return; }
-      if (exists) {
-        Boot2Docker.state(function (err, state) {
-          if (err) { console.log(err); return; }
-          Session.set('boot2dockerState', state);
-          if (state === 'running') {
-            Boot2Docker.stats(function (err, stats) {
-              if (err) { console.log(err); return; }
-              if (stats.state !== 'poweroff' && stats.memory && stats.disk) {
-                Session.set('boot2dockerMemoryUsage', stats.memory);
-                Session.set('boot2dockerDiskUsage', stats.disk);
-              }
-            });
-          }
-        });
-      }
-    });
-  }
-}, 5000);
+startUpdatingBoot2DockerUtilization = function () {
+  updateBoot2DockerUtilization(function (err) {
+    Meteor.setTimeout(updateBoot2DockerUtilization, 5000);
+  });
+};
 
-Meteor.setInterval(function () {
-  if (!Session.get('onIntro')) {
+startSyncingAppState = function () {
+  ImageUtil.sync();
+  AppUtil.sync();
+  Meteor.setTimeout(function () {
     ImageUtil.sync();
     AppUtil.sync();
-  }
-}, 5000);
+  }, 5000);
+};

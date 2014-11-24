@@ -6,15 +6,6 @@ var fs = require('fs');
 
 ImageUtil = {};
 
-var createTarFile = function (image, callback) {
-  var TAR_PATH = path.join(Util.KITE_TAR_PATH, image._id + '.tar');
-  exec('tar czf ' + TAR_PATH + ' -C ' + image.path + ' .', function (err) {
-    if (err) { callback(err, null); return; }
-    console.log('Created tar file: ' + TAR_PATH);
-    callback(null, TAR_PATH);
-  });
-};
-
 var getFromImage = function (dockerfile) {
   var patternString = "(FROM)(.*)";
   var regex = new RegExp(patternString, "g");
@@ -54,23 +45,8 @@ ImageUtil.getMetaData = function (directory) {
   return kiteJSON;
 };
 
-ImageUtil.saveFolder = function (directory, imageId, callback) {
-  var destinationPath = path.join(Util.KITE_IMAGES_PATH, imageId);
-  if (!fs.existsSync(destinationPath)) {
-    fs.mkdirSync(destinationPath, function (err) {
-      if (err) { callback(err); return; }
-    });
-    Util.copyFolder(directory, destinationPath, function (err) {
-      if (err) { callback(err); return; }
-      console.log('Copied image folder for: ' + imageId);
-      callback(null);
-    });
-  }
-};
-
 ImageUtil.rebuildHelper = function (image, callback) {
-  Util.deleteFolder(image.path);
-  var imageMetaData = ImageUtil.getMetaData(image.originPath);
+  var imageMetaData = ImageUtil.getMetaData(image.path);
   if (imageMetaData.logo) {
     Images.update(image._id, {
       $set: {
@@ -91,14 +67,11 @@ ImageUtil.rebuildHelper = function (image, callback) {
     }
   });
   image = Images.findOne(image._id);
-  ImageUtil.saveFolder(image.originPath, image._id, function (err) {
-    if (err) { console.error(err); }
-    ImageUtil.pull(fs.readFileSync(path.join(image.path, 'Dockerfile'), 'utf8'), image._id, function (err) {
-      if (err) { callback(err, null); return; }
-      ImageUtil.build(image, function (err) {
-        if (err) { console.error(err); }
-        callback(null, null);
-      });
+  ImageUtil.pull(fs.readFileSync(path.join(image.path, 'Dockerfile'), 'utf8'), image._id, function (err) {
+    if (err) { callback(err, null); return; }
+    ImageUtil.build(image, function (err) {
+      if (err) { console.error(err); }
+      callback(null, null);
     });
   });
 };
@@ -146,7 +119,6 @@ ImageUtil.pull = function (dockerfile, imageId, callback) {
   console.log('From image: ' + fromImage);
   var installedImage = null;
   Docker.getImageData(imageId, function (err, data) {
-    if (err) { console.error(err); }
     installedImage = data;
     if (fromImage && !installedImage) {
       Images.update(imageId, {
@@ -191,7 +163,7 @@ ImageUtil.pull = function (dockerfile, imageId, callback) {
 };
 
 ImageUtil.build = function (image, callback) {
-  createTarFile(image, function (err, tarFilePath) {
+  Util.createTarFile(image.path, path.join(Util.KITE_TAR_PATH, image._id + '.tar'), function (err, tarFilePath) {
     if (err) { console.error(err); }
     Images.update(image._id, {
       $set: {
@@ -199,7 +171,7 @@ ImageUtil.build = function (image, callback) {
       }
     });
     Docker.client().buildImage(tarFilePath, {t: image.meta.name + ':' + image.meta.version}, function (err, response) {
-      if (err) { callback(err); }
+      if (err) { callback(err); return; }
       console.log('Building Docker image...');
       response.setEncoding('utf8');
       response.on('data', function (data) {
@@ -264,11 +236,6 @@ ImageUtil.remove = function (imageId) {
     Docker.removeImage(image.docker.Id, function (err) {
       if (err) { console.error(err); }
     });
-  }
-  try {
-    Util.deleteFolder(image.path);
-  } catch (e) {
-    console.error(e);
   }
 };
 
@@ -342,7 +309,6 @@ ImageUtil.sync = function () {
               version: version
             }
           };
-          console.log(imageObj);
           Images.insert(imageObj);
         }
       });

@@ -1,4 +1,4 @@
-<template name="dashboard_single_image">
+<template name="dashboardSingleImage">
   <div class="image">
     <h5>
       {{#if $eq status 'READY'}}
@@ -35,7 +35,7 @@
         <a onclick="trackLink('open image folder')" href="#" class="btn-icon btn-folder" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Folder"><span class="typcn typcn-folder-open"></span></a>
       {{/if}}
       {{#if $neq status 'BUILDING'}}
-        {{#if originPath}}
+        {{#if $or path originPath}}
           <a onclick="trackLink('rebuild image')" href="#" class="btn-icon btn-rebuild" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Rebuild"><span class="typcn typcn-refresh-outline"></span></a>
         {{/if}}
       {{/if}}

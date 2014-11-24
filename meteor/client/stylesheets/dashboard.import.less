@@ -20,6 +20,49 @@
       .btn-icon {
         font-size: 20px;
         margin-left: 0.4em;
+        cursor: pointer;
+      }
+      .dropdown {
+        &.open {
+          .tooltip {
+            display: none !important;
+          }
+        }
+      }
+      .ports {
+        .dropdown-menu {
+          min-width: 241px;
+        }
+        .btn-group {
+          top: -2px;
+        }
+        .btn-globe {
+          line-height: 22px;
+          padding: 0 5px;
+          .typcn {
+            font-size: 18px;
+            top: 2px;
+            position: relative;
+          }
+        }
+        .btn-ports {
+          .caret {
+            margin-left: 3px;
+            margin-right: 1px;
+            margin-top: -2px
+          }
+        }
+        .btn-caret {    
+          padding-top: 3px;
+          padding-bottom: 3px;
+          border-width: 1px;
+          padding-left: 3px;
+          padding-right: 3px;
+        }
+        &.open + .tooltip {
+          display: none !important;
+        }
+        position: relative;
       }
     }
     &:hover {
@@ -256,6 +299,39 @@
     }
     .options {
       .make-xs-column(2);
+    }
+  }
+
+  .app-ports {
+    cursor: default;
+    padding: 10px 15px 3px;
+    min-width: 240px;
+    li {
+      padding-bottom: 7px;
+      white-space: nowrap;
+
+      .port-wrapper {
+        display: inline-block;
+        min-width: 72px;
+        font-weight: bold;
+        font-size: 13px;
+      }
+      .arrow-wrapper {
+        text-align: center;
+        display: inline-block;
+        min-width: 28px;
+        font-size: 15px;
+        color: #999;
+      }
+      .open-button-wrapper {
+        display: inline-block;
+      }
+      .host-address-wrapper {
+        font-family: Monaco, monospace;
+        font-size: 12px;
+        cursor: text;
+        .text-select();
+      }
     }
   }
 

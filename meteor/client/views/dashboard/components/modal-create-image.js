@@ -3,13 +3,13 @@ var fs = require('fs');
 var remote = require('remote');
 var dialog = remote.require('dialog');
 
-Template.modal_create_image.rendered = function () {
+Template.modalCreateImage.rendered = function () {
   $('#modal-create-image').bind('hidden.bs.modal', function () {
     Router.go('dashboard_images');
   });
 };
 
-Template.modal_create_image.events({
+Template.modalCreateImage.events({
   'click #btn-pick-directory': function () {
     dialog.showOpenDialog({properties: ['openDirectory']}, function (filenames) {
       if (!filenames) {
@@ -40,10 +40,9 @@ Template.modal_create_image.events({
     $('#picked-directory-error').html('');
     $('#picked-directory').html('');
     $('#btn-create-image').attr('disabled', 'disabled');
-    $('#modal-create-image').modal('hide');
     var imageObj = {
       status: 'BUILDING',
-      originPath: directory,
+      path: directory,
       buildLogs: [],
       createdAt: new Date()
     };
@@ -51,12 +50,12 @@ Template.modal_create_image.events({
     imageObj.meta = imageMetaData;
     imageObj.tags = [imageMetaData.name + ':' + imageMetaData.version];
     var imageId = Images.insert(imageObj);
-    var imagePath = path.join(Util.KITE_IMAGES_PATH, imageId);
-    Images.update(imageId, {
-      $set: {
-        path: imagePath
-      }
+
+    $('#modal-create-image').modal('hide');
+    $('#modal-create-image').on('hidden.bs.modal', function () {
+      Router.go('dashboard_images_logs', {id: imageId});
     });
+
     if (imageObj.meta.logo) {
       Images.update(imageId, {
         $set: {
@@ -65,13 +64,10 @@ Template.modal_create_image.events({
       });
     }
     var image = Images.findOne(imageId);
-    ImageUtil.saveFolder(image.originPath, imageId, function (err) {
-      if (err) { console.error(err); }
-      ImageUtil.pull(fs.readFileSync(path.join(image.path, 'Dockerfile'), 'utf8'), imageId, function (err) {
-        if (err) { throw err; }
-        ImageUtil.build(image, function (err) {
-          if (err) { console.error(err); }
-        });
+    ImageUtil.pull(fs.readFileSync(path.join(image.path, 'Dockerfile'), 'utf8'), imageId, function (err) {
+      if (err) { throw err; }
+      ImageUtil.build(image, function (err) {
+        if (err) { console.error(err); }
       });
     });
   }

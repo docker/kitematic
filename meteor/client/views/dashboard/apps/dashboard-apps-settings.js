@@ -13,7 +13,7 @@ var getConfigVars = function ($form) {
   return configVars;
 };
 
-Template.dashboard_apps_settings.events({
+Template.dashboardAppsSettings.events({
   'click .btn-delete-var': function (e) {
     var $button = $(e.currentTarget);
     $button.attr("disabled", "disabled");
@@ -41,7 +41,8 @@ Template.dashboard_apps_settings.events({
     e.stopPropagation();
     return false;
   },
-  'click .btn-delete-app': function () {
+  'click .btn-delete-app': function (e) {
+    e.preventDefault();
     var appId = this._id;
     dialog.showMessageBox({
       message: 'Are you sure you want to delete this app?',
@@ -50,6 +51,30 @@ Template.dashboard_apps_settings.events({
       if (index === 0) {
         AppUtil.remove(appId);
         Router.go('dashboard_apps');
+      }
+    });
+  },
+  'click .btn-enable-volumes': function (e) {
+    e.preventDefault();
+    var appId = this._id;
+    Apps.update(appId, {
+      $set: {volumesEnabled: true}
+    });
+    AppUtil.run(Apps.findOne(appId), function (err) {
+      if (err) {
+        throw err;
+      }
+    });
+  },
+  'click .btn-disable-volumes': function (e) {
+    e.preventDefault();
+    var appId = this._id;
+    Apps.update(appId, {
+      $set: {volumesEnabled: false}
+    });
+    AppUtil.run(Apps.findOne(appId), function (err) {
+      if (err) {
+        throw err;
       }
     });
   }

@@ -1,7 +1,7 @@
 var remote = require('remote');
 var dialog = remote.require('dialog');
 
-Template.dashboard_settings.events({
+Template.dashboardSettings.events({
   'click .btn-start-boot2docker': function (e) {
     var $btn = $(e.currentTarget);
     $btn.html('Starting Boot2Docker...');
@@ -53,7 +53,7 @@ Template.dashboard_settings.events({
   }
 });
 
-Template.dashboard_settings.helpers({
+Template.dashboardSettings.helpers({
   settings: function () {
     return Settings.findOne({});
   },

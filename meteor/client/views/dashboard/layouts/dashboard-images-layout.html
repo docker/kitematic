@@ -1,12 +1,12 @@
-<template name="dashboard_images_layout">
+<template name="dashboardImagesLayout">
   {{setTitle this.meta.name}}
   <input id="imageId" type="hidden" value="{{this._id}}">
   <div class="dashboard">
     <div class="container">
       <div class="dashboard-row">
-        {{> dashboard_menu}}
+        {{> dashboardMenu}}
         <div class="dashboard-body">
-          {{> menu_header}}
+          {{> menuHeader}}
           <div class="header">
             <h3>
               <a href="/images" onclick="trackLink('back to images')">Images</a> &raquo; {{this.meta.name}}
@@ -37,6 +37,6 @@
         </div>
       </div>
     </div>
-    {{> modal_create_app}}
+    {{> modalCreateApp}}
   </div>
 </template>

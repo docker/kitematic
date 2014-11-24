@@ -17,4 +17,11 @@ Meteor.startup(function () {
   if (!fs.existsSync(Util.getResourceDir())) {
     fs.mkdirSync(Util.getResourceDir());
   }
+
+  Boot2Docker.ip(function (err, ip) {
+    if (!err) {
+      console.log('Setting host IP to: ' + ip);
+      Docker.setHost(ip);
+    }
+  });
 });

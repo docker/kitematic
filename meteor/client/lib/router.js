@@ -6,25 +6,26 @@ Router.configure({
       var currentPath = Router.current().path;
       ga('send', 'pageview', currentPath);
     }
+    this.next();
   }
 });
 
 DashboardController = RouteController.extend({
-  layoutTemplate: 'dashboard_layout',
+  layoutTemplate: 'dashboardLayout',
   waitOn: function () {
     return [Meteor.subscribe('apps'), Meteor.subscribe('images'), Meteor.subscribe('settings')];
   }
 });
 
 AppController = DashboardController.extend({
-  layoutTemplate: 'dashboard_apps_layout',
+  layoutTemplate: 'dashboardAppsLayout',
   data: function () {
     return Apps.findOne({name: this.params.name});
   }
 });
 
 ImageController = DashboardController.extend({
-  layoutTemplate: 'dashboard_images_layout',
+  layoutTemplate: 'dashboardImagesLayout',
   data: function () {
     return Images.findOne({_id: this.params.id});
   }
@@ -50,6 +51,8 @@ Router.map(function () {
               Settings.insert({tracking: true});
             }
             Session.set('onIntro', false);
+            startUpdatingBoot2DockerUtilization();
+            // startSyncingAppState();
             Router.go('dashboard_apps');
           }
         });
