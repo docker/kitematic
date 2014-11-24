@@ -1,12 +1,12 @@
 var ipc = require('ipc');
 
-Template.update_notification.helpers({
+Template.updateNotification.helpers({
   updateAvailable: function () {
     return Session.get('updateAvailable');
   }
 });
 
-Template.update_notification.events({
+Template.updateNotification.events({
   'click .btn-update': function (e) {
     ipc.send('command', 'application:quit-install');
   }

@@ -95,7 +95,6 @@ Docker.runContainer = function (app, image, callback) {
     var builtStr = key + '=' + app.config[key];
     envParam.push(builtStr);
   });
-  console.log(envParam);
   Docker.client().createContainer({
     Image: image.docker.Id,
     Tty: false,
@@ -107,9 +106,9 @@ Docker.runContainer = function (app, image, callback) {
     console.log('Created container: ' + container.id);
     // Bind volumes
     var binds = [];
-    if (image.docker.Config.Volumes && image.docker.Config.Volumes.length > 0) {
+    if (app.volumesEnabled && image.docker.Config.Volumes && image.docker.Config.Volumes.length > 0) {
       _.each(image.docker.Config.Volumes, function (vol) {
-        binds.push('/var/lib/docker/binds/' + app.name + vol.Path + ':' + vol.Path);
+        binds.push([Util.getHomePath(), 'Kitematic', app.name, vol.Path].join('/') + ':' + vol.Path);
       });
     }
     // Start the container
@@ -146,19 +145,6 @@ Docker.stopContainer = function (containerId, callback) {
       return;
     }
     console.log('Stopped container: ' + containerId);
-    callback(null);
-  });
-};
-
-Docker.restartContainer = function (containerId, callback) {
-  var container = Docker.client().getContainer(containerId);
-  container.restart(function (err) {
-    if (err) {
-      console.log(err);
-      callback(err);
-      return;
-    }
-    console.log('Restarted container: ' + containerId);
     callback(null);
   });
 };
@@ -239,11 +225,5 @@ Docker.removeImage = function (imageId, callback) {
     if (err) { callback(err); return; }
     console.log('Deleted image: ' + imageId);
     callback(null);
-  });
-};
-
-Docker.removeBindFolder = function (name, callback) {
-  exec(Boot2Docker.command() + ' ssh "sudo rm -rf /var/lib/docker/binds/' + name + '"', function (err, stdout) {
-    callback(err, stdout);
   });
 };

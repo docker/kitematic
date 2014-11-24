@@ -124,10 +124,7 @@ app.on('ready', function() {
       width: 800,
       height: 578,
       resizable: false,
-      frame: false,
-      'web-preferences': {
-        'web-security': false
-      }
+      frame: false
     };
     mainWindow = new BrowserWindow(windowOptions);
     mainWindow.hide();
@@ -144,6 +141,10 @@ app.on('ready', function() {
         mongoChild.kill();
       }
       exec('VBoxManage controlvm boot2docker-vm savestate', function (stderr, stdout, code) {});
+    });
+
+    mainWindow.webContents.on('new-window', function (e) {
+      e.preventDefault();
     });
 
     mainWindow.webContents.on('did-finish-load', function() {

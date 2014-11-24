@@ -69,6 +69,12 @@ Boot2Docker.ip = function (callback) {
   });
 };
 
+Boot2Docker.portOpen = function (port, callback) {
+  this.exec('nc -vz 127.0.0.1 ' + port, function (stderr, stdout, code) {
+    
+  });
+};
+
 Boot2Docker.setIp = function (ifname, ip, callback) {
   Boot2Docker.exec('ssh "sudo ifconfig ' + ifname + ' ' + ip + ' netmask 255.255.255.0"', function (stderr, stdout) {
     Boot2Docker.exec('ssh "sudo rm -rf /var/lib/boot2docker/tls/* && sudo /etc/init.d/docker restart"', function (stderr, stdout) {

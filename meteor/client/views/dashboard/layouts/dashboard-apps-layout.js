@@ -1,10 +1,10 @@
-Template.dashboard_apps_layout.rendered = function () {
+Template.dashboardAppsLayout.rendered = function () {
   Meteor.setInterval(function () {
     $('.header .icons a').tooltip();
   }, 1000);
 };
 
-Template.dashboard_apps_layout.events({
+Template.dashboardAppsLayout.events({
   'click .btn-view': function (e) {
     try {
       var open = require('open');

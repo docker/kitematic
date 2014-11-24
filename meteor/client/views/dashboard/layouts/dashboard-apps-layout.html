@@ -1,12 +1,12 @@
-<template name="dashboard_apps_layout">
+<template name="dashboardAppsLayout">
   {{setTitle this.name}}
   <input id="appId" type="hidden" value="{{this._id}}">
   <div class="dashboard">
     <div class="container">
       <div class="dashboard-row">
-        {{> dashboard_menu}}
+        {{> dashboardMenu}}
         <div class="dashboard-body">
-          {{> menu_header}}
+          {{> menuHeader}}
           <div class="header">
             <h3>
               <a href="/apps" onclick="trackLink('back to containers')">Containers</a> &raquo; {{this.name}}

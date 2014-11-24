@@ -1,10 +1,10 @@
-Template.dashboard_images_layout.rendered = function () {
+Template.dashboardImagesLayout.rendered = function () {
   Meteor.setInterval(function () {
     $('.header .icons a').tooltip();
   }, 1000);
 };
 
-Template.dashboard_images_layout.events({
+Template.dashboardImagesLayout.events({
   'click .btn-create-app': function () {
     $('#modal-create-app').modal('show');
     $('#form-create-app').find('input[name="imageId"]').val(this._id);

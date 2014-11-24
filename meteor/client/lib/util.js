@@ -77,6 +77,14 @@ Util.copyVolumes = function (directory, appName, callback) {
   }
 };
 
+Util.createTarFile = function (sourcePath, destinationFile, callback) {
+  exec('tar czf ' + destinationFile + ' -C ' + sourcePath + ' .', function (err) {
+    if (err) {callback(err, null); return;}
+    console.log('Created tar file: ' + destinationFile);
+    callback(null, destinationFile);
+  });
+};
+
 Util.hasDockerfile = function (directory) {
   return fs.existsSync(path.join(directory, 'Dockerfile'));
 };

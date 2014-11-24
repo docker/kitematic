@@ -101,10 +101,8 @@ Setup.steps = [
         }
       });
     },
-    message: 'Setting up the Docker VM...',
+    message: 'Setting up the Docker VM...'
   },
-
-  // Start the Docker VM
   {
     run: function (callback) {
       Boot2Docker.state(function (err, state) {
@@ -118,9 +116,8 @@ Setup.steps = [
         }
       });
     },
-    message: 'Starting the Docker VM...',
+    message: 'Starting the Docker VM...'
   },
-
   {
     run: function (callback) {
       Boot2Docker.ip(function (err, ip) {
