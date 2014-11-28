@@ -1,6 +1,7 @@
 var fs = require('fs');
 var exec = require('exec');
 var path = require('path');
+var async = require('async');
 
 VirtualBox = {};
 
@@ -51,7 +52,7 @@ VirtualBox.version = function (callback) {
   });
 };
 
-VirtualBox.shutDownRunningVMs = function (callback) {
+VirtualBox.saveRunningVMs = function (callback) {
   if (!this.installed()) {
     callback('VirtualBox not installed.');
     return;
@@ -66,13 +67,51 @@ VirtualBox.shutDownRunningVMs = function (callback) {
 };
 
 VirtualBox.killAllProcesses = function (callback) {
-  this.shutDownRunningVMs(function (err) {
+  this.saveRunningVMs(function (err) {
     if (err) {callback(err); return;}
     exec('pkill VirtualBox', function (stderr, stdout, code) {
       if (code) {callback(stderr); return;}
       exec('pkill VBox', function (stderr, stdout, code) {
         if (code) {callback(stderr); return;}
         callback();
+      });
+    });
+  });
+};
+
+VirtualBox.vmState = function (name, callback) {
+  VirtualBox.exec('showvminfo ' + name + ' --machinereadable', function (stderr, stdout, code) {
+    if (code) { callback(stderr); return; }
+    var match = stdout.match(/VMState="(\w+)"/);
+    if (!match) {
+      callback('Could not parse VMState');
+      return;
+    }
+    callback(null, match[1]);
+  });
+};
+
+VirtualBox.shutdownVM = function (name, callback) {
+  VirtualBox.vmState(name, function (err, state) {
+    // No VM found
+    if (err) { callback(null, false); return; }
+    VirtualBox.exec('controlvm ' + name + ' acpipowerbutton', function (stderr, stdout, code) {
+      if (code) { callback(stderr, false); return; }
+      var state = null;
+
+      async.until(function () {
+        return state === 'poweroff';
+      }, function (callback) {
+        VirtualBox.vmState(name, function (err, newState) {
+          if (err) { callback(err); return; }
+          state = newState;
+          setTimeout(callback, 250);
+        });
+      }, function (err) {
+        VirtualBox.exec('unregistervm ' + name + ' --delete', function (stderr, stdout, code) {
+          if (code) { callback(err); return; }
+          callback();
+        });
       });
     });
   });

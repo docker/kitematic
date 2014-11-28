@@ -1,13 +1,13 @@
 Apps = new Meteor.Collection('apps');
 
 Apps.COMMON_WEB_PORTS = [
-  80,
-  8000,
-  8080,
-  3000,
-  5000,
-  2368,
-  443
+  '80',
+  '8000',
+  '8080',
+  '3000',
+  '5000',
+  '2368',
+  '443'
 ];
 
 Apps.allow({
@@ -35,21 +35,26 @@ Apps.helpers({
     if (!app.docker || !app.docker.NetworkSettings.Ports) {
       return [];
     }
+
     var results = _.map(app.docker.NetworkSettings.Ports, function (value, key) {
       var portProtocolPair = key.split('/');
       var res = {
-        'port': parseInt(portProtocolPair[0]),
+        'port': portProtocolPair[0],
         'protocol': portProtocolPair[1]
       };
-      if (value.length) {
+      if (value && value.length) {
         var port = value[0].HostPort;
         res['hostIp'] = Docker.hostIp;
         res['hostPort'] = port;
         res['web'] = Apps.COMMON_WEB_PORTS.indexOf(res.port) !== -1;
         res['url'] = 'http://' + Docker.hostIp + ':' + port;
+      } else {
+        return null;
       }
       return res;
     });
+
+    results = _.filter(results, function (res) { return res !== null; });
 
     results.sort(function (a, b) {
       // prefer lower ports

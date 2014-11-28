@@ -45,7 +45,7 @@ Template.dashboardAppsSettings.events({
     e.preventDefault();
     var appId = this._id;
     dialog.showMessageBox({
-      message: 'Are you sure you want to delete this app?',
+      message: 'Are you sure you want to delete this container?',
       buttons: ['Delete', 'Cancel']
     }, function (index) {
       if (index === 0) {

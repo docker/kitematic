@@ -12,12 +12,12 @@
     "type": "GNU",
     "url": "https://raw.githubusercontent.com/kitematic/kitematic/master/LICENSE"
   }],
+  "boot2docker-version": "1.3.2",
   "main": "index.js",
   "version": "0.4.0",
   "dependencies": {
     "ansi-to-html": "0.2.0",
     "async": "^0.9.0",
-    "chokidar": "git+https://github.com/usekite/chokidar.git",
     "dockerode": "2.0.4",
     "exec": "^0.1.2",
     "moment": "2.8.1",
@@ -25,6 +25,7 @@
     "open": "0.0.5",
     "request": "2.42.0",
     "request-progress": "0.3.1",
-    "tar": "0.1.20"
+    "tar": "0.1.20",
+    "pkginfo": "0.3.0"
   }
 }

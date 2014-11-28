@@ -52,7 +52,7 @@ Router.map(function () {
             }
             Session.set('onIntro', false);
             startUpdatingBoot2DockerUtilization();
-            // startSyncingAppState();
+            startSyncingAppState();
             Router.go('dashboard_apps');
           }
         });

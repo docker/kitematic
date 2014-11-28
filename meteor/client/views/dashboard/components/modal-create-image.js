@@ -59,7 +59,7 @@ Template.modalCreateImage.events({
     if (imageObj.meta.logo) {
       Images.update(imageId, {
         $set: {
-          logoPath: path.join(imagePath, imageObj.meta.logo)
+          logoPath: path.join(directory, imageObj.meta.logo)
         }
       });
     }

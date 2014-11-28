@@ -67,6 +67,17 @@ Setup.steps = [
     },
     message: 'Downloading VirtualBox...'
   },
+  {
+    run: function (callback) {
+      VirtualBox.shutdownVM('kitematic-vm', function (err, removed) {
+        if (err) {
+          console.log(err);
+        }
+        callback();
+      });
+    },
+    message: 'Cleaning up existing Docker VM...'
+  },
 
   // Initialize Boot2Docker if necessary.
   {
@@ -74,10 +85,6 @@ Setup.steps = [
       Boot2Docker.exists(function (err, exists) {
         if (err) { callback(err); return; }
         if (!exists) {
-          var vmFilesPath = path.join(Util.getHomePath(), 'VirtualBox\ VMs', 'boot2docker-vm');
-          if (fs.existsSync(vmFilesPath)) {
-            Util.deleteFolder(vmFilesPath);
-          }
           Boot2Docker.init(function (err) {
             callback(err);
           });
@@ -105,15 +112,17 @@ Setup.steps = [
   },
   {
     run: function (callback) {
-      Boot2Docker.state(function (err, state) {
-        if (err) {callback(err); return;}
-        if (state !== 'running') {
-          Boot2Docker.start(function (err) {
-            callback(err);
-          });
-        } else {
-          callback();
-        }
+      Boot2Docker.waitWhileStatus('saving', function (err) {
+        Boot2Docker.status(function (err, status) {
+          if (err) {callback(err); return;}
+          if (status !== 'running') {
+            Boot2Docker.start(function (err) {
+              callback(err);
+            });
+          } else {
+            callback();
+          }
+        });
       });
     },
     message: 'Starting the Docker VM...'

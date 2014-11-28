@@ -124,7 +124,10 @@ app.on('ready', function() {
       width: 800,
       height: 578,
       resizable: false,
-      frame: false
+      frame: false,
+      'web-preferences': {
+        'web-security': false
+      }
     };
     mainWindow = new BrowserWindow(windowOptions);
     mainWindow.hide();

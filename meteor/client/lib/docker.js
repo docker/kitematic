@@ -95,13 +95,23 @@ Docker.runContainer = function (app, image, callback) {
     var builtStr = key + '=' + app.config[key];
     envParam.push(builtStr);
   });
-  Docker.client().createContainer({
+
+  var containerOpts = {
     Image: image.docker.Id,
     Tty: false,
     Env: envParam,
     Hostname: app.name,
     name: app.name
-  }, function (err, container) {
+  };
+
+  
+  if (app.docker && app.docker.NetworkSettings.Ports) {
+    containerOpts.ExposedPorts = app.docker.NetworkSettings.Ports;
+  }
+
+  console.log(containerOpts);
+
+  Docker.client().createContainer(containerOpts, function (err, container) {
     if (err) { callback(err, null); return; }
     console.log('Created container: ' + container.id);
     // Bind volumes
@@ -111,11 +121,19 @@ Docker.runContainer = function (app, image, callback) {
         binds.push([Util.getHomePath(), 'Kitematic', app.name, vol.Path].join('/') + ':' + vol.Path);
       });
     }
-    // Start the container
-    container.start({
-      PublishAllPorts: true,
+
+    var startOpts = {
       Binds: binds
-    }, function (err) {
+    };
+
+    if (app.docker && app.docker.NetworkSettings.Ports) {
+      startOpts.PortBindings = app.docker.NetworkSettings.Ports;
+    } else {
+      startOpts.PublishAllPorts = true;
+    }
+
+    console.log(startOpts);
+    container.start(startOpts, function (err) {
       if (err) { callback(err, null); return; }
       console.log('Started container: ' + container.id);
       callback(null, container);
