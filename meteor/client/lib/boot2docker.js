@@ -2,11 +2,12 @@ var exec = require('exec');
 var path = require('path');
 var fs = require('fs');
 var path = require('path');
+var async = require('async');
+var pkginfo = require('pkginfo')(module);
+
 
 Boot2Docker = {};
-
-Boot2Docker.REQUIRED_IP = '192.168.60.103';
-Boot2Docker.VERSION = '1.3.1';
+Boot2Docker.VERSION = module.exports['boot2docker-version'];
 
 Boot2Docker.command = function () {
   return path.join(Util.getBinDir(), 'boot2docker-' + Boot2Docker.VERSION);
@@ -252,7 +253,43 @@ Boot2Docker.vmUpToDate = function (callback) {
     if (err) {
       callback(err); return;
     }
-    var index = data.indexOf('Boot2Docker-v' + Boot2Docker.VERSION);
-    callback(null, index !== -1);
+    var match = data.match(/Boot2Docker-v(\d+\.\d+\.\d+)/);
+    if (!match) {
+      callback('Could not parse boot2docker iso version');
+      return;
+    }
+    callback (null, Util.compareVersions(match[1], Boot2Docker.VERSION) < 0);
   });
-}
+};
+
+Boot2Docker.status = function (callback) {
+  this.exec('status', function (stderr, stdout, code) {
+    if (code) {callback(stderr); return;}
+    callback(null, stdout.trim());
+  });
+};
+
+Boot2Docker.portAvailable = function (port, protocol, callback) {
+  this.exec('ssh netstat -lntu | grep LISTEN | grep ' + protocol + ' | grep -c ":::' + port + '\\s"', function (stdout, stderr, code) {
+    if (stderr.trim() === '0') {
+      callback(true);
+    } else {
+      callback(false);
+    }
+  });
+};
+
+Boot2Docker.waitWhileStatus = function (status, callback) {
+  var current = status;
+  async.whilst(function () {
+    return current === status;
+  }, function (innerCallback) {
+    Boot2Docker.status(function (err, vmStatus) {
+      if (err) {innerCallback(err); return;}
+      current = vmStatus.trim();
+      innerCallback();
+    });
+  }, function (err) {
+    callback(err);
+  });
+};

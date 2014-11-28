@@ -31,7 +31,6 @@ Template.modalCreateApp.events({
         imageId: cleaned.imageId,
         status: 'STARTING',
         config: {},
-        path: appPath,
         logs: [],
         createdAt: new Date(),
         volumesEnabled: true

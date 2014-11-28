@@ -32,7 +32,8 @@ Template.dashboardAppsLayout.events({
   },
   'click .btn-folder': function () {
     var exec = require('child_process').exec;
-    exec('open ' + this.path, function (err) {
+    var appPath = path.join(Util.KITE_PATH, this.name);
+    exec('open ' + appPath, function (err) {
       if (err) { throw err; }
     });
   },

@@ -1,23 +1,13 @@
 <template name="dashboardAppsPorts">
   <div class="app-ports">
     {{#each ports}}
-      {{#if this.web}}
-        <li role="menuitem">
-          <span class="port-wrapper">Port {{this.port}}</span>
-          <span class="arrow-wrapper"></span>
-          <span class="open-button-wrapper">
-            <a href="{{this.url}}" onclick="trackLink('view container')" class="btn btn-action btn-xs btn-view-port">Open in Browser</a>
-          </span>
-        </li>
-      {{else}}
-        <li role="menuitem">
-          <span class="port-wrapper">Port {{this.port}}</span>
-          <span class="arrow-wrapper">
-            <span class="typcn typcn-arrow-right"></span>
-          </span>
-          <span class="host-address-wrapper">{{this.hostIp}}:{{this.hostPort}}</span>
-        </li>
-      {{/if}}
+      <li role="menuitem">
+        <span class="port-wrapper">Port {{this.port}}</span>
+        <span class="arrow-wrapper">
+          <span class="typcn typcn-arrow-right"></span>
+        </span>
+        <span class="host-address-wrapper">{{this.hostIp}}:{{this.hostPort}}</span>
+      </li>
     {{/each}}
   </div>
 </template>

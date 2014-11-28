@@ -30,8 +30,11 @@
         }
       }
       .ports {
+        position: relative;
+        top: -2px;
         .dropdown-menu {
           min-width: 241px;
+          padding: 10px 15px 3px;
         }
         .btn-group {
           top: -2px;
@@ -62,7 +65,6 @@
         &.open + .tooltip {
           display: none !important;
         }
-        position: relative;
       }
     }
     &:hover {
@@ -281,30 +283,38 @@
     }
   }
 
-  .env-var-pair {
-    .make-row();
-    margin-bottom: 0.2em;
-    font-size: 12px;
-    .env-var-key {
-      .make-xs-column(5);
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
+  .form-env-vars {
+    label {
+      font-size: 13px;
     }
-    .env-var-value {
-      .make-xs-column(5);
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
+    input {
+      font-size: 13px;
+      padding: 5px 9px;
     }
-    .options {
-      .make-xs-column(2);
+    .env-var-pair {
+      .make-row();
+      margin-bottom: 0.2em;
+      font-size: 13px;
+      .env-var-key {
+        .make-xs-column(5);
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .env-var-value {
+        .make-xs-column(5);
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .options {
+        .make-xs-column(2);
+      }
     }
   }
 
   .app-ports {
     cursor: default;
-    padding: 10px 15px 3px;
     min-width: 240px;
     li {
       padding-bottom: 7px;

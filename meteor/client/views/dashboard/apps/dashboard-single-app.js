@@ -1,6 +1,7 @@
 var remote = require('remote');
 var dialog = remote.require('dialog');
 var exec = require('child_process').exec;
+var path = require('path');
 
 Template.dashboardSingleApp.rendered = function () {
   Meteor.setInterval(function () {
@@ -48,21 +49,38 @@ Template.dashboardSingleApp.events({
   },
   'click .btn-restart': function (e) {
     e.preventDefault();
-    AppUtil.restart(this._id);
+    AppUtil.run(this, function (err) {});
   },
   'click .btn-folder': function (e) {
     e.preventDefault();
-    var appId = this._id;
-
-    var app = Apps.findOne(appId);
+    var app = this;
     if (!app) {
-      throw new Error('Cannot find app with id: ' + appId);
+      throw new Error('Cannot find app with id: ' + app._id);
     }
 
+    var openDirectory = function () {
+      var appPath = path.join(Util.KITE_PATH, app.name);
+      if (app.docker.Volumes.length) {
+        if (app.docker.Volumes[0].Value.indexOf(path.join(Util.getHomePath(), 'Kitematic')) !== -1) {
+          exec('open ' + appPath, function (err) {
+            if (err) { throw err; }
+          });
+          return;
+        } else {
+          exec('open ' + app.docker.Volumes[0].Value, function (err) {
+            if (err) { throw err; }
+          });
+          return;
+        }
+      } else {
+        exec('open ' + appPath, function (err) {
+          if (err) { throw err; }
+        });
+      }
+    };
+
     if (app.volumesEnabled) {
-      exec('open ' + this.path, function (err) {
-        if (err) { throw err; }
-      });
+      openDirectory();
       return;
     }
 
@@ -71,14 +89,12 @@ Template.dashboardSingleApp.events({
       buttons: ['Enable Volumes', 'Cancel']
     }, function (index) {
       if (index === 0) {
-        Apps.update(appId, {
+        Apps.update(app._id, {
           $set: {volumesEnabled: true}
         });
-        AppUtil.run(Apps.findOne(appId), function (err) {
+        AppUtil.run(Apps.findOne(app._id), function (err) {
           if (err) { throw err; }
-          exec('open ' + this.path, function (err) {
-            if (err) { throw err; }
-          });
+          openDirectory();
         });
       }
     });

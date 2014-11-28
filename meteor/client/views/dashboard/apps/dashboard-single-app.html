@@ -23,37 +23,39 @@
     </h5>
     <div class="options">
       {{#if $eq status 'READY'}}
-        {{#if viewPort}}
-        <div class="ports btn-group btn-icon" title="View" data-placement="bottom">
-          <a href="{{viewPort.url}}" onclick="trackLink('view container')" class="btn btn-action btn-xs btn-view btn-globe">
-            <span class="typcn typcn-world-outline"></span>
-          </a>
-          <a href="#" class="btn btn-action btn-xs btn-caret dropdown-toggle" id="dashboardAppsPorts" data-toggle="dropdown">
-            <span class="caret"></span>
-            <span class="sr-only">Toggle Dropdown</span>
-          </a>
-          <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dashboardAppsPorts">
-            {{> dashboardAppsPorts}}
-          </ul>
-        </div>
-        {{else}}
-        <span class="ports dropdown">
-          <div class="dropdown btn-group btn-icon dropdown-toggle" id="dashboardAppsPorts" data-toggle="dropdown" data-placement="bottom" title="View">
-            <a href="#" onclick="trackLink('view container')" class="btn btn-action btn-xs btn-globe btn-ports">
+        {{#if ports}}
+          {{#if viewPort}}
+          <div class="ports btn-group btn-icon" title="View" data-placement="bottom">
+            <a href="{{viewPort.url}}" onclick="trackLink('view container')" class="btn btn-action btn-xs btn-view btn-globe">
               <span class="typcn typcn-world-outline"></span>
-              <span class="caret"></span>
             </a>
+            <a href="#" class="btn btn-action btn-xs btn-caret dropdown-toggle" id="dashboardAppsPorts" data-toggle="dropdown">
+              <span class="caret"></span>
+              <span class="sr-only">Toggle Dropdown</span>
+            </a>
+            <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dashboardAppsPorts">
+              {{> dashboardAppsPorts}}
+            </ul>
           </div>
-          <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dashboardAppsPorts">
-            {{> dashboardAppsPorts}}
-          </ul>
-        </span>
+          {{else}}
+          <span class="ports dropdown">
+            <div class="dropdown btn-group btn-icon dropdown-toggle" id="dashboardAppsPorts" data-toggle="dropdown" data-placement="bottom" title="View">
+              <a href="#" onclick="trackLink('view container')" class="btn btn-action btn-xs btn-globe btn-ports">
+                <span class="typcn typcn-world-outline"></span>
+                <span class="caret"></span>
+              </a>
+            </div>
+            <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="dashboardAppsPorts">
+              {{> dashboardAppsPorts}}
+            </ul>
+          </span>
+          {{/if}}
         {{/if}}
       {{/if}}
       <a href="#" onclick="trackLink('open container folder')" class="btn-icon btn-folder" data-toggle="tooltip" data-placement="bottom" title="Volumes"><span class="typcn typcn-folder"></span></a>
       {{#if $eq status 'READY'}}
         <a href="#" onclick="trackLink('terminal into container')" class="btn-icon btn-terminal" data-toggle="tooltip" data-placement="bottom" title="Terminal"><span class="typcn typcn-device-laptop"></span></a>
-        <a href="#" onclick="trackLink('stop container')" class="btn-icon btn-stop" data-toggle="tooltip" data-placement="bottom" title="Stop"><span class="typcn typcn-media-pause-outline"></span></a>
+        <a href="#" onclick="trackLink('stop container')" class="btn-icon btn-stop" data-toggle="tooltip" data-placement="bottom" title="Stop"><span class="typcn typcn-media-stop-outline"></span></a>
       {{/if}}
       {{#if $eq status 'STOPPED'}}
       <a href="#" onclick="trackLink('start container')" class="btn-icon btn-start" data-toggle="tooltip" data-placement="bottom" title="Start"><span class="typcn typcn-media-play-outline"></span></a>
