@@ -3,11 +3,11 @@ var path = require('path');
 var fs = require('fs');
 var path = require('path');
 var async = require('async');
-var pkginfo = require('pkginfo')(module);
+var packagejson = JSON.parse(fs.readFileSync(path.join(process.env.DIR, 'package.json'), 'utf8'));
 
 
 Boot2Docker = {};
-Boot2Docker.VERSION = module.exports['boot2docker-version'];
+Boot2Docker.VERSION = packagejson['boot2docker-version'];
 
 Boot2Docker.command = function () {
   return path.join(Util.getBinDir(), 'boot2docker-' + Boot2Docker.VERSION);
@@ -258,7 +258,7 @@ Boot2Docker.vmUpToDate = function (callback) {
       callback('Could not parse boot2docker iso version');
       return;
     }
-    callback (null, Util.compareVersions(match[1], Boot2Docker.VERSION) < 0);
+    callback (null, Util.compareVersions(match[1], Boot2Docker.VERSION) >= 0);
   });
 };
 
