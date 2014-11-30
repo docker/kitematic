@@ -14,7 +14,9 @@
       {{#if hasItem images}}
         <div class="images line-item-collection">
           {{#each images}}
-            {{> dashboardSingleImage}}
+            {{#if this.tags}}
+              {{> dashboardSingleImage}}
+            {{/if}}
           {{/each}}
         </div>
       {{else}}

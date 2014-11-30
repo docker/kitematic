@@ -171,7 +171,7 @@ ImageUtil.build = function (image, callback) {
         buildLogs: []
       }
     });
-    Docker.client().buildImage(tarFilePath, {t: image.meta.name + ':' + image.meta.version}, function (err, response) {
+    Docker.client().buildImage(tarFilePath, {forcerm: true, t: image.meta.name + ':' + image.meta.version}, function (err, response) {
       if (err) { callback(err); return; }
       console.log('Building Docker image...');
       response.setEncoding('utf8');
@@ -240,7 +240,7 @@ ImageUtil.remove = function (imageId) {
 };
 
 ImageUtil.sync = function (callback) {
-  Docker.listImages(function (err, dockerImages) {
+  Docker.listImages({all: 0}, function (err, dockerImages) {
     if (err) {
       callback(err);
       return;
@@ -269,24 +269,30 @@ ImageUtil.sync = function (callback) {
       return _.contains(kitematicIds, image.Id);
     });
     _.each(diffDockerImages, function (image) {
+      if (!image.RepoTags || _.isEmpty(image.Config.ExposedPorts)) {
+        return;
+      }
+
+      var meta = {};
       var repoTag = _.first(image.RepoTags);
       var repoTagTokens = repoTag.split(':');
       var name = repoTagTokens[0];
       var version = repoTagTokens[1];
+      meta = {
+        name: name,
+        version: version
+      };
       var buildingImage = _.find(images, function (image) {
         return image.status === 'BUILDING' && image.meta.name === name && image.meta.version === version;
       });
-      if (!buildingImage && name !== '<none>' && version !== '<none>' && name !== 'kite-dns') {
+      if (!buildingImage) {
         var imageObj = {
           status: 'READY',
           docker: image,
           buildLogs: [],
           createdAt: new Date(),
           tags: image.RepoTags,
-          meta: {
-            name: name,
-            version: version
-          }
+          meta: meta
         };
         Images.insert(imageObj);
       }

@@ -101,11 +101,16 @@ startUpdatingBoot2DockerUtilization = function () {
 };
 
 startSyncingAppState = function () {
-  ImageUtil.sync(function (err) {
-    if (err) {console.log(err);}
-    AppUtil.sync(function (err) {
-      if (err) {console.log(err);}
-      Meteor.setTimeout(startSyncingAppState, 2000);
+  try {
+    ImageUtil.sync(function (err) {
+      if (err) {throw err;}
+      AppUtil.sync(function (err) {
+        if (err) {throw err;}
+        Meteor.setTimeout(startSyncingAppState, 2000);
+      });
     });
-  });
+  } catch (err) {
+    console.log(err);
+    Meteor.setTimeout(startSyncingAppState, 2000);
+  }
 };
