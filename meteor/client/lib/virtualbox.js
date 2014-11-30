@@ -16,7 +16,7 @@ VirtualBox.installed = function () {
 };
 
 VirtualBox.exec = function (command, callback) {
-  exec('/usr/bin/VBoxManage ' + command, function (stderr, stdout, code) {
+  exec(['/usr/bin/VBoxManage', command], function (stderr, stdout, code) {
     callback(stderr, stdout, code);
   });
 };

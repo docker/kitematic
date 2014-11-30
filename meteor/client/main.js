@@ -82,8 +82,8 @@ updateBoot2DockerUtilization = function (callback) {
             if (stats.state !== 'poweroff' && stats.memory && stats.disk) {
               Session.set('boot2dockerMemoryUsage', stats.memory);
               Session.set('boot2dockerDiskUsage', stats.disk);
-              callback();
             }
+            callback();
           });
         } else {
           callback();
@@ -95,7 +95,8 @@ updateBoot2DockerUtilization = function (callback) {
 
 startUpdatingBoot2DockerUtilization = function () {
   updateBoot2DockerUtilization(function (err) {
-    Meteor.setTimeout(updateBoot2DockerUtilization, 5000);
+    if (err) {console.log(err);}
+    Meteor.setTimeout(startUpdatingBoot2DockerUtilization, 2000);
   });
 };
 
@@ -104,7 +105,7 @@ startSyncingAppState = function () {
     if (err) {console.log(err);}
     AppUtil.sync(function (err) {
       if (err) {console.log(err);}
-      Meteor.setTimeout(startSyncingAppState, 5000);
+      Meteor.setTimeout(startSyncingAppState, 2000);
     });
   });
 };

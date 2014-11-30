@@ -182,6 +182,7 @@ AppUtil.sync = function (callback) {
         } else {
           status = 'ERROR';
         }
+
         var appObj = {
           name: appName,
           docker: container,
@@ -190,6 +191,7 @@ AppUtil.sync = function (callback) {
           path: appPath,
           logs: [],
           createdAt: new Date(),
+          imageId: Images.findOne({'docker.Id': container.Image})._id
         };
         if (container.HostConfig.Binds && container.HostConfig.Binds.length) {
           appObj.volumesEnabled = true;

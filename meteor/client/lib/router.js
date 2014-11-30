@@ -38,7 +38,6 @@ Router.map(function () {
       return [Meteor.subscribe('apps'), Meteor.subscribe('images'), Meteor.subscribe('settings')];
     },
     action: function () {
-      Session.set('onIntro', true);
       if (this.ready()) {
         this.render();
         Setup.run(function (err) {
@@ -50,8 +49,10 @@ Router.map(function () {
             if (!settings) {
               Settings.insert({tracking: true});
             }
-            Session.set('onIntro', false);
+            console.log('Starting boot2docker utilization monitor...');
             startUpdatingBoot2DockerUtilization();
+
+            console.log('Starting CLI sync...');
             startSyncingAppState();
             Router.go('dashboard_apps');
           }

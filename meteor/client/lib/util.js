@@ -78,7 +78,7 @@ Util.copyVolumes = function (directory, appName, callback) {
 };
 
 Util.createTarFile = function (sourcePath, destinationFile, callback) {
-  exec('tar czf ' + destinationFile + ' -C ' + sourcePath + ' .', function (err) {
+  exec(['tar', 'czf', destinationFile, '-C', sourcePath, '.'], function (err) {
     if (err) {callback(err, null); return;}
     console.log('Created tar file: ' + destinationFile);
     callback(null, destinationFile);
@@ -90,12 +90,11 @@ Util.hasDockerfile = function (directory) {
 };
 
 Util.openTerminal = function (command) {
-  var terminalCmd = path.join(Util.getBinDir(),  'terminal') + ' ' + command;
-  var exec = require('child_process').exec;
-  exec(terminalCmd, function (err, stdout) {
-    console.log(stdout);
-    if (err) {
-      console.log(err);
+  var cmd = [path.join(Util.getBinDir(), 'terminal')];
+  cmd.push.apply(cmd, command);
+  exec(cmd, function (stderr, stdout, code) {
+    if (code) {
+      console.log(stderr);
     }
   });
 };

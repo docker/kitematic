@@ -1,3 +1,6 @@
+var exec = require('exec');
+var path = require('path');
+
 Template.dashboardAppsLayout.rendered = function () {
   Meteor.setInterval(function () {
     $('.header .icons a').tooltip();
@@ -7,12 +10,13 @@ Template.dashboardAppsLayout.rendered = function () {
 Template.dashboardAppsLayout.events({
   'click .btn-view': function (e) {
     try {
-      var open = require('open');
       e.preventDefault();
       e.stopPropagation();
       var $btn = $(e.currentTarget);
       var url = $btn.attr('href');
-      open(url);
+      exec(['open', url], function (err) {
+        if (err) { throw err; }
+      });
     } catch (exception) {
       console.log(exception);
     }
@@ -24,16 +28,15 @@ Template.dashboardAppsLayout.events({
     AppUtil.logs(this._id);
   },
   'click .btn-terminal': function () {
-    var cmd = Boot2Docker.command() + ' ssh -t "sudo docker-enter ' + this.docker.Id + '"';
+    var cmd = [Boot2Docker.command(), 'ssh', '-t', 'sudo docker exec -i -t ' + this.docker.Id + ' bash'];
     Util.openTerminal(cmd);
   },
   'click .btn-restart': function () {
-    AppUtil.restart(this._id);
+    AppUtil.run(this, function (err) {});
   },
   'click .btn-folder': function () {
-    var exec = require('child_process').exec;
     var appPath = path.join(Util.KITE_PATH, this.name);
-    exec('open ' + appPath, function (err) {
+    exec(['open', appPath], function (err) {
       if (err) { throw err; }
     });
   },

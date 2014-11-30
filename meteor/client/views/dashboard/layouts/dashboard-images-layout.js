@@ -11,8 +11,8 @@ Template.dashboardImagesLayout.events({
     $('#image-picker').hide();
   },
   'click .btn-folder': function () {
-    var exec = require('child_process').exec;
-    exec('open ' + this.originPath, function (err) {
+    var exec = require('exec');
+    exec(['open', this.originPath], function (err) {
       if (err) { throw err; }
     });
   },

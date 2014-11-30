@@ -184,7 +184,7 @@ ImageUtil.build = function (image, callback) {
             }
           });
         } catch (e) {
-          console.error(e);
+          // Ignore misc conversion errors
         }
       });
       response.on('end', function () {
@@ -197,7 +197,6 @@ ImageUtil.build = function (image, callback) {
         }
         var imageData = null;
         Docker.getImageData(image.meta.name + ':' + image.meta.version, function (err, data) {
-          console.log(data);
           if (err) {
             console.error(err);
             Images.update(image._id, {
@@ -243,7 +242,7 @@ ImageUtil.remove = function (imageId) {
 ImageUtil.sync = function (callback) {
   Docker.listImages(function (err, dockerImages) {
     if (err) {
-      console.error(err);
+      callback(err);
       return;
     }
     var images = Images.find({}).fetch();
@@ -254,7 +253,7 @@ ImageUtil.sync = function (callback) {
         return image.docker.Id;
       }
     });
-    var daemonIds = _.map(daemonIds, function (image) {
+    var daemonIds = _.map(dockerImages, function (image) {
       return image.Id;
     });
     var diffImages = _.difference(kitematicIds, daemonIds);
@@ -319,6 +318,8 @@ ImageUtil.sync = function (callback) {
           });
           callback();
         });
+      } else {
+        callback();
       }
     }, function (err) {
       callback(err);
