@@ -1,3 +1,5 @@
+var exec = require('exec');
+
 Template.dashboardSingleImage.rendered = function () {
   Meteor.setInterval(function () {
     $('.btn-icon').tooltip();
@@ -11,8 +13,7 @@ Template.dashboardSingleImage.events({
     $('#image-picker').hide();
   },
   'click .btn-folder': function () {
-    var exec = require('child_process').exec;
-    exec('open ' + this.originPath, function (err) {
+    exec(['open', this.originPath], function (err) {
       if (err) { throw err; }
     });
   },

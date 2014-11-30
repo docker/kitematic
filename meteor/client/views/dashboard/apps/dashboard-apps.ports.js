@@ -1,12 +1,12 @@
 Template.dashboardSingleApp.events({
   'click .btn-view-port': function (e) {
     try {
-      var open = require('open');
+      var exec = require('exec');
       e.preventDefault();
       e.stopPropagation();
       var $btn = $(e.currentTarget);
       var url = $btn.attr('href');
-      open(url);
+      exec(['open', url]);
     } catch (exception) {
       console.log(exception);
     }

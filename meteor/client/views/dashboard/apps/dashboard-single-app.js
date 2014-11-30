@@ -1,6 +1,6 @@
 var remote = require('remote');
 var dialog = remote.require('dialog');
-var exec = require('child_process').exec;
+var exec = require('exec');
 var path = require('path');
 
 Template.dashboardSingleApp.rendered = function () {
@@ -22,19 +22,19 @@ Template.dashboardSingleApp.helpers({
 Template.dashboardSingleApp.events({
   'click .btn-view': function (e) {
     try {
-      var open = require('open');
       e.preventDefault();
       e.stopPropagation();
       var $btn = $(e.currentTarget);
       var url = $btn.attr('href');
-      open(url);
+      exec(['open', url], function (err) {
+        if (err) { throw err; }
+      });
     } catch (exception) {
       console.log(exception);
     }
   },
   'click .btn-terminal': function () {
-    var app = this;
-    var cmd = Boot2Docker.command() + ' ssh -t "sudo docker exec -i -t ' + app.docker.Id + ' bash"';
+    var cmd = [Boot2Docker.command(), 'ssh', '-t', 'sudo docker exec -i -t ' + this.docker.Id + ' bash'];
     Util.openTerminal(cmd);
   },
   'click .btn-start': function (e) {
@@ -62,19 +62,19 @@ Template.dashboardSingleApp.events({
       var appPath = path.join(Util.KITE_PATH, app.name);
       if (app.docker.Volumes.length) {
         if (app.docker.Volumes[0].Value.indexOf(path.join(Util.getHomePath(), 'Kitematic')) !== -1) {
-          exec('open ' + appPath, function (err) {
-            if (err) { throw err; }
+          exec(['open', appPath], function (stderr, stdout, code) {
+            if (code) { throw stderr; }
           });
           return;
         } else {
-          exec('open ' + app.docker.Volumes[0].Value, function (err) {
-            if (err) { throw err; }
+          exec(['open', app.docker.Volumes[0].Value], function (stderr, stdout, code) {
+            if (code) { throw stderr; }
           });
           return;
         }
       } else {
-        exec('open ' + appPath, function (err) {
-          if (err) { throw err; }
+        exec(['open', appPath], function (stderr, stdout, code) {
+          if (code) { throw stderr; }
         });
       }
     };
