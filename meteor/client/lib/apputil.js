@@ -66,10 +66,9 @@ AppUtil.stop = function (appId) {
 
 AppUtil.remove = function (appId) {
   var app = Apps.findOne(appId);
-  Apps.remove({_id: appId});
   if (app.docker) {
     Docker.removeContainer(app.docker.Id, function (err) {
-      if (err) { console.error(err); }
+      Apps.remove({_id: appId});
       var appPath = path.join(Util.KITE_PATH, app.name);
       Util.deleteFolder(appPath);
     });
@@ -82,7 +81,11 @@ AppUtil.configVar = function (appId, configVars) {
     status: 'STARTING'
   }});
   var app = Apps.findOne({_id: appId});
-  AppUtil.run(app);
+  AppUtil.run(Apps.findOne(appId), function (err) {
+    if (err) {
+      throw err;
+    }
+  });
 };
 
 AppUtil.logs = function (appId) {
@@ -137,7 +140,7 @@ AppUtil.sync = function (callback) {
     }
 
     var apps = Apps.find({}).fetch();
-    var dockerIds = _.map(apps, function (app) {
+    var guiIds = _.map(apps, function (app) {
       if (app.docker && app.docker.Id) {
         return app.docker.Id;
       }
@@ -145,7 +148,7 @@ AppUtil.sync = function (callback) {
     var containerIds = _.map(containers, function (container) {
       return container.Id;
     });
-    var diffApps = _.difference(dockerIds, containerIds);
+    var diffApps = _.difference(guiIds, containerIds);
     _.each(diffApps, function (appContainerId) {
       var app = Apps.findOne({'docker.Id': appContainerId});
       if (app && app.status !== 'STARTING') {
@@ -153,54 +156,61 @@ AppUtil.sync = function (callback) {
       }
     });
     var diffContainers = _.reject(containers, function (container) {
-      return _.contains(dockerIds, container.Id);
+      return _.contains(guiIds, container.Id);
     });
     _.each(diffContainers, function (container) {
       var appName = container.Name.substring(1);
       var startingApp = _.find(apps, function (app) {
         return app.status === 'STARTING' && app.name === appName;
       });
-      if (!startingApp && appName !== 'kite-dns') {
-        var appPath = path.join(Util.KITE_PATH, appName);
-        if (!fs.existsSync(appPath)) {
-          console.log('Created Kite ' + appName + ' directory.');
-          fs.mkdirSync(appPath, function (err) {
-            if (err) { throw err; }
-          });
-        }
-        var envVars = container.Config.Env;
-        var config = {};
-        _.each(envVars, function (envVar) {
-          var eqPos = envVar.indexOf('=');
-          var envKey = envVar.substring(0, eqPos);
-          var envVal = envVar.substring(eqPos + 1);
-          config[envKey] = envVal;
-        });
-        var status = 'STARTING';
-        if (container.State.Running) {
-          status = 'READY';
-        } else {
-          status = 'ERROR';
-        }
 
-        var appObj = {
-          name: appName,
-          docker: container,
-          status: status,
-          config: config,
-          path: appPath,
-          logs: [],
-          createdAt: new Date(),
-          imageId: Images.findOne({'docker.Id': container.Image})._id
-        };
-        if (container.HostConfig.Binds && container.HostConfig.Binds.length) {
-          appObj.volumesEnabled = true;
-        } else {
-          appObj.volumesEnabled = false;
-        }
-        console.log(appObj);
-        Apps.insert(appObj);
+      if (startingApp || _.isEmpty(container.NetworkSettings.Ports)) {
+        return;
       }
+
+      var appPath = path.join(Util.KITE_PATH, appName);
+      if (!fs.existsSync(appPath)) {
+        console.log('Created Kite ' + appName + ' directory.');
+        fs.mkdirSync(appPath, function (err) {
+          if (err) { throw err; }
+        });
+      }
+      var envVars = container.Config.Env;
+      var config = {};
+      _.each(envVars, function (envVar) {
+        var eqPos = envVar.indexOf('=');
+        var envKey = envVar.substring(0, eqPos);
+        var envVal = envVar.substring(eqPos + 1);
+        config[envKey] = envVal;
+      });
+      var status = 'STARTING';
+      if (container.State.Running) {
+        status = 'READY';
+      } else {
+        status = 'ERROR';
+      }
+
+      var appObj = {
+        name: appName,
+        docker: container,
+        status: status,
+        config: config,
+        path: appPath,
+        logs: [],
+        createdAt: new Date()
+      };
+
+      var image = Images.findOne({'docker.Id': container.Image});
+      if (image) {
+        appObj.imageId = image._id;
+      }
+      if (container.HostConfig.Binds && container.HostConfig.Binds.length) {
+        appObj.volumesEnabled = true;
+      } else {
+        appObj.volumesEnabled = false;
+      }
+      console.log(appObj);
+      Apps.insert(appObj);
     });
 
     async.each(apps, function (app, callback) {

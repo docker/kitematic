@@ -181,37 +181,24 @@ var convertVolumeObjToArray = function (obj) {
 };
 
 Docker.getImageData = function (imageId, callback) {
-  Docker.client().listImages({all: false}, function (err, images) {
+  var image = Docker.client().getImage(imageId);
+  image.inspect(function (err, data) {
     if (err) {
       callback(err, null);
-    } else {
-      var dockerImage = _.find(images, function (image) {
-        return image.Id === imageId;
-      });
-      var image = Docker.client().getImage(imageId);
-      image.inspect(function (err, data) {
-        if (err) {
-          callback(err, null);
-        } else {
-          if (data.Config && data.Config.Volumes) {
-            data.Config.Volumes = convertVolumeObjToArray(data.Config.Volumes);
-          }
-          if (data.ContainerConfig && data.ContainerConfig.Volumes) {
-            data.ContainerConfig.Volumes = convertVolumeObjToArray(data.ContainerConfig.Volumes);
-          }
-          if (!dockerImage) {
-            callback(null, data);
-          } else {
-            callback(null, _.extend(dockerImage, data));
-          }
-        }
-      });
+      return;
     }
+    if (data.Config && data.Config.Volumes) {
+      data.Config.Volumes = convertVolumeObjToArray(data.Config.Volumes);
+    }
+    if (data.ContainerConfig && data.ContainerConfig.Volumes) {
+      data.ContainerConfig.Volumes = convertVolumeObjToArray(data.ContainerConfig.Volumes);
+    }
+    callback(null, data);
   });
 };
 
-Docker.listImages = function (callback) {
-  Docker.client().listImages({all: false}, function (err, images) {
+Docker.listImages = function (opts, callback) {
+  Docker.client().listImages(opts, function (err, images) {
     if (err) {
       callback(err, null);
     } else {
@@ -221,7 +208,7 @@ Docker.listImages = function (callback) {
             if (err) {
               cb(err, null);
             } else {
-              cb(null, data);
+              cb(null, _.extend(image, data));
             }
           });
         };

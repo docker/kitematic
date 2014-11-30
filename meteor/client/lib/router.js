@@ -49,10 +49,7 @@ Router.map(function () {
             if (!settings) {
               Settings.insert({tracking: true});
             }
-            console.log('Starting boot2docker utilization monitor...');
             startUpdatingBoot2DockerUtilization();
-
-            console.log('Starting CLI sync...');
             startSyncingAppState();
             Router.go('dashboard_apps');
           }
