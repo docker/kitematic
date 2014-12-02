@@ -1,11 +1,12 @@
-<template name="dashboard_layout">
+<template name="dashboardLayout">
   <div class="dashboard">
     {{setTitle}}
     <div class="container">
       <div class="dashboard-row">
-        {{> dashboard_menu}}
+        {{> dashboardMenu}}
         <div class="dashboard-body">
           <div class="mac-window-header"><a href="#">Kitematic</a></div>
+          {{> updateNotification}}
           {{> yield}}
         </div>
       </div>

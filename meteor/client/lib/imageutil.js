@@ -3,17 +3,9 @@ var convert = new Convert();
 var exec = require('exec');
 var path = require('path');
 var fs = require('fs');
+var async = require('async');
 
 ImageUtil = {};
-
-var createTarFile = function (image, callback) {
-  var TAR_PATH = path.join(Util.KITE_TAR_PATH, image._id + '.tar');
-  exec('tar czf ' + TAR_PATH + ' -C ' + image.path + ' .', function (err) {
-    if (err) { callback(err, null); return; }
-    console.log('Created tar file: ' + TAR_PATH);
-    callback(null, TAR_PATH);
-  });
-};
 
 var getFromImage = function (dockerfile) {
   var patternString = "(FROM)(.*)";
@@ -54,23 +46,8 @@ ImageUtil.getMetaData = function (directory) {
   return kiteJSON;
 };
 
-ImageUtil.saveFolder = function (directory, imageId, callback) {
-  var destinationPath = path.join(Util.KITE_IMAGES_PATH, imageId);
-  if (!fs.existsSync(destinationPath)) {
-    fs.mkdirSync(destinationPath, function (err) {
-      if (err) { callback(err); return; }
-    });
-    Util.copyFolder(directory, destinationPath, function (err) {
-      if (err) { callback(err); return; }
-      console.log('Copied image folder for: ' + imageId);
-      callback(null);
-    });
-  }
-};
-
 ImageUtil.rebuildHelper = function (image, callback) {
-  Util.deleteFolder(image.path);
-  var imageMetaData = ImageUtil.getMetaData(image.originPath);
+  var imageMetaData = ImageUtil.getMetaData(image.path);
   if (imageMetaData.logo) {
     Images.update(image._id, {
       $set: {
@@ -91,14 +68,11 @@ ImageUtil.rebuildHelper = function (image, callback) {
     }
   });
   image = Images.findOne(image._id);
-  ImageUtil.saveFolder(image.originPath, image._id, function (err) {
-    if (err) { console.error(err); }
-    ImageUtil.pull(fs.readFileSync(path.join(image.path, 'Dockerfile'), 'utf8'), image._id, function (err) {
-      if (err) { callback(err, null); return; }
-      ImageUtil.build(image, function (err) {
-        if (err) { console.error(err); }
-        callback(null, null);
-      });
+  ImageUtil.pull(fs.readFileSync(path.join(image.path, 'Dockerfile'), 'utf8'), image._id, function (err) {
+    if (err) { callback(err, null); return; }
+    ImageUtil.build(image, function (err) {
+      if (err) { console.error(err); }
+      callback(null, null);
     });
   });
 };
@@ -146,7 +120,6 @@ ImageUtil.pull = function (dockerfile, imageId, callback) {
   console.log('From image: ' + fromImage);
   var installedImage = null;
   Docker.getImageData(imageId, function (err, data) {
-    if (err) { console.error(err); }
     installedImage = data;
     if (fromImage && !installedImage) {
       Images.update(imageId, {
@@ -191,15 +164,15 @@ ImageUtil.pull = function (dockerfile, imageId, callback) {
 };
 
 ImageUtil.build = function (image, callback) {
-  createTarFile(image, function (err, tarFilePath) {
+  Util.createTarFile(image.path, path.join(Util.KITE_TAR_PATH, image._id + '.tar'), function (err, tarFilePath) {
     if (err) { console.error(err); }
     Images.update(image._id, {
       $set: {
         buildLogs: []
       }
     });
-    Docker.client().buildImage(tarFilePath, {t: image.meta.name + ':' + image.meta.version}, function (err, response) {
-      if (err) { callback(err); }
+    Docker.client().buildImage(tarFilePath, {forcerm: true, t: image.meta.name + ':' + image.meta.version}, function (err, response) {
+      if (err) { callback(err); return; }
       console.log('Building Docker image...');
       response.setEncoding('utf8');
       response.on('data', function (data) {
@@ -211,7 +184,7 @@ ImageUtil.build = function (image, callback) {
             }
           });
         } catch (e) {
-          console.error(e);
+          // Ignore misc conversion errors
         }
       });
       response.on('end', function () {
@@ -224,7 +197,6 @@ ImageUtil.build = function (image, callback) {
         }
         var imageData = null;
         Docker.getImageData(image.meta.name + ':' + image.meta.version, function (err, data) {
-          console.log(data);
           if (err) {
             console.error(err);
             Images.update(image._id, {
@@ -265,88 +237,98 @@ ImageUtil.remove = function (imageId) {
       if (err) { console.error(err); }
     });
   }
-  try {
-    Util.deleteFolder(image.path);
-  } catch (e) {
-    console.error(e);
-  }
-  Sync.removeAppWatcher(imageId);
 };
 
-ImageUtil.sync = function () {
-  Docker.listImages(function (err, dockerImages) {
+ImageUtil.sync = function (callback) {
+  Docker.listImages({all: 0}, function (err, dockerImages) {
     if (err) {
-      console.error(err);
-    } else {
-      var images = Images.find({}).fetch();
-      _.each(images, function (image) {
-        var image = Images.findOne(image._id);
-        if (image && image.docker && image.docker.Id) {
-          var duplicateImages = Images.find({'docker.Id': image.docker.Id, _id: {$ne: image._id}}).fetch();
-          _.each(duplicateImages, function (duplicateImage) {
-            Images.remove(duplicateImage._id);
-          });
-          var imageData = _.find(dockerImages, function (dockerImage) {
-            return dockerImage.Id === image.docker.Id;
-          });
-          if (imageData && imageData.RepoTags) {
-            Images.update(image._id, {
-              $set: {
-                tags: imageData.RepoTags
-              }
-            });
-          }
-          Docker.getImageData(image.docker.Id, function (err, data) {
-            Images.update(image._id, {
-              $set: {
-                docker: data
-              }
-            })
-          });
-        }
-      });
-      var dockerIds = _.map(images, function (image) {
-        if (image.docker && image.docker.Id) {
-          return image.docker.Id;
-        }
-      });
-      var imageIds = _.map(dockerImages, function (image) {
-        return image.Id;
-      });
-      var diffImages = _.difference(dockerIds, imageIds);
-      _.each(diffImages, function (imageId) {
-        var image = Images.findOne({'docker.Id': imageId});
-        if (image && image.status !== 'BUILDING') {
-          ImageUtil.remove(image._id);
-        }
-      });
-      var diffDockerImages = _.reject(dockerImages, function (image) {
-        return _.contains(dockerIds, image.Id);
-      });
-      _.each(diffDockerImages, function (image) {
-        var repoTag = _.first(image.RepoTags);
-        var repoTagTokens = repoTag.split(':');
-        var name = repoTagTokens[0];
-        var version = repoTagTokens[1];
-        var buildingImage = _.find(images, function (image) {
-          return image.status === 'BUILDING' && image.meta.name === name && image.meta.version === version;
-        });
-        if (!buildingImage && name !== '<none>' && version !== '<none>' && name !== 'kite-dns') {
-          var imageObj = {
-            status: 'READY',
-            docker: image,
-            buildLogs: [],
-            createdAt: new Date(),
-            tags: image.RepoTags,
-            meta: {
-              name: name,
-              version: version
-            }
-          };
-          console.log(imageObj);
-          Images.insert(imageObj);
-        }
-      });
+      callback(err);
+      return;
     }
+    var images = Images.find({}).fetch();
+
+    // Delete missing GUI images
+    var kitematicIds = _.map(images, function (image) {
+      if (image.docker && image.docker.Id) {
+        return image.docker.Id;
+      }
+    });
+    var daemonIds = _.map(dockerImages, function (image) {
+      return image.Id;
+    });
+    var diffImages = _.difference(kitematicIds, daemonIds);
+    _.each(diffImages, function (imageId) {
+      var image = Images.findOne({'docker.Id': imageId});
+      if (image && image.status !== 'BUILDING') {
+        Images.remove(image._id);
+      }
+    });
+
+    // Add missing Daemon images
+    var diffDockerImages = _.reject(dockerImages, function (image) {
+      return _.contains(kitematicIds, image.Id);
+    });
+    _.each(diffDockerImages, function (image) {
+      if (!image.RepoTags || _.isEmpty(image.Config.ExposedPorts)) {
+        return;
+      }
+
+      var meta = {};
+      var repoTag = _.first(image.RepoTags);
+      var repoTagTokens = repoTag.split(':');
+      var name = repoTagTokens[0];
+      var version = repoTagTokens[1];
+      meta = {
+        name: name,
+        version: version
+      };
+      var buildingImage = _.find(images, function (image) {
+        return image.status === 'BUILDING' && image.meta.name === name && image.meta.version === version;
+      });
+      if (!buildingImage) {
+        var imageObj = {
+          status: 'READY',
+          docker: image,
+          buildLogs: [],
+          createdAt: new Date(),
+          tags: image.RepoTags,
+          meta: meta
+        };
+        Images.insert(imageObj);
+      }
+    });
+
+    async.each(images, function (image, callback) {
+      var image = Images.findOne(image._id);
+      if (image && image.docker && image.docker.Id) {
+        var duplicateImages = Images.find({'docker.Id': image.docker.Id, _id: {$ne: image._id}}).fetch();
+        _.each(duplicateImages, function (duplicateImage) {
+          Images.remove(duplicateImage._id);
+        });
+        var imageData = _.find(dockerImages, function (dockerImage) {
+          return dockerImage.Id === image.docker.Id;
+        });
+        if (imageData && imageData.RepoTags) {
+          Images.update(image._id, {
+            $set: {
+              tags: imageData.RepoTags
+            }
+          });
+        }
+        Docker.getImageData(image.docker.Id, function (err, data) {
+          if (err) {callback(err); return;}
+          Images.update(image._id, {
+            $set: {
+              docker: data
+            }
+          });
+          callback();
+        });
+      } else {
+        callback();
+      }
+    }, function (err) {
+      callback(err);
+    });
   });
 };

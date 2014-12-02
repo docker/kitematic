@@ -1,4 +1,4 @@
-<template name="dashboard_images">
+<template name="dashboardImages">
   <div class="header">
     <h3>Images</h3>
     <div class="options">
@@ -14,7 +14,9 @@
       {{#if hasItem images}}
         <div class="images line-item-collection">
           {{#each images}}
-            {{> dashboard_single_image}}
+            {{#if this.tags}}
+              {{> dashboardSingleImage}}
+            {{/if}}
           {{/each}}
         </div>
       {{else}}
@@ -30,6 +32,6 @@
       {{/if}}
     </div>
   </div>
-  {{> modal_create_app}}
-  {{> modal_create_image}}
+  {{> modalCreateApp}}
+  {{> modalCreateImage}}
 </template>

@@ -1,18 +1,18 @@
-Template.dashboard_images_layout.rendered = function () {
+Template.dashboardImagesLayout.rendered = function () {
   Meteor.setInterval(function () {
     $('.header .icons a').tooltip();
   }, 1000);
 };
 
-Template.dashboard_images_layout.events({
+Template.dashboardImagesLayout.events({
   'click .btn-create-app': function () {
     $('#modal-create-app').modal('show');
     $('#form-create-app').find('input[name="imageId"]').val(this._id);
     $('#image-picker').hide();
   },
   'click .btn-folder': function () {
-    var exec = require('child_process').exec;
-    exec('open ' + this.originPath, function (err) {
+    var exec = require('exec');
+    exec(['open', this.path], function (err) {
       if (err) { throw err; }
     });
   },

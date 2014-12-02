@@ -20,6 +20,51 @@
       .btn-icon {
         font-size: 20px;
         margin-left: 0.4em;
+        cursor: pointer;
+      }
+      .dropdown {
+        &.open {
+          .tooltip {
+            display: none !important;
+          }
+        }
+      }
+      .ports {
+        position: relative;
+        top: -2px;
+        .dropdown-menu {
+          min-width: 241px;
+          padding: 10px 15px 3px;
+        }
+        .btn-group {
+          top: -2px;
+        }
+        .btn-globe {
+          line-height: 22px;
+          padding: 0 5px;
+          .typcn {
+            font-size: 18px;
+            top: 2px;
+            position: relative;
+          }
+        }
+        .btn-ports {
+          .caret {
+            margin-left: 3px;
+            margin-right: 1px;
+            margin-top: -2px
+          }
+        }
+        .btn-caret {
+          padding-top: 3px;
+          padding-bottom: 3px;
+          border-width: 1px;
+          padding-left: 3px;
+          padding-right: 3px;
+        }
+        &.open + .tooltip {
+          display: none !important;
+        }
       }
     }
     &:hover {
@@ -62,6 +107,28 @@
       font-size: 30px;
       position: relative;
       margin-right: 0.3em;
+    }
+  }
+
+  .update-alert {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    margin-bottom: 0;
+    padding: 5px;
+    width: 100%;
+    text-align: right;
+    background: white;
+    font-size: 12px;
+    z-index: 2;
+    color: @text-color-less-light;
+    border-top: 1px solid @text-color-lightest;
+    box-shadow: 0 -1px 2px 0 rgba(0, 0, 0, 0.05);
+
+    .update-text {
+      position: relative;
+      top: 2px;
+      right: 5px;
     }
   }
 
@@ -139,8 +206,7 @@
       }
       .content {
         .padded {
-          padding: 1.6em;
-          padding-top: 0;
+          padding: 0 1.6em 2.5em;
         }
         &.longer {
           min-height: @dashboard-content-height + @dashboard-header-height;
@@ -217,33 +283,70 @@
     }
   }
 
-  .env-var-pair {
-    .make-row();
-    margin-bottom: 0.2em;
-    font-size: 12px;
-    .env-var-key {
-      .make-xs-column(5);
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
+  .form-env-vars {
+    label {
+      font-size: 13px;
     }
-    .env-var-value {
-      .make-xs-column(5);
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
+    input {
+      font-size: 13px;
+      padding: 5px 9px;
     }
-    .options {
-      .make-xs-column(2);
+    .env-var-pair {
+      .make-row();
+      margin-bottom: 0.2em;
+      font-size: 13px;
+      .env-var-key {
+        .make-xs-column(5);
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .env-var-value {
+        .make-xs-column(5);
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+      }
+      .options {
+        .make-xs-column(2);
+      }
+    }
+  }
+
+  .app-ports {
+    cursor: default;
+    min-width: 240px;
+    li {
+      padding-bottom: 7px;
+      white-space: nowrap;
+
+      .port-wrapper {
+        display: inline-block;
+        min-width: 72px;
+        font-weight: bold;
+        font-size: 13px;
+      }
+      .arrow-wrapper {
+        text-align: center;
+        display: inline-block;
+        min-width: 28px;
+        font-size: 15px;
+        color: #999;
+      }
+      .open-button-wrapper {
+        display: inline-block;
+      }
+      .host-address-wrapper {
+        font-family: Monaco, monospace;
+        font-size: 12px;
+        cursor: text;
+        .text-select();
+      }
     }
   }
 
   .utilization {
     font-size: 12px;
-  }
-
-  .disk-utilization {
-    margin-top: 2em;
   }
 
   .progress {

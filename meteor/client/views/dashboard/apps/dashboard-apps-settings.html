@@ -1,41 +1,17 @@
-<template name="dashboard_apps_settings">
+<template name="dashboardAppsSettings">
   <div class="section">
     <div class="left-section">
-      <h4>Container Details</h4>
-      <p class="help-block">This section lists more information about this container.</p>
+      <h4>Ports</h4>
     </div>
     <div class="right-section">
-      <div class="row">
-        <div class="col-xs-3">
-          <label>Host URL</label>
-        </div>
-        <div class="col-xs-8">
-          {{hostUrl}}
-        </div>
-      </div>
-      {{#if ports}}
-        <div class="row">
-          <div class="col-xs-3">
-            <label>Ports</label>
-          </div>
-          <div class="col-xs-8">
-            {{ports}}
-          </div>
-        </div>
-      {{/if}}
-      <div class="row">
-        <div class="col-xs-3">
-          <label>Status</label>
-        </div>
-        <div class="col-xs-8">
-          {{status}}
-        </div>
-      </div>
+      <ul class="list-unstyled">
+        {{> dashboardAppsPorts}}
+      </ul>
     </div>
   </div>
   <div class="section">
     <div class="left-section">
-      <h4>Config Variables</h4>
+      <h4>Environment Variables</h4>
       <p class="help-block">You can update your container's environment variables here.</p>
     </div>
     <div class="right-section">
@@ -67,6 +43,19 @@
         </div>
         <button onclick="trackLink('add environment variable')" type="submit" class="btn btn-action btn-sm">Save Variable</button>
       </form>
+    </div>
+  </div>
+  <div class="section">
+    <div class="left-section">
+      <h4>Volumes</h4>
+      <p class="help-block">When enabled, this container's volume data will be available under ~/Kitematic/{{name}}.</p>
+    </div>
+    <div class="right-section">
+      {{#if volumesEnabled}}
+        <a onclick="trackLink('enable container volumes')" class="btn btn-negative btn-disable-volumes btn-sm">Disable Volumes</a>
+      {{else}}
+        <a onclick="trackLink('disable container volumes')" class="btn btn-positive btn-enable-volumes btn-sm">Enable Volumes</a>
+      {{/if}}
     </div>
   </div>
   <div class="section">

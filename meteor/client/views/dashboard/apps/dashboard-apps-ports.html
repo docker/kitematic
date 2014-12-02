@@ -1,0 +1,13 @@
+<template name="dashboardAppsPorts">
+  <div class="app-ports">
+    {{#each ports}}
+      <li role="menuitem">
+        <span class="port-wrapper">Port {{this.port}}</span>
+        <span class="arrow-wrapper">
+          <span class="typcn typcn-arrow-right"></span>
+        </span>
+        <span class="host-address-wrapper">{{this.hostIp}}:{{this.hostPort}}</span>
+      </li>
+    {{/each}}
+  </div>
+</template>

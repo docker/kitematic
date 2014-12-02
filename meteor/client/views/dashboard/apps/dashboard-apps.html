@@ -1,4 +1,4 @@
-<template name="dashboard_apps">
+<template name="dashboardApps">
   <div class="header">
     <h3>Containers</h3>
     <div class="options">
@@ -14,7 +14,7 @@
       {{#if hasItem apps}}
         <div class="apps line-item-collection">
           {{#each apps}}
-            {{> dashboard_single_app}}
+            {{> dashboardSingleApp}}
           {{/each}}
         </div>
       {{else}}
@@ -30,6 +30,6 @@
       {{/if}}
     </div>
   </div>
-  {{> modal_create_app}}
-  {{> modal_create_image}}
+  {{> modalCreateApp}}
+  {{> modalCreateImage}}
 </template>

@@ -1,34 +1,22 @@
 #!/bin/bash
-set -e # Auto exit on error
+set -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source $DIR/colors.sh
-
+ATOM_SHELL_VERSION=0.19.1
+ATOM_SHELL_FILE=atom-shell-v$ATOM_SHELL_VERSION-darwin-x64.zip
 BASE=$DIR/..
-pushd $BASE
+
+source $DIR/colors.sh
+cd $BASE
 
 mkdir -p cache
-
-pushd cache
-
-BOOT2DOCKER_CLI_VERSION=1.3.0
-BOOT2DOCKER_CLI_VERSION_FILE=boot2docker-$BOOT2DOCKER_CLI_VERSION
-BOOT2DOCKER_CLI_FILE=boot2docker
-
-ATOM_SHELL_VERSION=0.16.2
-ATOM_SHELL_FILE=atom-shell-v$ATOM_SHELL_VERSION-darwin-x64.zip
+cd cache
 
 if [ ! -f $ATOM_SHELL_FILE ]; then
   cecho "-----> Downloading Atom Shell..." $purple
   curl -L -o $ATOM_SHELL_FILE https://github.com/atom/atom-shell/releases/download/v$ATOM_SHELL_VERSION/$ATOM_SHELL_FILE
   mkdir -p atom-shell
   unzip -d atom-shell $ATOM_SHELL_FILE
-fi
-
-if [ ! -f kite-node-webkit.tar.gz ]; then
-  cecho "-----> Downloading node-webkit..." $purple
-  curl -L -o kite-node-webkit.tar.gz https://s3.amazonaws.com/kite-installer/kite-node-webkit.tar.gz
-  tar -zxf kite-node-webkit.tar.gz -C .
 fi
 
 if [ ! -f mongodb-osx-x86_64-2.6.3.tgz ]; then
@@ -48,9 +36,13 @@ if [ ! -f "node-v0.10.29-darwin-x64.tar.gz" ]; then
   cp node/LICENSE $BASE/resources/NODE_LICENSE.txt
 fi
 
-popd
+cd $BASE
 
-pushd resources
+NODE="$BASE/cache/node/bin/node"
+BOOT2DOCKER_CLI_VERSION=$($NODE -pe "JSON.parse(process.argv[1])['boot2dockerversion']" "$(cat package.json)")
+BOOT2DOCKER_CLI_VERSION_FILE=boot2docker-$BOOT2DOCKER_CLI_VERSION
+
+cd resources
 
 if [ ! -f $BOOT2DOCKER_CLI_VERSION_FILE ]; then
   cecho "-----> Downloading Boot2docker CLI..." $purple
@@ -59,13 +51,12 @@ fi
 
 chmod +x $BOOT2DOCKER_CLI_VERSION_FILE
 
-popd
+cd $BASE
 
+# Build NPM modules
 NPM="$BASE/cache/node/bin/npm"
-
 export npm_config_disturl=https://gh-contractor-zcbenz.s3.amazonaws.com/atom-shell/dist
-export npm_config_target=0.16.2
+export npm_config_target=ATOM_SHELL_VERSION
 export npm_config_arch=ia32
 HOME=~/.atom-shell-gyp $NPM install
 
-popd

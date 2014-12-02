@@ -1,21 +1,18 @@
-<template name="dashboard_settings">
+<template name="dashboardSettings">
   <div class="header">
     <h3>Settings</h3>
   </div>
-  <div class="section dashboard-settings">
-    <div class="left-section">
-      <h4>Boot2Docker VM</h4>
-      {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
-        <p class="help-block error">Please start Boot2Docker for Kitematic to work properly!</p>
-      {{else}}
-        <p class="help-block">All containers run in a Linux VM included with Kitematic. It needs to be turned on to run containers.</p>
-      {{/if}}
-    </div>
-    <div class="right-section">
-      {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
-        <a onclick="trackLink('start boot2docker')" class="btn btn-default btn-start-boot2docker">Start Boot2Docker VM</a>
-      {{else}}
-        <a onclick="trackLink('stop boot2docker')" class="btn btn-negative btn-stop-boot2docker">Stop Boot2Docker VM</a>
+  <div class="content">
+    <div class="section dashboard-settings">
+      <div class="left-section">
+        <h4>Boot2Docker VM</h4>
+        {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
+          <p class="help-block error">Please start Boot2Docker for Kitematic to work properly!</p>
+        {{else}}
+          <p class="help-block">All containers run in a Linux VM included with Kitematic. It needs to be turned on to run containers.</p>
+        {{/if}}
+      </div>
+      <div class="right-section">
         {{#if disk}}
           <div class="utilization disk-utilization">
             <div><strong>Disk Utilization</strong><span class="pull-right">{{disk.used_gb}}GB used of {{disk.total_gb}}GB</span></div>
@@ -36,29 +33,20 @@
             </div>
           </div>
         {{/if}}
-      {{/if}}
+      </div>
     </div>
-  </div>
-  <div class="section dashboard-settings">
-    <div class="left-section">
-      <h4>Usage Diagnostics</h4>
-      <p class="help-block">Send anonymized usage diagnostics to help us improve Kitematic.</p>
-    </div>
-    <div class="right-section">
-      {{#if settings.tracking}}
-        <a onclick="trackLink('turn off usage analytics')" class="btn btn-negative btn-usage-analytics-off">Turn Off Usage Diagnostics</a>
-      {{else}}
-        <a onclick="trackLink('turn on usage analytics')" class="btn btn-positive btn-usage-analytics-on">Turn On Usage Diagnostics</a>
-      {{/if}}
-    </div>
-  </div>
-  <div class="section dashboard-settings">
-    <div class="left-section">
-      <h4>Repair Kitematic</h4>
-      <p class="help-block">You can repair Kitematic installation if the container stops working properly.</p>
-    </div>
-    <div class="right-section">
-      <a onclick="trackLink('repair kitematic')" class="btn btn-negative btn-repair">Repair Kitematic</a>
+    <div class="section dashboard-settings">
+      <div class="left-section">
+        <h4>Usage Diagnostics</h4>
+        <p class="help-block">Send anonymized usage diagnostics to help us improve Kitematic.</p>
+      </div>
+      <div class="right-section">
+        {{#if settings.tracking}}
+          <a onclick="trackLink('turn off usage analytics')" class="btn btn-negative btn-usage-analytics-off">Turn Off Usage Diagnostics</a>
+        {{else}}
+          <a onclick="trackLink('turn on usage analytics')" class="btn btn-positive btn-usage-analytics-on">Turn On Usage Diagnostics</a>
+        {{/if}}
+      </div>
     </div>
   </div>
 </template>
