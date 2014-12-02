@@ -93,8 +93,7 @@ Setup.steps = [
             callback('Boot2Docker SSH key doesn\'t exist. Fix by removing the existing Boot2Docker VM and re-run the installer. This usually occurs because an old version of Boot2Docker is installed.');
           } else {
             Boot2Docker.vmUpToDate(function (err, upToDate) {
-              if (err) {callback(err); return;}
-              if (!upToDate) {
+              if (err || !upToDate) {
                 Boot2Docker.stop(function(err) {
                   Boot2Docker.upgrade(function (err) {
                     callback(err);
@@ -104,7 +103,7 @@ Setup.steps = [
                 callback();
               }
             });
-          } 
+          }
         }
       });
     },
