@@ -13,7 +13,7 @@ Template.dashboardSingleImage.events({
     $('#image-picker').hide();
   },
   'click .btn-folder': function () {
-    exec(['open', this.originPath], function (err) {
+    exec(['open', this.path], function (err) {
       if (err) { throw err; }
     });
   },

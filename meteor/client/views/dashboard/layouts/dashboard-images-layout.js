@@ -12,7 +12,7 @@ Template.dashboardImagesLayout.events({
   },
   'click .btn-folder': function () {
     var exec = require('exec');
-    exec(['open', this.originPath], function (err) {
+    exec(['open', this.path], function (err) {
       if (err) { throw err; }
     });
   },

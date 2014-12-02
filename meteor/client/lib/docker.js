@@ -104,7 +104,7 @@ Docker.runContainer = function (app, image, callback) {
     name: app.name
   };
 
-  
+
   if (app.docker && app.docker.NetworkSettings.Ports) {
     containerOpts.ExposedPorts = app.docker.NetworkSettings.Ports;
   }
@@ -118,6 +118,9 @@ Docker.runContainer = function (app, image, callback) {
     var binds = [];
     if (app.volumesEnabled && image.docker.Config.Volumes && image.docker.Config.Volumes.length > 0) {
       _.each(image.docker.Config.Volumes, function (vol) {
+        if (vol.Path && vol.Path.length && vol.Path[0] === '/') {
+          vol.Path = vol.Path.substr(1);
+        }
         binds.push([Util.getHomePath(), 'Kitematic', app.name, vol.Path].join('/') + ':' + vol.Path);
       });
     }

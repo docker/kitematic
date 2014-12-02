@@ -51,7 +51,11 @@ Router.map(function () {
             }
             startUpdatingBoot2DockerUtilization();
             startSyncingAppState();
-            Router.go('dashboard_apps');
+            if (Apps.findOne()) {
+              Router.go('dashboard_apps');
+            } else {
+              Router.go('dashboard_images');
+            }
           }
         });
       }

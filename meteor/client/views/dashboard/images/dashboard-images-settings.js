@@ -35,7 +35,7 @@ Template.dashboardImagesSettings.events({
         } else {
           Images.update(imageId, {
             $set: {
-              originPath: directory
+              path: directory
             }
           });
         }

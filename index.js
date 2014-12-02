@@ -135,6 +135,7 @@ app.on('ready', function() {
 
     process.on('uncaughtException', app.quit);
 
+    var saveVMOnQuit = true;
     app.on('will-quit', function (e) {
       console.log('Cleaning up children.');
       if (nodeChild) {
@@ -143,7 +144,9 @@ app.on('ready', function() {
       if (mongoChild) {
         mongoChild.kill();
       }
-      exec('VBoxManage controlvm boot2docker-vm savestate', function (stderr, stdout, code) {});
+      if (saveVMOnQuit) {
+        exec('VBoxManage controlvm boot2docker-vm savestate', function (stderr, stdout, code) {});
+      }
     });
 
     mainWindow.webContents.on('new-window', function (e) {
@@ -178,6 +181,7 @@ app.on('ready', function() {
       ipc.on('command', function (event, arg) {
         console.log('Command: ' + arg);
         if (arg === 'application:quit-install') {
+          saveVMOnQuit = false;
           autoUpdater.quitAndInstall();
         }
       });
