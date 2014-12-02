@@ -60,9 +60,9 @@
       {{#if $eq status 'STOPPED'}}
       <a href="#" onclick="trackLink('start container')" class="btn-icon btn-start" data-toggle="tooltip" data-placement="bottom" title="Start"><span class="typcn typcn-media-play-outline"></span></a>
       {{/if}}
-      {{#if $eq status 'READY'}}
+      {{#unless changingState}}
       <a href="#" onclick="trackLink('restart container')" class="btn-icon btn-restart" data-toggle="tooltip" data-placement="bottom" title="Restart"><span class="typcn typcn-refresh-outline"></span></a>
-      {{/if}}
+      {{/unless}}
       <a href="/apps/{{name}}/logs" onclick="trackLink('container logs')" class="btn-icon btn-logs" data-toggle="tooltip" data-placement="bottom" title="Logs"><span class="typcn typcn-document-text"></span></a>
       <a href="/apps/{{name}}/settings" onclick="trackLink('container settings')" class="btn-icon" data-toggle="tooltip" data-placement="bottom" title="Settings"><span class="typcn typcn-cog-outline"></span></a>
     </div>

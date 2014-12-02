@@ -16,6 +16,9 @@ Template.dashboardSingleApp.helpers({
       return ports[0];
     }
     return null;
+  },
+  changingState: function () {
+    return this.status === 'STARTING' || this.status === 'STOPPING';
   }
 });
 
@@ -49,10 +52,12 @@ Template.dashboardSingleApp.events({
   },
   'click .btn-restart': function (e) {
     e.preventDefault();
+    $('.btn-icon').tooltip('hide');
     AppUtil.run(this, function (err) {});
   },
   'click .btn-folder': function (e) {
     e.preventDefault();
+    $('.btn-icon').tooltip('hide');
     var app = this;
     if (!app) {
       throw new Error('Cannot find app with id: ' + app._id);
@@ -61,13 +66,14 @@ Template.dashboardSingleApp.events({
     var openDirectory = function () {
       var appPath = path.join(Util.KITE_PATH, app.name);
       if (app.docker.Volumes.length) {
-        if (app.docker.Volumes[0].Value.indexOf(path.join(Util.getHomePath(), 'Kitematic')) !== -1) {
+        if (_.find(app.docker.Volumes, function (volume) { return volume.Value.indexOf(path.join(Util.getHomePath(), 'Kitematic')) !== -1; })) {
           exec(['open', appPath], function (stderr, stdout, code) {
             if (code) { throw stderr; }
           });
           return;
         } else {
-          exec(['open', app.docker.Volumes[0].Value], function (stderr, stdout, code) {
+          var volume = _.find(app.docker.Volumes, function (volume) { return volume.Value.indexOf(Util.getHomePath()) !== -1; })
+          exec(['open', volume.Value], function (stderr, stdout, code) {
             if (code) { throw stderr; }
           });
           return;
@@ -101,5 +107,6 @@ Template.dashboardSingleApp.events({
   },
   'click .btn-logs': function (e) {
     AppUtil.logs(this._id);
+    $('.btn-icon').tooltip('hide');
   }
 });
