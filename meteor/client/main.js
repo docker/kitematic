@@ -1,11 +1,5 @@
 try {
   moment = require('moment');
-  // gui = require('nw.gui');
-  // gui.App.clearCache();
-  // win = gui.Window.get();
-  // var nativeMenuBar = new gui.Menu({type: 'menubar'});
-  // nativeMenuBar.createMacBuiltin('Kitematic');
-  // win.menu = nativeMenuBar;
 } catch (e) {
   console.error(e);
 }
@@ -75,90 +69,48 @@ Handlebars.registerHelper('displayTags', function (tags, delimiter) {
   }
 });
 
-var fixBoot2DockerVM = function (callback) {
-  Boot2Docker.check(function (err) {
-    if (err) {
-      Session.set('available', false);
-      Boot2Docker.resolve(function (err) {
-        if (err) {
-          callback(err);
+updateBoot2DockerUtilization = function (callback) {
+  Boot2Docker.exists(function (err, exists) {
+    if (err) { callback(err); return; }
+    if (exists) {
+      Boot2Docker.state(function (err, state) {
+        if (err) { callback(err); return; }
+        Session.set('boot2dockerState', state);
+        if (state === 'running') {
+          Boot2Docker.stats(function (err, stats) {
+            if (err) { callback(err); return; }
+            if (stats.state !== 'poweroff' && stats.memory && stats.disk) {
+              Session.set('boot2dockerMemoryUsage', stats.memory);
+              Session.set('boot2dockerDiskUsage', stats.disk);
+            }
+            callback();
+          });
         } else {
-          Session.set('available', true);
           callback();
         }
       });
-    } else {
-      callback();
     }
   });
 };
 
-var fixDefaultImages = function (callback) {
-  Docker.checkDefaultImages(function (err) {
-    if (err) {
-      Session.set('available', false);
-      Docker.resolveDefaultImages(function (err) {
-        if (err) {
-          callback();
-        } else {
-          Session.set('available', true);
-          callback();
-        }
-      });
-    } else {
-      Session.set('available', true);
-      callback();
-    }
+startUpdatingBoot2DockerUtilization = function () {
+  updateBoot2DockerUtilization(function (err) {
+    if (err) {console.log(err);}
+    Meteor.setTimeout(startUpdatingBoot2DockerUtilization, 2000);
   });
 };
 
-var fixDefaultContainers = function (callback) {
-  Docker.checkDefaultContainers(function (err) {
-    if (err) {
-      Session.set('available', false);
-      Docker.resolveDefaultContainers(function (err) {
-        if (err) {
-          callback(err);
-        } else {
-          Session.set('available', true);
-          callback();
-        }
+startSyncingAppState = function () {
+  try {
+    ImageUtil.sync(function (err) {
+      if (err) {throw err;}
+      AppUtil.sync(function (err) {
+        if (err) {throw err;}
+        Meteor.setTimeout(startSyncingAppState, 2000);
       });
-    } else {
-      Session.set('available', true);
-      callback();
-    }
-  });
-};
-
-Meteor.setInterval(function () {
-  if (!Session.get('installing')) {
-    Boot2Docker.exists(function (err, exists) {
-      if (err) { console.log(err); return; }
-      if (exists) {
-        Boot2Docker.state(function (err, state) {
-          if (err) { console.log(err); return; }
-          Session.set('boot2dockerState', state);
-          if (state === 'running') {
-            Boot2Docker.stats(function (err, stats) {
-              if (err) { console.log(err); return; }
-              if (stats.state !== 'poweroff' && stats.memory && stats.disk) {
-                Session.set('boot2dockerMemoryUsage', stats.memory);
-                Session.set('boot2dockerDiskUsage', stats.disk);
-              }
-            });
-          }
-        });
-      }
     });
+  } catch (err) {
+    console.log(err);
+    Meteor.setTimeout(startSyncingAppState, 2000);
   }
-}, 5000);
-
-Meteor.setInterval(function () {
-  if (!Session.get('installing')) {
-    Sync.resolveWatchers(function () {});
-    ImageUtil.sync();
-    AppUtil.sync();
-    AppUtil.recover();
-  }
-}, 5000);
+};

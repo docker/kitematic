@@ -34,17 +34,14 @@ end tell
 EOF
 
 else
-  osascript > /dev/null <<EOF
-
-tell application "Terminal"
-  activate
-end tell
-tell application "System Events"
-  tell process "Terminal" to keystroke "t" using command down
-end
+osascript > /dev/null <<EOF
+tell application "Terminal" to activate
+delay 0.4
+tell application "System Events" to keystroke "t" using command down
 tell application "Terminal"
   do script "clear && $*" in window 1
 end tell
+
 EOF
 
 fi

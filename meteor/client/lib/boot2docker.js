@@ -1,24 +1,29 @@
 var exec = require('exec');
 var path = require('path');
 var fs = require('fs');
+var path = require('path');
+var async = require('async');
+var packagejson = JSON.parse(fs.readFileSync(path.join(process.env.DIR, 'package.json'), 'utf8'));
+
 
 Boot2Docker = {};
-
-Boot2Docker.REQUIRED_IP = '192.168.60.103';
+Boot2Docker.VERSION = packagejson['boot2docker-version'];
 
 Boot2Docker.command = function () {
-  return path.join(Util.getBinDir(), 'boot2docker-1.3.0') + ' --vm="kitematic-vm"';
+  return path.join(Util.getBinDir(), 'boot2docker-' + Boot2Docker.VERSION);
 };
 
 Boot2Docker.exec = function (command, callback) {
-  exec(Boot2Docker.command() + ' ' + command, function(err, stdout, stderr) {
-    callback(err, stdout, stderr);
+  var cmd = [Boot2Docker.command()];
+  cmd.push.apply(cmd, command);
+  exec(cmd, function(stderr, stdout, code) {
+    callback(stderr, stdout, code);
   });
 };
 
 Boot2Docker.exists = function (callback) {
-  this.exec('info', function (err) {
-    if (err) {
+  this.exec(['info'], function (stderr, stdout, code) {
+    if (stderr) {
       callback(null, false);
     } else {
       callback(null, true);
@@ -27,49 +32,53 @@ Boot2Docker.exists = function (callback) {
 };
 
 Boot2Docker.stop = function (callback) {
-  this.exec('stop', function (err, stdout) {
-    // Sometimes stop returns an error even though it worked
-    callback(null);
+  this.exec(['stop'], function (stderr, stdout, code) {
+    if (code) {
+      callback(stderr);
+    } else {
+      callback();
+    }
   });
 };
 
 Boot2Docker.erase = function (callback) {
-  var VMFileLocation = path.join(Util.getHomePath(), 'VirtualBox\\ VMs/kitematic-vm');
-  exec('rm -rf ' + VMFileLocation, function (err) {
-    callback(err);
+  var VMFileLocation = path.join(Util.getHomePath(), 'VirtualBox\\ VMs/boot2docker-vm');
+  exec(['rm', '-rf', VMFileLocation], function (stderr) {
+    callback(stderr);
   });
 };
 
 Boot2Docker.upgrade = function (callback) {
   var self = this;
-  self.stop(function (err) {
-    self.exec('upgrade', function (err, stdout) {
-      callback(err);
+  self.stop(function (stderr, stdout, code) {
+    if (code) {callback(stderr); return;}
+    self.exec(['upgrade'], function (stderr, stdout, code) {
+      if (code) {
+        callback(stderr);
+      } else {
+        callback();
+      }
     });
   });
 };
 
 Boot2Docker.ip = function (callback) {
-  this.exec('ip', function (err, stdout) {
-    if (err) {
-      callback(err, null);
+  this.exec(['ip'], function (stderr, stdout, code) {
+    if (code) {
+      callback(stderr, null);
     } else {
       callback(null, stdout);
     }
   });
 };
 
-Boot2Docker.setIp = function (ifname, ip, callback) {
-  Boot2Docker.exec('ssh "sudo ifconfig ' + ifname + ' ' + ip + ' netmask 255.255.255.0"', function (err, stdout) {
-    Boot2Docker.exec('ssh "sudo rm -rf /var/lib/boot2docker/tls/* && sudo /etc/init.d/docker restart"', function (err, stdout) {
-      callback(err);
-    });
-  });
-};
-
 Boot2Docker.init = function (callback) {
-  this.exec('init', function (err) {
-    callback(err);
+  this.exec(['init'], function (stderr, stdout, code) {
+    if (code) {
+      callback(stderr);
+    } else {
+      callback();
+    }
   });
 };
 
@@ -80,33 +89,19 @@ Boot2Docker.start = function (callback) {
       callback('Cannot start if the boot2docker VM doesn\'t exist');
       return;
     }
-    self.exec('start', function (err, stdout) {
-      // Sometimes boot2docker returns an error code even though it's working / waiting, so treat that as success as well
-      if (!err || (err.indexOf('Waiting') !== -1 || err.indexOf('Writing') !== -1 || err.indexOf('Generating a server cert') !== -1)) {
-        self.correct(function (err) {
-          self.injectUtilities(function (err) {
-            callback(err);
-          });
-        });
+    self.exec(['start'], function (stderr, stdout, code) {
+      if (code) {
+        callback(stderr);
       } else {
-        callback(err);
+        callback();
       }
     });
   });
 };
 
-Boot2Docker.correct = function (callback) {
-  Boot2Docker.setIp('eth1', Boot2Docker.REQUIRED_IP, function(err) {
-    if (err) { callback(err); return; }
-    VirtualBox.removeDHCP(function (err) {
-      callback();
-    });
-  });
-};
-
 Boot2Docker.state = function (callback) {
-  this.exec('info', function (err, stdout, stderr) {
-    if (err) { callback(err, null); return; }
+  this.exec(['info'], function (stderr, stdout, code) {
+    if (code) { callback(stderr, null); return; }
     try {
       var info = JSON.parse(stdout);
       callback(null, info.State);
@@ -117,9 +112,9 @@ Boot2Docker.state = function (callback) {
 };
 
 Boot2Docker.diskUsage = function (callback) {
-  this.exec('ssh "df"', function (err, stdout) {
-    if (err) {
-      callback(err, null);
+  this.exec(['ssh', 'df'], function (stderr, stdout, code) {
+    if (code) {
+      callback(stderr, null);
       return;
     }
     try {
@@ -140,15 +135,15 @@ Boot2Docker.diskUsage = function (callback) {
         percent: percent
       });
     } catch (error) {
-      callback(err, null);
+      callback(error, null);
     }
   });
 };
 
 Boot2Docker.memoryUsage = function (callback) {
-  this.exec('ssh "free -m"', function (err, stdout) {
-    if (err) {
-      callback(err, null);
+  this.exec(['ssh', 'free -m'], function (stderr, stdout, code) {
+    if (code) {
+      callback(stderr, null);
       return;
     }
     try {
@@ -208,25 +203,10 @@ Boot2Docker.sshKeyExists = function () {
   return fs.existsSync(path.join(Util.getHomePath(), '.ssh', 'id_boot2docker'));
 };
 
-/**
- * Get the VM's version.
- * Node that this only works if the VM is up and running.
- */
-Boot2Docker.vmVersion = function (callback) {
-  this.exec('ssh "cat /etc/version', function (err, stdout, stderr) {
-    if (err) {
-      callback(err);
-      return;
-    } else {
-      callback(null, stdout);
-    }
-  });
-};
-
 Boot2Docker.version = function (callback) {
-  this.exec('version', function (err, stdout, stderr) {
-    if (err) {
-      callback(err);
+  this.exec(['version'], function (stderr, stdout, code) {
+    if (code) {
+      callback(stderr);
       return;
     }
     var match = stdout.match(/Client version: v(\d\.\d\.\d)/);
@@ -235,12 +215,6 @@ Boot2Docker.version = function (callback) {
     } else {
       callback(null, match[1]);
     }
-  });
-};
-
-Boot2Docker.injectUtilities = function (callback) {
-  exec('/bin/cat ' + path.join(Util.getBinDir(), 'kite-binaries.tar.gz') + ' | ' +  Boot2Docker.command() + ' ssh "sudo tar zx -C /usr/local/bin && sudo chown -R root.root /usr/local/bin"', function (err, stdout) {
-    callback(err);
   });
 };
 
@@ -255,36 +229,55 @@ Boot2Docker.check = function (callback) {
         if (state !== 'running') {
           callback('boot2docker not running');
         } else {
-          self.correct(function (err) {
-            callback(err);
-          });
+          callback();
         }
       });
     }
   });
 };
 
-Boot2Docker.resolve = function (callback) {
-  var self = this;
-  self.exists(function (err, exists) {
-    // If somehow the boot2docker VM doesn't exist anymor then re-create it.
-    if (!exists) {
-      self.init(function () {
-        self.start(function (err) {
-          callback(err);
-        });
-      });
-    } else {
-      // If it exists but it's not running.. restart it.
-      self.state(function (err, state) {
-        if (state !== 'running') {
-          self.start(function (err) {
-            callback(err);
-          });
-        } else {
-          callback();
-        }
-      });
+Boot2Docker.vmUpToDate = function (callback) {
+  fs.readFile(path.join(Util.getHomePath(), '.boot2docker', 'boot2docker.iso'), 'utf8', function (err, data) {
+    if (err) {
+      callback(err); return;
     }
+    var match = data.match(/Boot2Docker-v(\d+\.\d+\.\d+)/);
+    if (!match) {
+      callback('Could not parse boot2docker iso version');
+      return;
+    }
+    callback (null, Util.compareVersions(match[1], Boot2Docker.VERSION) >= 0);
+  });
+};
+
+Boot2Docker.status = function (callback) {
+  this.exec(['status'], function (stderr, stdout, code) {
+    if (code) {callback(stderr); return;}
+    callback(null, stdout.trim());
+  });
+};
+
+Boot2Docker.portAvailable = function (port, protocol, callback) {
+  this.exec(['ssh', 'netstat -lntu | grep LISTEN | grep ' + protocol + ' | grep -c ":::' + port + '\\s"'], function (stdout, stderr, code) {
+    if (stderr.trim() === '0') {
+      callback(true);
+    } else {
+      callback(false);
+    }
+  });
+};
+
+Boot2Docker.waitWhileStatus = function (status, callback) {
+  var current = status;
+  async.whilst(function () {
+    return current === status;
+  }, function (innerCallback) {
+    Boot2Docker.status(function (err, vmStatus) {
+      if (err) {innerCallback(err); return;}
+      current = vmStatus.trim();
+      innerCallback();
+    });
+  }, function (err) {
+    callback(err);
   });
 };

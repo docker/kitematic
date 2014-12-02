@@ -1,12 +1,12 @@
-<template name="dashboard_images_layout">
+<template name="dashboardImagesLayout">
   {{setTitle this.meta.name}}
   <input id="imageId" type="hidden" value="{{this._id}}">
   <div class="dashboard">
     <div class="container">
       <div class="dashboard-row">
-        {{> dashboard_menu}}
+        {{> dashboardMenu}}
         <div class="dashboard-body">
-          {{> menu_header}}
+          {{> menuHeader}}
           <div class="header">
             <h3>
               <a href="/images" onclick="trackLink('back to images')">Images</a> &raquo; {{this.meta.name}}
@@ -16,11 +16,11 @@
                     <a onclick="trackLink('create container from image')" href="#" class="btn-create-app" data-toggle="tooltip" data-placement="bottom" title="Create Container" data-container="body"><span class="typcn typcn-plus-outline"></span></a>
                   {{/if}}
                 {{/if}}
-                {{#if originPath}}
+                {{#if path}}
                   <a onclick="trackLink('open image folder')" href="#" class="btn-folder" data-toggle="tooltip" data-placement="bottom" title="Folder" data-container="body"><span class="typcn typcn-folder-open"></span></a>
                 {{/if}}
                 {{#if $neq status 'BUILDING'}}
-                  {{#if originPath}}
+                  {{#if path}}
                     <a onclick="trackLink('rebuild image')" href="#" class="btn-rebuild" data-toggle="tooltip" data-placement="bottom" title="Rebuild" data-container="body"><span class="typcn typcn-refresh-outline"></span></a>
                   {{/if}}
                 {{/if}}
@@ -37,6 +37,6 @@
         </div>
       </div>
     </div>
-    {{> modal_create_app}}
+    {{> modalCreateApp}}
   </div>
 </template>

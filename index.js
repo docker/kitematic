@@ -3,12 +3,14 @@ var net = require('net');
 var os = require('os');
 var fs = require('fs');
 var path = require('path');
+var exec = require('exec');
 
+var autoUpdater = require('auto-updater');
 var app = require('app');
 var BrowserWindow = require('browser-window');
+var ipc = require('ipc');
 
 var dirname = __dirname;
-console.log(dirname);
 
 var freeport = function (callback) {
   var server = net.createServer();
@@ -116,33 +118,75 @@ app.on('activate-with-no-open-windows', function () {
 
 app.on('ready', function() {
   start(function (url, nodeChild, mongoChild) {
-    var cleanUpChildren = function () {
-      console.log('Cleaning up children.');
-      mongoChild.kill();
-      nodeChild.kill();
-      app.quit();
-      process.exit();
-    };
-
-    if (nodeChild && mongoChild) {
-      process.on('exit', cleanUpChildren);
-      process.on('uncaughtException', cleanUpChildren);
-      process.on('SIGINT', cleanUpChildren);
-      process.on('SIGTERM', cleanUpChildren);
-    }
 
     // Create the browser window.
     var windowOptions = {
       width: 800,
       height: 578,
-      frame: false,
       resizable: false,
+      frame: false,
       'web-preferences': {
         'web-security': false
       }
     };
     mainWindow = new BrowserWindow(windowOptions);
-    mainWindow.focus();
+    mainWindow.hide();
     mainWindow.loadUrl(url);
+
+    process.on('uncaughtException', app.quit);
+
+    var saveVMOnQuit = true;
+    app.on('will-quit', function (e) {
+      console.log('Cleaning up children.');
+      if (nodeChild) {
+        nodeChild.kill();
+      }
+      if (mongoChild) {
+        mongoChild.kill();
+      }
+      if (saveVMOnQuit) {
+        exec('VBoxManage controlvm boot2docker-vm savestate', function (stderr, stdout, code) {});
+      }
+    });
+
+    mainWindow.webContents.on('new-window', function (e) {
+      e.preventDefault();
+    });
+
+    mainWindow.webContents.on('did-finish-load', function() {
+      mainWindow.show();
+      mainWindow.focus();
+
+      // Auto Updates
+      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion());
+
+      autoUpdater.on('checking-for-update', function (e) {
+        console.log('Checking for update...');
+      });
+
+      autoUpdater.on('update-available', function (e) {
+        console.log('Update available.');
+        console.log(e);
+      });
+
+      autoUpdater.on('update-not-available', function (e) {
+        console.log('Update not available.');
+      });
+
+      autoUpdater.on('update-downloaded', function (e, releaseNotes, releaseName, releaseDate, updateURL) {
+        console.log('Update downloaded.');
+        mainWindow.webContents.send('notify', 'window:update-available');
+      });
+
+      ipc.on('command', function (event, arg) {
+        console.log('Command: ' + arg);
+        if (arg === 'application:quit-install') {
+          saveVMOnQuit = false;
+          autoUpdater.quitAndInstall();
+        }
+      });
+
+      autoUpdater.checkForUpdates();
+    });
   });
 });

@@ -1,6 +1,6 @@
 var remote = require('remote');
 
-Template.dashboard_menu.events({
+Template.dashboardMenu.events({
   'click .mac-close': function () {
     remote.getCurrentWindow().hide();
   },
@@ -19,7 +19,7 @@ Template.dashboard_menu.events({
   }
 });
 
-Template.dashboard_menu.rendered = function () {
+Template.dashboardMenu.rendered = function () {
   $('.nav a').attr('tabIndex', '-1');
   $('.nav a').attr('onfocus', 'this.blur()');
   $('.nav a').tooltip();

@@ -1,13 +1,13 @@
 var fs = require('fs');
 var path = require('path');
 
-Template.modal_create_app.helpers({
+Template.modalCreateApp.helpers({
   images: function () {
     return Images.find({status: 'READY', 'docker.Config.ExposedPorts': {$ne: null}}, {sort: {createdAt: -1}});
   }
 });
 
-Template.modal_create_app.events({
+Template.modalCreateApp.events({
   'submit #form-create-app': function (e) {
     var $form = $(e.currentTarget);
     var formData = $form.serializeObject();
@@ -31,20 +31,17 @@ Template.modal_create_app.events({
         imageId: cleaned.imageId,
         status: 'STARTING',
         config: {},
-        path: appPath,
         logs: [],
-        createdAt: new Date()
+        createdAt: new Date(),
+        volumesEnabled: true
       };
       var appId = Apps.insert(appObj);
       var app = Apps.findOne(appId);
       var image = Images.findOne(app.imageId);
       Util.copyVolumes(image.path, app.name, function (err) {
         if (err) { console.error(err); }
-        Docker.removeBindFolder(app.name, function (err) {
+        AppUtil.run(app, function (err) {
           if (err) { console.error(err); }
-          AppUtil.run(app, function (err) {
-            if (err) { console.error(err); }
-          });
         });
       });
       $('#modal-create-app').bind('hidden.bs.modal', function () {

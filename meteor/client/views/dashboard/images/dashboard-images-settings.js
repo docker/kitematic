@@ -1,7 +1,7 @@
 var remote = require('remote');
 var dialog = remote.require('dialog');
 
-Template.dashboard_images_settings.events({
+Template.dashboardImagesSettings.events({
   'click .btn-delete-image': function () {
     var imageId = this._id;
     dialog.showMessageBox({
@@ -35,7 +35,7 @@ Template.dashboard_images_settings.events({
         } else {
           Images.update(imageId, {
             $set: {
-              originPath: directory
+              path: directory
             }
           });
         }

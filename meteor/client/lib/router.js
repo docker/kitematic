@@ -4,76 +4,60 @@ Router.configure({
     var setting = Settings.findOne({});
     if (setting && setting.tracking) {
       var currentPath = Router.current().path;
-      console.log(currentPath);
       ga('send', 'pageview', currentPath);
     }
-  }
-});
-
-SetupController = RouteController.extend({
-  layoutTemplate: 'setup_layout',
-  waitOn: function () {
-    return [Meteor.subscribe('apps'), Meteor.subscribe('images'), Meteor.subscribe('installs'), Meteor.subscribe('settings')];
+    this.next();
   }
 });
 
 DashboardController = RouteController.extend({
-  layoutTemplate: 'dashboard_layout',
+  layoutTemplate: 'dashboardLayout',
   waitOn: function () {
-    return [Meteor.subscribe('apps'), Meteor.subscribe('images'), Meteor.subscribe('installs'), Meteor.subscribe('settings')];
+    return [Meteor.subscribe('apps'), Meteor.subscribe('images'), Meteor.subscribe('settings')];
   }
 });
 
 AppController = DashboardController.extend({
-  layoutTemplate: 'dashboard_apps_layout',
+  layoutTemplate: 'dashboardAppsLayout',
   data: function () {
     return Apps.findOne({name: this.params.name});
   }
 });
 
 ImageController = DashboardController.extend({
-  layoutTemplate: 'dashboard_images_layout',
+  layoutTemplate: 'dashboardImagesLayout',
   data: function () {
     return Images.findOne({_id: this.params.id});
   }
 });
 
 Router.map(function () {
-
-  this.route('setup_intro', {
-    path: '/setup/intro',
-    controller: 'SetupController',
-    onBeforeAction: function () {
-      Session.set('installing', true);
-    }
-  });
-
-  this.route('setup_install', {
-    path: '/setup/install',
-    controller: 'SetupController'
-  });
-
-  this.route('setup_finish', {
-    path: '/setup/finish',
-    controller: 'SetupController'
-  });
-
-  this.route('setup', {
+  this.route('intro', {
     path: '/',
-    controller: 'SetupController',
+    waitOn: function () {
+      return [Meteor.subscribe('apps'), Meteor.subscribe('images'), Meteor.subscribe('settings')];
+    },
     action: function () {
       if (this.ready()) {
-        if (!Installer.isUpToDate()) {
-          if (!Installs.findOne()) {
-            console.log('No installs detected, running installer again.');
+        this.render();
+        Setup.run(function (err) {
+          if (err) {
+            console.log('Setup failed.');
+            console.log(err);
           } else {
-            // There's an install but it's lower than the current version, re-run as an 'update'.
-            Session.set('isUpdating', true);
+            var settings = Settings.findOne();
+            if (!settings) {
+              Settings.insert({tracking: true});
+            }
+            startUpdatingBoot2DockerUtilization();
+            startSyncingAppState();
+            if (Apps.findOne()) {
+              Router.go('dashboard_apps');
+            } else {
+              Router.go('dashboard_images');
+            }
           }
-          this.redirect('/setup/intro');
-        } else {
-          this.redirect('/apps');
-        }
+        });
       }
     }
   });
