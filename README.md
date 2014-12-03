@@ -43,15 +43,12 @@ Have a bug or a feature request? Please first read the [Issue Guidelines](https:
 
 Please read through our [Contributing Guidelines](https://github.com/kitematic/kitematic/blob/master/CONTRIBUTING.md). Included are directions for opening issues, coding standards, and notes on development.
 
-Development [Roadmap](https://trello.com/b/G5Aw0Rqc/kitematic-roadmap) can be found on our Trello board.
-
 ## Community
 
 Keep track of development and community news.
 
 - Follow [@kitematic on Twitter](https://twitter.com/kitematic).
-- Check out Kitematic's [Roadmap](https://trello.com/b/G5Aw0Rqc/kitematic-roadmap) on our Trello board.
-- Read and subscribe to [The Official Kitematic Blog](https://kitematic.com/blog).
+- Read and subscribe to [The Official Kitematic Blog](http://blog.kitematic.com).
 - Chat with developers using Kitematic in our [HipChat room](http://www.hipchat.com/giAT9Fqb5).
 
 ## Versioning
