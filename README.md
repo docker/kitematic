@@ -58,13 +58,6 @@ Keep track of development and community news.
 
 For transparency into our release cycle and in striving to maintain backward compatibility, Kitematic is maintained under the [Semantic Versioning Guidelines](http://semver.org/). We'll try very hard to adhere to those rules whenever possible.
 
-## Creators
-
-Team E-mail: [contact@kitematic.com](mailto:contact@kitematic.com)
-- <https://github.com/Elesant>
-- <https://github.com/jeffdm>
-- <https://github.com/mk101>
-
 ## Copyright and License
 
 Code released under the [AGPL license](LICENSE).
