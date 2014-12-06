@@ -13,7 +13,7 @@ Metrics.trackEvent = function (name) {
   if (!name) {
     return;
   }
-  var uuid = localStorage.getItem('metrics.userId');
+  var uuid = localStorage.getItem('metrics.uuid');
   if (localStorage.getItem('metrics.enabled') && uuid) {
     mixpanel.track('docker_gui ' + name, {
       distinct_id: uuid,
