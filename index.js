@@ -178,6 +178,11 @@ app.on('ready', function() {
         mainWindow.webContents.send('notify', 'window:update-available');
       });
 
+      autoUpdater.on('error', function (e) {
+        console.log('An error occured while checking for updates.');
+        console.log(e);
+      });
+
       ipc.on('command', function (event, arg) {
         console.log('Command: ' + arg);
         if (arg === 'application:quit-install') {
