@@ -1,6 +1,4 @@
 .DS_Store
-bundle
-bundle.tar.gz
 .demeteorized
 dist
 node_modules
@@ -9,14 +7,15 @@ cache
 bin
 
 # Resources
-resources/cache
-resources/base-images-*.tar.gz
 resources/virtualbox-*.pkg
 resources/boot2docker*
-resources/node-webkit
 resources/mongod
 resources/MONGOD_LICENSE.txt
 resources/node
 resources/NODE_LICENSE.txt
+resources/settings.json
+
+# Cache
+cache
 
 script/sign.sh

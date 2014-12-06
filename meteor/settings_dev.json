@@ -1,10 +1,7 @@
 {
   "public": {
-    "ga": {
-      "id": "UA-54515442-1",
-      "create": {
-        "cookieDomain": "none"
-      }
+    "mixpanel": {
+      "token": "812536ceb71a26ccf29e861a78bdd6ff"
     }
   }
 }

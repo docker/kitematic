@@ -9,26 +9,26 @@
           {{> menuHeader}}
           <div class="header">
             <h3>
-              <a href="/images" onclick="trackLink('back to images')">Images</a> &raquo; {{this.meta.name}}
+              <a href="/images" onclick="Metrics.trackEvent('image back to list')">Images</a> &raquo; {{this.meta.name}}
               <span class="icons">
                 {{#if $eq status 'READY'}}
                   {{#if hasExposedPort}}
-                    <a onclick="trackLink('create container from image')" href="#" class="btn-create-app" data-toggle="tooltip" data-placement="bottom" title="Create Container" data-container="body"><span class="typcn typcn-plus-outline"></span></a>
+                    <a onclick="Metrics.trackEvent('image details create container')" href="#" class="btn-create-app" data-toggle="tooltip" data-placement="bottom" title="Create Container" data-container="body"><span class="typcn typcn-plus-outline"></span></a>
                   {{/if}}
                 {{/if}}
                 {{#if path}}
-                  <a onclick="trackLink('open image folder')" href="#" class="btn-folder" data-toggle="tooltip" data-placement="bottom" title="Folder" data-container="body"><span class="typcn typcn-folder-open"></span></a>
+                  <a onclick="Metrics.trackEvent('image details open directory')" href="#" class="btn-folder" data-toggle="tooltip" data-placement="bottom" title="Folder" data-container="body"><span class="typcn typcn-folder-open"></span></a>
                 {{/if}}
                 {{#if $neq status 'BUILDING'}}
                   {{#if path}}
-                    <a onclick="trackLink('rebuild image')" href="#" class="btn-rebuild" data-toggle="tooltip" data-placement="bottom" title="Rebuild" data-container="body"><span class="typcn typcn-refresh-outline"></span></a>
+                    <a onclick="Metrics.trackEvent('image details rebuild')" href="#" class="btn-rebuild" data-toggle="tooltip" data-placement="bottom" title="Rebuild" data-container="body"><span class="typcn typcn-refresh-outline"></span></a>
                   {{/if}}
                 {{/if}}
               </span>
             </h3>
             <div class="options">
-              <a onclick="trackLink('image logs')" href="/images/{{this._id}}/logs" class="btn btn-action {{activeDashboardSubMenuItem 'logs'}}"><span class="typcn typcn-document-text"></span> Logs</a>
-              <a onclick="trackLink('image settings')" href="/images/{{this._id}}/settings" class="btn btn-action {{activeDashboardSubMenuItem 'settings'}}"><span class="typcn typcn-cog-outline"></span> Settings</a>
+              <a onclick="Metrics.trackEvent('image details logs')" href="/images/{{this._id}}/logs" class="btn btn-action {{activeDashboardSubMenuItem 'logs'}}"><span class="typcn typcn-document-text"></span> Logs</a>
+              <a onclick="Metrics.trackEvent('image details settings')" href="/images/{{this._id}}/settings" class="btn btn-action {{activeDashboardSubMenuItem 'settings'}}"><span class="typcn typcn-cog-outline"></span> Settings</a>
             </div>
           </div>
           <div class="content">

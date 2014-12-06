@@ -61,7 +61,7 @@
     <div class="right-section">
       <h5><strong>{{this.path}}</strong></h5>
       <h6 id="picked-directory-error" class="error"></h6>
-      <a onclick="trackLink('change build directory')" href="#" id="btn-pick-directory" class="btn btn-positive btn-sm"><span class="typcn typcn-folder-open"></span> Change Directory</a>
+      <a onclick="Metrics.trackEvent('image change directory')" href="#" id="btn-pick-directory" class="btn btn-positive btn-sm"><span class="typcn typcn-folder-open"></span> Change Directory</a>
     </div>
   </div>
   <div class="section">
@@ -70,7 +70,7 @@
       <p class="help-block">Delete this image permanently.</p>
     </div>
     <div class="right-section">
-      <a onclick="trackLink('delete image')" class="btn btn-negative btn-delete-image btn-sm">Delete Image</a>
+      <a onclick="Metrics.trackEvent('image delete')" class="btn btn-negative btn-delete-image btn-sm">Delete Image</a>
       <div id="error-delete-image" class="error no-display"></div>
     </div>
   </div>
