@@ -16,20 +16,19 @@ Kitematic's documentation and other information can be found at [http://kitemati
 - Install meteor.js `curl https://install.meteor.com/ | sh`.
 - Install meteorite `npm install meteorite -g`
 - Install demeteorizer `npm install demeteorizer -g`
-- Run ./script/setup.sh to download the binary requirements (things like virtualbox).
+- Run `./script/setup.sh` to download the binary requirements (things like virtualbox).
 
 ### Running the development Server
 
-- ./script/run.sh
+- `./script/run.sh`
 
 ### Building the Mac OS X Package
 
-- ./script/bundle.sh  # Generates the app bundle under ./bundle
-- ./script/dist.sh    # Generates the app under ./dist./osx/Kitematic.app
+- `./script/dist.sh`    # Generates the app under ./dist./osx/Kitematic.app
 
 ## Uninstalling
 
-- Remove VirtualBox
+- Remove Kitematic.app
 ```bash
 # remove app data
 rm -rf ~/Library/Application\ Support/Kitematic
@@ -48,7 +47,7 @@ Please read through our [Contributing Guidelines](https://github.com/kitematic/k
 Keep track of development and community news.
 
 - Follow [@kitematic on Twitter](https://twitter.com/kitematic).
-- Read and subscribe to [The Official Kitematic Blog](http://blog.kitematic.com).
+- Read and subscribe to [The Kitematic Blog](http://blog.kitematic.com).
 - Chat with developers using Kitematic in our [HipChat room](http://www.hipchat.com/giAT9Fqb5).
 
 ## Versioning
