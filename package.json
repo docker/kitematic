@@ -27,7 +27,6 @@
     "request-progress": "0.3.1",
     "tar": "0.1.20",
     "mixpanel": "0.0.20",
-    "node-uuid": "1.4.1",
-    "getmac": "1.0.6"
+    "node-uuid": "1.4.1"
   }
 }
