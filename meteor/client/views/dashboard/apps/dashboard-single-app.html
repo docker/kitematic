@@ -18,18 +18,18 @@
           {{/if}}
         {{/if}}
       {{/if}}
-      <a onclick="trackLink('container detail')" href="/apps/{{name}}" class="name">{{name}}</a>
-      <small><a onclick="trackLink('container image detail')" href="/images/{{image._id}}">{{displayTags image.tags}}</a></small>
+      <a onclick="Metrics.trackEvent('container details')" href="/apps/{{name}}" class="name">{{name}}</a>
+      <small><a onclick="Metrics.trackEvent('container view image details')" href="/images/{{image._id}}">{{displayTags image.tags}}</a></small>
     </h5>
     <div class="options">
       {{#if $eq status 'READY'}}
         {{#if ports}}
           {{#if viewPort}}
           <div class="ports btn-group btn-icon" title="View" data-placement="bottom">
-            <a href="{{viewPort.url}}" onclick="trackLink('view container')" class="btn btn-action btn-xs btn-view btn-globe">
+            <a href="{{viewPort.url}}" onclick="Metrics.trackEvent('container open browser')" class="btn btn-action btn-xs btn-view btn-globe">
               <span class="typcn typcn-world-outline"></span>
             </a>
-            <a href="#" class="btn btn-action btn-xs btn-caret dropdown-toggle" id="dashboardAppsPorts" data-toggle="dropdown">
+            <a href="#" class="btn btn-action btn-xs btn-caret dropdown-toggle" onclick="Metrics.trackEvent('container view ports')" id="dashboardAppsPorts" data-toggle="dropdown">
               <span class="caret"></span>
               <span class="sr-only">Toggle Dropdown</span>
             </a>
@@ -40,7 +40,7 @@
           {{else}}
           <span class="ports dropdown">
             <div class="dropdown btn-group btn-icon dropdown-toggle" id="dashboardAppsPorts" data-toggle="dropdown" data-placement="bottom" title="View">
-              <a href="#" onclick="trackLink('view container')" class="btn btn-action btn-xs btn-globe btn-ports">
+              <a href="#" onclick="Metrics.trackEvent('container view ports')" class="btn btn-action btn-xs btn-globe btn-ports">
                 <span class="typcn typcn-world-outline"></span>
                 <span class="caret"></span>
               </a>
@@ -52,19 +52,19 @@
           {{/if}}
         {{/if}}
       {{/if}}
-      <a href="#" onclick="trackLink('open container folder')" class="btn-icon btn-folder" data-toggle="tooltip" data-placement="bottom" title="Volumes"><span class="typcn typcn-folder"></span></a>
+      <a href="#" onclick="Metrics.trackEvent('container open volume directory')" class="btn-icon btn-folder" data-toggle="tooltip" data-placement="bottom" title="Volumes"><span class="typcn typcn-folder"></span></a>
       {{#if $eq status 'READY'}}
-        <a href="#" onclick="trackLink('terminal into container')" class="btn-icon btn-terminal" data-toggle="tooltip" data-placement="bottom" title="Terminal"><span class="typcn typcn-device-laptop"></span></a>
-        <a href="#" onclick="trackLink('stop container')" class="btn-icon btn-stop" data-toggle="tooltip" data-placement="bottom" title="Stop"><span class="typcn typcn-media-stop-outline"></span></a>
+        <a href="#" onclick="Metrics.trackEvent('container open terminal')" class="btn-icon btn-terminal" data-toggle="tooltip" data-placement="bottom" title="Terminal"><span class="typcn typcn-device-laptop"></span></a>
+        <a href="#" onclick="Metrics.trackEvent('container stop')" class="btn-icon btn-stop" data-toggle="tooltip" data-placement="bottom" title="Stop"><span class="typcn typcn-media-stop-outline"></span></a>
       {{/if}}
       {{#if $eq status 'STOPPED'}}
-      <a href="#" onclick="trackLink('start container')" class="btn-icon btn-start" data-toggle="tooltip" data-placement="bottom" title="Start"><span class="typcn typcn-media-play-outline"></span></a>
+      <a href="#" onclick="Metrics.trackEvent('container start')" class="btn-icon btn-start" data-toggle="tooltip" data-placement="bottom" title="Start"><span class="typcn typcn-media-play-outline"></span></a>
       {{/if}}
       {{#unless changingState}}
-      <a href="#" onclick="trackLink('restart container')" class="btn-icon btn-restart" data-toggle="tooltip" data-placement="bottom" title="Restart"><span class="typcn typcn-refresh-outline"></span></a>
+      <a href="#" onclick="Metrics.trackEvent('container restart')" class="btn-icon btn-restart" data-toggle="tooltip" data-placement="bottom" title="Restart"><span class="typcn typcn-refresh-outline"></span></a>
       {{/unless}}
-      <a href="/apps/{{name}}/logs" onclick="trackLink('container logs')" class="btn-icon btn-logs" data-toggle="tooltip" data-placement="bottom" title="Logs"><span class="typcn typcn-document-text"></span></a>
-      <a href="/apps/{{name}}/settings" onclick="trackLink('container settings')" class="btn-icon" data-toggle="tooltip" data-placement="bottom" title="Settings"><span class="typcn typcn-cog-outline"></span></a>
+      <a href="/apps/{{name}}/logs" onclick="Metrics.trackEvent('container open logs')" class="btn-icon btn-logs" data-toggle="tooltip" data-placement="bottom" title="Logs"><span class="typcn typcn-document-text"></span></a>
+      <a href="/apps/{{name}}/settings" onclick="Metrics.trackEvent('container open settings')" class="btn-icon" data-toggle="tooltip" data-placement="bottom" title="Settings"><span class="typcn typcn-cog-outline"></span></a>
     </div>
   </div>
 </template>

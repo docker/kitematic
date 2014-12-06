@@ -49,7 +49,6 @@ reactive-dict@1.0.4
 reactive-var@1.0.3
 reload@1.1.1
 retry@1.0.1
-reywood:iron-router-ga@0.4.1
 routepolicy@1.0.2
 session@1.0.4
 simison:bootstrap3-less@0.3.0

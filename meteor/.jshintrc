@@ -166,6 +166,7 @@
       "VirtualBox": true,
       "ImageUtil": true,
       "AppUtil": true,
+      "Metrics": true
 
       // Forms
       "showFormErrors": true,
@@ -173,8 +174,7 @@
       "formValidate": true,
       "FormSchema": true,
       "showFormSuccess": true,
-      "resetForm": true,
-      "trackLink": true,
+      "resetForm": true
 
       // Testing
       "require": false,

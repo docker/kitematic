@@ -1,13 +1,5 @@
 Router.configure({
-  layoutTemplate: 'layout',
-  onBeforeAction: function () {
-    var setting = Settings.findOne({});
-    if (setting && setting.tracking) {
-      var currentPath = Router.current().path;
-      ga('send', 'pageview', currentPath);
-    }
-    this.next();
-  }
+  layoutTemplate: 'layout'
 });
 
 DashboardController = RouteController.extend({
@@ -44,11 +36,8 @@ Router.map(function () {
           if (err) {
             console.log('Setup failed.');
             console.log(err);
+            Metrics.trackEvent('app setup failed');
           } else {
-            var settings = Settings.findOne();
-            if (!settings) {
-              Settings.insert({tracking: true});
-            }
             startUpdatingBoot2DockerUtilization();
             startSyncingAppState();
             if (Apps.findOne()) {

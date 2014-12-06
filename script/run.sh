@@ -12,4 +12,3 @@ sed '/App running at/q' <&3 ; cat <&3 &
 NODE_ENV=development $BASE/cache/atom-shell/Atom.app/Contents/MacOS/Atom $BASE
 kill $(ps aux | grep '.*node.*kitematic' | awk '{print $2}')
 kill $(ps aux | grep '.*mongod.*kitematic' | awk '{print $2}')
-

@@ -47,7 +47,7 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
             {{#if hasItem images}}
-              <button onclick="trackLink('confirm create app')" type="submit" class="btn btn-sm btn-action">Create Container</button>
+              <button onclick="Metrics.trackEvent('container create')" type="submit" class="btn btn-sm btn-action">Create Container</button>
             {{else}}
               <button type="submit" class="btn btn-sm btn-action" disabled="disabled">Create Container</button>
             {{/if}}

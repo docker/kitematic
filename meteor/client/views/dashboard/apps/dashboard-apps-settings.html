@@ -29,7 +29,7 @@
             <div class="env-var-key" data-key="{{name}}" title="{{name}}">{{name}}</div>
             <div class="env-var-value" data-value="{{value}}" title="{{value}}">{{value}}</div>
             <div class="options">
-              <a href="#" onclick="trackLink('delete environment variable')" class="btn btn-negative btn-xs btn-delete-var" data-app-id="{{../_id}}" data-key="{{name}}"><i class="fa fa-times"></i></a>
+              <a href="#" onclick="Metrics.trackEvent('container remove environment variable')" class="btn btn-negative btn-xs btn-delete-var" data-app-id="{{../_id}}" data-key="{{name}}"><i class="fa fa-times"></i></a>
             </div>
           </div>
         {{/each}}
@@ -41,7 +41,7 @@
             <input type="text" name="env-var-value" class="form-control" placeholder="New Value">
           </div>
         </div>
-        <button onclick="trackLink('add environment variable')" type="submit" class="btn btn-action btn-sm">Save Variable</button>
+        <button onclick="Metrics.trackEvent('container add environment variable')" type="submit" class="btn btn-action btn-sm">Save Variable</button>
       </form>
     </div>
   </div>
@@ -52,9 +52,9 @@
     </div>
     <div class="right-section">
       {{#if volumesEnabled}}
-        <a onclick="trackLink('enable container volumes')" class="btn btn-negative btn-disable-volumes btn-sm">Disable Volumes</a>
+        <a onclick="Metrics.trackEvent('container enable volumes')" class="btn btn-negative btn-disable-volumes btn-sm">Disable Volumes</a>
       {{else}}
-        <a onclick="trackLink('disable container volumes')" class="btn btn-positive btn-enable-volumes btn-sm">Enable Volumes</a>
+        <a onclick="Metrics.trackEvent('container disable volumes')" class="btn btn-positive btn-enable-volumes btn-sm">Enable Volumes</a>
       {{/if}}
     </div>
   </div>
@@ -64,7 +64,7 @@
       <p class="help-block">Delete this container permanently.</p>
     </div>
     <div class="right-section">
-      <a onclick="trackLink('delete container')" class="btn btn-negative btn-delete-app btn-sm">Delete Container</a>
+      <a onclick="Metrics.trackEvent('container delete')" class="btn btn-negative btn-delete-app btn-sm">Delete Container</a>
     </div>
   </div>
 </template>
