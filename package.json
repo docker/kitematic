@@ -25,6 +25,8 @@
     "open": "0.0.5",
     "request": "2.42.0",
     "request-progress": "0.3.1",
-    "tar": "0.1.20"
+    "tar": "0.1.20",
+    "mixpanel": "0.0.20",
+    "node-uuid": "1.4.1"
   }
 }

@@ -5,7 +5,7 @@
       {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
         <a href="#" data-toggle="modal" data-target="#modal-create-image" class="btn btn-action" disabled="disabled"><span class="typcn typcn-plus-outline"></span> Create Image</a>
       {{else}}
-        <a href="#" onclick="trackLink('create image')" data-toggle="modal" data-target="#modal-create-image" class="btn btn-action"><span class="typcn typcn-plus-outline"></span> Create Image</a>
+        <a href="#" onclick="Metrics.trackEvent('image create modal')" data-toggle="modal" data-target="#modal-create-image" class="btn btn-action"><span class="typcn typcn-plus-outline"></span> Create Image</a>
       {{/if}}
     </div>
   </div>
@@ -26,7 +26,7 @@
           {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
             <a href="#" data-toggle="modal" data-target="#modal-create-image" class="btn btn-action" disabled="disabled"><span class="typcn typcn-plus-outline"></span> Create Image</a>
           {{else}}
-            <a href="#" onclick="trackLink('create image')" data-toggle="modal" data-target="#modal-create-image" class="btn btn-action"><span class="typcn typcn-plus-outline"></span>Create Image</a>
+            <a href="#" onclick="Metrics.trackEvent('image create modal')" data-toggle="modal" data-target="#modal-create-image" class="btn btn-action"><span class="typcn typcn-plus-outline"></span>Create Image</a>
           {{/if}}
         </div>
       {{/if}}

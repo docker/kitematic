@@ -186,12 +186,3 @@ Util.compareVersions = function (v1, v2, options) {
 
   return 0;
 };
-
-trackLink = function (trackLabel) {
-  var setting = Settings.findOne({});
-  if (setting && setting.tracking) {
-    if (trackLabel) {
-      ga('send', 'event', 'link', 'click', trackLabel);
-    }
-  }
-};

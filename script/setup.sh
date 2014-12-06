@@ -39,7 +39,7 @@ fi
 cd $BASE
 
 NODE="$BASE/cache/node/bin/node"
-BOOT2DOCKER_CLI_VERSION=$($NODE -pe "JSON.parse(process.argv[1])['boot2dockerversion']" "$(cat package.json)")
+BOOT2DOCKER_CLI_VERSION=$($NODE -pe "JSON.parse(process.argv[1])['boot2docker-version']" "$(cat package.json)")
 BOOT2DOCKER_CLI_VERSION_FILE=boot2docker-$BOOT2DOCKER_CLI_VERSION
 
 cd resources

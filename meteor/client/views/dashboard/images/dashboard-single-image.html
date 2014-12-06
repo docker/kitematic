@@ -18,7 +18,7 @@
           {{/if}}
         {{/if}}
       {{/if}}
-      <a onclick="trackLink('image detail')" href="/images/{{_id}}" class="name">{{displayTags tags ', '}}</a>
+      <a onclick="Metrics.trackEvent('image details')" href="/images/{{_id}}" class="name">{{displayTags tags ', '}}</a>
       {{#if $eq status 'BUILDING'}}
         <small>Creating image. This may take a couple minutes...</small>
       {{else}}
@@ -28,19 +28,19 @@
     <div class="options">
       {{#if $eq status 'READY'}}
         {{#if hasExposedPort}}
-          <a onclick="trackLink('create container from image')" href="#" class="btn-icon btn-create-app" data-toggle="tooltip" data-placement="bottom" title="Create Container"><span class="typcn typcn-plus-outline"></span></a>
+          <a onclick="Metrics.trackEvent('image create container')" href="#" class="btn-icon btn-create-app" data-toggle="tooltip" data-placement="bottom" title="Create Container"><span class="typcn typcn-plus-outline"></span></a>
         {{/if}}
       {{/if}}
       {{#if path}}
-        <a onclick="trackLink('open image folder')" href="#" class="btn-icon btn-folder" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Folder"><span class="typcn typcn-folder-open"></span></a>
+        <a onclick="Metrics.trackEvent('image directory')" href="#" class="btn-icon btn-folder" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Folder"><span class="typcn typcn-folder-open"></span></a>
       {{/if}}
       {{#if $neq status 'BUILDING'}}
         {{#if path}}
-          <a onclick="trackLink('rebuild image')" href="#" class="btn-icon btn-rebuild" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Rebuild"><span class="typcn typcn-refresh-outline"></span></a>
+          <a onclick="Metrics.trackEvent('image rebuild')" href="#" class="btn-icon btn-rebuild" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Rebuild"><span class="typcn typcn-refresh-outline"></span></a>
         {{/if}}
       {{/if}}
-      <a onclick="trackLink('image logs')" href="/images/{{_id}}/logs" class="btn-icon" data-toggle="tooltip" data-placement="bottom" title="Logs"><span class="typcn typcn-document-text"></span></a>
-      <a onclick="trackLink('image settings')" href="/images/{{_id}}/settings" class="btn-icon" data-toggle="tooltip" data-placement="bottom" title="Settings"><span class="typcn typcn-cog-outline"></span></a>
+      <a onclick="Metrics.trackEvent('image logs')" href="/images/{{_id}}/logs" class="btn-icon" data-toggle="tooltip" data-placement="bottom" title="Logs"><span class="typcn typcn-document-text"></span></a>
+      <a onclick="Metrics.trackEvent('image settings')" href="/images/{{_id}}/settings" class="btn-icon" data-toggle="tooltip" data-placement="bottom" title="Settings"><span class="typcn typcn-cog-outline"></span></a>
     </div>
   </div>
 </template>

@@ -5,7 +5,7 @@
       {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
         <a href="#" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action" disabled="disabled"><span class="typcn typcn-plus-outline"></span> Create Container</a>
       {{else}}
-        <a href="#" onclick="trackLink('create container')" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action"><span class="typcn typcn-plus-outline"></span> Create Container</a>
+        <a href="#" onclick="Metrics.trackEvent('container create modal')" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action"><span class="typcn typcn-plus-outline"></span> Create Container</a>
       {{/if}}
     </div>
   </div>
@@ -24,7 +24,7 @@
           {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
             <a href="#" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action" disabled="disabled"><span class="typcn typcn-plus-outline"></span> Create Container</a>
           {{else}}
-            <a href="#" onclick="trackLink('create container')" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action"><span class="typcn typcn-plus-outline"></span> Create Container</a>
+            <a href="#" onclick="Metrics.trackEvent('container create modal')" data-toggle="modal" data-target="#modal-create-app" class="btn btn-action"><span class="typcn typcn-plus-outline"></span> Create Container</a>
           {{/if}}
         </div>
       {{/if}}

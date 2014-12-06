@@ -18,6 +18,13 @@ Meteor.startup(function () {
     fs.mkdirSync(Util.getResourceDir());
   }
 
+  Metrics.prepareTracking();
+  Metrics.trackEvent('app started');
+  Metrics.trackEvent('app heartbeat');
+  Meteor.setInterval(function () {
+    Metrics.trackEvent('app heartbeat');
+  }, 14400000);
+
   Boot2Docker.ip(function (err, ip) {
     if (!err) {
       console.log('Setting host IP to: ' + ip);
