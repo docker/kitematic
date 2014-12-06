@@ -6,11 +6,6 @@
     <div class="section dashboard-settings">
       <div class="left-section">
         <h4>Boot2Docker VM</h4>
-        {{#if $.Session.equals 'boot2dockerState' 'poweroff'}}
-          <p class="help-block error">Please start Boot2Docker for Kitematic to work properly!</p>
-        {{else}}
-          <p class="help-block">All containers run in a Linux VM included with Kitematic. It needs to be turned on to run containers.</p>
-        {{/if}}
       </div>
       <div class="right-section">
         {{#if disk}}
@@ -41,10 +36,10 @@
         <p class="help-block">Send anonymized usage diagnostics to help us improve Kitematic.</p>
       </div>
       <div class="right-section">
-        {{#if settings.tracking}}
-          <a onclick="trackLink('turn off usage analytics')" class="btn btn-negative btn-usage-analytics-off">Turn Off Usage Diagnostics</a>
+        {{#if metricsEnabled}}
+          <a onclick="Metrics.trackEvent('settings disable metrics')" class="btn btn-negative btn-usage-analytics-off">Turn Off Usage Diagnostics</a>
         {{else}}
-          <a onclick="trackLink('turn on usage analytics')" class="btn btn-positive btn-usage-analytics-on">Turn On Usage Diagnostics</a>
+          <a onclick="Metrics.trackEvent('settings enable metrics')" class="btn btn-positive btn-usage-analytics-on">Turn On Usage Diagnostics</a>
         {{/if}}
       </div>
     </div>

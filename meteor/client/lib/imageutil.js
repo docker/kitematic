@@ -269,7 +269,7 @@ ImageUtil.sync = function (callback) {
       return _.contains(kitematicIds, image.Id);
     });
     _.each(diffDockerImages, function (image) {
-      if (!image.RepoTags || _.isEmpty(image.Config.ExposedPorts)) {
+      if (!image.RepoTags || !image.Config || _.isEmpty(image.Config.ExposedPorts)) {
         return;
       }
 

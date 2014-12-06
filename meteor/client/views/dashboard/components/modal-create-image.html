@@ -11,12 +11,12 @@
             <p>Select a folder with Dockerfile to build your image.</p>
             <h5 id="picked-directory"></h5>
             <h6 id="picked-directory-error" class="error"></h6>
-            <a onclick="trackLink('pick image folder')" href="#" id="btn-pick-directory" class="btn btn-positive btn-sm"><span class="typcn typcn-folder-open"></span> Select Folder</a>
+            <a onclick="Metrics.trackEvent('image choose directory')" href="#" id="btn-pick-directory" class="btn btn-positive btn-sm"><span class="typcn typcn-folder-open"></span> Select Folder</a>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Close</button>
-          <button onclick="trackLink('confirm create image')" id="btn-create-image" type="button" class="btn btn-sm btn-action" disabled="disabled">Create Image</button>
+          <button onclick="Metrics.trackEvent('image create')" id="btn-create-image" type="button" class="btn btn-sm btn-action" disabled="disabled">Create Image</button>
         </div>
       </div>
     </div>

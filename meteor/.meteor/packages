@@ -9,5 +9,4 @@ raix:handlebar-helpers
 mrt:underscore-string-latest
 dburles:collection-helpers
 iron:router
-reywood:iron-router-ga
 simison:bootstrap3-less
