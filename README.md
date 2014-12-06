@@ -24,7 +24,7 @@ Kitematic's documentation and other information can be found at [http://kitemati
 
 ### Building the Mac OS X Package
 
-- `./script/dist.sh`    # Generates the app under ./dist./osx/Kitematic.app
+- `./script/dist.sh`
 
 ## Uninstalling
 
