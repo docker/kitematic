@@ -52,9 +52,9 @@
           {{/if}}
         {{/if}}
       {{/if}}
-      <a href="#" onclick="Metrics.trackEvent('container open volume directory')" class="btn-icon btn-folder" data-toggle="tooltip" data-placement="bottom" title="Volumes"><span class="typcn typcn-folder"></span></a>
+      <a href="#" onclick="Metrics.trackEvent('container volume directory')" class="btn-icon btn-folder" data-toggle="tooltip" data-placement="bottom" title="Volumes"><span class="typcn typcn-folder"></span></a>
       {{#if $eq status 'READY'}}
-        <a href="#" onclick="Metrics.trackEvent('container open terminal')" class="btn-icon btn-terminal" data-toggle="tooltip" data-placement="bottom" title="Terminal"><span class="typcn typcn-device-laptop"></span></a>
+        <a href="#" onclick="Metrics.trackEvent('container terminal')" class="btn-icon btn-terminal" data-toggle="tooltip" data-placement="bottom" title="Terminal"><span class="typcn typcn-device-laptop"></span></a>
         <a href="#" onclick="Metrics.trackEvent('container stop')" class="btn-icon btn-stop" data-toggle="tooltip" data-placement="bottom" title="Stop"><span class="typcn typcn-media-stop-outline"></span></a>
       {{/if}}
       {{#if $eq status 'STOPPED'}}
@@ -63,8 +63,8 @@
       {{#unless changingState}}
       <a href="#" onclick="Metrics.trackEvent('container restart')" class="btn-icon btn-restart" data-toggle="tooltip" data-placement="bottom" title="Restart"><span class="typcn typcn-refresh-outline"></span></a>
       {{/unless}}
-      <a href="/apps/{{name}}/logs" onclick="Metrics.trackEvent('container open logs')" class="btn-icon btn-logs" data-toggle="tooltip" data-placement="bottom" title="Logs"><span class="typcn typcn-document-text"></span></a>
-      <a href="/apps/{{name}}/settings" onclick="Metrics.trackEvent('container open settings')" class="btn-icon" data-toggle="tooltip" data-placement="bottom" title="Settings"><span class="typcn typcn-cog-outline"></span></a>
+      <a href="/apps/{{name}}/logs" onclick="Metrics.trackEvent('container logs')" class="btn-icon btn-logs" data-toggle="tooltip" data-placement="bottom" title="Logs"><span class="typcn typcn-document-text"></span></a>
+      <a href="/apps/{{name}}/settings" onclick="Metrics.trackEvent('container settings')" class="btn-icon" data-toggle="tooltip" data-placement="bottom" title="Settings"><span class="typcn typcn-cog-outline"></span></a>
     </div>
   </div>
 </template>

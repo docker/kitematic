@@ -17,7 +17,7 @@
                     <a onclick="Metrics.trackEvent('container details view image details')" href="/images/{{image._id}}" class="btn-image" data-toggle="tooltip" data-placement="bottom" title="Image" data-container="body"><span class="typcn typcn-camera-outline"></span></a>
                   {{/if}}
                 {{/if}}
-                <a onclick="Metrics.trackEvent('container details open volume directory')" href="#" class="btn-folder" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Folder" data-container="body"><span class="typcn typcn-folder-open"></span></a>
+                <a onclick="Metrics.trackEvent('container details volume directory')" href="#" class="btn-folder" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Folder" data-container="body"><span class="typcn typcn-folder-open"></span></a>
                 {{#if $eq status 'READY'}}
                   <a href="#" onclick="Metrics.trackEvent('container details stop')" class="btn-icon btn-stop" target="_blank" data-toggle="tooltip" data-placement="bottom" title="Stop"><span class="typcn typcn-media-stop-outline"></span></a>
                 {{/if}}

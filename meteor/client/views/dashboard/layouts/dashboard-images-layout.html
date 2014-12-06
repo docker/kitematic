@@ -13,11 +13,11 @@
               <span class="icons">
                 {{#if $eq status 'READY'}}
                   {{#if hasExposedPort}}
-                    <a onclick="Metrics.trackEvent('image details create container')" href="#" class="btn-create-app" data-toggle="tooltip" data-placement="bottom" title="Create Container" data-container="body"><span class="typcn typcn-plus-outline"></span></a>
+                    <a onclick="Metrics.trackEvent('image details container')" href="#" class="btn-create-app" data-toggle="tooltip" data-placement="bottom" title="Create Container" data-container="body"><span class="typcn typcn-plus-outline"></span></a>
                   {{/if}}
                 {{/if}}
                 {{#if path}}
-                  <a onclick="Metrics.trackEvent('image details open directory')" href="#" class="btn-folder" data-toggle="tooltip" data-placement="bottom" title="Folder" data-container="body"><span class="typcn typcn-folder-open"></span></a>
+                  <a onclick="Metrics.trackEvent('image details directory')" href="#" class="btn-folder" data-toggle="tooltip" data-placement="bottom" title="Folder" data-container="body"><span class="typcn typcn-folder-open"></span></a>
                 {{/if}}
                 {{#if $neq status 'BUILDING'}}
                   {{#if path}}
