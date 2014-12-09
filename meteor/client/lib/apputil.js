@@ -68,10 +68,11 @@ AppUtil.remove = function (appId) {
   var app = Apps.findOne(appId);
   if (app.docker) {
     Docker.removeContainer(app.docker.Id, function (err) {
-      Apps.remove({_id: appId});
       var appPath = path.join(Util.KITE_PATH, app.name);
       Util.deleteFolder(appPath);
     });
+  } else {
+    Apps.remove({_id: appId});
   }
 };
 
