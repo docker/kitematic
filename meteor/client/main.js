@@ -2,6 +2,7 @@ var remote = require('remote');
 var Menu = remote.require('menu');
 var MenuItem = remote.require('menu-item');
 var BrowserWindow = remote.require('browser-window');
+var app = remote.require('app');
 
 // main.js
 var template = [
