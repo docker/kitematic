@@ -153,7 +153,7 @@ AppUtil.sync = function (callback) {
     var diffApps = _.difference(guiIds, containerIds);
     _.each(diffApps, function (appContainerId) {
       var app = Apps.findOne({'docker.Id': appContainerId});
-      if (app && app.status !== 'STARTING') {
+      if (app) {
         AppUtil.remove(app._id);
       }
     });
