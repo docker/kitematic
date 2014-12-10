@@ -221,24 +221,24 @@ updateBoot2DockerUtilization = function (callback) {
   });
 };
 
+
+
 startUpdatingBoot2DockerUtilization = function () {
-  updateBoot2DockerUtilization(function (err) {
-    if (err) {console.log(err);}
-    Meteor.setTimeout(startUpdatingBoot2DockerUtilization, 2000);
-  });
+  updateBoot2DockerUtilization(function (err) { if (err) {console.log(err);} });
+  Meteor.setTimeout(startUpdatingBoot2DockerUtilization, 2000);
 };
 
 startSyncingAppState = function () {
-  try {
-    ImageUtil.sync(function (err) {
-      if (err) {throw err;}
-      AppUtil.sync(function (err) {
-        if (err) {throw err;}
-        Meteor.setTimeout(startSyncingAppState, 2000);
-      });
+  console.log('app');
+  ImageUtil.sync(function (err) {
+    if (err) {
+      console.log(err);
+    }
+    AppUtil.sync(function (err) {
+      if (err) {
+        console.log(err);
+      }
     });
-  } catch (err) {
-    console.log(err);
-    Meteor.setTimeout(startSyncingAppState, 2000);
-  }
+  });
+  Meteor.setTimeout(startSyncingAppState, 2000);
 };
