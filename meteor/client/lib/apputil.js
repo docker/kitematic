@@ -67,10 +67,10 @@ AppUtil.stop = function (appId) {
 AppUtil.remove = function (appId) {
   var app = Apps.findOne(appId);
   if (app.docker) {
-    Apps.remove({_id: appId});
     Docker.removeContainer(app.docker.Id, function (err) {
       var appPath = path.join(Util.KITE_PATH, app.name);
       Util.deleteFolder(appPath);
+      Apps.remove({_id: appId});
     });
   } else {
     Apps.remove({_id: appId});
@@ -153,7 +153,7 @@ AppUtil.sync = function (callback) {
     var diffApps = _.difference(guiIds, containerIds);
     _.each(diffApps, function (appContainerId) {
       var app = Apps.findOne({'docker.Id': appContainerId});
-      if (app) {
+      if (app && app.status !== 'STARTING') {
         AppUtil.remove(app._id);
       }
     });
