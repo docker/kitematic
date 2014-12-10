@@ -4,9 +4,6 @@ var crypto = require('crypto');
 var getmac = require('getmac');
 var uuid = require('node-uuid');
 
-var Mixpanel = require('mixpanel');
-var mixpanel = Mixpanel.init(Meteor.settings.public.mixpanel.token);
-
 Metrics = {};
 
 Metrics.trackEvent = function (name) {
