@@ -21,6 +21,10 @@ Util.getResourceDir = function () {
   return path.join(Util.getHomePath(), 'Library/Application Support/Kitematic/Resources');
 };
 
+Util.getDataDir = function () {
+  return path.join(Util.getHomePath(), 'Library/Application Support/Kitematic/data');
+};
+
 Util.KITE_PATH = path.join(Util.getHomePath(), 'Kitematic');
 Util.KITE_TAR_PATH = path.join(Util.KITE_PATH, '.tar');
 Util.KITE_IMAGES_PATH = path.join(Util.KITE_PATH, '.images');
