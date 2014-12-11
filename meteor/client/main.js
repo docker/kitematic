@@ -229,7 +229,6 @@ startUpdatingBoot2DockerUtilization = function () {
 };
 
 startSyncingAppState = function () {
-  console.log('app');
   ImageUtil.sync(function (err) {
     if (err) {
       console.log(err);
