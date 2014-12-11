@@ -56,7 +56,7 @@ cd $BASE
 # Build NPM modules
 NPM="$BASE/cache/node/bin/npm"
 export npm_config_disturl=https://gh-contractor-zcbenz.s3.amazonaws.com/atom-shell/dist
-export npm_config_target=ATOM_SHELL_VERSION
-export npm_config_arch=ia32
+export npm_config_target=$ATOM_SHELL_VERSION
+export npm_config_arch=ia64
 HOME=~/.atom-shell-gyp $NPM install
 

@@ -26,6 +26,8 @@
     "request": "2.42.0",
     "request-progress": "0.3.1",
     "tar": "0.1.20",
-    "node-uuid": "1.4.1"
+    "node-uuid": "1.4.1",
+    "leveldown": "^1.0.0",
+    "levelup": "git+https://github.com/kitematic/node-levelup.git"
   }
 }
