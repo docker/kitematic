@@ -1,13 +1,15 @@
 var remote = require('remote');
 var dialog = remote.require('dialog');
+var level = require('levelup');
+var db = level(path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], 'Library/Application Support/Kitematic/data', 'db'));
 
 Template.dashboardSettings.events({
   'click .btn-usage-analytics-on': function () {
-    localStorage.setItem('metrics.enabled', true);
+    db.put('metrics.enabled', true);
     Session.set('metrics.enabled', true);
   },
   'click .btn-usage-analytics-off': function () {
-    localStorage.setItem('metrics.enabled', false);
+    db.put('metrics.enabled', false);
     Session.set('metrics.enabled', false);
   }
 });
@@ -15,7 +17,9 @@ Template.dashboardSettings.events({
 Template.dashboardSettings.helpers({
   metricsEnabled: function () {
     if (Session.get('metrics.enabled') === undefined) {
-      Session.set('metrics.enabled', localStorage.getItem('metrics.enabled'));
+      db.get('metrics.enabled', function (err, value) {
+        Session.set('metrics.enabled', value);
+      });
     }
     return Session.get('metrics.enabled');
   },
