@@ -38,9 +38,10 @@ Metrics.trackEvent = function (name) {
       if (err) {
         return;
       }
-      mixpanel.track('docker_gui ' + name, {
+      mixpanel.track(name, {
         distinct_id: uuid,
-        version: app.getVersion()
+        version: app.getVersion(),
+        product: 'Docker GUI'
       });
     });
   });
