@@ -8,18 +8,41 @@ var db = level(path.join(process.env[(process.platform === 'win32') ? 'USERPROFI
 
 Metrics = {};
 
+Metrics.enable = function () {
+  db.put('metrics.enabled', true);
+};
+
+Metrics.disable = function () {
+  db.put('metrics.enabled', false);
+};
+
+Metrics.enabled = function (callback) {
+  db.get('metrics.enabled', function (err, value) {
+    if (err) {
+      callback(false);
+    } else {
+      callback(value);
+    }
+  });
+};
+
 Metrics.trackEvent = function (name) {
   if (!name) {
     return;
   }
-  var uuid = localStorage.getItem('metrics.uuid');
   db.get('metrics.enabled', function (err, value) {
-    if (!err && uuid) {
+    if (err || !value) {
+      return;
+    }
+    db.get('metrics.uuid', function (err, uuid) {
+      if (err) {
+        return;
+      }
       mixpanel.track('docker_gui ' + name, {
         distinct_id: uuid,
         version: app.getVersion()
       });
-    }
+    });
   });
 };
 
@@ -34,7 +57,9 @@ Metrics.prepareTracking = function () {
       }
     }
     db.get('metrics.uuid', function (err, value) {
-      db.put('metrics.uuid', uuid.v4());
+      if (err && err.notFound) {
+        db.put('metrics.uuid', uuid.v4());
+      }
     });
   });
 };
