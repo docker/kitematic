@@ -259,7 +259,7 @@ ImageUtil.sync = function (callback) {
     var diffImages = _.difference(kitematicIds, daemonIds);
     _.each(diffImages, function (imageId) {
       var image = Images.findOne({'docker.Id': imageId});
-      if (image && image.status !== 'BUILDING') {
+      if (image && image.status === 'READY') {
         Images.remove(image._id);
       }
     });

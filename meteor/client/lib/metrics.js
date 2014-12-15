@@ -38,10 +38,12 @@ Metrics.trackEvent = function (name) {
       if (err) {
         return;
       }
+      var osVersion = navigator.userAgent.match(/Mac OS X (\d+_\d+_\d+)/)[1].replace(/_/g, '.');
       mixpanel.track(name, {
         distinct_id: uuid,
         version: app.getVersion(),
-        product: 'Docker GUI'
+        product: 'Docker GUI',
+        'Operating System Version': osVersion
       });
     });
   });
