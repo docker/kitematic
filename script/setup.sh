@@ -46,6 +46,7 @@ cd resources
 
 if [ ! -f $BOOT2DOCKER_CLI_VERSION_FILE ]; then
   cecho "-----> Downloading Boot2docker CLI..." $purple
+  rm -rf boot2docker-*
   curl -L -o $BOOT2DOCKER_CLI_VERSION_FILE https://github.com/boot2docker/boot2docker-cli/releases/download/v${BOOT2DOCKER_CLI_VERSION}/boot2docker-v${BOOT2DOCKER_CLI_VERSION}-darwin-amd64
 fi
 

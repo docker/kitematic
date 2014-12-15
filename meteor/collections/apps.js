@@ -32,7 +32,7 @@ Apps.helpers({
   },
   ports: function () {
     var app = this;
-    if (!app.docker || !app.docker.NetworkSettings.Ports) {
+    if (!app.docker || !app.docker.NetworkSettings || !app.docker.NetworkSettings || !app.docker.NetworkSettings.Ports) {
       return [];
     }
 
