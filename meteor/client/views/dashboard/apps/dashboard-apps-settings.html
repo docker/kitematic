@@ -1,14 +1,16 @@
 <template name="dashboardAppsSettings">
-  <div class="section">
-    <div class="left-section">
-      <h4>Ports</h4>
+  {{#if ports}}
+    <div class="section">
+      <div class="left-section">
+        <h4>Ports</h4>
+      </div>
+      <div class="right-section">
+        <ul class="list-unstyled">
+          {{> dashboardAppsPorts}}
+        </ul>
+      </div>
     </div>
-    <div class="right-section">
-      <ul class="list-unstyled">
-        {{> dashboardAppsPorts}}
-      </ul>
-    </div>
-  </div>
+  {{/if}}
   <div class="section">
     <div class="left-section">
       <h4>Environment Variables</h4>

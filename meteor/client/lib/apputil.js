@@ -14,9 +14,23 @@ AppUtil.run = function (app, callback) {
   }});
   Docker.removeContainer(app.name, function (err) {
     Docker.runContainer(app, image, function (err, container) {
-      if (err) { callback(err); }
+      if (err) {
+        Apps.update(app._id, {$set: {
+          status: 'ERROR',
+          logs: [err.message]
+        }});
+        callback(err);
+        return;
+        }
       Docker.getContainerData(container.id, function (err, data) {
-        if (err) { callback(err); }
+        if (err) {
+          callback(err);
+          Apps.update(app._id, {$set: {
+            status: 'ERROR',
+            logs: [err.message]
+          }});
+          return;
+        }
         // Set a delay for app to spin up
         Apps.update(app._id, {$set: {
           docker: data,
@@ -153,7 +167,7 @@ AppUtil.sync = function (callback) {
     var diffApps = _.difference(guiIds, containerIds);
     _.each(diffApps, function (appContainerId) {
       var app = Apps.findOne({'docker.Id': appContainerId});
-      if (app && app.status !== 'STARTING') {
+      if (app && app.status === 'READY') {
         AppUtil.remove(app._id);
       }
     });
@@ -211,7 +225,6 @@ AppUtil.sync = function (callback) {
       } else {
         appObj.volumesEnabled = false;
       }
-      console.log(appObj);
       Apps.insert(appObj);
     });
 
