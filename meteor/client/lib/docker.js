@@ -105,7 +105,7 @@ Docker.runContainer = function (app, image, callback) {
   };
 
 
-  if (app.docker && app.docker.NetworkSettings.Ports) {
+  if (app.docker && app.docker.NetworkSettings && app.docker.NetworkSettings.Ports) {
     containerOpts.ExposedPorts = app.docker.NetworkSettings.Ports;
   }
 
@@ -129,7 +129,7 @@ Docker.runContainer = function (app, image, callback) {
       Binds: binds
     };
 
-    if (app.docker && app.docker.NetworkSettings.Ports) {
+    if (app.docker && app.docker.NetworkSettings && app.docker.NetworkSettings.Ports) {
       startOpts.PortBindings = app.docker.NetworkSettings.Ports;
     } else {
       startOpts.PublishAllPorts = true;

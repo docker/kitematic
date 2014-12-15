@@ -40,9 +40,7 @@ Template.modalCreateApp.events({
       var image = Images.findOne(app.imageId);
       Util.copyVolumes(image.path, app.name, function (err) {
         if (err) { console.error(err); }
-        AppUtil.run(app, function (err) {
-          if (err) { console.error(err); }
-        });
+        AppUtil.run(app, function (err) {});
       });
       $('#modal-create-app').bind('hidden.bs.modal', function () {
         $('#slug-create-app-name').html('');
