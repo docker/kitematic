@@ -37,7 +37,7 @@ Template.dashboardSingleApp.events({
     }
   },
   'click .btn-terminal': function () {
-    var cmd = [Boot2Docker.command(), 'ssh', '-t', 'sudo docker exec -i -t ' + this.docker.Id + ' bash'];
+    var cmd = [Boot2Docker.command().replace(/ /g, '\\\\ '), 'ssh', '-t', 'sudo', 'docker', 'exec', '-i', '-t', this.docker.Id, 'bash'];
     Util.openTerminal(cmd);
   },
   'click .btn-start': function (e) {
