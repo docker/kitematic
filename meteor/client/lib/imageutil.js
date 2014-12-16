@@ -291,7 +291,7 @@ ImageUtil.sync = function (callback) {
           docker: image,
           buildLogs: [],
           createdAt: new Date(),
-          tags: image.RepoTags,
+          tags: image.RepoTags.sort(),
           meta: meta
         };
         Images.insert(imageObj);
@@ -311,7 +311,7 @@ ImageUtil.sync = function (callback) {
         if (imageData && imageData.RepoTags) {
           Images.update(image._id, {
             $set: {
-              tags: imageData.RepoTags
+              tags: imageData.RepoTags.sort()
             }
           });
         }
