@@ -1,6 +1,0 @@
-.DS_Store
-mup.json
-env_secret.sh
-.demeteorized
-*.pyc
-meteor-normalized.tar.gz
