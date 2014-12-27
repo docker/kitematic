@@ -10,6 +10,9 @@
     "url": "git@github.com:kitematic/kitematic.git"
   },
   "bugs": "https://github.com/kitematic/kitematic/issues",
+  "scripts": {
+    "start": "./script/run"
+  },
   "licenses": [
     {
       "type": "GNU",
@@ -23,17 +26,18 @@
     "async": "^0.9.0",
     "dockerode": "2.0.4",
     "exec": "^0.1.2",
-    "moment": "2.8.1",
-    "ncp": "0.6.0",
-    "open": "0.0.5",
-    "request": "2.42.0",
-    "request-progress": "0.3.1",
-    "tar": "0.1.20",
-    "node-uuid": "1.4.1",
+    "flux-react": "^2.6.1",
     "leveldown": "^1.0.0",
     "levelup": "git+https://github.com/kitematic/node-levelup.git",
-    "flux-react": "^2.6.1",
-    "react": "^0.12.1"
+    "minimist": "^1.1.0",
+    "moment": "2.8.1",
+    "ncp": "0.6.0",
+    "node-uuid": "1.4.1",
+    "open": "0.0.5",
+    "react": "^0.12.1",
+    "request": "2.42.0",
+    "request-progress": "0.3.1",
+    "tar": "0.1.20"
   },
   "devDependencies": {
     "browserify": "^6.2.0",
@@ -46,8 +50,6 @@
     "gulp-download-atom-shell": "0.0.4",
     "gulp-if": "^1.2.4",
     "gulp-imagemin": "^2.0.0",
-    "gulp-jasmine2-phantomjs": "^0.1.1",
-    "gulp-jest": "^0.2.3",
     "gulp-less": "^2.0.1",
     "gulp-livereload": "^2.1.1",
     "gulp-notify": "^1.4.2",
@@ -57,7 +59,7 @@
     "gulp-streamify": "0.0.5",
     "gulp-uglify": "^0.3.1",
     "gulp-util": "^3.0.0",
-    "phantomjs": "^1.9.12",
+    "jasmine-tagged": "^1.1.2",
     "reactify": "^0.15.2",
     "run-sequence": "^1.0.2",
     "vinyl-source-stream": "^0.1.1",

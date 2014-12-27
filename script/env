@@ -1,0 +1,21 @@
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+BASE=$DIR/..
+export NODE_VERSION="0.11.14"
+export NPM="$BASE/cache/node-v$NODE_VERSION/bin/npm"
+export NODE="$BASE/cache/node-v$NODE_VERSION/bin/node"
+export PATH="$BASE/cache/node-v$NODE_VERSION/bin/:$BASE/node_modules/.bin:$PATH"
+export NODE_PATH="$BASE/node_modules"
+
+pushd $BASE > /dev/null
+mkdir -p cache
+cd cache
+
+if [ ! -f "$NODE" ]; then
+  curl -L -o node-v$NODE_VERSION-darwin-x64.tar.gz http://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-darwin-x64.tar.gz
+  mkdir -p node-v$NODE_VERSION
+  tar -xzf node-v$NODE_VERSION-darwin-x64.tar.gz --strip-components 1 -C node-v$NODE_VERSION
+fi
+
+popd > /dev/null

@@ -10,6 +10,8 @@ var app = require('app');
 var BrowserWindow = require('browser-window');
 var ipc = require('ipc');
 
+var argv = require('minimist')(process.argv.slice(2));
+
 app.on('activate-with-no-open-windows', function () {
   if (mainWindow) {
     mainWindow.show();
