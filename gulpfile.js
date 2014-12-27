@@ -16,11 +16,9 @@ var shell = require('gulp-shell');
 var plumber = require('gulp-plumber');
 var sourcemaps = require('gulp-sourcemaps');
 var glob = require('glob');
-var jest = require('gulp-jest');
 var runSequence = require('run-sequence');
 var ecstatic = require('ecstatic');
 var downloadatomshell = require('gulp-download-atom-shell');
-var jasminePhantomJs = require('gulp-jasmine2-phantomjs');
 var packagejson = require('./package.json');
 var http = require('http');
 
@@ -28,7 +26,8 @@ var dependencies = Object.keys(packagejson.dependencies);
 var options = {
   dev: process.argv.indexOf('release') === -1,
   filename: 'Kitematic.app',
-  name: 'Kitematic'
+  name: 'Kitematic',
+  signing_identity: process.env.XCODE_SIGNING_IDENTITY
 };
 
 gulp.task('js', function () {
@@ -73,15 +72,12 @@ gulp.task('specs', function () {
   });
 
   var bundle = function () {
-    console.log('Building TEST bundle');
-    testBundler.bundle()
+    bundler.bundle()
     .on('error', gutil.log)
     .pipe(source('specs.js'))
     .pipe(gulp.dest('./build'));
   };
 
-  bundler = watchify(bundler);
-  bundler.on('update', bundle);
   bundle();
 });
 
@@ -157,13 +153,29 @@ gulp.task('dist', function (cb) {
   return stream;
 });
 
+gulp.task('sign', function () {
+  return gulp.src('').pipe(shell([
+    'codesign --deep --force --verbose --sign "' + options.signing_identity + '" ' + options.filename
+  ], {
+    cwd: './dist/osx/'
+  }));
+});
+
+gulp.task('zip', function () {
+  return gulp.src('').pipe(shell([
+    'ditto -c -k --sequesterRsrc --keepParent ' + options.filename + ' ' + options.name + '-' + packagejson.version + '.zip'
+  ], {
+    cwd: './dist/osx/'
+  }));
+});
+
 gulp.task('release', function () {
-  runSequence('download', 'dist', ['copy', 'images', 'js', 'styles']);
+  runSequence('download', 'dist', ['copy', 'images', 'js', 'styles'], 'sign', 'zip');
 });
 
 gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function () {
   gulp.watch('./app/**/*.html', ['copy']);
-  gulp.watch('./app/images/**', ['public']);
+  gulp.watch('./app/images/**', ['images']);
   gulp.watch('./app/styles/**/*.less', ['styles']);
 
   gulp.src('').pipe(shell(['./cache/Atom.app/Contents/MacOS/Atom .'], {
@@ -174,5 +186,5 @@ gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function ()
 });
 
 gulp.task('test', function () {
-  return gulp.src('./app/__tests__').pipe(jest());
+   return gulp.src('./app/__tests__').pipe(jest());
 });

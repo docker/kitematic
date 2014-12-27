@@ -1,5 +1,5 @@
 var App = require('./../app/App.js');
-var TestUtils = require('react-addons').TestUtils;
+var TestUtils = require('react/addons').TestUtils;
 
 describe("App", function() {
 

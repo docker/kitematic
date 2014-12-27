@@ -1,10 +1,11 @@
 .DS_Store
-.demeteorized
+build
 dist
 node_modules
-package
-cache
-bin
+npm-debug.log
+
+# Signing Identity
+script/identity
 
 # Resources
 resources/virtualbox-*.pkg
@@ -17,5 +18,3 @@ resources/settings.json
 
 # Cache
 cache
-
-script/sign.sh
