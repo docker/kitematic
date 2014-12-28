@@ -18,7 +18,7 @@
           {{/if}}
         {{/if}}
       {{/if}}
-      <a onclick="Metrics.trackEvent('image details')" href="/images/{{_id}}" class="name">{{displayTags tags ', '}}</a>
+      <a onclick="Metrics.trackEvent('image details')" href="/images/{{_id}}" class="name">{{displayTagsAsLabels tags}}</a>
       {{#if $eq status 'BUILDING'}}
         <small>Creating image. This may take a couple minutes...</small>
       {{else}}

@@ -19,7 +19,7 @@
         {{/if}}
       {{/if}}
       <a onclick="Metrics.trackEvent('container details')" href="/apps/{{name}}" class="name">{{name}}</a>
-      <small><a onclick="Metrics.trackEvent('container view image details')" href="/images/{{image._id}}">{{displayTags image.tags ', '}}</a></small>
+      <small><a onclick="Metrics.trackEvent('container view image details')" href="/images/{{image._id}}">{{displayTagsAsLabels image.tags}}</a></small>
     </h5>
     <div class="options">
       {{#if $eq status 'READY'}}

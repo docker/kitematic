@@ -197,6 +197,23 @@ Handlebars.registerHelper('displayTags', function (tags, delimiter) {
   }
 });
 
+Handlebars.registerHelper('displayTagsAsLabels', function (tags) {
+  if (tags) {
+    // extract name
+    name = tags[0].substr(0, tags[0].indexOf(':'));
+    // special handling for <none> tags, since there's no Handlebars.Utils
+    name = name.replace("<none>", 'none');
+    // build string with labels
+    var returnString = name;
+    tags.forEach(function (entry) {
+      returnString += ' <span class="label label-default">' + entry.substr(entry.indexOf(':') + 1) + '</span>';
+    });
+    return new Handlebars.SafeString(returnString);
+  } else {
+    return '';
+  }
+});
+
 updateBoot2DockerUtilization = function (callback) {
   Boot2Docker.exists(function (err, exists) {
     if (err) { callback(err); return; }
