@@ -9,6 +9,7 @@ var streamify = require('gulp-streamify');
 var notify = require('gulp-notify');
 var concat = require('gulp-concat');
 var less = require('gulp-less');
+var livereload = require('gulp-livereload');
 var cssmin = require('gulp-cssmin');
 var imagemin = require('gulp-imagemin');
 var gutil = require('gulp-util');
@@ -35,6 +36,7 @@ gulp.task('js', function () {
     entries: ['./app/main.js'], // Only need initial file, browserify finds the rest
     transform: [reactify], // We want to convert JSX to normal javascript
     debug: options.dev, // Gives us sourcemapping
+    ignoreMissing: true,
     cache: {}, packageCache: {}, fullPaths: options.dev // Requirement of watchify
   });
 
@@ -43,12 +45,15 @@ gulp.task('js', function () {
     bundler.external(dep);
   });
 
+  bundler.external('./app');
+
   var bundle = function () {
     return bundler.bundle()
       .on('error', gutil.log)
       .pipe(source('main.js'))
       .pipe(gulpif(!options.dev, streamify(uglify())))
-      .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'));
+      .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
+      .pipe(gulpif(options.dev, livereload()));
   };
 
   if (options.dev) {
@@ -88,7 +93,8 @@ gulp.task('images', function() {
       interlaced: true,
       svgoPlugins: [{removeViewBox: false}]
     }))
-    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'));
+    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
+    .pipe(gulpif(options.dev, livereload()));
 });
 
 gulp.task('styles', function () {
@@ -99,7 +105,8 @@ gulp.task('styles', function () {
     .pipe(gulpif(options.dev, sourcemaps.write()))
     .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
     .pipe(gulpif(!options.dev, cssmin()))
-    .pipe(concat('main.css'));
+    .pipe(concat('main.css'))
+    .pipe(gulpif(options.dev, livereload()));
 });
 
 gulp.task('download', function (cb) {
@@ -111,7 +118,8 @@ gulp.task('download', function (cb) {
 
 gulp.task('copy', function () {
   gulp.src('./app/index.html')
-    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'));
+    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
+    .pipe(gulpif(options.dev, livereload()));
 });
 
 gulp.task('dist', function (cb) {
@@ -178,10 +186,12 @@ gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function ()
   gulp.watch('./app/images/**', ['images']);
   gulp.watch('./app/styles/**/*.less', ['styles']);
 
+  livereload.listen();
+
+  var env = process.env;
+  env.NODE_ENV = 'development';
   gulp.src('').pipe(shell(['./cache/Atom.app/Contents/MacOS/Atom .'], {
-    env: {
-      NODE_ENV: 'development'
-    }
+    env: env
   }));
 });
 

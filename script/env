@@ -8,14 +8,15 @@ export NODE="$BASE/cache/node-v$NODE_VERSION/bin/node"
 export PATH="$BASE/cache/node-v$NODE_VERSION/bin/:$BASE/node_modules/.bin:$PATH"
 export NODE_PATH="$BASE/node_modules"
 
-pushd $BASE > /dev/null
-mkdir -p cache
-cd cache
+mkdir -p $BASE/cache
+
+pushd $BASE/cache > /dev/null
 
 if [ ! -f "$NODE" ]; then
   curl -L -o node-v$NODE_VERSION-darwin-x64.tar.gz http://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-darwin-x64.tar.gz
   mkdir -p node-v$NODE_VERSION
   tar -xzf node-v$NODE_VERSION-darwin-x64.tar.gz --strip-components 1 -C node-v$NODE_VERSION
+  rm -rf node-v$NODE_VERSION-darwin-x64.tar.gz
 fi
 
 popd > /dev/null

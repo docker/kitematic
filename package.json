@@ -20,12 +20,12 @@
     }
   ],
   "boot2docker-version": "1.3.2",
-  "atom-shell-version": "0.19.1",
+  "atom-shell-version": "0.20.3",
   "dependencies": {
     "ansi-to-html": "0.2.0",
     "async": "^0.9.0",
     "dockerode": "2.0.4",
-    "exec": "^0.1.2",
+    "exec": "0.1.2",
     "flux-react": "^2.6.1",
     "leveldown": "^1.0.0",
     "levelup": "git+https://github.com/kitematic/node-levelup.git",

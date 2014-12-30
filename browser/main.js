@@ -22,8 +22,8 @@ app.on('activate-with-no-open-windows', function () {
 app.on('ready', function() {
   // Create the browser window.
   var windowOptions = {
-    width: 800,
-    height: 578,
+    width: 960,
+    height: 640,
     resizable: true,
     frame: false,
     'web-preferences': {
