@@ -17,12 +17,20 @@ Util.getBinDir = function () {
   return path.join(process.env.DIR, 'resources');
 };
 
+Util.getAppSupportDir = function () {
+  return path.join(Util.getHomePath(), 'Library/Application Support/Kitematic');
+};
+
 Util.getResourceDir = function () {
   return path.join(Util.getHomePath(), 'Library/Application Support/Kitematic/Resources');
 };
 
 Util.getDataDir = function () {
   return path.join(Util.getHomePath(), 'Library/Application Support/Kitematic/data');
+};
+
+Util.getMetricsDir = function () {
+  return path.join(Util.getHomePath(), 'Library/Application Support/Kitematic/data/db');
 };
 
 Util.KITE_PATH = path.join(Util.getHomePath(), 'Kitematic');
