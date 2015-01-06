@@ -51,6 +51,18 @@ Metrics.trackEvent = function (name) {
   });
 };
 
+Metrics.prepareUUID = function (callback) {
+  db.get('metrics.uuid', function (err, value) {
+    if (err && err.notFound) {
+      db.put('metrics.uuid', uuid.v4(), function (err) {
+        callback();
+      });
+    } else {
+      callback();
+    }
+  });
+});
+
 Metrics.prepareTracking = function (callback) {
   db = level(Util.getMetricsDir());
   db.get('metrics.enabled', function (err, value) {
@@ -58,22 +70,15 @@ Metrics.prepareTracking = function (callback) {
       var settings = Settings.findOne();
       if (settings && settings.tracking) {
         db.put('metrics.enabled', !!settings.tracking, function(err) {
-          callback();
+          Metrics.prepareUUID(callback);
         });
       } else {
         db.put('metrics.enabled', true, function (err) {
-          callback();
+          Metrics.prepareUUID(callback);
         });
       }
+    } else {
+      Metrics.prepareUUID(callback);
     }
-    db.get('metrics.uuid', function (err, value) {
-      if (err && err.notFound) {
-        db.put('metrics.uuid', uuid.v4(), function (err) {
-          callback();
-        });
-      } else {
-        callback();
-      }
-    });
   });
 };
