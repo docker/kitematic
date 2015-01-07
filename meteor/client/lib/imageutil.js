@@ -259,7 +259,7 @@ ImageUtil.sync = function (callback) {
     var diffImages = _.difference(kitematicIds, daemonIds);
     _.each(diffImages, function (imageId) {
       var image = Images.findOne({'docker.Id': imageId});
-      if (image && image.status === 'READY') {
+      if (image && image.status !== 'BUILDING') {
         Images.remove(image._id);
       }
     });
@@ -269,7 +269,7 @@ ImageUtil.sync = function (callback) {
       return _.contains(kitematicIds, image.Id);
     });
     _.each(diffDockerImages, function (image) {
-      if (!image.RepoTags || !image.Config || _.isEmpty(image.Config.ExposedPorts)) {
+      if (!image.RepoTags || !image.RepoTags || image.RepoTags[0] === '<none>:<none>' || !image.Config || _.isEmpty(image.Config.ExposedPorts)) {
         return;
       }
 

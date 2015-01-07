@@ -2,9 +2,11 @@ var remote = require('remote');
 var app = remote.require('app');
 var crypto = require('crypto');
 var uuid = require('node-uuid');
-var level = require('levelup');
 var path = require('path');
-var db = level(path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], 'Library/Application Support/Kitematic/data', 'db'));
+var fs = require('fs');
+
+var level = require('levelup');
+var db;
 
 Metrics = {};
 
@@ -49,20 +51,34 @@ Metrics.trackEvent = function (name) {
   });
 };
 
-Metrics.prepareTracking = function () {
+Metrics.prepareUUID = function (callback) {
+  db.get('metrics.uuid', function (err, value) {
+    if (err && err.notFound) {
+      db.put('metrics.uuid', uuid.v4(), function (err) {
+        callback();
+      });
+    } else {
+      callback();
+    }
+  });
+};
+
+Metrics.prepareTracking = function (callback) {
+  db = level(Util.getMetricsDir());
   db.get('metrics.enabled', function (err, value) {
     if (err && err.notFound) {
       var settings = Settings.findOne();
       if (settings && settings.tracking) {
-        db.put('metrics.enabled', !!settings.tracking);
+        db.put('metrics.enabled', !!settings.tracking, function(err) {
+          Metrics.prepareUUID(callback);
+        });
       } else {
-        db.put('metrics.enabled', true);
+        db.put('metrics.enabled', true, function (err) {
+          Metrics.prepareUUID(callback);
+        });
       }
+    } else {
+      Metrics.prepareUUID(callback);
     }
-    db.get('metrics.uuid', function (err, value) {
-      if (err && err.notFound) {
-        db.put('metrics.uuid', uuid.v4());
-      }
-    });
   });
 };

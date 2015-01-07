@@ -31,7 +31,6 @@ AppUtil.run = function (app, callback) {
           }});
           return;
         }
-        // Set a delay for app to spin up
         Apps.update(app._id, {$set: {
           docker: data,
           status: 'READY'
@@ -167,7 +166,7 @@ AppUtil.sync = function (callback) {
     var diffApps = _.difference(guiIds, containerIds);
     _.each(diffApps, function (appContainerId) {
       var app = Apps.findOne({'docker.Id': appContainerId});
-      if (app && app.status === 'READY') {
+      if (app && app.status !== 'STARTING') {
         AppUtil.remove(app._id);
       }
     });
@@ -180,7 +179,7 @@ AppUtil.sync = function (callback) {
         return app.status === 'STARTING' && app.name === appName;
       });
 
-      if (startingApp || _.isEmpty(container.NetworkSettings.Ports)) {
+      if (startingApp || _.isEmpty(container.NetworkSettings.Ports) || !_.pairs(container.NetworkSettings.Ports)[0][1]) {
         return;
       }
 

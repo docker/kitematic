@@ -109,8 +109,6 @@ Docker.runContainer = function (app, image, callback) {
     containerOpts.ExposedPorts = app.docker.NetworkSettings.Ports;
   }
 
-  console.log(containerOpts);
-
   Docker.client().createContainer(containerOpts, function (err, container) {
     if (err) { callback(err, null); return; }
     console.log('Created container: ' + container.id);
@@ -135,7 +133,6 @@ Docker.runContainer = function (app, image, callback) {
       startOpts.PublishAllPorts = true;
     }
 
-    console.log(startOpts);
     container.start(startOpts, function (err) {
       if (err) { callback(err, null); return; }
       console.log('Started container: ' + container.id);
