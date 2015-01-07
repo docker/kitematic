@@ -179,7 +179,7 @@ AppUtil.sync = function (callback) {
         return app.status === 'STARTING' && app.name === appName;
       });
 
-      if (startingApp || _.isEmpty(container.NetworkSettings.Ports)) {
+      if (startingApp || _.isEmpty(container.NetworkSettings.Ports) || !_.pairs(container.NetworkSettings.Ports)[0][1]) {
         return;
       }
 

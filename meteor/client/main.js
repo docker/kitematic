@@ -225,7 +225,7 @@ updateBoot2DockerUtilization = function (callback) {
 
 startUpdatingBoot2DockerUtilization = function () {
   updateBoot2DockerUtilization(function (err) { if (err) {console.log(err);} });
-  Meteor.setTimeout(startUpdatingBoot2DockerUtilization, 2000);
+  Meteor.setTimeout(startUpdatingBoot2DockerUtilization, 8000);
 };
 
 startSyncingAppState = function () {
@@ -239,5 +239,5 @@ startSyncingAppState = function () {
       }
     });
   });
-  Meteor.setTimeout(startSyncingAppState, 2000);
+  Meteor.setTimeout(startSyncingAppState, 8000);
 };
