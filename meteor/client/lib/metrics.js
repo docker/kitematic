@@ -61,7 +61,7 @@ Metrics.prepareUUID = function (callback) {
       callback();
     }
   });
-});
+};
 
 Metrics.prepareTracking = function (callback) {
   db = level(Util.getMetricsDir());
