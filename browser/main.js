@@ -10,7 +10,11 @@ var app = require('app');
 var BrowserWindow = require('browser-window');
 var ipc = require('ipc');
 
-var argv = require('minimist')(process.argv.slice(2));
+var argv = require('minimist')(process.argv);
+
+if (argv.test) {
+  console.log('Running tests');
+}
 
 app.on('activate-with-no-open-windows', function () {
   if (mainWindow) {
@@ -22,17 +26,22 @@ app.on('activate-with-no-open-windows', function () {
 app.on('ready', function() {
   // Create the browser window.
   var windowOptions = {
-    width: 960,
-    height: 640,
+    width: 1200,
+    height: 800,
     resizable: true,
-    frame: false,
+    frame: true,
     'web-preferences': {
       'web-security': false
     }
   };
   mainWindow = new BrowserWindow(windowOptions);
   mainWindow.hide();
-  mainWindow.loadUrl('file://' + __dirname + '/../build/index.html');
+
+  if (argv.test) {
+    mainWindow.loadUrl('file://' + __dirname + '/../build/specs.html');
+  } else{
+    mainWindow.loadUrl('file://' + __dirname + '/../build/index.html');
+  }
 
   process.on('uncaughtException', app.quit);
 
@@ -50,6 +59,8 @@ app.on('ready', function() {
   mainWindow.webContents.on('did-finish-load', function() {
     mainWindow.show();
     mainWindow.focus();
+
+    mainWindow.setTitle('');
 
     // Auto Updates
     autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion());

@@ -37,7 +37,8 @@
     "react": "^0.12.1",
     "request": "2.42.0",
     "request-progress": "0.3.1",
-    "tar": "0.1.20"
+    "tar": "0.1.20",
+    "retina.js": "^1.1.0"
   },
   "devDependencies": {
     "browserify": "^6.2.0",
@@ -60,6 +61,7 @@
     "gulp-uglify": "^0.3.1",
     "gulp-util": "^3.0.0",
     "jasmine-tagged": "^1.1.2",
+    "object-assign": "^2.0.0",
     "reactify": "^0.15.2",
     "run-sequence": "^1.0.2",
     "vinyl-source-stream": "^0.1.1",

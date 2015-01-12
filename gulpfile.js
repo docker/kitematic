@@ -24,8 +24,10 @@ var packagejson = require('./package.json');
 var http = require('http');
 
 var dependencies = Object.keys(packagejson.dependencies);
+var devDependencies = Object.keys(packagejson.devDependencies);
 var options = {
   dev: process.argv.indexOf('release') === -1,
+  test: process.argv.indexOf('test') !== -1,
   filename: 'Kitematic.app',
   name: 'Kitematic',
   signing_identity: process.env.XCODE_SIGNING_IDENTITY
@@ -36,12 +38,20 @@ gulp.task('js', function () {
     entries: ['./app/main.js'], // Only need initial file, browserify finds the rest
     transform: [reactify], // We want to convert JSX to normal javascript
     debug: options.dev, // Gives us sourcemapping
-    ignoreMissing: true,
+    builtins: false,
+    commondir: false,
+    insertGlobals: false,
+    detectGlobals: false,
+    bundleExternal: false,
     cache: {}, packageCache: {}, fullPaths: options.dev // Requirement of watchify
   });
 
   // We set our dependencies as externals on our app bundler when developing
   dependencies.forEach(function (dep) {
+    bundler.external(dep);
+  });
+
+  devDependencies.forEach(function (dep) {
     bundler.external(dep);
   });
 
@@ -53,7 +63,7 @@ gulp.task('js', function () {
       .pipe(source('main.js'))
       .pipe(gulpif(!options.dev, streamify(uglify())))
       .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
-      .pipe(gulpif(options.dev, livereload()));
+      .pipe(gulpif(options.dev && !options.test, livereload()));
   };
 
   if (options.dev) {
@@ -76,25 +86,30 @@ gulp.task('specs', function () {
     bundler.external(dep);
   });
 
-  var bundle = function () {
-    bundler.bundle()
+  devDependencies.forEach(function (dep) {
+    bundler.external(dep);
+  });
+
+  bundler.external('./app');
+
+  bundler.bundle()
     .on('error', gutil.log)
     .pipe(source('specs.js'))
     .pipe(gulp.dest('./build'));
-  };
 
-  bundle();
+  gulp.src('./specs/specs.html')
+    .pipe(gulp.dest('./build'));
 });
 
 gulp.task('images', function() {
-  return gulp.src('./app/images/**')
+  return gulp.src('./app/images/*')
     .pipe(imagemin({
       progressive: true,
       interlaced: true,
       svgoPlugins: [{removeViewBox: false}]
     }))
     .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
-    .pipe(gulpif(options.dev, livereload()));
+    .pipe(gulpif(options.dev && !options.test, livereload()));
 });
 
 gulp.task('styles', function () {
@@ -106,7 +121,7 @@ gulp.task('styles', function () {
     .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
     .pipe(gulpif(!options.dev, cssmin()))
     .pipe(concat('main.css'))
-    .pipe(gulpif(options.dev, livereload()));
+    .pipe(gulpif(options.dev && !options.test, livereload()));
 });
 
 gulp.task('download', function (cb) {
@@ -119,7 +134,7 @@ gulp.task('download', function (cb) {
 gulp.task('copy', function () {
   gulp.src('./app/index.html')
     .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
-    .pipe(gulpif(options.dev, livereload()));
+    .pipe(gulpif(options.dev && !options.test, livereload()));
 });
 
 gulp.task('dist', function (cb) {
@@ -144,7 +159,7 @@ gulp.task('dist', function (cb) {
         filename: options.filename,
         name: options.name,
         version: packagejson.version,
-        bundle: 'com.kitematic.kitematic'
+        bundle: 'com.kitematic.app'
       }
   }));
 
@@ -181,10 +196,18 @@ gulp.task('release', function () {
   runSequence('download', 'dist', ['copy', 'images', 'js', 'styles'], 'sign', 'zip');
 });
 
+gulp.task('test', ['download', 'copy', 'js', 'images', 'styles', 'specs'], function () {
+  var env = process.env;
+  env.NODE_ENV = 'development';
+  gulp.src('').pipe(shell(['./cache/Atom.app/Contents/MacOS/Atom . --test'], {
+    env: env
+  }));
+});
+
 gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function () {
   gulp.watch('./app/**/*.html', ['copy']);
   gulp.watch('./app/images/**', ['images']);
-  gulp.watch('./app/styles/**/*.less', ['styles']);
+  gulp.watch('./app/styles/**', ['styles']);
 
   livereload.listen();
 
@@ -193,8 +216,4 @@ gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function ()
   gulp.src('').pipe(shell(['./cache/Atom.app/Contents/MacOS/Atom .'], {
     env: env
   }));
-});
-
-gulp.task('test', function () {
-   return gulp.src('./app/__tests__').pipe(jest());
 });
