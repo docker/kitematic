@@ -6,7 +6,6 @@ var async = require('async');
 
 var cmdExec = function (cmd, callback) {
   exec(cmd, function (stderr, stdout, code) {
-    console.log(stderr, stdout, code);
     if (code) {
       callback('Exit code ' + code + ': ' + stderr);
     } else {
@@ -21,12 +20,10 @@ var homeDir = function () {
 
 var Boot2Docker = {
   version: function () {
-    var packagejson = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'));
-    return packagejson['boot2docker-version'];
+    return JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'))['boot2docker-version'];
   },
   cliVersion: function (callback) {
     cmdExec([Boot2Docker.command(), 'version'], function (err, out) {
-      console.log(err, out);
       if (err) {
         callback(err);
         return;
@@ -61,7 +58,6 @@ var Boot2Docker = {
   },
   status: function (callback) {
     cmdExec([Boot2Docker.command(), 'status'], function (err, out) {
-      console.log(err, out);
       if (err) {
         callback(err);
         return;
@@ -192,26 +188,26 @@ var Boot2Docker = {
   },
   sshKeyExists: function () {
     return fs.existsSync(path.join(homeDir(), '.ssh', 'id_boot2docker'));
+  },
+
+  // Todo: move me to setup
+  waitWhileStatus: function (status, callback) {
+    var current = status;
+    async.whilst(function () {
+      return current === status;
+    }, function (callback) {
+      Boot2Docker.status(function (err, vmStatus) {
+        if (err) {
+          callback(err);
+        } else {
+          current = vmStatus.trim();
+          callback();
+        }
+      });
+    }, function (err) {
+      callback(err);
+    });
   }
 };
 
 module.exports = Boot2Docker;
-
-//TODO: move me to setup
-Boot2Docker.waitWhileStatus = function (status, callback) {
-  var current = status;
-  async.whilst(function () {
-    return current === status;
-  }, function (callback) {
-    Boot2Docker.status(function (err, vmStatus) {
-      if (err) {
-        callback(err);
-      } else {
-        current = vmStatus.trim();
-        callback();
-      }
-    });
-  }, function (err) {
-    callback(err);
-  });
-};
