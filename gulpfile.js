@@ -114,9 +114,13 @@ gulp.task('images', function() {
 
 gulp.task('styles', function () {
   return gulp.src('app/styles/main.less')
-    .pipe(plumber())
+    .pipe(plumber(function(error) {
+      gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.message));
+      // emit the end event, to properly end the task
+      this.emit('end');
+    }))
     .pipe(gulpif(options.dev, sourcemaps.init()))
-    .pipe(less()).on('error', console.error.bind(console))
+    .pipe(less())
     .pipe(gulpif(options.dev, sourcemaps.write()))
     .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
     .pipe(gulpif(!options.dev, cssmin()))
@@ -133,6 +137,10 @@ gulp.task('download', function (cb) {
 
 gulp.task('copy', function () {
   gulp.src('./app/index.html')
+    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
+    .pipe(gulpif(options.dev && !options.test, livereload()));
+
+  gulp.src('./app/fonts/**')
     .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
     .pipe(gulpif(options.dev && !options.test, livereload()));
 });
@@ -206,8 +214,8 @@ gulp.task('test', ['download', 'copy', 'js', 'images', 'styles', 'specs'], funct
 
 gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function () {
   gulp.watch('./app/**/*.html', ['copy']);
-  gulp.watch('./app/images/**', ['images']);
-  gulp.watch('./app/styles/**', ['styles']);
+  gulp.watch('./app/styles/**/*.less', ['styles']);
+  gulp.watch('./app/images/**/*.png', ['images']);
 
   livereload.listen();
 

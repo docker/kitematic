@@ -27,6 +27,8 @@
     "dockerode": "2.0.4",
     "exec": "0.1.2",
     "flux-react": "^2.6.1",
+    "ftscroller": "^0.5.1",
+    "iscroll": "^5.1.3",
     "leveldown": "^1.0.0",
     "levelup": "git+https://github.com/kitematic/node-levelup.git",
     "minimist": "^1.1.0",
@@ -37,8 +39,8 @@
     "react": "^0.12.1",
     "request": "2.42.0",
     "request-progress": "0.3.1",
-    "tar": "0.1.20",
-    "retina.js": "^1.1.0"
+    "retina.js": "^1.1.0",
+    "tar": "0.1.20"
   },
   "devDependencies": {
     "browserify": "^6.2.0",
