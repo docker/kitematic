@@ -28,18 +28,17 @@ app.on('ready', function() {
   var windowOptions = {
     width: 1200,
     height: 800,
+    'min-width': 1080,
+    'min-height': 560,
     resizable: true,
-    frame: true,
-    'web-preferences': {
-      'web-security': false
-    }
+    frame: false
   };
   mainWindow = new BrowserWindow(windowOptions);
   mainWindow.hide();
 
   if (argv.test) {
     mainWindow.loadUrl('file://' + __dirname + '/../build/specs.html');
-  } else{
+  } else {
     mainWindow.loadUrl('file://' + __dirname + '/../build/index.html');
   }
 
@@ -48,7 +47,7 @@ app.on('ready', function() {
   var saveVMOnQuit = true;
   app.on('will-quit', function (e) {
     if (saveVMOnQuit) {
-      exec('VBoxManage controlvm boot2docker-vm savestate', function (stderr, stdout, code) {});
+      // exec('VBoxManage controlvm boot2docker-vm savestate', function (stderr, stdout, code) {});
     }
   });
 
