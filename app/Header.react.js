@@ -8,16 +8,28 @@ var Header = React.createClass({
   handleMinimize: function () {
     remote.getCurrentWindow().minimize();
   },
-  handleMaximize: function () {
-    remote.getCurrentWindow().setFullScreen(!remote.getCurrentWindow().isFullScreen());
+  handleFullscreen: function () {
+    var isFullscreen = remote.getCurrentWindow().isFullScreen();
+    remote.getCurrentWindow().setFullScreen(!isFullscreen);
+    this.forceUpdate();
+  },
+  handleFullscreenHover: function () {
+    this.update();
   },
   render: function () {
+    var fullscreenButton;
+    if (remote.getCurrentWindow().isFullScreen()) {
+      fullscreenButton = <div className="button button-fullscreenclose" onClick={this.handleFullscreen}></div>;
+    } else {
+      fullscreenButton = <div className="button button-fullscreen" onClick={this.handleFullscreen}></div>;
+    }
+
     return (
       <div className="header">
         <div className="buttons">
           <div className="button button-close" onClick={this.handleClose}></div>
           <div className="button button-minimize" onClick={this.handleMinimize}></div>
-          <div className="button button-maximize" onClick={this.handleMaximize}></div>
+          {fullscreenButton}
         </div>
       </div>
     );

@@ -23,8 +23,11 @@
       .button-close {
         .at2x('close.png', 10px, 10px);
       }
-      .button-maximize {
-        .at2x('maximize.png', 10px, 10px);
+      .button-fullscreen {
+        .at2x('fullscreen.png', 10px, 10px);
+      }
+      .button-fullscreenclose {
+        .at2x('fullscreenclose.png', 10px, 10px);
       }
     }
 
@@ -44,7 +47,8 @@
         box-shadow: 0px 1px 1px 0px rgba(195,198,201,0.50);
       }
 
-      &:active {
+      &:hover:active {
+        cursor: default;
         -webkit-filter: brightness(92%);
       }
     }
@@ -157,6 +161,7 @@
       }
 
       .logs {
+        user-select: text;
         overflow: auto;
         font-family: Menlo;
         font-size: 12px;
@@ -174,6 +179,7 @@ html, body {
   width: 100%;
   overflow: hidden;
 
+  user-select: none;
   -webkit-font-smoothing: subpixel-antialiased;
   font-family: 'Helvetica Neue', sans-serif;
 }
