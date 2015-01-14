@@ -23,7 +23,7 @@ Boot2Docker.exec = function (command, callback) {
 
 Boot2Docker.exists = function (callback) {
   this.exec(['info'], function (stderr, stdout, code) {
-    if (stderr) {
+    if (code) {
       callback(null, false);
     } else {
       callback(null, true);
