@@ -29,21 +29,11 @@ var getImageJSON = function (directory) {
 };
 
 ImageUtil.getMetaData = function (directory) {
-  var kiteJSON = getImageJSON(directory);
-  if (kiteJSON) {
-    if (!kiteJSON.name) {
-      kiteJSON.name = _.last(directory.split(path.sep));
-    }
-    if (!kiteJSON.version) {
-      kiteJSON.version = 'latest';
-    }
-  } else {
-    kiteJSON = {
-      name: _.last(directory.split(path.sep)),
-      version: 'latest'
-    };
-  }
-  return kiteJSON;
+  var ret = {
+    name: _.last(directory.split(path.sep)).replace(/\s+/g, '-').toLowerCase(),
+    version: 'latest'
+  };
+  return ret;
 };
 
 ImageUtil.rebuildHelper = function (image, callback) {
@@ -171,7 +161,7 @@ ImageUtil.build = function (image, callback) {
         buildLogs: []
       }
     });
-    Docker.client().buildImage(tarFilePath, {forcerm: true, t: image.meta.name + ':' + image.meta.version}, function (err, response) {
+    Docker.client().buildImage(tarFilePath, {forcerm: true, t: image.tags}, function (err, response) {
       if (err) { callback(err); return; }
       console.log('Building Docker image...');
       response.setEncoding('utf8');
@@ -196,7 +186,7 @@ ImageUtil.build = function (image, callback) {
           console.error(e);
         }
         var imageData = null;
-        Docker.getImageData(image.meta.name + ':' + image.meta.version, function (err, data) {
+        Docker.getImageData(image.tags, function (err, data) {
           if (err) {
             console.error(err);
             Images.update(image._id, {

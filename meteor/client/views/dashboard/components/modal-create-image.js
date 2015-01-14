@@ -48,7 +48,17 @@ Template.modalCreateImage.events({
     };
     var imageMetaData = ImageUtil.getMetaData(directory);
     imageObj.meta = imageMetaData;
+
+    var count = 2;
     imageObj.tags = [imageMetaData.name + ':' + imageMetaData.version];
+    while (Images.findOne({tags: imageObj.tags})) {
+      imageObj.meta = {
+        name: imageMetaData.name + '-' + count,
+        version: imageMetaData.version
+      };
+      imageObj.tags = [imageMetaData.name + '-' + count + ':' + imageMetaData.version];
+      count++;
+    }
     var imageId = Images.insert(imageObj);
 
     $('#modal-create-image').modal('hide');
