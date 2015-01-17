@@ -1,43 +1,75 @@
 var React = require('react');
 var Router = require('react-router');
+var Modal = require('react-bootstrap/Modal');
+var RetinaImage = require('react-retina-image');
+var ModalTrigger = require('react-bootstrap/ModalTrigger');
+var ContainerModal = require('./ContainerModal.react.js');
+var ContainerStore = require('./ContainerStore.js');
 var Route = Router.Route;
 var NotFoundRoute = Router.NotFoundRoute;
 var DefaultRoute = Router.DefaultRoute;
 var Link = Router.Link;
 var RouteHandler = Router.RouteHandler;
 var Navigation= Router.Navigation;
-
 var Header = require('./Header.react.js');
-
 var async = require('async');
+var _ = require('underscore');
 var docker = require('./docker.js');
 
-
 var ContainerList = React.createClass({
+  mixins: [Navigation],
+  getInitialState: function () {
+    return {
+      containers: []
+    };
+  },
+  handleClick: function () {
+    console.log('hi');
+  },
+  componentDidMount: function () {
+    ContainerStore.addChangeListener(this.update);
+  },
+  componentWillUnmount: function () {
+    ContainerStore.removeChangeListener(this.update);
+  },
+  update: function () {
+    var containers = _.values(ContainerStore.containers()).sort(function (a, b) {
+      return a.Name.localeCompare(b.Name);
+    });
+    console.log(containers);
+    if (containers.length > 0) {
+      this.transitionTo('container', {Id: containers[0].Id, container: containers[0]});
+    }
+    this.setState({
+      containers: containers
+    });
+  },
   render: function () {
-    var containers = this.props.containers.map(function (container) {
+    var containers = this.state.containers.map(function (container) {
       var state;
       if (container.State.Running) {
-        state = <span className="status">running</span>;
-      } else if (container.State.Restarting) {
-        state = <span className="status">restarting</span>;
+        state = <div className="state state-running"><div className="runningwave"></div></div>;
+      } else {
+        state = <div className="state state-restarting"></div>;
       }
-
       return (
-        <Link key={container.Id} to="container" params={{Id: container.Id, container: container}}>
+        <Link key={container.Id} to="container" params={{Id: container.Id, container: container}} onClick={this.handleClick}>
           <li>
-            <div className="name">
-              {container.Name.replace('/', '')}
-            </div>
-            <div className="image">
-              {state} - {container.Config.Image}
+            {state}
+            <div className="info">
+              <div className="name">
+                {container.Name.replace('/', '')}
+              </div>
+              <div className="image">
+                {container.Config.Image}
+              </div>
             </div>
           </li>
         </Link>
       );
     });
     return (
-      <ul className="container-list">
+      <ul>
         {containers}
       </ul>
     );
@@ -45,49 +77,50 @@ var ContainerList = React.createClass({
 });
 
 var Containers = React.createClass({
-  mixins: [Navigation],
-  getInitialState: function() {
-    return {containers: [], index: null};
+  getInitialState: function () {
+    return {
+      sidebarOffset: 0
+    };
   },
-  update: function () {
-    var self = this;
-    docker.client().listContainers({all: true}, function (err, containers) {
-      async.map(containers, function(container, callback) {
-        docker.client().getContainer(container.Id).inspect(function (err, data) {
-          callback(null, data);
-        });
-      }, function (err, results) {
-        if (results.length > 0) {
-          self.transitionTo('container', {Id: results[0].Id, container: results[0]});
-        }
-        self.setState({containers: results});
+  handleScroll: function (e) {
+    if (e.target.scrollTop > 0 && !this.state.sidebarOffset) {
+      this.setState({
+        sidebarOffset: e.target.scrollTop
       });
-    });
+    } else if (e.target.scrollTop === 0 && this.state.sidebarOffset) {
+      this.setState({
+        sidebarOffset: 0
+      });
+    }
   },
-  componentDidMount: function () {
-    this.update();
-    var self = this;
-    docker.client().getEvents(function (err, stream) {
-      if (err) {
-        throw err;
-      }
-      stream.setEncoding('utf8');
-      stream.on('data', function (data) {
-        self.update();
-      });
-    });
+  handleClick: function () {
+    // ContainerStore.create('jbfink/wordpress', 'latest');
   },
   render: function () {
+    var sidebarHeaderClass = 'sidebar-header';
+    if (this.state.sidebarOffset) {
+      sidebarHeaderClass += ' sep';
+    }
     return (
-      <div className="containers">
+      <div className="containers" onClick={this.handleClick}>
         <Header/>
         <div className="containers-body">
           <div className="sidebar">
-            <ContainerList containers={this.state.containers}/>
+            <section className={sidebarHeaderClass}>
+              <h3>containers</h3>
+              <div className="create">
+                <ModalTrigger modal={<ContainerModal/>}>
+                  <div className="wrapper">
+                    <span className="icon icon-add-3"></span>
+                  </div>
+                </ModalTrigger>
+              </div>
+            </section>
+            <section className="sidebar-containers" onScroll={this.handleScroll}>
+              <ContainerList/>
+            </section>
           </div>
-          <div className="details container">
-            <RouteHandler containers={this.state.containers}/>
-          </div>
+          <RouteHandler/>
         </div>
       </div>
     );

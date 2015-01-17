@@ -28,8 +28,8 @@ app.on('ready', function() {
   var windowOptions = {
     width: 1200,
     height: 800,
-    'min-width': 1080,
-    'min-height': 560,
+    'min-width': 960,
+    'min-height': 700,
     resizable: true,
     frame: false
   };

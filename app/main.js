@@ -7,12 +7,14 @@ var DefaultRoute = Router.DefaultRoute;
 var Link = Router.Link;
 var RouteHandler = Router.RouteHandler;
 
+var Raven = require('raven');
 var async = require('async');
 var docker = require('./docker.js');
 var boot2docker = require('./boot2docker.js');
 var Setup = require('./Setup.react');
 var Containers = require('./Containers.react');
-var Container = require('./Container.react');
+var ContainerDetails = require('./ContainerDetails.react');
+var ContainerStore = require('./ContainerStore.js');
 var Radial = require('./Radial.react');
 
 var NoContainers = React.createClass({
@@ -26,6 +28,9 @@ var NoContainers = React.createClass({
 });
 
 var App = React.createClass({
+  componentWillMount: function () {
+    ContainerStore.init();
+  },
   render: function () {
     return (
       <RouteHandler/>
@@ -36,7 +41,7 @@ var App = React.createClass({
 var routes = (
   <Route name="app" path="/" handler={App}>
     <Route name="containers" handler={Containers}>
-      <Route name="container" path=":Id" handler={Container}>
+      <Route name="container" path=":Id" handler={ContainerDetails}>
       </Route>
       <DefaultRoute handler={NoContainers}/>
     </Route>

@@ -2,6 +2,18 @@ var React = require('react/addons');
 var remote = require('remote');
 
 var Header = React.createClass({
+  componentDidMount: function () {
+    document.addEventListener('keyup', this.handleDocumentKeyUp, false);
+  },
+  componentWillUnmount: function () {
+    document.removeEventListener('keyup', this.handleDocumentKeyUp, false);
+  },
+  handleDocumentKeyUp: function (e) {
+    if (e.keyCode === 27 && remote.getCurrentWindow().isFullScreen()) {
+      remote.getCurrentWindow().setFullScreen(false);
+      this.forceUpdate();
+    }
+  },
   handleClose: function () {
     remote.getCurrentWindow().hide();
   },
@@ -9,30 +21,35 @@ var Header = React.createClass({
     remote.getCurrentWindow().minimize();
   },
   handleFullscreen: function () {
-    var isFullscreen = remote.getCurrentWindow().isFullScreen();
-    remote.getCurrentWindow().setFullScreen(!isFullscreen);
+    remote.getCurrentWindow().setFullScreen(!remote.getCurrentWindow().isFullScreen());
     this.forceUpdate();
   },
   handleFullscreenHover: function () {
     this.update();
   },
   render: function () {
-    var fullscreenButton;
+    var buttons;
     if (remote.getCurrentWindow().isFullScreen()) {
-      fullscreenButton = <div className="button button-fullscreenclose" onClick={this.handleFullscreen}></div>;
-    } else {
-      fullscreenButton = <div className="button button-fullscreen" onClick={this.handleFullscreen}></div>;
-    }
-
-    return (
-      <div className="header">
-        <div className="buttons">
-          <div className="button button-close" onClick={this.handleClose}></div>
-          <div className="button button-minimize" onClick={this.handleMinimize}></div>
-          {fullscreenButton}
+      return (
+        <div className="header no-drag">
+          <div className="buttons">
+            <div className="button button-close disabled"></div>
+            <div className="button button-minimize disabled"></div>
+            <div className="button button-fullscreenclose enabled" onClick={this.handleFullscreen}></div>
+          </div>
         </div>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div className="header">
+          <div className="buttons">
+            <div className="button button-close enabled" onClick={this.handleClose}></div>
+            <div className="button button-minimize enabled" onClick={this.handleMinimize}></div>
+            <div className="button button-fullscreen enabled" onClick={this.handleFullscreen}></div>
+          </div>
+        </div>
+      );
+    }
   }
 });
 

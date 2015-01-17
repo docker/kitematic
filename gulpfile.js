@@ -215,7 +215,7 @@ gulp.task('test', ['download', 'copy', 'js', 'images', 'styles', 'specs'], funct
 gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function () {
   gulp.watch('./app/**/*.html', ['copy']);
   gulp.watch('./app/styles/**/*.less', ['styles']);
-  gulp.watch('./app/images/**/*.png', ['images']);
+  gulp.watch('./app/images/**', ['images']);
 
   livereload.listen();
 

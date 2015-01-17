@@ -20,7 +20,7 @@ var homeDir = function () {
 
 var Boot2Docker = {
   version: function () {
-    return JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8'))['boot2docker-version'];
+    return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'))['boot2docker-version'];
   },
   cliVersion: function (callback) {
     cmdExec([Boot2Docker.command(), 'version'], function (err, out) {
