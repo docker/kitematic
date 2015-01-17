@@ -4,15 +4,14 @@ var dockerode = require('dockerode');
 
 var Docker = {
   host: null,
+  _client: null,
   setHost: function(host) {
     this.host = host;
-  },
-  client: function () {
     var certDir = path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], '.boot2docker/certs/boot2docker-vm');
     if (!fs.existsSync(certDir)) {
-      return null;
+      return;
     }
-    return new dockerode({
+    this._client = new dockerode({
       protocol: 'https',
       host: this.host,
       port: 2376,
@@ -20,6 +19,9 @@ var Docker = {
       cert: fs.readFileSync(path.join(certDir, 'cert.pem')),
       key: fs.readFileSync(path.join(certDir, 'key.pem'))
     });
+  },
+  client: function () {
+    return this._client;
   }
 };
 

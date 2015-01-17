@@ -6,15 +6,33 @@ var NotFoundRoute = Router.NotFoundRoute;
 var DefaultRoute = Router.DefaultRoute;
 var Link = Router.Link;
 var RouteHandler = Router.RouteHandler;
-
 var Convert = require('ansi-to-html');
 var convert = new Convert();
-
+var ContainerStore = require('./ContainerStore.js');
 var docker = require('./docker.js');
 
-var Container = React.createClass({
+var ContainerDetails = React.createClass({
   mixins: [Router.State],
+  componentDidMount: function () {
+    ContainerStore.addChangeListener(this.update);
+  },
+  componentWillUnmount: function () {
+    ContainerStore.removeChangeListener(this.update);
+  },
+  update: function () {
+    var containerId = this.getParams().Id;
+    this.setState({
+      container: ContainerStore.containers()[containerId]
+    });
+  },
+  _escapeHTML: function (html) {
+    var text = document.createTextNode(html);
+    var div = document.createElement('div');
+    div.appendChild(text);
+    return div.innerHTML;
+  },
   componentWillReceiveProps: function () {
+    this.update();
     var self = this;
     var logs = [];
     var index = 0;
@@ -29,7 +47,7 @@ var Container = React.createClass({
         if (index % 2 === 1) {
           var time = buf.substr(0,buf.indexOf(' '));
           var msg = buf.substr(buf.indexOf(' ')+1);
-          logs.push(convert.toHtml(msg));
+          logs.push(convert.toHtml(self._escapeHTML(msg)));
         }
         index += 1;
       });
@@ -47,7 +65,7 @@ var Container = React.createClass({
             if (index % 2 === 1) {
               var time = buf.substr(0,buf.indexOf(' '));
               var msg = buf.substr(buf.indexOf(' ')+1);
-              logs.push(convert.toHtml(msg));
+              logs.push(convert.toHtml(self._escapeHTML(msg)));
               self.setState({logs: logs});
             }
             index += 1;
@@ -63,12 +81,9 @@ var Container = React.createClass({
       return false;
     }
 
-    var container = _.find(this.props.containers, function (container) {
-      return container.Id === self.getParams().Id;
-    });
     // console.log(container);
 
-    if (!container || !this.state) {
+    if (!this.state) {
       return <div></div>;
     }
 
@@ -77,23 +92,25 @@ var Container = React.createClass({
     });
 
     var state;
-    if (container.State.Running) {
+    if (this.state.container.State.Running) {
       state = <h2 className="status">running</h2>;
-    } else if (container.State.Restarting) {
+    } else if (this.state.container.State.Restarting) {
       state = <h2 className="status">restarting</h2>;
     }
 
     return (
-      <div>
+      <div className="details">
         <div className="details-header">
-        <h1>{container.Name.replace('/', '')}</h1>{state}
+          <h1>{this.state.container.Name.replace('/', '')}</h1>
         </div>
-        <div className="logs">
-          {logs}
+        <div className="details-logs">
+          <div className="logs">
+            {logs}
+          </div>
         </div>
       </div>
     );
   }
 });
 
-module.exports = Container;
+module.exports = ContainerDetails;
