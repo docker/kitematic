@@ -1,20 +1,18 @@
-var React = require('react');
+var React = require('react/addons');
 var Router = require('react-router');
 var Modal = require('react-bootstrap/Modal');
 var RetinaImage = require('react-retina-image');
 var ModalTrigger = require('react-bootstrap/ModalTrigger');
-var ContainerModal = require('./ContainerModal.react.js');
-var ContainerStore = require('./ContainerStore.js');
-var Route = Router.Route;
-var NotFoundRoute = Router.NotFoundRoute;
-var DefaultRoute = Router.DefaultRoute;
+var ContainerModal = require('./ContainerModal.react');
+var ContainerStore = require('./ContainerStore');
+var Header = require('./Header.react');
+var async = require('async');
+var _ = require('underscore');
+var docker = require('./docker');
+
 var Link = Router.Link;
 var RouteHandler = Router.RouteHandler;
 var Navigation= Router.Navigation;
-var Header = require('./Header.react.js');
-var async = require('async');
-var _ = require('underscore');
-var docker = require('./docker.js');
 
 var ContainerList = React.createClass({
   mixins: [Navigation],
@@ -23,14 +21,11 @@ var ContainerList = React.createClass({
       containers: []
     };
   },
-  handleClick: function () {
-
-  },
   componentDidMount: function () {
     this.update();
     ContainerStore.addChangeListener(this.update);
-    if (this.state.containers.length > 0) {
-      this.transitionTo('container', {Id: this.state.containers[0].Id});
+    if (this.state.active) {
+      this.transitionTo('container', {name: this.state.active});
     }
   },
   componentWillMount: function () {
@@ -43,8 +38,16 @@ var ContainerList = React.createClass({
     var containers = _.values(ContainerStore.containers()).sort(function (a, b) {
       return a.Name.localeCompare(b.Name);
     });
+    var state = {};
+    if (!this.state.active && containers.length > 0) {
+      state.active = containers[0].Name.replace('/', '');
+    }
+    state.containers = containers;
+    this.setState(state);
+  },
+  handleClick: function (containerId) {
     this.setState({
-      containers: containers
+      active: containerId
     });
   },
   render: function () {
@@ -85,8 +88,9 @@ var ContainerList = React.createClass({
       } else {
         state = <div className="state state-stopped"></div>;
       }
+
       return (
-        <Link key={container.Id} to="container" params={{Id: container.Id}} onClick={this.handleClick}>
+        <Link key={container.Name.replace('/', '')} to="container" params={{name: container.Name.replace('/', '')}} onClick={self.handleClick.bind(self, container.Id)}>
           <li>
             {state}
             <div className="info">
@@ -126,9 +130,6 @@ var Containers = React.createClass({
       });
     }
   },
-  handleClick: function () {
-    ContainerStore.create('dockerfile/ghost', 'latest', 'testghost');
-  },
   render: function () {
     var sidebarHeaderClass = 'sidebar-header';
     if (this.state.sidebarOffset) {
@@ -140,7 +141,7 @@ var Containers = React.createClass({
         <div className="containers-body">
           <div className="sidebar">
             <section className={sidebarHeaderClass}>
-              <h3 onClick={this.handleClick}>containers</h3>
+              <h3>containers</h3>
               <div className="create">
                 <ModalTrigger modal={<ContainerModal/>}>
                   <div className="wrapper">

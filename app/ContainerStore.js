@@ -42,6 +42,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
       docker.client().getEvents(function (err, stream) {
         stream.setEncoding('utf8');
         stream.on('data', function (data) {
+          console.log(data);
 
           // TODO: Make
           self.update(function (err) {
@@ -69,10 +70,9 @@ var ContainerStore = assign(EventEmitter.prototype, {
         }
         var containers = {};
         results.map(function (r) {
-          containers[r.Id] = r;
+          containers[r.Name.replace('/', '')] = r;
         });
         self._containers = containers;
-        console.log(containers);
         self.emit('change');
         callback(null);
       });
@@ -157,6 +157,10 @@ var ContainerStore = assign(EventEmitter.prototype, {
       }
     }
   },
+  // Returns all shoes
+  containers: function() {
+    return this._containers;
+  },
   create: function (repository, tag, callback) {
 
     console.log('create', repository, tag);
@@ -182,6 +186,8 @@ var ContainerStore = assign(EventEmitter.prototype, {
           }
           console.log('Placeholder container created.');
           docker.client().pull(imageName, function (err, stream) {
+            console.log(containerName);
+            callback(null, containerName);
             stream.setEncoding('utf8');
             stream.on('data', function (data) {
               console.log(data);
@@ -197,6 +203,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
       } else {
         // If not then directly create the container
         self._createContainer(imageName, containerName, function () {
+          callback(null, containerName);
           console.log('done');
         });
       }
@@ -205,19 +212,15 @@ var ContainerStore = assign(EventEmitter.prototype, {
       // Pull image
       // When image is done pulling then
   },
-
-  // Returns all shoes
-  containers: function() {
-    return this._containers;
+  logs: function (containerName) {
+    return logs[containerId];
   },
-
   addChangeListener: function(callback) {
     this.on('change', callback);
   },
-
   removeChangeListener: function(callback) {
     this.removeListener('change', callback);
-  }
+  },
 });
 
 module.exports = ContainerStore;

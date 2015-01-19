@@ -1,12 +1,6 @@
 var React = require('react');
 var Router = require('react-router');
 var RetinaImage = require('react-retina-image');
-var Route = Router.Route;
-var NotFoundRoute = Router.NotFoundRoute;
-var DefaultRoute = Router.DefaultRoute;
-var Link = Router.Link;
-var RouteHandler = Router.RouteHandler;
-
 var Raven = require('raven');
 var async = require('async');
 var docker = require('./docker.js');
@@ -15,7 +9,13 @@ var Setup = require('./Setup.react');
 var Containers = require('./Containers.react');
 var ContainerDetails = require('./ContainerDetails.react');
 var ContainerStore = require('./ContainerStore.js');
-var Radial = require('./Radial.react');
+var Radial = require('./Radial.react.js');
+
+var Route = Router.Route;
+var NotFoundRoute = Router.NotFoundRoute;
+var DefaultRoute = Router.DefaultRoute;
+var Link = Router.Link;
+var RouteHandler = Router.RouteHandler;
 
 var NoContainers = React.createClass({
   render: function () {
@@ -38,7 +38,7 @@ var App = React.createClass({
 var routes = (
   <Route name="app" path="/" handler={App}>
     <Route name="containers" handler={Containers}>
-      <Route name="container" path=":Id" handler={ContainerDetails}>
+      <Route name="container" path=":name" handler={ContainerDetails}>
       </Route>
       <DefaultRoute handler={NoContainers}/>
     </Route>
@@ -48,17 +48,19 @@ var routes = (
   </Route>
 );
 
-Router.run(routes, function (Handler) {
-  boot2docker.ip(function (err, ip) {
-    if (!err) {
-      docker.setHost(ip);
-      ContainerStore.init(function () {
-          React.render(<Handler/>, document.body);
+boot2docker.ip(function (err, ip) {
+  if (!err) {
+    docker.setHost(ip);
+    ContainerStore.init(function () {
+      Router.run(routes, function (Handler) {
+        React.render(<Handler/>, document.body);
       });
-    } else {
+    });
+  } else {
+    Router.run(routes, function (Handler) {
       React.render(<Handler/>, document.body);
-    }
-  });
+    });
+  }
 });
 
 if (process.env.NODE_ENV !== 'development') {

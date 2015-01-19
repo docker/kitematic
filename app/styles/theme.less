@@ -17,24 +17,11 @@
 .btn-info,
 .btn-warning,
 .btn-danger {
-  text-shadow: 0 -1px 0 rgba(0,0,0,.2);
-  @shadow: inset 0 1px 0 rgba(255,255,255,.15), 0 1px 1px rgba(0,0,0,.075);
-  .box-shadow(@shadow);
 
-  // Reset the shadow
-  &:active,
-  &.active {
-    .box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
-  }
-
-  .badge {
-    text-shadow: none;
-  }
 }
 
 // Mixin for generating new styles
 .btn-styles(@btn-color: #555) {
-  #gradient > .vertical(@start-color: @btn-color; @end-color: darken(@btn-color, 12%));
   .reset-filter(); // Disable gradients for IE9 because filter bleeds through rounded corners
   background-repeat: repeat-x;
   border-color: darken(@btn-color, 14%);
@@ -42,33 +29,35 @@
   &:hover,
   &:focus  {
     background-color: darken(@btn-color, 12%);
-    background-position: 0 -15px;
-  }
-
-  &:active,
-  &.active {
-    background-color: darken(@btn-color, 12%);
-    border-color: darken(@btn-color, 14%);
   }
 
   &:disabled,
   &[disabled] {
     background-color: darken(@btn-color, 12%);
-    background-image: none;
   }
 }
 
 // Common styles
 .btn {
+  border-radius: 25px;
+  box-shadow: none;
+  font-weight: 400;
+  text-shadow: none;
   // Remove the gradient for the pressed/active state
   &:active,
   &.active {
     background-image: none;
   }
+
+  &:focus,
+  &.focus {
+    box-shadow: none;
+    outline: none !important;
+  }
 }
 
 // Apply the mixin to the buttons
-.btn-default { .btn-styles(@btn-default-bg); text-shadow: 0 1px 0 #fff; border-color: #ccc; }
+.btn-default { .btn-styles(@btn-default-bg); }
 .btn-primary { .btn-styles(@btn-primary-bg); }
 .btn-success { .btn-styles(@btn-success-bg); }
 .btn-info    { .btn-styles(@btn-info-bg); }
