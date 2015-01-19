@@ -49,7 +49,7 @@ var routes = (
 );
 
 boot2docker.ip(function (err, ip) {
-  if (!err) {
+  if (window.location.hash !== '#/') {
     docker.setHost(ip);
     ContainerStore.init(function () {
       Router.run(routes, function (Handler) {
