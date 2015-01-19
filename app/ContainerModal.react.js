@@ -5,7 +5,10 @@ var RetinaImage = require('react-retina-image');
 var $ = require('jquery');
 var ContainerStore = require('./ContainerStore');
 
+var Navigation = Router.Navigation;
+
 var ContainerModal = React.createClass({
+  mixins: [Navigation],
   getInitialState: function () {
     return {
       query: '',
@@ -36,7 +39,10 @@ var ContainerModal = React.createClass({
   },
   handleClick: function (event) {
     var name = event.target.getAttribute('name');
+    var self = this;
     ContainerStore.create(name, 'latest', function (err, containerName) {
+      ContainerStore.setActive(containerName);
+      self.props.onRequestHide();
     });
   },
   render: function () {
