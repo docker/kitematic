@@ -24,10 +24,17 @@ var ContainerList = React.createClass({
     };
   },
   handleClick: function () {
-    console.log('hi');
+
   },
   componentDidMount: function () {
+    this.update();
     ContainerStore.addChangeListener(this.update);
+    if (this.state.containers.length > 0) {
+      this.transitionTo('container', {Id: this.state.containers[0].Id});
+    }
+  },
+  componentWillMount: function () {
+    this._start = Date.now();
   },
   componentWillUnmount: function () {
     ContainerStore.removeChangeListener(this.update);
@@ -36,24 +43,50 @@ var ContainerList = React.createClass({
     var containers = _.values(ContainerStore.containers()).sort(function (a, b) {
       return a.Name.localeCompare(b.Name);
     });
-    console.log(containers);
-    if (containers.length > 0) {
-      this.transitionTo('container', {Id: containers[0].Id, container: containers[0]});
-    }
     this.setState({
       containers: containers
     });
   },
   render: function () {
+    var self = this;
     var containers = this.state.containers.map(function (container) {
+      var downloadingImage = null, downloading = false;
+      var env = container.Config.Env;
+      if (env.length) {
+        var obj = _.object(env.map(function (e) {
+          return e.split('=');
+        }));
+        if (obj.KITEMATIC_DOWNLOADING) {
+          downloading = true;
+        }
+        downloadingImage = obj.KITEMATIC_DOWNLOADING_IMAGE || null;
+      }
+
+      var imageName = downloadingImage || container.Config.Image;
+
       var state;
-      if (container.State.Running) {
-        state = <div className="state state-running"><div className="runningwave"></div></div>;
+
+      // Synchronize all animations
+      var style = {
+        WebkitAnimationDelay: (self._start - Date.now()) + 'ms'
+      };
+
+      if (downloading) {
+        state = <div className="state state-downloading"><div style={style} className="downloading-arrow"></div></div>;
+      } else if (container.State.Running && !container.State.Paused) {
+        state = <div className="state state-running"><div style={style} className="runningwave"></div></div>;
+      } else if (container.State.Restarting) {
+        state = <div className="state state-restarting" style={style}></div>;
+      } else if (container.State.Paused) {
+        state = <div className="state state-paused"></div>;
+      } else if (container.State.ExitCode) {
+        // state = <div className="state state-error"></div>;
+        state = <div className="state state-stopped"></div>;
       } else {
-        state = <div className="state state-restarting"></div>;
+        state = <div className="state state-stopped"></div>;
       }
       return (
-        <Link key={container.Id} to="container" params={{Id: container.Id, container: container}} onClick={this.handleClick}>
+        <Link key={container.Id} to="container" params={{Id: container.Id}} onClick={this.handleClick}>
           <li>
             {state}
             <div className="info">
@@ -61,7 +94,7 @@ var ContainerList = React.createClass({
                 {container.Name.replace('/', '')}
               </div>
               <div className="image">
-                {container.Config.Image}
+                {imageName}
               </div>
             </div>
           </li>
@@ -94,7 +127,7 @@ var Containers = React.createClass({
     }
   },
   handleClick: function () {
-    // ContainerStore.create('jbfink/wordpress', 'latest');
+    ContainerStore.create('dockerfile/ghost', 'latest', 'testghost');
   },
   render: function () {
     var sidebarHeaderClass = 'sidebar-header';
@@ -102,12 +135,12 @@ var Containers = React.createClass({
       sidebarHeaderClass += ' sep';
     }
     return (
-      <div className="containers" onClick={this.handleClick}>
+      <div className="containers">
         <Header/>
         <div className="containers-body">
           <div className="sidebar">
             <section className={sidebarHeaderClass}>
-              <h3>containers</h3>
+              <h3 onClick={this.handleClick}>containers</h3>
               <div className="create">
                 <ModalTrigger modal={<ContainerModal/>}>
                   <div className="wrapper">

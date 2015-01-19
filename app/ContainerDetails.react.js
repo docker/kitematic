@@ -13,25 +13,12 @@ var docker = require('./docker.js');
 
 var ContainerDetails = React.createClass({
   mixins: [Router.State],
-  componentDidMount: function () {
-    ContainerStore.addChangeListener(this.update);
+  getInitialState: function () {
+    return {
+      logs: []
+    };
   },
-  componentWillUnmount: function () {
-    ContainerStore.removeChangeListener(this.update);
-  },
-  update: function () {
-    var containerId = this.getParams().Id;
-    this.setState({
-      container: ContainerStore.containers()[containerId]
-    });
-  },
-  _escapeHTML: function (html) {
-    var text = document.createTextNode(html);
-    var div = document.createElement('div');
-    div.appendChild(text);
-    return div.innerHTML;
-  },
-  componentWillReceiveProps: function () {
+  componentWillMount: function () {
     this.update();
     var self = this;
     var logs = [];
@@ -74,14 +61,26 @@ var ContainerDetails = React.createClass({
       });
     });
   },
+  componentDidMount: function () {
+    ContainerStore.addChangeListener(this.update);
+  },
+  componentWillUnmount: function () {
+    ContainerStore.removeChangeListener(this.update);
+  },
+  update: function () {
+    var containerId = this.getParams().Id;
+    this.setState({
+      container: ContainerStore.containers()[containerId]
+    });
+  },
+  _escapeHTML: function (html) {
+    var text = document.createTextNode(html);
+    var div = document.createElement('div');
+    div.appendChild(text);
+    return div.innerHTML;
+  },
   render: function () {
     var self = this;
-
-    if (!this.state || !this.state.logs) {
-      return false;
-    }
-
-    // console.log(container);
 
     if (!this.state) {
       return <div></div>;
