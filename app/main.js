@@ -21,16 +21,13 @@ var NoContainers = React.createClass({
   render: function () {
     return (
       <div>
-        <Radial spin="true" progress="92"/>
+        No Containers
       </div>
     );
   }
 });
 
 var App = React.createClass({
-  componentWillMount: function () {
-    ContainerStore.init();
-  },
   render: function () {
     return (
       <RouteHandler/>
@@ -53,8 +50,14 @@ var routes = (
 
 Router.run(routes, function (Handler) {
   boot2docker.ip(function (err, ip) {
-    docker.setHost(ip);
-    React.render(<Handler/>, document.body);
+    if (!err) {
+      docker.setHost(ip);
+      ContainerStore.init(function () {
+          React.render(<Handler/>, document.body);
+      });
+    } else {
+      React.render(<Handler/>, document.body);
+    }
   });
 });
 

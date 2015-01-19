@@ -188,9 +188,9 @@
           li {
             vertical-align: middle;
 
-            margin: 11px 24px 0px;
+            margin: 14px 24px 0px;
             border-bottom: 1px solid #efefef;
-            padding-bottom: 11px;
+            padding-bottom: 14px;
 
             display: flex;
             flex-direction: row;
@@ -209,34 +209,65 @@
               }
               .image {
                 color: #999;
-                font-size: 12px;
+                font-size: 10px;
                 font-weight: 400;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
               }
             }
 
             .state {
               margin-top: 8px;
               display: inline-block;
+              position: relative;
+              min-width: 20px;
+              height: 20px;
+            }
+
+            .state-error {
+              .at2x('error.png', 20px, 20px);
+            }
+
+            .state-stopped {
+              .at2x('stopped.png', 20px, 20px);
+            }
+
+            .state-paused {
+              .at2x('paused.png', 20px, 20px);
+            }
+
+            .state-downloading {
+              .at2x('downloading.png', 20px, 20px);
+              overflow: hidden;
+
+              .downloading-arrow {
+                width: 20px;
+                height: 20px;
+                .at2x('downloading-arrow.png', 20px, 20px);
+                position: absolute;
+                // background-repeat: repeat;
+                -webkit-animation-name: translatedownload;
+                -webkit-animation-duration: 1.8s;
+                -webkit-animation-iteration-count: infinite;
+                -webkit-animation-timing-function: linear;
+              }
             }
 
             .state-running {
-              display: inline-block;
-              position: relative;
-              width: 20px;
-              height: 20px;
               .at2x('running.png', 20px, 20px);
               overflow: hidden;
               // -webkit-mask-image: -webkit-radial-gradient(circle, white, black);
 
               .runningwave {
                 position: absolute;
-                width: 44px;
+                width: 40px;
                 height: 20px;
                 left: -20px;
                 .at2x('runningwave.png', 20px, 20px);
                 // background-repeat: repeat;
-                -webkit-animation-name: translate;
-                -webkit-animation-duration: 6.0s;
+                -webkit-animation-name: translatewave;
+                -webkit-animation-duration: 8.0s;
                 -webkit-animation-iteration-count: infinite;
                 -webkit-animation-timing-function: linear;
               }
@@ -248,6 +279,7 @@
               height: 20px;
               .at2x('restarting.png', 20px, 20px);
               background-repeat: repeat-x;
+              -webkit-animation-delay: -1s;
               -webkit-animation-name: rotate;
               -webkit-animation-duration: 3.0s;
               -webkit-animation-iteration-count: infinite;
@@ -478,7 +510,7 @@ html, body {
   height: 100%;
 }
 
-@-webkit-keyframes rotate {
+@-webkit-keyframes translatedownload {
   from {
     -webkit-transform: rotate(0deg);
   }
@@ -487,11 +519,30 @@ html, body {
   }
 }
 
-@-webkit-keyframes translate {
+@-webkit-keyframes translatewave {
   from {
     -webkit-transform: translateX(0px);
   }
   to {
     -webkit-transform: translateX(20px);
+  }
+}
+
+@-webkit-keyframes translatedownload {
+  0% {
+    -webkit-transform: translateY(6px);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+    -webkit-transform: translateY(6px);
+  }
+  50% {
+    opacity: 1;
+    -webkit-transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: translateY(20px);
   }
 }

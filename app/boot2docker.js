@@ -156,6 +156,11 @@ var Boot2Docker = {
       }
     });
   },
+  createScratchImage: function (callback) {
+    cmdExec([Boot2Docker.command(), 'ssh', 'tar cv --files-from /dev/null | docker import - scratch'], function (err, out) {
+      callback(err);
+    });
+  },
   stats: function (callback) {
     var self = this;
     self.state(function (err, state) {

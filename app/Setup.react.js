@@ -9,6 +9,7 @@ var boot2docker = require('./boot2docker.js');
 var virtualbox = require('./virtualbox.js');
 var util = require('./util.js');
 var docker = require('./docker.js');
+var ContainerStore = require('./ContainerStore.js');
 
 var setupSteps = [
   {
