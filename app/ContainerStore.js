@@ -45,7 +45,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
         stream.on('data', function (data) {
           console.log(data);
 
-          // TODO: Make
+          // TODO: Dont refresh on deleting placeholder containers
           self.update(function (err) {
             console.log('Updated container data.');
           });
@@ -82,10 +82,6 @@ var ContainerStore = assign(EventEmitter.prototype, {
   _pullScratchImage: function (callback) {
     var image = docker.client().getImage('scratch:latest');
     image.inspect(function (err, data) {
-      if (err) {
-        callback(err);
-        return;
-      }
       if (!data) {
         docker.client().pull('scratch:latest', function (err, stream) {
           if (err) {
@@ -130,6 +126,10 @@ var ContainerStore = assign(EventEmitter.prototype, {
   _createPlaceholderContainer: function (imageName, name, callback) {
     console.log('_createPlaceholderContainer', imageName, name);
     this._pullScratchImage(function (err) {
+      if (err) {
+        callback(err);
+        return;
+      }
       docker.client().createContainer({
         Image: 'scratch:latest',
         Tty: false,
@@ -158,14 +158,11 @@ var ContainerStore = assign(EventEmitter.prototype, {
       }
     }
   },
-  // Returns all shoes
+  // Returns all containers
   containers: function() {
     return this._containers;
   },
   create: function (repository, tag, callback) {
-
-    console.log('create', repository, tag);
-
     var containerName = this._generateName(repository);
     tag = tag || 'latest';
     var imageName = repository + ':' + tag;
@@ -191,7 +188,8 @@ var ContainerStore = assign(EventEmitter.prototype, {
             callback(null, containerName);
             stream.setEncoding('utf8');
             stream.on('data', function (data) {
-              console.log(data);
+              // TODO: update progress
+              //console.log(data);
             });
             stream.on('end', function () {
               self._createContainer(imageName, containerName, function () {
@@ -199,8 +197,6 @@ var ContainerStore = assign(EventEmitter.prototype, {
             });
           });
         });
-
-        // Create placeholder container
       } else {
         // If not then directly create the container
         self._createContainer(imageName, containerName, function () {

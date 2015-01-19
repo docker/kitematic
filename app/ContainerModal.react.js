@@ -8,7 +8,6 @@ var ContainerStore = require('./ContainerStore');
 var Navigation = Router.Navigation;
 
 var ContainerModal = React.createClass({
-  mixins: [Navigation],
   getInitialState: function () {
     return {
       query: '',

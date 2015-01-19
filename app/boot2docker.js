@@ -6,7 +6,7 @@ var async = require('async');
 
 var cmdExec = function (cmd, callback) {
   exec(cmd, function (stderr, stdout, code) {
-    if (code) {
+    if (code !== 0) {
       callback('Exit code ' + code + ': ' + stderr);
     } else {
       callback(null, stdout);
