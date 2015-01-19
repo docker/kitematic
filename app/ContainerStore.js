@@ -9,6 +9,7 @@ var _ = require('underscore');
 var ContainerStore = assign(EventEmitter.prototype, {
   _containers: {},
   _logs: {},
+  _active: null,
   init: function (callback) {
     // TODO: Load cached data from db on loading
 
@@ -211,6 +212,13 @@ var ContainerStore = assign(EventEmitter.prototype, {
       // If so then create a container w/ kitematic-only 'downloading state'
       // Pull image
       // When image is done pulling then
+  },
+  setActive: function (containerName) {
+    this._active = containerName;
+    this.emit('change');
+  },
+  active: function () {
+    return this._active;
   },
   logs: function (containerName) {
     return logs[containerId];

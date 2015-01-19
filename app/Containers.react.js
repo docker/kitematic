@@ -18,15 +18,18 @@ var ContainerList = React.createClass({
   mixins: [Navigation],
   getInitialState: function () {
     return {
+      active: null,
       containers: []
     };
   },
   componentDidMount: function () {
     this.update();
-    ContainerStore.addChangeListener(this.update);
-    if (this.state.active) {
-      this.transitionTo('container', {name: this.state.active});
+    if (this.state.containers.length > 0) {
+      var name = this.state.containers[0].Name.replace('/', '');
+      active = name;
+      ContainerStore.setActive(name);
     }
+    ContainerStore.addChangeListener(this.update);
   },
   componentWillMount: function () {
     this._start = Date.now();
@@ -38,17 +41,18 @@ var ContainerList = React.createClass({
     var containers = _.values(ContainerStore.containers()).sort(function (a, b) {
       return a.Name.localeCompare(b.Name);
     });
-    var state = {};
-    if (!this.state.active && containers.length > 0) {
-      state.active = containers[0].Name.replace('/', '');
+
+    this.setState({
+      active: ContainerStore.active(),
+      containers: containers
+    });
+
+    if (ContainerStore.active()) {
+      this.transitionTo('container', {name: ContainerStore.active()});
     }
-    state.containers = containers;
-    this.setState(state);
   },
   handleClick: function (containerId) {
-    this.setState({
-      active: containerId
-    });
+    ContainerStore.setActive(name);
   },
   render: function () {
     var self = this;

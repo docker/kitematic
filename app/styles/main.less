@@ -1,0 +1,206 @@
+@import "bootstrap/bootstrap.less";
+@import "clearsans.less";
+@import "theme.less";
+@import "icons.less";
+@import "retina.less";
+@import "setup.less";
+@import "radial.less";
+@import "header.less";
+@import "containers.less";
+
+html, body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  font-family: 'Clear Sans', sans-serif;
+}
+
+::-webkit-scrollbar {
+  width: 13px;
+}
+
+::-webkit-scrollbar-track {
+  margin: 3px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  background: none;
+}
+
+::-webkit-scrollbar-thumb {
+  border: 3px solid rgba(0, 0, 0, 0);
+  background-clip: padding-box;
+  width: 7px;
+  border-radius: 8px;
+  background-color: rgba(0,0,0,0.2);
+}
+
+.create-modal {
+  @modal-padding: 32px;
+  @search-width: 372px;
+  @custom-width: 270px;
+  .modal-dialog {
+    margin-top: 8%;
+    width: calc(@modal-padding + @search-width + 2 * @modal-padding + @custom-width);
+  }
+  .modal-content {
+    //box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
+    border: none; //1px solid #ccc;
+    height: 610px;
+  }
+  .modal-body {
+    display: flex;
+    flex-direction: row;
+    padding: 32px 32px;
+
+    .title {
+      color: #CCD3D5;
+      font-weight: 400;
+      font-size: 13px;
+    }
+
+    aside.custom {
+      flex: 0 auto;
+      padding-left: 32px;
+      min-width: 270px;
+    }
+
+    section.search {
+      flex: 0 auto;
+      min-width: 404px;
+      padding-right: 32px;
+      border-right: 1px solid #eee;
+
+      .question {
+        a {
+          color: #CCD3D5;
+        }
+        font-size: 10px;
+        text-align: right;
+      }
+
+      input {
+        border-radius: 20px;
+        font-size: 13px;
+        height: 38px;
+        padding: 8px 16px;
+        font-weight: 400;
+        color: #666;
+
+        &:focus {
+          box-shadow: none;
+          border-color: #bbb;
+        }
+
+        &::-webkit-input-placeholder {
+          color: #ddd;
+          font-weight: 300;
+        }
+      }
+
+      .results {
+        overflow: auto;
+
+        .title {
+          margin-top: 16px;
+        }
+
+        ul {
+          list-style: none;
+          color: #555;
+          padding: 0;
+
+          li {
+            display: flex;
+            flex-direction: row;
+            margin: 12px;
+            border-bottom: 1px solid #eee;
+            .info {
+              .name {
+                max-width: 278px;
+                img {
+                  margin-right: 6px;
+                  margin-left: 2px;
+                }
+                font-size: 16px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+              .stars {
+                color: #A7A7A7;
+                margin-top: 2px;
+
+                .star-count {
+                  font-size: 10px;
+                  display: inline-block;
+                  position: relative;
+                  top: -3px;
+                  left: 1px;
+                  height: 17px;
+                }
+
+                .icon {
+                  overflow: hidden;
+                  display: inline-block;
+                  font-size: 15px;
+                  height: 15px;
+                }
+              }
+              flex: 0 auto;
+            }
+            .action {
+              text-align: right;
+              flex: 1 auto;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.modal-backdrop.in {
+  background: rgba(227,230,230,0.95);
+  opacity: 1;
+  height: 100%;
+}
+
+@-webkit-keyframes translatedownload {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes translatewave {
+  from {
+    -webkit-transform: translateX(0px);
+  }
+  to {
+    -webkit-transform: translateX(20px);
+  }
+}
+
+@-webkit-keyframes translatedownload {
+  0% {
+    -webkit-transform: translateY(6px);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+    -webkit-transform: translateY(6px);
+  }
+  50% {
+    opacity: 1;
+    -webkit-transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: translateY(20px);
+  }
+}
