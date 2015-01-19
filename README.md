@@ -10,21 +10,13 @@ Kitematic is a simple application for managing Docker containers on Mac OS X.
 
 Kitematic's documentation and other information can be found at [http://kitematic.com/docs](http://kitematic.com/docs).
 
-## Development
-
-- Install any version of Node.js
-- Install meteor.js `curl https://install.meteor.com/ | sh`.
-- Install meteorite `npm install meteorite -g`
-- Install demeteorizer `npm install demeteorizer -g`
-- Run `./script/setup.sh` to download the binary requirements (things like virtualbox).
-
-### Running the development Server
+### Development
 
 - `./script/run.sh`
 
 ### Building the Mac OS X Package
 
-- `./script/dist.sh`
+- `./script/release`
 
 ## Uninstalling
 
