@@ -3,7 +3,7 @@ var Router = require('react-router');
 var Modal = require('react-bootstrap/Modal');
 var RetinaImage = require('react-retina-image');
 var $ = require('jquery');
-var ContainerStore = require('./ContainerStore.js');
+var ContainerStore = require('./ContainerStore');
 
 var ContainerModal = React.createClass({
   getInitialState: function () {
@@ -28,7 +28,6 @@ var ContainerModal = React.createClass({
     if (query === this.state.query) {
       return;
     }
-
     clearTimeout(this.timeout);
     var self = this;
     this.timeout = setTimeout(function () {
@@ -37,7 +36,8 @@ var ContainerModal = React.createClass({
   },
   handleClick: function (event) {
     var name = event.target.getAttribute('name');
-    ContainerStore.create(name);
+    ContainerStore.create(name, 'latest', function (err, containerName) {
+    });
   },
   render: function () {
     var top = this.state.results.splice(0, 7);
