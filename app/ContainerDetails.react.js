@@ -60,10 +60,11 @@ var ContainerDetails = React.createClass({
         });
       });
     });
+
   },
   componentWillMount: function () {
     this.update();
-    var self = this;
+     var self = this;
     var logs = [];
     var index = 0;
     docker.client().getContainer(this.getParams().name).logs({
@@ -105,10 +106,12 @@ var ContainerDetails = React.createClass({
     });
   },
   componentDidMount: function () {
-    ContainerStore.addChangeListener(this.update);
+    var containerName = this.getParams().name;
+    ContainerStore.addChangeListener(containerName, this.update);
   },
   componentWillUnmount: function () {
-    ContainerStore.removeChangeListener(this.update);
+    var containerName = this.getParams().name;
+    ContainerStore.removeChangeListener(containerName, this.update);
   },
   update: function () {
     var containerName = this.getParams().name;
@@ -123,6 +126,7 @@ var ContainerDetails = React.createClass({
     return div.innerHTML;
   },
   render: function () {
+    console.log('render details');
     var self = this;
 
     if (!this.state) {

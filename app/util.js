@@ -3,7 +3,6 @@ var fs = require('fs');
 var nodeCrypto = require('crypto');
 var request = require('request');
 var progress = require('request-progress');
-var ncp = require('ncp').ncp;
 var exec = require('exec');
 
 var Util = {

@@ -7,6 +7,8 @@ var _ = require('underscore');
 
 // Merge our store with Node's Event Emitter
 var ContainerStore = assign(EventEmitter.prototype, {
+  CONTAINERS: 'containers',
+  ACTIVE: 'active',
   _containers: {},
   _logs: {},
   _active: null,
@@ -70,11 +72,14 @@ var ContainerStore = assign(EventEmitter.prototype, {
           return;
         }
         var containers = {};
-        results.map(function (r) {
+        results.forEach(function (r) {
           containers[r.Name.replace('/', '')] = r;
         });
         self._containers = containers;
-        self.emit('change');
+        _.keys(self._containers).forEach(function(c) {
+          self.emit(c);
+        });
+        self.emit(self.CONTAINERS);
         callback(null);
       });
     });
@@ -211,7 +216,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
   },
   setActive: function (containerName) {
     this._active = containerName;
-    this.emit('change');
+    this.emit(self.ACTIVE);
   },
   active: function () {
     return this._active;
@@ -219,11 +224,11 @@ var ContainerStore = assign(EventEmitter.prototype, {
   logs: function (containerName) {
     return logs[containerId];
   },
-  addChangeListener: function(callback) {
-    this.on('change', callback);
+  addChangeListener: function(eventType, callback) {
+    this.on(eventType, callback);
   },
-  removeChangeListener: function(callback) {
-    this.removeListener('change', callback);
+  removeChangeListener: function(eventType, callback) {
+    this.removeListener(eventType, callback);
   },
 });
 

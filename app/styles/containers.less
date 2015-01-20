@@ -10,14 +10,15 @@
     .sidebar {
       display: flex;
       flex-direction: column;
-      min-width: 260px;
+      min-width: 240px;
       margin: 0;
       box-sizing: border-box;
       border-right: 1px solid #eee;
 
       .sidebar-header {
         flex: 0 auto;
-        min-width: 260px;
+        min-width: 240px;
+        min-height: 42px;
         display: flex;
         border-bottom: 1px solid transparent;
         transition: border-bottom 0.25s;
@@ -79,14 +80,9 @@
         }
 
         ul {
-          padding: 0;
           margin: 0;
-          min-width: 260px;
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          right: 0;
-          left: 0;
+          min-width: 240px;
+          padding: 0;
 
           display: flex;
           flex-direction: column;
