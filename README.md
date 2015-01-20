@@ -12,10 +12,12 @@ Kitematic's documentation and other information can be found at [http://kitemati
 
 ### Development
 
-Kitematic uses a special version of node npm (found under `script/npm`) so packages are built against the same v8 headers as atom-shell. To run the app in development:
-
+- `sudo npm install -g less`
 - `./script/npm install`
-- `./script/run`
+
+To run the app in development:
+
+- `./script/gulp`
 
 ### Building the Mac OS X Package
 

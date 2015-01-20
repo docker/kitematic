@@ -9,6 +9,7 @@ var Header = require('./Header.react');
 var async = require('async');
 var _ = require('underscore');
 var docker = require('./docker');
+var $ = require('jquery');
 
 var Link = Router.Link;
 var RouteHandler = Router.RouteHandler;
@@ -29,13 +30,18 @@ var ContainerList = React.createClass({
       active = name;
       ContainerStore.setActive(name);
     }
-    ContainerStore.addChangeListener(this.update);
+    ContainerStore.addChangeListener(ContainerStore.CONTAINERS, this.update);
+    ContainerStore.addChangeListener(ContainerStore.ACTIVE, this.update);
   },
   componentWillMount: function () {
     this._start = Date.now();
   },
   componentWillUnmount: function () {
-    ContainerStore.removeChangeListener(this.update);
+    ContainerStore.removeChangeListener(ContainerStore.CONTAINERS, this.update);
+    ContainerStore.removeChangeListener(ContainerStore.ACTIVE, this.update);
+  },
+  componentDidUpdate: function () {
+
   },
   update: function () {
     var containers = _.values(ContainerStore.containers()).sort(function (a, b) {
