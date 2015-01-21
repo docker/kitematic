@@ -19,6 +19,7 @@ var ContainerDetails = React.createClass({
     };
   },
   componentWillReceiveProps: function () {
+    console.log('props');
     this.update();
     var self = this;
     var logs = [];
@@ -60,63 +61,25 @@ var ContainerDetails = React.createClass({
         });
       });
     });
-
   },
   componentWillMount: function () {
     this.update();
-     var self = this;
-    var logs = [];
-    var index = 0;
-    docker.client().getContainer(this.getParams().name).logs({
-      follow: false,
-      stdout: true,
-      timestamps: true
-    }, function (err, stream) {
-      stream.setEncoding('utf8');
-      stream.on('data', function (buf) {
-        // Every other message is a header
-        if (index % 2 === 1) {
-          var time = buf.substr(0,buf.indexOf(' '));
-          var msg = buf.substr(buf.indexOf(' ')+1);
-          logs.push(convert.toHtml(self._escapeHTML(msg)));
-        }
-        index += 1;
-      });
-      stream.on('end', function (buf) {
-        self.setState({logs: logs});
-        docker.client().getContainer(self.getParams().name).logs({
-          follow: true,
-          stdout: true,
-          timestamps: true,
-          tail: 0
-        }, function (err, stream) {
-          stream.setEncoding('utf8');
-          stream.on('data', function (buf) {
-            // Every other message is a header
-            if (index % 2 === 1) {
-              var time = buf.substr(0,buf.indexOf(' '));
-              var msg = buf.substr(buf.indexOf(' ')+1);
-              logs.push(convert.toHtml(self._escapeHTML(msg)));
-              self.setState({logs: logs});
-            }
-            index += 1;
-          });
-        });
-      });
-    });
   },
   componentDidMount: function () {
-    var containerName = this.getParams().name;
-    ContainerStore.addChangeListener(containerName, this.update);
+    ContainerStore.addChangeListener(ContainerStore.CONTAINERS, this.update);
+    ContainerStore.addChangeListener(ContainerStore.PROGRESS, this.update);
   },
   componentWillUnmount: function () {
-    var containerName = this.getParams().name;
-    ContainerStore.removeChangeListener(containerName, this.update);
+    ContainerStore.removeChangeListener(ContainerStore.CONTAINERS, this.update);
+    ContainerStore.removeChangeListener(ContainerStore.PROGRESS, this.update);
   },
   update: function () {
-    var containerName = this.getParams().name;
+    var name = this.getParams().name;
+    var container = ContainerStore.container(name);
+    var progress = ContainerStore.progress(name);
     this.setState({
-      container: ContainerStore.containers()[containerName]
+      progress: progress,
+      container: container
     });
   },
   _escapeHTML: function (html) {
@@ -137,6 +100,10 @@ var ContainerDetails = React.createClass({
       return <p key={i} dangerouslySetInnerHTML={{__html: l}}></p>;
     });
 
+    if (!this.state.container) {
+      return false;
+    }
+
     var state;
     if (this.state.container.State.Running) {
       state = <h2 className="status">running</h2>;
@@ -148,6 +115,7 @@ var ContainerDetails = React.createClass({
       <div className="details">
         <div className="details-header">
           <h1>{this.state.container.Name.replace('/', '')}</h1>
+          <h2>{this.state.progress}</h2>
         </div>
         <div className="details-logs">
           <div className="logs">

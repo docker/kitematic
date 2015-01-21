@@ -8,6 +8,7 @@ var ContainerStore = require('./ContainerStore');
 var Navigation = Router.Navigation;
 
 var ContainerModal = React.createClass({
+  _searchRequest: null,
   getInitialState: function () {
     return {
       query: '',
@@ -19,9 +20,11 @@ var ContainerModal = React.createClass({
   },
   search: function (query) {
     var self = this;
-    $.get('https://registry.hub.docker.com/v1/search?q=' + query, function (result) {
-      self.setState(result);
-      console.log(result);
+    this._searchRequest = $.get('https://registry.hub.docker.com/v1/search?q=' + query, function (result) {
+      if (self.isMounted()) {
+        self.setState(result);
+        console.log(result);
+      }
     });
   },
   handleChange: function (e) {
@@ -29,6 +32,11 @@ var ContainerModal = React.createClass({
 
     if (query === this.state.query) {
       return;
+    }
+
+    if (this._searchRequest) {
+      this._searchRequest.abort();
+      this._searchRequest = null;
     }
     clearTimeout(this.timeout);
     var self = this;

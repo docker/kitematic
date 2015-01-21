@@ -1,3 +1,6 @@
+var async = require('async');
+var _ = require('underscore');
+var $ = require('jquery');
 var React = require('react/addons');
 var Router = require('react-router');
 var Modal = require('react-bootstrap/Modal');
@@ -6,10 +9,7 @@ var ModalTrigger = require('react-bootstrap/ModalTrigger');
 var ContainerModal = require('./ContainerModal.react');
 var ContainerStore = require('./ContainerStore');
 var Header = require('./Header.react');
-var async = require('async');
-var _ = require('underscore');
 var docker = require('./docker');
-var $ = require('jquery');
 
 var Link = Router.Link;
 var RouteHandler = Router.RouteHandler;
@@ -24,37 +24,34 @@ var ContainerList = React.createClass({
     };
   },
   componentDidMount: function () {
-    this.update();
-    if (this.state.containers.length > 0) {
-      var name = this.state.containers[0].Name.replace('/', '');
-      active = name;
-      ContainerStore.setActive(name);
-    }
-    ContainerStore.addChangeListener(ContainerStore.CONTAINERS, this.update);
-    ContainerStore.addChangeListener(ContainerStore.ACTIVE, this.update);
+    this.updateContainers();
+    ContainerStore.addChangeListener(ContainerStore.ACTIVE, this.updateActive);
+    ContainerStore.addChangeListener(ContainerStore.CONTAINERS, this.updateContainers);
   },
   componentWillMount: function () {
     this._start = Date.now();
   },
   componentWillUnmount: function () {
-    ContainerStore.removeChangeListener(ContainerStore.CONTAINERS, this.update);
-    ContainerStore.removeChangeListener(ContainerStore.ACTIVE, this.update);
+    ContainerStore.removeChangeListener(ContainerStore.CONTAINERS, this.updateContainers);
+    ContainerStore.removeChangeListener(ContainerStore.ACTIVE, updateActive.update);
   },
-  componentDidUpdate: function () {
-
+  updateActive: function () {
+    if (ContainerStore.active()) {
+      this.transitionTo('container', {name: ContainerStore.active()});
+    }
   },
-  update: function () {
+  updateContainers: function () {
+    // Sort by name
     var containers = _.values(ContainerStore.containers()).sort(function (a, b) {
       return a.Name.localeCompare(b.Name);
     });
 
-    this.setState({
-      active: ContainerStore.active(),
-      containers: containers
-    });
+    this.setState({containers: containers});
 
-    if (ContainerStore.active()) {
-      this.transitionTo('container', {name: ContainerStore.active()});
+    // Transition to the active container or set one
+    var active = ContainerStore.active();
+    if (!ContainerStore.container(active) && containers.length > 0) {
+      ContainerStore.setActive(containers[0].Name.replace('/', ''));
     }
   },
   handleClick: function (containerId) {
@@ -77,13 +74,12 @@ var ContainerList = React.createClass({
 
       var imageName = downloadingImage || container.Config.Image;
 
-      var state;
-
       // Synchronize all animations
       var style = {
         WebkitAnimationDelay: (self._start - Date.now()) + 'ms'
       };
 
+      var state;
       if (downloading) {
         state = <div className="state state-downloading"><div style={style} className="downloading-arrow"></div></div>;
       } else if (container.State.Running && !container.State.Paused) {
@@ -123,52 +119,4 @@ var ContainerList = React.createClass({
   }
 });
 
-var Containers = React.createClass({
-  getInitialState: function () {
-    return {
-      sidebarOffset: 0
-    };
-  },
-  handleScroll: function (e) {
-    if (e.target.scrollTop > 0 && !this.state.sidebarOffset) {
-      this.setState({
-        sidebarOffset: e.target.scrollTop
-      });
-    } else if (e.target.scrollTop === 0 && this.state.sidebarOffset) {
-      this.setState({
-        sidebarOffset: 0
-      });
-    }
-  },
-  render: function () {
-    var sidebarHeaderClass = 'sidebar-header';
-    if (this.state.sidebarOffset) {
-      sidebarHeaderClass += ' sep';
-    }
-    return (
-      <div className="containers">
-        <Header/>
-        <div className="containers-body">
-          <div className="sidebar">
-            <section className={sidebarHeaderClass}>
-              <h3>containers</h3>
-              <div className="create">
-                <ModalTrigger modal={<ContainerModal/>}>
-                  <div className="wrapper">
-                    <span className="icon icon-add-3"></span>
-                  </div>
-                </ModalTrigger>
-              </div>
-            </section>
-            <section className="sidebar-containers" onScroll={this.handleScroll}>
-              <ContainerList/>
-            </section>
-          </div>
-          <RouteHandler/>
-        </div>
-      </div>
-    );
-  }
-});
-
-module.exports = Containers;
+module.exports = ContainerList;
