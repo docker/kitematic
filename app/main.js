@@ -8,8 +8,8 @@ var boot2docker = require('./boot2docker.js');
 var Setup = require('./Setup.react');
 var Containers = require('./Containers.react');
 var ContainerDetails = require('./ContainerDetails.react');
-var ContainerStore = require('./ContainerStore.js');
-var Radial = require('./Radial.react.js');
+var ContainerStore = require('./ContainerStore');
+var Radial = require('./Radial.react');
 
 var Route = Router.Route;
 var NotFoundRoute = Router.NotFoundRoute;
@@ -17,20 +17,20 @@ var DefaultRoute = Router.DefaultRoute;
 var Link = Router.Link;
 var RouteHandler = Router.RouteHandler;
 
+var App = React.createClass({
+  render: function () {
+    return (
+      <RouteHandler/>
+    );
+  }
+});
+
 var NoContainers = React.createClass({
   render: function () {
     return (
       <div>
         No Containers
       </div>
-    );
-  }
-});
-
-var App = React.createClass({
-  render: function () {
-    return (
-      <RouteHandler/>
     );
   }
 });

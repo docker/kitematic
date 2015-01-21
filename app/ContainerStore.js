@@ -1,89 +1,21 @@
 var EventEmitter = require('events').EventEmitter;
 var async = require('async');
 var assign = require('react/lib/Object.assign');
-var docker = require('./docker.js');
+var docker = require('./docker');
+var registry = require('./registry');
 var $ = require('jquery');
 var _ = require('underscore');
 
 // Merge our store with Node's Event Emitter
 var ContainerStore = assign(EventEmitter.prototype, {
   CONTAINERS: 'containers',
+  PROGRESS: 'progress',
+  LOGS: 'logs',
   ACTIVE: 'active',
   _containers: {},
+  _progress: {},
   _logs: {},
   _active: null,
-  init: function (callback) {
-    // TODO: Load cached data from db on loading
-
-    // Refresh with docker & hook into events
-    var self = this;
-    this.update(function (err) {
-      callback();
-      var downloading = _.filter(_.values(self._containers), function (container) {
-        var env = container.Config.Env;
-        return _.indexOf(env, 'KITEMATIC_DOWNLOADING=true') !== -1;
-      });
-
-      // Recover any pulls that were happening
-      downloading.forEach(function (container) {
-        var env = _.object(container.Config.Env.map(function (e) {
-          return e.split('=');
-        }));
-        docker.client().pull(env.KITEMATIC_DOWNLOADING_IMAGE, function (err, stream) {
-          stream.setEncoding('utf8');
-          stream.on('data', function (data) {
-            console.log(data);
-          });
-          stream.on('end', function () {
-            self._createContainer(env.KITEMATIC_DOWNLOADING_IMAGE, container.Name.replace('/', ''), function () {
-              console.log('RECOVERED');
-            });
-          });
-        });
-      });
-
-      docker.client().getEvents(function (err, stream) {
-        stream.setEncoding('utf8');
-        stream.on('data', function (data) {
-          console.log(data);
-
-          // TODO: Dont refresh on deleting placeholder containers
-          self.update(function (err) {
-            console.log('Updated container data.');
-          });
-        });
-      });
-    });
-  },
-  update: function (callback) {
-    var self = this;
-    docker.client().listContainers({all: true}, function (err, containers) {
-      if (err) {
-        callback(err);
-        return;
-      }
-      async.map(containers, function(container, callback) {
-        docker.client().getContainer(container.Id).inspect(function (err, data) {
-          callback(err, data);
-        });
-      }, function (err, results) {
-        if (err) {
-          callback(err);
-          return;
-        }
-        var containers = {};
-        results.forEach(function (r) {
-          containers[r.Name.replace('/', '')] = r;
-        });
-        self._containers = containers;
-        _.keys(self._containers).forEach(function(c) {
-          self.emit(c);
-        });
-        self.emit(self.CONTAINERS);
-        callback(null);
-      });
-    });
-  },
   _pullScratchImage: function (callback) {
     var image = docker.client().getImage('scratch:latest');
     image.inspect(function (err, data) {
@@ -163,41 +95,156 @@ var ContainerStore = assign(EventEmitter.prototype, {
       }
     }
   },
-  // Returns all containers
-  containers: function() {
-    return this._containers;
+  init: function (callback) {
+    // TODO: Load cached data from db on loading
+
+    // Refresh with docker & hook into events
+    var self = this;
+    this.update(function (err) {
+      callback();
+      var downloading = _.filter(_.values(self._containers), function (container) {
+        var env = container.Config.Env;
+        return _.indexOf(env, 'KITEMATIC_DOWNLOADING=true') !== -1;
+      });
+
+      // Recover any pulls that were happening
+      downloading.forEach(function (container) {
+        var env = _.object(container.Config.Env.map(function (e) {
+          return e.split('=');
+        }));
+        docker.client().pull(env.KITEMATIC_DOWNLOADING_IMAGE, function (err, stream) {
+          stream.setEncoding('utf8');
+          stream.on('data', function (data) {
+            console.log(data);
+          });
+          stream.on('end', function () {
+            self._createContainer(env.KITEMATIC_DOWNLOADING_IMAGE, container.Name.replace('/', ''), function () {
+
+            });
+          });
+        });
+      });
+
+      docker.client().getEvents(function (err, stream) {
+        stream.setEncoding('utf8');
+        stream.on('data', function (data) {
+          console.log(data);
+
+          // TODO: Dont refresh on deleting placeholder containers
+          var deletingPlaceholder = data.status === 'destroy' && self.container(data.id) && self.container(data.id).Config.Env.indexOf('KITEMATIC_DOWNLOADING=true') !== -1;
+          console.log(deletingPlaceholder);
+          if (!deletingPlaceholder) {
+            self.update(function (err) {
+              console.log('Updated container data.');
+            });
+          }
+        });
+      });
+    });
+  },
+  update: function (callback) {
+    var self = this;
+    docker.client().listContainers({all: true}, function (err, containers) {
+      if (err) {
+        callback(err);
+        return;
+      }
+      async.map(containers, function(container, callback) {
+        docker.client().getContainer(container.Id).inspect(function (err, data) {
+          callback(err, data);
+        });
+      }, function (err, results) {
+        if (err) {
+          callback(err);
+          return;
+        }
+        var containers = {};
+        results.forEach(function (r) {
+          containers[r.Name.replace('/', '')] = r;
+        });
+        self._containers = containers;
+        self.emit(self.CONTAINERS);
+        callback(null);
+      });
+    });
   },
   create: function (repository, tag, callback) {
-    var containerName = this._generateName(repository);
     tag = tag || 'latest';
-    var imageName = repository + ':' + tag;
-    // Check if image is not local or already being downloaded
-    console.log('Creating container.');
     var self = this;
+    var imageName = repository + ':' + tag;
+    var containerName = this._generateName(repository);
     var image = docker.client().getImage(imageName);
-    console.log(image);
-    image.inspect(function (err, data) {
-      // TODO: Get image size from registry API
-      /*$.get('https://registry.hub.docker.com/v1/repositories/' + repository + '/tags/' + tag, function (data) {
 
-      });*/
+    image.inspect(function (err, data) {
       if (!data) {
         // Pull image
         self._createPlaceholderContainer(imageName, containerName, function (err, container) {
           if (err) {
             console.log(err);
           }
-          console.log('Placeholder container created.');
-          docker.client().pull(imageName, function (err, stream) {
-            console.log(containerName);
-            callback(null, containerName);
-            stream.setEncoding('utf8');
-            stream.on('data', function (data) {
-              // TODO: update progress
-              //console.log(data);
-            });
-            stream.on('end', function () {
-              self._createContainer(imageName, containerName, function () {
+          registry.layers(repository, tag, function (err, layerSizes) {
+            if (err) {
+              callback(err);
+            }
+
+            // TODO: Support v2 registry API
+            // TODO: clean this up- It's messy to work with pulls from both the v1 and v2 registry APIs
+            // Use the per-layer pull progress % to update the total progress.
+            docker.client().listImages({all: 1}, function(err, images) {
+              var existingIds = new Set(images.map(function (image) {
+                return image.Id.slice(0, 12);
+              }));
+              var layersToDownload = layerSizes.filter(function (layerSize) {
+                return !existingIds.has(layerSize.Id);
+              });
+
+              var totalBytes = layersToDownload.map(function (s) { return s.size; }).reduce(function (pv, sv) { return pv + sv; }, 0);
+              docker.client().pull(imageName, function (err, stream) {
+                callback(null, containerName);
+                stream.setEncoding('utf8');
+
+                var layerProgress = layersToDownload.reduce(function (r, layer) {
+                  if (_.findWhere(images, {Id: layer.Id})) {
+                    r[layer.Id] = 100;
+                  } else {
+                    r[layer.Id] = 0;
+                  }
+                  return r;
+                }, {});
+
+                self._progress[containerName] = 0;
+                self.emit(containerName);
+
+                stream.on('data', function (str) {
+                  console.log(str);
+                  var data = JSON.parse(str);
+
+                  if (data.status === 'Already exists') {
+                    layerProgress[data.id] = 1;
+                  } else if (data.status === 'Downloading') {
+                    var current = data.progressDetail.current;
+                    var total = data.progressDetail.total;
+                    var layerFraction = current / total;
+                    layerProgress[data.id] = layerFraction;
+                  }
+
+                  var chunks = layersToDownload.map(function (s) {
+                    return layerProgress[s.Id] * s.size;
+                  });
+
+                  var totalReceived = chunks.reduce(function (pv, sv) {
+                    return pv + sv;
+                  });
+
+                  var totalProgress = totalReceived / totalBytes;
+                  self._progress[containerName] = totalProgress;
+                  self.emit(self.PROGRESS);
+                });
+                stream.on('end', function () {
+                  self._createContainer(imageName, containerName, function () {
+                    delete self._progress[containerName];
+                  });
+                });
               });
             });
           });
@@ -210,19 +257,27 @@ var ContainerStore = assign(EventEmitter.prototype, {
         });
       }
     });
-      // If so then create a container w/ kitematic-only 'downloading state'
-      // Pull image
-      // When image is done pulling then
   },
-  setActive: function (containerName) {
-    this._active = containerName;
-    this.emit(self.ACTIVE);
+  setActive: function (name) {
+    console.log('set active');
+    this._active = name;
+    this.emit(this.ACTIVE);
   },
   active: function () {
     return this._active;
   },
-  logs: function (containerName) {
-    return logs[containerId];
+  // Returns all containers
+  containers: function() {
+    return this._containers;
+  },
+  container: function (name) {
+    return this._containers[name];
+  },
+  progress: function (name) {
+    return this._progress[name];
+  },
+  logs: function (name) {
+    return logs[name];
   },
   addChangeListener: function(eventType, callback) {
     this.on(eventType, callback);
