@@ -1,0 +1,10 @@
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+source $DIR/env
+
+if [ -f $DIR/identity ]; then
+  source $DIR/identity
+fi
+
+gulp release

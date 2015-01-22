@@ -1,0 +1,283 @@
+.containers {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  .containers-body {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      min-width: 240px;
+      margin: 0;
+      box-sizing: border-box;
+      border-right: 1px solid #eee;
+
+      .sidebar-header {
+        flex: 0 auto;
+        min-width: 240px;
+        min-height: 42px;
+        display: flex;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom 0.25s;
+
+        &.sep {
+          border-bottom: 1px solid #eee;
+          box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.03);
+        }
+
+        h3 {
+          align-self: flex-start;
+          color: #CCD3D5;
+          font-size: 18px;
+          font-weight: 400;
+          padding: 0 24px;
+          margin: 10px 0 0;
+          font-variant: small-caps;
+          display: inline-block;
+          position: relative;
+        }
+
+        .create {
+          flex: 1 auto;
+          text-align: right;
+
+          .wrapper {
+            text-align: center;
+            display: inline-block;
+            width: 50px;
+
+            span.icon {
+              margin-top: 5px;
+              margin-left: auto;
+              display: inline-block;
+              border-radius: 20px;
+              font-size: 26px;
+              color: @brand-primary;
+            }
+
+            &:hover {
+              span.icon {
+                color: darken(@brand-primary, 20%);
+              }
+            }
+          }
+
+        }
+      }
+
+      .sidebar-containers {
+        position: relative;
+        flex: 1 auto;
+        overflow-y: scroll;
+        overflow-x: hidden;
+        box-sizing: border-box;
+
+        &.sep {
+          border-top: 1px solid #eee;
+        }
+
+        ul {
+          margin: 0;
+          min-width: 240px;
+          padding: 0;
+
+          display: flex;
+          flex-direction: column;
+
+          a {
+            color: inherit;
+            flex-shrink: 0;
+            cursor: default;
+
+            &.active {
+                background: #eee;
+                border-bottom: none;
+
+              &:hover {
+              }
+            }
+
+            &:hover {
+              text-decoration: none;
+              cursor: default;
+            }
+            &:focus {
+              text-decoration: none;
+            }
+          }
+
+          li {
+            vertical-align: middle;
+            padding-bottom: 14px;
+            margin: 16px 24px 0px;
+
+            display: flex;
+            flex-direction: row;
+
+
+            .info {
+              font-size: 13px;
+              margin-left: 16px;
+              .name {
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+                font-size: 14px;
+                font-weight: 400;
+                color: #555;
+              }
+              .image {
+                color: #999;
+                font-size: 12px;
+                font-weight: 400;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+              }
+            }
+
+            .state {
+              margin-top: 9px;
+              display: inline-block;
+              position: relative;
+              min-width: 20px;
+              height: 20px;
+            }
+
+            .state-error {
+              .at2x('error.png', 20px, 20px);
+            }
+
+            .state-stopped {
+              .at2x('stopped.png', 20px, 20px);
+            }
+
+            .state-paused {
+              .at2x('paused.png', 20px, 20px);
+            }
+
+            .state-downloading {
+              .at2x('downloading.png', 20px, 20px);
+              overflow: hidden;
+
+              .downloading-arrow {
+                width: 20px;
+                height: 20px;
+                .at2x('downloading-arrow.png', 20px, 20px);
+                position: absolute;
+                // background-repeat: repeat;
+                -webkit-animation-name: translatedownload;
+                -webkit-animation-duration: 1.8s;
+                -webkit-animation-iteration-count: infinite;
+                -webkit-animation-timing-function: linear;
+              }
+            }
+
+            .state-running {
+              .at2x('running.png', 20px, 20px);
+              overflow: hidden;
+              // -webkit-mask-image: -webkit-radial-gradient(circle, white, black);
+
+              .runningwave {
+                position: absolute;
+                width: 40px;
+                height: 20px;
+                left: -20px;
+                .at2x('runningwave.png', 20px, 20px);
+                // background-repeat: repeat;
+                -webkit-animation-name: translatewave;
+                -webkit-animation-duration: 8.0s;
+                -webkit-animation-iteration-count: infinite;
+                -webkit-animation-timing-function: linear;
+              }
+            }
+
+            .state-restarting {
+              display: inline-block;
+              width: 20px;
+              height: 20px;
+              .at2x('restarting.png', 20px, 20px);
+              background-repeat: repeat-x;
+              -webkit-animation-delay: -1s;
+              -webkit-animation-name: rotate;
+              -webkit-animation-duration: 3.0s;
+              -webkit-animation-iteration-count: infinite;
+              -webkit-animation-timing-function: linear;
+            }
+          }
+        }
+      }
+
+      .status {
+        font-size: 12px;
+        font-variant: small-caps;
+        color: @brand-primary;
+      }
+    }
+
+    .details {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+
+      flex: 1;
+
+      display: flex;
+      flex-direction: column;
+
+      .details-header {
+        flex: 0 auto;
+        display: flex;
+        flex-direction: row;
+        padding: 0px 45px 14px;
+        position: relative;
+        a {
+          position: absolute;
+          right: 30px;
+          top: -4px;
+        }
+        h1 {
+          font-size: 24px;
+          margin: 0;
+        }
+        h2 {
+          margin-left: 18px;
+          font-size: 14px;
+          font-variant: small-caps;
+
+          &.status {
+            color: @brand-success;
+          }
+
+          &.image {
+
+          }
+        }
+      }
+
+      .details-progress {
+        margin: 26% auto 0;
+        width: 300px;
+      }
+
+      .details-logs {
+        flex: 1;
+        overflow: auto;
+        .logs {
+          user-select: text;
+          font-family: Menlo;
+          font-size: 12px;
+          padding: 44px 45px;
+          color: #595D5E;
+          white-space: pre-wrap;
+          p {
+            margin: 0 6px;
+          }
+        }
+      }
+    }
+  }
+}
