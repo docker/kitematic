@@ -1,0 +1,65 @@
+//
+// Load core variables and mixins
+// --------------------------------------------------
+
+@import "bootstrap/variables.less";
+@import "bootstrap/mixins.less";
+
+
+//
+// Buttons
+// --------------------------------------------------
+
+// Common styles
+.btn-default,
+.btn-primary,
+.btn-success,
+.btn-info,
+.btn-warning,
+.btn-danger {
+
+}
+
+// Mixin for generating new styles
+.btn-styles(@btn-color: #555) {
+  .reset-filter(); // Disable gradients for IE9 because filter bleeds through rounded corners
+  background-repeat: repeat-x;
+  // border-color: darken(@btn-color, 14%);
+
+  &:hover,
+  &:focus  {
+    background-color: darken(@btn-color, 12%);
+  }
+
+  &:disabled,
+  &[disabled] {
+    background-color: darken(@btn-color, 12%);
+  }
+}
+
+// Common styles
+.btn {
+  border-radius: 25px;
+  box-shadow: none;
+  font-weight: 400;
+  text-shadow: none;
+  // Remove the gradient for the pressed/active state
+  &:active,
+  &.active {
+    background-image: none;
+  }
+
+  &:focus,
+  &.focus {
+    box-shadow: none;
+    outline: none !important;
+  }
+}
+
+// Apply the mixin to the buttons
+.btn-default { .btn-styles(@btn-default-bg); }
+.btn-primary { .btn-styles(@btn-primary-bg); }
+.btn-success { .btn-styles(@btn-success-bg); }
+.btn-info    { .btn-styles(@btn-info-bg); }
+.btn-warning { .btn-styles(@btn-warning-bg); }
+.btn-danger  { .btn-styles(@btn-danger-bg); }
