@@ -1,18 +1,21 @@
+var async = require('async');
+var $ = require('jquery');
 var React = require('react');
 var Router = require('react-router');
 var Modal = require('react-bootstrap/Modal');
 var RetinaImage = require('react-retina-image');
-var $ = require('jquery');
 var ContainerStore = require('./ContainerStore');
 
 var Navigation = Router.Navigation;
 
 var ContainerModal = React.createClass({
+  mixins: [Navigation],
   _searchRequest: null,
   getInitialState: function () {
     return {
       query: '',
-      results: []
+      results: [],
+      recommended: ContainerStore.recommended()
     };
   },
   componentDidMount: function () {
@@ -21,6 +24,8 @@ var ContainerModal = React.createClass({
   search: function (query) {
     var self = this;
     this._searchRequest = $.get('https://registry.hub.docker.com/v1/search?q=' + query, function (result) {
+      self._searchRequest.abort();
+      self._searchRequest = null;
       if (self.isMounted()) {
         self.setState(result);
         console.log(result);
@@ -35,6 +40,7 @@ var ContainerModal = React.createClass({
     }
 
     if (this._searchRequest) {
+      console.log('Cancel');
       this._searchRequest.abort();
       this._searchRequest = null;
     }
@@ -48,14 +54,20 @@ var ContainerModal = React.createClass({
     var name = event.target.getAttribute('name');
     var self = this;
     ContainerStore.create(name, 'latest', function (err, containerName) {
-      ContainerStore.setActive(containerName);
+      // this.transitionTo('containers', {container: containerName});
       self.props.onRequestHide();
-    });
+    }.bind(this));
   },
   render: function () {
-    var top = this.state.results.splice(0, 7);
     var self = this;
-    var results = top.map(function (r) {
+
+    var data;
+    if (this.state.query) {
+      data = this.state.results.splice(0, 7);
+    } else {
+      data = this.state.recommended;
+    }
+    var results = data.map(function (r) {
       var name;
       if (r.is_official) {
         name = <span><RetinaImage src="official.png"/>{r.name}</span>;
@@ -79,6 +91,14 @@ var ContainerModal = React.createClass({
         </li>
       );
     });
+
+    var title;
+    if (this.state.query) {
+      title = <div className="title">Results</div>;
+    } else {
+      title = <div className="title">Recommended</div>;
+    }
+
     return (
       <Modal {...this.props} animation={false} className="create-modal">
         <div className="modal-body">
@@ -88,7 +108,7 @@ var ContainerModal = React.createClass({
               <a href="#"><span>What&#39;s an image?</span></a>
             </div>
             <div className="results">
-              <div className="title">Results</div>
+              {title}
               <ul>
                 {results}
               </ul>

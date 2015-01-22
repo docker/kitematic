@@ -233,7 +233,12 @@
         display: flex;
         flex-direction: row;
         padding: 0px 45px 14px;
-        background: white;
+        position: relative;
+        a {
+          position: absolute;
+          right: 30px;
+          top: -4px;
+        }
         h1 {
           font-size: 24px;
           margin: 0;
@@ -251,6 +256,11 @@
 
           }
         }
+      }
+
+      .details-progress {
+        margin: 26% auto 0;
+        width: 300px;
       }
 
       .details-logs {

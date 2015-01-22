@@ -1,15 +1,19 @@
 var _ = require('underscore');
 var React = require('react');
 var Router = require('react-router');
+var Convert = require('ansi-to-html');
+var convert = new Convert();
+var ContainerStore = require('./ContainerStore');
+var docker = require('./docker');
+var exec = require('exec');
+var boot2docker = require('./boot2docker');
+var ProgressBar = require('react-bootstrap/ProgressBar');
+
 var Route = Router.Route;
 var NotFoundRoute = Router.NotFoundRoute;
 var DefaultRoute = Router.DefaultRoute;
 var Link = Router.Link;
 var RouteHandler = Router.RouteHandler;
-var Convert = require('ansi-to-html');
-var convert = new Convert();
-var ContainerStore = require('./ContainerStore');
-var docker = require('./docker');
 
 var ContainerDetails = React.createClass({
   mixins: [Router.State],
@@ -19,14 +23,17 @@ var ContainerDetails = React.createClass({
     };
   },
   componentWillReceiveProps: function () {
-    console.log('props');
     this.update();
+    this.setState({
+      logs: []
+    });
     var self = this;
     var logs = [];
     var index = 0;
     docker.client().getContainer(this.getParams().name).logs({
       follow: false,
       stdout: true,
+      stderr: true,
       timestamps: true
     }, function (err, stream) {
       stream.setEncoding('utf8');
@@ -44,6 +51,7 @@ var ContainerDetails = React.createClass({
         docker.client().getContainer(self.getParams().name).logs({
           follow: true,
           stdout: true,
+          stderr: true,
           timestamps: true,
           tail: 0
         }, function (err, stream) {
@@ -75,11 +83,9 @@ var ContainerDetails = React.createClass({
   },
   update: function () {
     var name = this.getParams().name;
-    var container = ContainerStore.container(name);
-    var progress = ContainerStore.progress(name);
     this.setState({
-      progress: progress,
-      container: container
+      container: ContainerStore.container(name),
+      progress: ContainerStore.progress(name)
     });
   },
   _escapeHTML: function (html) {
@@ -88,8 +94,32 @@ var ContainerDetails = React.createClass({
     div.appendChild(text);
     return div.innerHTML;
   },
+  handleClick: function (name) {
+    var container = this.state.container;
+    boot2docker.ip(function (err, ip) {
+      var ports = _.map(container.NetworkSettings.Ports, function (value, key) {
+        var portProtocolPair = key.split('/');
+        var res = {
+          'port': portProtocolPair[0],
+          'protocol': portProtocolPair[1]
+        };
+        if (value && value.length) {
+          var port = value[0].HostPort;
+          res.host = ip;
+          res.port = port;
+          res.url = 'http://' + ip + ':' + port;
+        } else {
+          return null;
+        }
+        return res;
+      });
+      console.log(ports);
+      exec(['open', ports[0].url], function (err) {
+        if (err) { throw err; }
+      });
+    });
+  },
   render: function () {
-    console.log('render details');
     var self = this;
 
     if (!this.state) {
@@ -111,12 +141,32 @@ var ContainerDetails = React.createClass({
       state = <h2 className="status">restarting</h2>;
     }
 
+    var progress;
+    if (this.state.progress > 0 && this.state.progress != 1) {
+      progress = (
+        <div className="details-progress">
+          <ProgressBar now={this.state.progress * 100} label="%(percent)s%" />
+        </div>
+      );
+    } else {
+      progress = <div></div>;
+    }
+
+    var button;
+    if (this.state.progress === 1) {
+      button = <a className="btn btn-primary" onClick={this.handleClick}>View</a>;
+    } else {
+      button = <a className="btn btn-primary disabled" onClick={this.handleClick}>View</a>;
+    }
+
+    var name = this.state.container.Name.replace('/', '');
+
     return (
       <div className="details">
         <div className="details-header">
-          <h1>{this.state.container.Name.replace('/', '')}</h1>
-          <h2>{this.state.progress}</h2>
+          <h1>{name}</h1> <a className="btn btn-primary" onClick={this.handleClick}>View</a>
         </div>
+        {progress}
         <div className="details-logs">
           <div className="logs">
             {logs}
