@@ -11,11 +11,11 @@ var ContainerStore = assign(EventEmitter.prototype, {
   CONTAINERS: 'containers',
   PROGRESS: 'progress',
   LOGS: 'logs',
-  ACTIVE: 'active',
+  RECOMMENDED: 'recommended',
+  _recommended: [],
   _containers: {},
   _progress: {},
   _logs: {},
-  _active: null,
   _pullScratchImage: function (callback) {
     var image = docker.client().getImage('scratch:latest');
     image.inspect(function (err, data) {
@@ -101,7 +101,9 @@ var ContainerStore = assign(EventEmitter.prototype, {
     // Refresh with docker & hook into events
     var self = this;
     this.update(function (err) {
-      callback();
+      self.updateRecommended(function (err) {
+        callback();
+      });
       var downloading = _.filter(_.values(self._containers), function (container) {
         var env = container.Config.Env;
         return _.indexOf(env, 'KITEMATIC_DOWNLOADING=true') !== -1;
@@ -168,6 +170,30 @@ var ContainerStore = assign(EventEmitter.prototype, {
       });
     });
   },
+  updateRecommended: function (callback) {
+    var self = this;
+    $.ajax({
+      url: 'https://kitematic.com/recommended.json',
+      dataType: 'json',
+      success: function (res, status) {
+        var recommended = res.recommended;
+        async.map(recommended, function (repository, callback) {
+          $.get('https://registry.hub.docker.com/v1/search?q=' + repository, function (data) {
+            var results = data.results;
+            callback(null, _.find(results, function (r) {
+              return r.name === repository;
+            }));
+          });
+        }, function (err, results) {
+          self._recommended = results;
+          callback();
+        });
+      },
+      error: function (err) {
+        console.log(err);
+      }
+    });
+  },
   create: function (repository, tag, callback) {
     tag = tag || 'latest';
     var self = this;
@@ -213,7 +239,6 @@ var ContainerStore = assign(EventEmitter.prototype, {
                 }, {});
 
                 self._progress[containerName] = 0;
-                self.emit(containerName);
 
                 stream.on('data', function (str) {
                   console.log(str);
@@ -253,25 +278,18 @@ var ContainerStore = assign(EventEmitter.prototype, {
         // If not then directly create the container
         self._createContainer(imageName, containerName, function () {
           callback(null, containerName);
-          console.log('done');
         });
       }
     });
   },
-  setActive: function (name) {
-    console.log('set active');
-    this._active = name;
-    this.emit(this.ACTIVE);
-  },
-  active: function () {
-    return this._active;
-  },
-  // Returns all containers
   containers: function() {
     return this._containers;
   },
   container: function (name) {
     return this._containers[name];
+  },
+  recommended: function () {
+    return this._recommended;
   },
   progress: function (name) {
     return this._progress[name];

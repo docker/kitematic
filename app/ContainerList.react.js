@@ -16,16 +16,13 @@ var RouteHandler = Router.RouteHandler;
 var Navigation= Router.Navigation;
 
 var ContainerList = React.createClass({
-  mixins: [Navigation],
   getInitialState: function () {
     return {
-      active: null,
       containers: []
     };
   },
   componentDidMount: function () {
     this.updateContainers();
-    ContainerStore.addChangeListener(ContainerStore.ACTIVE, this.updateActive);
     ContainerStore.addChangeListener(ContainerStore.CONTAINERS, this.updateContainers);
   },
   componentWillMount: function () {
@@ -33,29 +30,13 @@ var ContainerList = React.createClass({
   },
   componentWillUnmount: function () {
     ContainerStore.removeChangeListener(ContainerStore.CONTAINERS, this.updateContainers);
-    ContainerStore.removeChangeListener(ContainerStore.ACTIVE, updateActive.update);
-  },
-  updateActive: function () {
-    if (ContainerStore.active()) {
-      this.transitionTo('container', {name: ContainerStore.active()});
-    }
   },
   updateContainers: function () {
     // Sort by name
     var containers = _.values(ContainerStore.containers()).sort(function (a, b) {
       return a.Name.localeCompare(b.Name);
     });
-
     this.setState({containers: containers});
-
-    // Transition to the active container or set one
-    var active = ContainerStore.active();
-    if (!ContainerStore.container(active) && containers.length > 0) {
-      ContainerStore.setActive(containers[0].Name.replace('/', ''));
-    }
-  },
-  handleClick: function (containerId) {
-    ContainerStore.setActive(name);
   },
   render: function () {
     var self = this;
@@ -95,13 +76,15 @@ var ContainerList = React.createClass({
         state = <div className="state state-stopped"></div>;
       }
 
+      var name = container.Name.replace('/', '');
+
       return (
-        <Link key={container.Name.replace('/', '')} to="container" params={{name: container.Name.replace('/', '')}} onClick={self.handleClick.bind(self, container.Id)}>
+        <Link key={name} data-container={name} to="container" params={{name: name}}>
           <li>
             {state}
             <div className="info">
               <div className="name">
-                {container.Name.replace('/', '')}
+                {name}
               </div>
               <div className="image">
                 {imageName}
