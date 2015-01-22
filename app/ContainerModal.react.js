@@ -1,15 +1,11 @@
 var async = require('async');
 var $ = require('jquery');
 var React = require('react');
-var Router = require('react-router');
 var Modal = require('react-bootstrap/Modal');
 var RetinaImage = require('react-retina-image');
 var ContainerStore = require('./ContainerStore');
 
-var Navigation = Router.Navigation;
-
 var ContainerModal = React.createClass({
-  mixins: [Navigation],
   _searchRequest: null,
   getInitialState: function () {
     return {
@@ -54,7 +50,7 @@ var ContainerModal = React.createClass({
     var name = event.target.getAttribute('name');
     var self = this;
     ContainerStore.create(name, 'latest', function (err, containerName) {
-      // this.transitionTo('containers', {container: containerName});
+      require('./router').transitionTo('container', {name: containerName});
       self.props.onRequestHide();
     }.bind(this));
   },

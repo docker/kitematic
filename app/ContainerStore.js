@@ -39,7 +39,6 @@ var ContainerStore = assign(EventEmitter.prototype, {
   _createContainer: function (image, name, callback) {
     var existing = docker.client().getContainer(name);
     existing.remove(function (err, data) {
-      console.log('Placeholder removed.');
       docker.client().createContainer({
         Image: image,
         Tty: false,
@@ -49,12 +48,10 @@ var ContainerStore = assign(EventEmitter.prototype, {
           callback(err, null);
           return;
         }
-        console.log('Created container: ' + container.id);
         container.start({
           PublishAllPorts: true
         }, function (err) {
           if (err) { callback(err, null); return; }
-          console.log('Started container: ' + container.id);
           callback(null, container);
         });
       });
@@ -130,14 +127,12 @@ var ContainerStore = assign(EventEmitter.prototype, {
       docker.client().getEvents(function (err, stream) {
         stream.setEncoding('utf8');
         stream.on('data', function (data) {
-          console.log(data);
 
           // TODO: Dont refresh on deleting placeholder containers
           var deletingPlaceholder = data.status === 'destroy' && self.container(data.id) && self.container(data.id).Config.Env.indexOf('KITEMATIC_DOWNLOADING=true') !== -1;
           console.log(deletingPlaceholder);
           if (!deletingPlaceholder) {
             self.update(function (err) {
-              console.log('Updated container data.');
             });
           }
         });
