@@ -210,12 +210,6 @@
           }
         }
       }
-
-      .status {
-        font-size: 12px;
-        font-variant: small-caps;
-        color: @brand-primary;
-      }
     }
 
     .details {
@@ -232,7 +226,7 @@
         flex: 0 auto;
         display: flex;
         flex-direction: row;
-        padding: 0px 45px 14px;
+        padding: 4px 40px 10px 40px;
         position: relative;
         a {
           position: absolute;
@@ -240,16 +234,18 @@
           top: -4px;
         }
         h1 {
-          font-size: 24px;
+          margin: 0;
+          font-size: 20px;
           margin: 0;
         }
         h2 {
-          margin-left: 18px;
-          font-size: 14px;
-          font-variant: small-caps;
+          margin: 6px 0px 0px 16px;
+          font-size: 10px;
+          text-transform: uppercase;
 
           &.status {
-            color: @brand-success;
+            font-weight: bold;
+            color: @brand-positive;
           }
 
           &.image {

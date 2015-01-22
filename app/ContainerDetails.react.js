@@ -160,11 +160,12 @@ var ContainerDetails = React.createClass({
     }
 
     var name = this.state.container.Name.replace('/', '');
+    var image = this.state.container.Config.Image;
 
     return (
       <div className="details">
         <div className="details-header">
-          <h1>{name}</h1> <a className="btn btn-primary" onClick={this.handleClick}>View</a>
+          <h1>{name}</h1> {state} {image}<a className="btn btn-primary" onClick={this.handleClick}>View</a>
         </div>
         {progress}
         <div className="details-logs">
