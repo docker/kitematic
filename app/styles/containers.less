@@ -30,12 +30,11 @@
 
         h3 {
           align-self: flex-start;
-          color: #CCD3D5;
-          font-size: 18px;
+          color: @gray-normal;
+          font-size: 13px;
           font-weight: 400;
           padding: 0 24px;
           margin: 10px 0 0;
-          font-variant: small-caps;
           display: inline-block;
           position: relative;
         }
@@ -222,6 +221,17 @@
       display: flex;
       flex-direction: column;
 
+      .details-actions {
+        flex: 0 auto;
+        display: flex;
+        flex-direction: row;
+        padding: 20px 40px 10px 40px;
+        position: relative;
+        .action {
+          margin-right: 24px;
+        }
+      }
+
       .details-header {
         flex: 0 auto;
         display: flex;
@@ -237,19 +247,27 @@
           margin: 0;
           font-size: 20px;
           margin: 0;
+          color: @gray-darkest;
         }
         h2 {
-          margin: 6px 0px 0px 16px;
-          font-size: 10px;
-          text-transform: uppercase;
-
           &.status {
+            margin: 8px 0px 0px 16px;
+            text-transform: uppercase;
             font-weight: bold;
-            color: @brand-positive;
+            font-size: 10px;
+            &.running {
+              color: @brand-positive;
+            }
           }
-
+          &.image-label {
+            margin: 8px 0px 0px 30px;
+            font-size: 10px;
+            color: @gray-lighter;
+          }
           &.image {
-
+            margin: 5px 0px 0px 16px;
+            font-size: 14px;
+            color: @gray-normal;
           }
         }
       }

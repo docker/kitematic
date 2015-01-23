@@ -136,9 +136,11 @@ var ContainerDetails = React.createClass({
 
     var state;
     if (this.state.container.State.Running) {
-      state = <h2 className="status">running</h2>;
+      state = <h2 className="status running">running</h2>;
     } else if (this.state.container.State.Restarting) {
-      state = <h2 className="status">restarting</h2>;
+      state = <h2 className="status restarting">restarting</h2>;
+    } else if (this.state.container.State.Paused) {
+      state = <h2 className="status paused">paused</h2>;
     }
 
     var progress;
@@ -165,7 +167,26 @@ var ContainerDetails = React.createClass({
     return (
       <div className="details">
         <div className="details-header">
-          <h1>{name}</h1> {state} {image}<a className="btn btn-primary" onClick={this.handleClick}>View</a>
+          <h1>{name}</h1>{state}<h2 className="image-label">Image</h2><h2 className="image">{image}</h2>
+        </div>
+        <div className="details-actions">
+          <div className="action btn-group">
+            <a className="btn btn-action" onClick={this.handleClick}><span className="icon icon-preview-2"></span> View</a>
+            <a className="btn btn-action dropdown-toggle"><span className="icon-dropdown icon icon-arrow-37"></span></a>
+          </div>
+          <div className="action">
+            <a className="btn btn-action dropdown-toggle" onClick={this.handleClick}><span className="icon icon-folder-1"></span> Volume <span className="icon-dropdown icon icon-arrow-37"></span></a>
+          </div>
+          <div className="action">
+            <a className="btn btn-action" onClick={this.handleClick}><span className="icon icon-refresh"></span> Restart</a>
+          </div>
+          <div className="action">
+            <a className="btn btn-action" onClick={this.handleClick}><span className="icon icon-window-code-3"></span> Terminal</a>
+          </div>
+          <div className="action btn-group">
+            <a className="btn btn-action only-icon active"><span className="icon icon-text-wrapping-2"></span></a>
+            <a className="btn btn-action only-icon"><span className="icon icon-setting-gear"></span></a>
+          </div>
         </div>
         {progress}
         <div className="details-logs">

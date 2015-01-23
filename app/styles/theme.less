@@ -21,28 +21,80 @@
 }
 
 // Mixin for generating new styles
-.btn-styles(@btn-color: #555) {
+.btn-styles(@btn-color: @gray-normal) {
+  transition: all 0.3s ease 0s;
   .reset-filter(); // Disable gradients for IE9 because filter bleeds through rounded corners
-  background-repeat: repeat-x;
-  // border-color: darken(@btn-color, 14%);
+  border-color: @btn-color;
+  color: @btn-color;
 
   &:hover,
-  &:focus  {
-    background-color: darken(@btn-color, 12%);
+  &:focus {
+    border-color: darken(@btn-color, 10%);
+    color: darken(@btn-color, 10%);
+  }
+
+  &:active {
+    background-color: lighten(@btn-color, 30%);
+    border-color: darken(@btn-color, 10%);
+    color: darken(@btn-color, 10%);
+  }
+
+  &.active {
+    background-color: @btn-color;
+    color: white;
+    box-shadow: none;
   }
 
   &:disabled,
   &[disabled] {
-    background-color: darken(@btn-color, 12%);
+    opacity: 0.5;
+  }
+}
+
+.btn-group {
+  .btn {
+    .icon-dropdown {
+      &.icon:before {
+        top: 7px;
+        margin-left: 0px;
+        margin-right: 4px;
+      }
+    }
   }
 }
 
 // Common styles
 .btn {
+  font-size: 12px;
+  background-color: transparent;
+  color: @gray-normal;
+  border: 1px solid @gray-normal;
   border-radius: 25px;
   box-shadow: none;
   font-weight: 400;
   text-shadow: none;
+  padding: 0px 12px 0px 12px;
+  height: 32px;
+  .icon:before {
+    position: relative;
+    top: 5px;
+    font-size: 20px;
+    margin-right: 4px;
+  }
+  &.only-icon {
+    .icon:before {
+      margin-right: 0px;
+    }
+  }
+  .icon-dropdown {
+    &.icon:before {
+      font-size: 10px;
+      position: relative;
+      top: 1px;
+      margin-left: 4px;
+      margin-right: 0px;
+    }
+  }
   // Remove the gradient for the pressed/active state
   &:active,
   &.active {
@@ -57,6 +109,9 @@
 }
 
 // Apply the mixin to the buttons
+.btn-action {
+  .btn-styles(@brand-action);
+}
 .btn-default { .btn-styles(@btn-default-bg); }
 .btn-primary { .btn-styles(@btn-primary-bg); }
 .btn-success { .btn-styles(@btn-success-bg); }
