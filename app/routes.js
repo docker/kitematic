@@ -1,7 +1,8 @@
-var React = require('react');
+var React = require('react/addons');
 var Setup = require('./Setup.react');
 var Containers = require('./Containers.react');
 var ContainerDetails = require('./ContainerDetails.react');
+var NoContainers = require('./NoContainers.react');
 var Router = require('react-router');
 
 var Route = Router.Route;
@@ -12,16 +13,6 @@ var App = React.createClass({
   render: function () {
     return (
       <RouteHandler/>
-    );
-  }
-});
-
-var NoContainers = React.createClass({
-  render: function () {
-    return (
-      <div>
-        No Containers
-      </div>
     );
   }
 });

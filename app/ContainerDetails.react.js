@@ -1,5 +1,6 @@
 var _ = require('underscore');
-var React = require('react');
+var $ = require('jquery');
+var React = require('react/addons');
 var Router = require('react-router');
 var Convert = require('ansi-to-html');
 var convert = new Convert();
@@ -17,17 +18,15 @@ var RouteHandler = Router.RouteHandler;
 
 var ContainerDetails = React.createClass({
   mixins: [Router.State],
+  _oldHeight: 0,
   getInitialState: function () {
     return {
       logs: []
     };
   },
-  componentWillReceiveProps: function () {
-    this.update();
-    this.setState({
-      logs: []
-    });
-    var self = this;
+  logs: function () {
+    this.updateProgress(this.getParams().name);
+    /*var self = this;
     var logs = [];
     var index = 0;
     docker.client().getContainer(this.getParams().name).logs({
@@ -68,25 +67,37 @@ var ContainerDetails = React.createClass({
           });
         });
       });
-    });
+    });*/
+  },
+  componentWillReceiveProps: function () {
+    this.logs();
   },
   componentWillMount: function () {
-    this.update();
+    this.logs();
   },
   componentDidMount: function () {
-    ContainerStore.addChangeListener(ContainerStore.CONTAINERS, this.update);
-    ContainerStore.addChangeListener(ContainerStore.PROGRESS, this.update);
+    ContainerStore.on(ContainerStore.SERVER_PROGRESS_EVENT, this.updateProgress);
   },
   componentWillUnmount: function () {
-    ContainerStore.removeChangeListener(ContainerStore.CONTAINERS, this.update);
-    ContainerStore.removeChangeListener(ContainerStore.PROGRESS, this.update);
+    ContainerStore.removeListener(ContainerStore.SERVER_PROGRESS_EVENT, this.updateProgress);
   },
-  update: function () {
-    var name = this.getParams().name;
-    this.setState({
-      container: ContainerStore.container(name),
-      progress: ContainerStore.progress(name)
-    });
+  componentDidUpdate: function () {
+    var parent = $('.details-logs');
+    if (!parent.length) {
+      return;
+    }
+    if (parent.scrollTop() >= this._oldHeight) {
+      parent.stop();
+      parent.scrollTop(parent[0].scrollHeight - parent.height());
+    }
+    this._oldHeight = parent[0].scrollHeight - parent.height();
+  },
+  updateProgress: function (name) {
+    if (name === this.getParams().name) {
+      this.setState({
+        progress: ContainerStore.progress(name)
+      });
+    }
   },
   _escapeHTML: function (html) {
     var text = document.createTextNode(html);
@@ -95,7 +106,7 @@ var ContainerDetails = React.createClass({
     return div.innerHTML;
   },
   handleClick: function (name) {
-    var container = this.state.container;
+    var container = this.props.container;
     boot2docker.ip(function (err, ip) {
       var ports = _.map(container.NetworkSettings.Ports, function (value, key) {
         var portProtocolPair = key.split('/');
@@ -113,7 +124,6 @@ var ContainerDetails = React.createClass({
         }
         return res;
       });
-      console.log(ports);
       exec(['open', ports[0].url], function (err) {
         if (err) { throw err; }
       });
@@ -130,14 +140,14 @@ var ContainerDetails = React.createClass({
       return <p key={i} dangerouslySetInnerHTML={{__html: l}}></p>;
     });
 
-    if (!this.state.container) {
+    if (!this.props.container) {
       return false;
     }
 
     var state;
-    if (this.state.container.State.Running) {
+    if (this.props.container.State.Running) {
       state = <h2 className="status">running</h2>;
-    } else if (this.state.container.State.Restarting) {
+    } else if (this.props.container.State.Restarting) {
       state = <h2 className="status">restarting</h2>;
     }
 
@@ -159,12 +169,10 @@ var ContainerDetails = React.createClass({
       button = <a className="btn btn-primary disabled" onClick={this.handleClick}>View</a>;
     }
 
-    var name = this.state.container.Name.replace('/', '');
-
     return (
       <div className="details">
         <div className="details-header">
-          <h1>{name}</h1> <a className="btn btn-primary" onClick={this.handleClick}>View</a>
+          <h1>{this.getParams().name}</h1> <a className="btn btn-primary" onClick={this.handleClick}>View</a>
         </div>
         {progress}
         <div className="details-logs">

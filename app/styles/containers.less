@@ -218,6 +218,19 @@
       }
     }
 
+    .no-containers {
+      flex: 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+
+      h3 {
+        font-size: 16px;
+        color: #C7D7D7;
+      }
+    }
+
     .details {
       margin: 0;
       padding: 0;
@@ -267,7 +280,7 @@
         flex: 1;
         overflow: auto;
         .logs {
-          user-select: text;
+          -webkit-user-select: text;
           font-family: Menlo;
           font-size: 12px;
           padding: 44px 45px;

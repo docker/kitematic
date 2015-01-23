@@ -2,6 +2,11 @@ var React = require('react/addons');
 var remote = require('remote');
 
 var Header = React.createClass({
+  getInitialState: function () {
+    return {
+      fullscreen: false
+    };
+  },
   componentDidMount: function () {
     document.addEventListener('keyup', this.handleDocumentKeyUp, false);
   },
@@ -22,14 +27,16 @@ var Header = React.createClass({
   },
   handleFullscreen: function () {
     remote.getCurrentWindow().setFullScreen(!remote.getCurrentWindow().isFullScreen());
-    this.forceUpdate();
+    this.setState({
+      fullscreen: remote.getCurrentWindow().isFullScreen()
+    });
   },
   handleFullscreenHover: function () {
     this.update();
   },
   render: function () {
     var buttons;
-    if (remote.getCurrentWindow().isFullScreen()) {
+    if (this.state.fullscreen) {
       return (
         <div className="header no-drag">
           <div className="buttons">

@@ -13,7 +13,7 @@ html, body {
   width: 100%;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
-  user-select: none;
+  -webkit-user-select: none;
   font-family: 'Clear Sans', sans-serif;
 }
 
@@ -49,8 +49,10 @@ html, body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
     border: none; //1px solid #ccc;
     height: 610px;
+    display: flex;
   }
   .modal-body {
+    flex: 1 auto;
     display: flex;
     flex-direction: row;
     padding: 32px 32px;
@@ -68,7 +70,6 @@ html, body {
     }
 
     section.search {
-      flex: 0 auto;
       min-width: 404px;
       padding-right: 32px;
       border-right: 1px solid #eee;
@@ -81,29 +82,54 @@ html, body {
         text-align: right;
       }
 
-      input {
-        border-radius: 20px;
-        font-size: 13px;
-        height: 38px;
-        padding: 8px 16px;
-        font-weight: 400;
-        color: #666;
-
-        &:focus {
-          box-shadow: none;
-          border-color: #bbb;
+      .search-bar {
+        position: relative;
+        .loading {
+          position: absolute;
+          right: 9px;
+          top: 7px;
+          width: 24px;
+          height: 24px;
+          -webkit-animation-name: spin;
+          -webkit-animation-duration: 1.8s;
+          -webkit-animation-iteration-count: infinite;
+          -webkit-animation-timing-function: linear;
         }
 
-        &::-webkit-input-placeholder {
-          color: #ddd;
-          font-weight: 300;
+        input {
+          border-radius: 20px;
+          font-size: 13px;
+          height: 38px;
+          padding: 8px 16px;
+          font-weight: 400;
+          color: #666;
+
+          &:focus {
+            box-shadow: none;
+            border-color: #bbb;
+          }
+
+          &::-webkit-input-placeholder {
+            color: #ddd;
+            font-weight: 300;
+          }
         }
       }
 
       .results {
         overflow: auto;
 
+        .no-results {
+          text-align: center;
+          h3 {
+            color: #ABC0C0;
+            font-size: 16px;
+            margin-top: 160px;
+          }
+        }
+
         .title {
+          flex: 0 auto;
           margin-top: 16px;
         }
 
@@ -129,7 +155,7 @@ html, body {
                 overflow: hidden;
                 text-overflow: ellipsis;
               }
-              .stars {
+              .properties {
                 color: #A7A7A7;
                 margin-top: 2px;
 
@@ -168,7 +194,7 @@ html, body {
   height: 100%;
 }
 
-@-webkit-keyframes translatedownload {
+@-webkit-keyframes spin {
   from {
     -webkit-transform: rotate(0deg);
   }
