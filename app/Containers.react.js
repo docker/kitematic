@@ -47,7 +47,7 @@ var Containers = React.createClass({
               <div className="create">
                 <ModalTrigger modal={<ContainerModal/>}>
                   <div className="wrapper">
-                    <span className="icon icon-add-3"></span>
+                    <a className="btn btn-action only-icon"><span className="icon icon-add-1"></span></a>
                   </div>
                 </ModalTrigger>
               </div>

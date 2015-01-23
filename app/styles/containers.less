@@ -10,10 +10,11 @@
     .sidebar {
       display: flex;
       flex-direction: column;
-      min-width: 240px;
+      min-width: 280px;
       margin: 0;
       box-sizing: border-box;
       border-right: 1px solid #eee;
+      //padding: 10px 26px 0px 10px;
 
       .sidebar-header {
         flex: 0 auto;
@@ -22,6 +23,7 @@
         display: flex;
         border-bottom: 1px solid transparent;
         transition: border-bottom 0.25s;
+        padding: 0px 28px 0px 10px;
 
         &.sep {
           border-bottom: 1px solid #eee;
@@ -46,22 +48,6 @@
           .wrapper {
             text-align: center;
             display: inline-block;
-            width: 50px;
-
-            span.icon {
-              margin-top: 5px;
-              margin-left: auto;
-              display: inline-block;
-              border-radius: 20px;
-              font-size: 26px;
-              color: @brand-primary;
-            }
-
-            &:hover {
-              span.icon {
-                color: darken(@brand-primary, 20%);
-              }
-            }
           }
 
         }
@@ -90,10 +76,22 @@
             color: inherit;
             flex-shrink: 0;
             cursor: default;
+            margin: 0px 5px 0px 20px;
 
             &.active {
-                background: #eee;
+                background: @brand-primary;
+                li {
+                  .name {
+                    color: white;
+                  }
+                  .image {
+                    color: white;
+                    opacity: 0.9;
+                  }
+                }
+                color: white;
                 border-bottom: none;
+                border-radius: 40px;
 
               &:hover {
               }
@@ -110,8 +108,7 @@
 
           li {
             vertical-align: middle;
-            padding-bottom: 14px;
-            margin: 16px 24px 0px;
+            padding: 10px 16px 10px 16px;
 
             display: flex;
             flex-direction: row;
@@ -126,10 +123,10 @@
                 overflow: hidden;
                 font-size: 14px;
                 font-weight: 400;
-                color: #555;
+                color: @gray-darkest;
               }
               .image {
-                color: #999;
+                color: @gray-lighter;
                 font-size: 12px;
                 font-weight: 400;
                 text-overflow: ellipsis;
