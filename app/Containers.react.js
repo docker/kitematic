@@ -43,7 +43,7 @@ var Containers = React.createClass({
         <div className="containers-body">
           <div className="sidebar">
             <section className={sidebarHeaderClass}>
-              <h3>containers</h3>
+              <h3>My Containers</h3>
               <div className="create">
                 <ModalTrigger modal={<ContainerModal/>}>
                   <div className="wrapper">
