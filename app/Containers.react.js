@@ -12,14 +12,50 @@ var _ = require('underscore');
 var docker = require('./docker');
 var $ = require('jquery');
 
-var Link = Router.Link;
-var RouteHandler = Router.RouteHandler;
-
 var Containers = React.createClass({
+  mixins: [Router.Navigation, Router.State],
   getInitialState: function () {
     return {
-      sidebarOffset: 0
+      sidebarOffset: 0,
+      containers: ContainerStore.containers(),
+      sorted: ContainerStore.sorted(),
     };
+  },
+  componentDidMount: function () {
+    this.update();
+    ContainerStore.on(ContainerStore.SERVER_CONTAINER_EVENT, this.update);
+    ContainerStore.on(ContainerStore.CLIENT_CONTAINER_EVENT, this.updateFromClient);
+
+    if (this.state.sorted.length) {
+      this.transitionTo('container', {name: this.state.sorted[0].Name});
+    }
+  },
+  componentDidUnmount: function () {
+    ContainerStore.removeListener(ContainerStore.SERVER_CONTAINER_EVENT, this.update);
+    ContainerStore.removeListener(ContainerStore.CLIENT_CONTAINER_EVENT, this.updateFromClient);
+  },
+  update: function (name, status) {
+    this.setState({
+      containers: ContainerStore.containers(),
+      sorted: ContainerStore.sorted()
+    });
+    if (status === 'destroy') {
+      if (this.state.sorted.length) {
+        this.transitionTo('container', {name: this.state.sorted[0].Name});
+      } else {
+        this.transitionTo('containers');
+      }
+    }
+  },
+  updateFromClient: function (name, status) {
+    this.setState({
+      containers: ContainerStore.containers(),
+      sorted: ContainerStore.sorted()
+    });
+    if (status === 'create') {
+      console.log('transition');
+      this.transitionTo('container', {name: name});
+    }
   },
   handleScroll: function (e) {
     if (e.target.scrollTop > 0 && !this.state.sidebarOffset) {
@@ -37,6 +73,7 @@ var Containers = React.createClass({
     if (this.state.sidebarOffset) {
       sidebarHeaderClass += ' sep';
     }
+
     return (
       <div className="containers">
         <Header/>
@@ -53,10 +90,10 @@ var Containers = React.createClass({
               </div>
             </section>
             <section className="sidebar-containers" onScroll={this.handleScroll}>
-              <ContainerList/>
+              <ContainerList containers={this.state.sorted}/>
             </section>
           </div>
-          <RouteHandler/>
+          <Router.RouteHandler container={this.state.containers[this.getParams().name]}/>
         </div>
       </div>
     );

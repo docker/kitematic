@@ -4,8 +4,7 @@ var browserify = require('browserify');
 var watchify = require('watchify');
 var reactify = require('reactify');
 var gulpif = require('gulp-if');
-var uglify = require('gulp-uglify');
-var streamify = require('gulp-streamify');
+var uglify = require('gulp-uglifyjs');
 var notify = require('gulp-notify');
 var concat = require('gulp-concat');
 var less = require('gulp-less');
@@ -22,6 +21,7 @@ var ecstatic = require('ecstatic');
 var downloadatomshell = require('gulp-download-atom-shell');
 var packagejson = require('./package.json');
 var http = require('http');
+var react = require('gulp-react');
 
 var dependencies = Object.keys(packagejson.dependencies);
 var devDependencies = Object.keys(packagejson.devDependencies);
@@ -34,44 +34,9 @@ var options = {
 };
 
 gulp.task('js', function () {
-  var bundler = browserify({
-    entries: ['./app/main.js'], // Only need initial file, browserify finds the rest
-    transform: [reactify], // We want to convert JSX to normal javascript
-    debug: options.dev, // Gives us sourcemapping
-    builtins: false,
-    commondir: false,
-    insertGlobals: false,
-    detectGlobals: false,
-    bundleExternal: false,
-    cache: {}, packageCache: {}, fullPaths: options.dev // Requirement of watchify
-  });
-
-  // We set our dependencies as externals on our app bundler when developing
-  dependencies.forEach(function (dep) {
-    bundler.external(dep);
-  });
-
-  devDependencies.forEach(function (dep) {
-    bundler.external(dep);
-  });
-
-  bundler.external('./app');
-
-  var bundle = function () {
-    return bundler.bundle()
-      .on('error', gutil.log)
-      .pipe(source('main.js'))
-      .pipe(gulpif(!options.dev, streamify(uglify())))
-      .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
-      .pipe(gulpif(options.dev && !options.test, livereload()));
-  };
-
-  if (options.dev) {
-    bundler = watchify(bundler);
-    bundler.on('update', bundle);
-  }
-
-  return bundle();
+  gulp.src('./app/**/*.js')
+    .pipe(react())
+    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'));
 });
 
 gulp.task('specs', function () {
@@ -147,7 +112,7 @@ gulp.task('copy', function () {
 
 gulp.task('dist', function (cb) {
   var stream = gulp.src('').pipe(shell([
-    'rm -rf ./dist/osx',
+    'rm -Rf ./dist',
     'mkdir -p ./dist/osx',
     'cp -R ./cache/Atom.app ./dist/osx/<%= filename %>',
     'mv ./dist/osx/<%= filename %>/Contents/MacOS/Atom ./dist/osx/<%= filename %>/Contents/MacOS/<%= name %>',
@@ -213,6 +178,7 @@ gulp.task('test', ['download', 'copy', 'js', 'images', 'styles', 'specs'], funct
 });
 
 gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function () {
+  gulp.watch('./app/**/*.js', ['js']);
   gulp.watch('./app/**/*.html', ['copy']);
   gulp.watch('./app/styles/**/*.less', ['styles']);
   gulp.watch('./app/images/**', ['images']);

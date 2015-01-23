@@ -16,6 +16,8 @@ if (argv.test) {
   console.log('Running tests');
 }
 
+process.env.NODE_PATH = __dirname + '/../node_modules';
+
 app.on('activate-with-no-open-windows', function () {
   if (mainWindow) {
     mainWindow.show();
@@ -32,6 +34,7 @@ app.on('ready', function() {
     resizable: true,
     frame: false
   };
+
   mainWindow = new BrowserWindow(windowOptions);
   mainWindow.hide();
 

@@ -1,24 +1,28 @@
 var EventEmitter = require('events').EventEmitter;
 var async = require('async');
-var assign = require('react/lib/Object.assign');
+var assign = require('object-assign');
 var docker = require('./docker');
 var registry = require('./registry');
 var $ = require('jquery');
 var _ = require('underscore');
 
-// Merge our store with Node's Event Emitter
+var _recommended = [];
+var _containers = {};
+var _progress = {};
+
 var ContainerStore = assign(EventEmitter.prototype, {
-  CONTAINERS: 'containers',
-  PROGRESS: 'progress',
-  LOGS: 'logs',
-  RECOMMENDED: 'recommended',
-  _recommended: [],
-  _containers: {},
-  _progress: {},
-  _logs: {},
+  CLIENT_CONTAINER_EVENT: 'client_container',
+  SERVER_CONTAINER_EVENT: 'server_container',
+  SERVER_PROGRESS_EVENT: 'server_progress',
+  SERVER_RECOMMENDED_EVENT: 'server_recommended_event',
+  SERVER_LOGS_EVENT: 'server_logs',
   _pullScratchImage: function (callback) {
     var image = docker.client().getImage('scratch:latest');
     image.inspect(function (err, data) {
+      if (err) {
+        callback(err);
+        return;
+      }
       if (!data) {
         docker.client().pull('scratch:latest', function (err, stream) {
           if (err) {
@@ -36,13 +40,72 @@ var ContainerStore = assign(EventEmitter.prototype, {
       }
     });
   },
+  _pullImage: function (repository, tag, callback, progressCallback) {
+    registry.layers(repository, tag, function (err, layerSizes) {
+
+      // TODO: Support v2 registry API
+      // TODO: clean this up- It's messy to work with pulls from both the v1 and v2 registry APIs
+      // Use the per-layer pull progress % to update the total progress.
+      docker.client().listImages({all: 1}, function(err, images) {
+        var existingIds = new Set(images.map(function (image) {
+          return image.Id.slice(0, 12);
+        }));
+        var layersToDownload = layerSizes.filter(function (layerSize) {
+          return !existingIds.has(layerSize.Id);
+        });
+
+        var totalBytes = layersToDownload.map(function (s) { return s.size; }).reduce(function (pv, sv) { return pv + sv; }, 0);
+        docker.client().pull(repository + ':' + tag, function (err, stream) {
+          stream.setEncoding('utf8');
+
+          var layerProgress = layersToDownload.reduce(function (r, layer) {
+            if (_.findWhere(images, {Id: layer.Id})) {
+              r[layer.Id] = 100;
+            } else {
+              r[layer.Id] = 0;
+            }
+            return r;
+          }, {});
+
+          stream.on('data', function (str) {
+            var data = JSON.parse(str);
+
+            if (data.status === 'Already exists') {
+              layerProgress[data.id] = 1;
+            } else if (data.status === 'Downloading') {
+              var current = data.progressDetail.current;
+              var total = data.progressDetail.total;
+              var layerFraction = current / total;
+              layerProgress[data.id] = layerFraction;
+            }
+
+            var chunks = layersToDownload.map(function (s) {
+              return layerProgress[s.Id] * s.size;
+            });
+
+            var totalReceived = chunks.reduce(function (pv, sv) {
+              return pv + sv;
+            });
+
+            var totalProgress = totalReceived / totalBytes;
+            progressCallback(totalProgress);
+          });
+          stream.on('end', function () {
+            callback();
+          });
+        });
+      });
+    });
+  },
   _createContainer: function (image, name, callback) {
     var existing = docker.client().getContainer(name);
+    var self = this;
     existing.remove(function (err, data) {
       docker.client().createContainer({
         Image: image,
         Tty: false,
-        name: name
+        name: name,
+        User: 'root'
       }, function (err, container) {
         if (err) {
           callback(err, null);
@@ -51,14 +114,18 @@ var ContainerStore = assign(EventEmitter.prototype, {
         container.start({
           PublishAllPorts: true
         }, function (err) {
-          if (err) { callback(err, null); return; }
-          callback(null, container);
+          if (err) {
+            callback(err);
+            return;
+          }
+          self.fetchContainer(name, callback);
         });
       });
     });
   },
   _createPlaceholderContainer: function (imageName, name, callback) {
     console.log('_createPlaceholderContainer', imageName, name);
+    var self = this;
     this._pullScratchImage(function (err) {
       if (err) {
         callback(err);
@@ -74,7 +141,11 @@ var ContainerStore = assign(EventEmitter.prototype, {
         Cmd: 'placeholder',
         name: name
       }, function (err, container) {
-        callback(err, container);
+        if (err) {
+          callback(err);
+          return;
+        }
+        self.fetchContainer(name, callback);
       });
     });
   },
@@ -83,7 +154,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
     var count = 1;
     var name = base;
     while (true) {
-      var exists = _.findWhere(_.values(this._containers), {Name: '/' + name}) || _.findWhere(_.values(this._containers), {Name: name});
+      var exists = _.findWhere(_.values(_containers), {Name: name}) || _.findWhere(_.values(_containers), {Name: name});
       if (!exists) {
         return name;
       } else {
@@ -92,80 +163,98 @@ var ContainerStore = assign(EventEmitter.prototype, {
       }
     }
   },
-  init: function (callback) {
-    // TODO: Load cached data from db on loading
+  _resumePulling: function () {
+    var downloading = _.filter(_.values(_containers), function (container) {
+      return container.State.Downloading;
+    });
 
-    // Refresh with docker & hook into events
+    // Recover any pulls that were happening
     var self = this;
-    this.update(function (err) {
-      self.updateRecommended(function (err) {
-        callback();
-      });
-      var downloading = _.filter(_.values(self._containers), function (container) {
-        var env = container.Config.Env;
-        return _.indexOf(env, 'KITEMATIC_DOWNLOADING=true') !== -1;
-      });
-
-      // Recover any pulls that were happening
-      downloading.forEach(function (container) {
-        var env = _.object(container.Config.Env.map(function (e) {
-          return e.split('=');
-        }));
-        docker.client().pull(env.KITEMATIC_DOWNLOADING_IMAGE, function (err, stream) {
-          stream.setEncoding('utf8');
-          stream.on('data', function (data) {
-            console.log(data);
-          });
-          stream.on('end', function () {
-            self._createContainer(env.KITEMATIC_DOWNLOADING_IMAGE, container.Name.replace('/', ''), function () {
-
-            });
-          });
-        });
-      });
-
-      docker.client().getEvents(function (err, stream) {
+    downloading.forEach(function (container) {
+      docker.client().pull(container.KitematicDownloadingImage, function (err, stream) {
         stream.setEncoding('utf8');
-        stream.on('data', function (data) {
-
-          // TODO: Dont refresh on deleting placeholder containers
-          var deletingPlaceholder = data.status === 'destroy' && self.container(data.id) && self.container(data.id).Config.Env.indexOf('KITEMATIC_DOWNLOADING=true') !== -1;
-          console.log(deletingPlaceholder);
-          if (!deletingPlaceholder) {
-            self.update(function (err) {
-            });
-          }
+        stream.on('data', function (data) {});
+        stream.on('end', function () {
+          self._createContainer(container.KitematicDownloadingImage, container.Name, function () {});
         });
       });
     });
   },
-  update: function (callback) {
+  _startListeningToEvents: function () {
+    docker.client().getEvents(function (err, stream) {
+      if (stream) {
+        stream.setEncoding('utf8');
+        stream.on('data', this._dockerEvent.bind(this));
+      }
+    }.bind(this));
+  },
+  _dockerEvent: function (json) {
+    var data = JSON.parse(json);
+    console.log(data);
+
+    // If the event is delete, remove the container
+    if (data.status === 'destroy') {
+      console.log('destroy');
+      var container = _.findWhere(_.values(_containers), {Id: data.id});
+      delete _containers[container.Name];
+      this.emit(this.SERVER_CONTAINER_EVENT, container.Name, data.status);
+    } else {
+      this.fetchContainer(data.id, function (err) {
+        var container = _.findWhere(_.values(_containers), {Id: data.id});
+        this.emit(this.SERVER_CONTAINER_EVENT, container ? container.Name : null, data.status);
+      }.bind(this));
+    }
+  },
+  init: function (callback) {
+    // TODO: Load cached data from db on loading
+    this.fetchAllContainers(function (err) {
+      callback();
+      this.emit(this.CLIENT_CONTAINER_EVENT);
+      this.fetchRecommended(function (err) {
+        this.emit(this.SERVER_RECOMMENDED_EVENT);
+      }.bind(this));
+      this._resumePulling();
+      this._startListeningToEvents();
+    }.bind(this));
+  },
+  fetchContainer: function (id, callback) {
+    docker.client().getContainer(id).inspect(function (err, container) {
+      if (err) {
+        callback(err);
+      } else {
+        // Fix leading slash in container names
+        container.Name = container.Name.replace('/', '');
+
+        // Add Downloading State (stored in environment variables) to containers for Kitematic
+        var env = _.object(container.Config.Env.map(function (e) { return e.split('='); }));
+        container.State.Downloading = !!env.KITEMATIC_DOWNLOADING;
+        container.KitematicDownloadingImage = env.KITEMATIC_DOWNLOADING_IMAGE;
+
+        _containers[container.Name] = container;
+        callback(null, container);
+      }
+    });
+  },
+  fetchAllContainers: function (callback) {
     var self = this;
     docker.client().listContainers({all: true}, function (err, containers) {
       if (err) {
         callback(err);
         return;
       }
-      async.map(containers, function(container, callback) {
-        docker.client().getContainer(container.Id).inspect(function (err, data) {
-          callback(err, data);
+      async.map(containers, function (container, callback) {
+        self.fetchContainer(container.Id, function (err) {
+          callback(err);
         });
       }, function (err, results) {
-        if (err) {
-          callback(err);
-          return;
-        }
-        var containers = {};
-        results.forEach(function (r) {
-          containers[r.Name.replace('/', '')] = r;
-        });
-        self._containers = containers;
-        self.emit(self.CONTAINERS);
-        callback(null);
+        callback(err);
       });
     });
   },
-  updateRecommended: function (callback) {
+  fetchRecommended: function (callback) {
+    if (_recommended.length) {
+     return;
+   }
     var self = this;
     $.ajax({
       url: 'https://kitematic.com/recommended.json',
@@ -180,7 +269,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
             }));
           });
         }, function (err, results) {
-          self._recommended = results;
+          _recommended = results;
           callback();
         });
       },
@@ -200,104 +289,57 @@ var ContainerStore = assign(EventEmitter.prototype, {
       if (!data) {
         // Pull image
         self._createPlaceholderContainer(imageName, containerName, function (err, container) {
-          if (err) {
-            console.log(err);
-          }
-          registry.layers(repository, tag, function (err, layerSizes) {
-            if (err) {
-              callback(err);
-            }
-
-            // TODO: Support v2 registry API
-            // TODO: clean this up- It's messy to work with pulls from both the v1 and v2 registry APIs
-            // Use the per-layer pull progress % to update the total progress.
-            docker.client().listImages({all: 1}, function(err, images) {
-              var existingIds = new Set(images.map(function (image) {
-                return image.Id.slice(0, 12);
-              }));
-              var layersToDownload = layerSizes.filter(function (layerSize) {
-                return !existingIds.has(layerSize.Id);
-              });
-
-              var totalBytes = layersToDownload.map(function (s) { return s.size; }).reduce(function (pv, sv) { return pv + sv; }, 0);
-              docker.client().pull(imageName, function (err, stream) {
-                callback(null, containerName);
-                stream.setEncoding('utf8');
-
-                var layerProgress = layersToDownload.reduce(function (r, layer) {
-                  if (_.findWhere(images, {Id: layer.Id})) {
-                    r[layer.Id] = 100;
-                  } else {
-                    r[layer.Id] = 0;
-                  }
-                  return r;
-                }, {});
-
-                self._progress[containerName] = 0;
-
-                stream.on('data', function (str) {
-                  console.log(str);
-                  var data = JSON.parse(str);
-
-                  if (data.status === 'Already exists') {
-                    layerProgress[data.id] = 1;
-                  } else if (data.status === 'Downloading') {
-                    var current = data.progressDetail.current;
-                    var total = data.progressDetail.total;
-                    var layerFraction = current / total;
-                    layerProgress[data.id] = layerFraction;
-                  }
-
-                  var chunks = layersToDownload.map(function (s) {
-                    return layerProgress[s.Id] * s.size;
-                  });
-
-                  var totalReceived = chunks.reduce(function (pv, sv) {
-                    return pv + sv;
-                  });
-
-                  var totalProgress = totalReceived / totalBytes;
-                  self._progress[containerName] = totalProgress;
-                  self.emit(self.PROGRESS);
-                });
-                stream.on('end', function () {
-                  self._createContainer(imageName, containerName, function () {
-                    delete self._progress[containerName];
-                  });
-                });
-              });
+          _containers[containerName] = container;
+          self.emit(self.CLIENT_CONTAINER_EVENT, containerName, 'create');
+          _progress[containerName] = 0;
+          self._pullImage(repository, tag, function () {
+            self._createContainer(imageName, containerName, function (err, container) {
+              delete _progress[containerName];
             });
+          }, function (progress) {
+            _progress[containerName] = progress;
+            self.emit(self.SERVER_PROGRESS_EVENT, containerName);
           });
+          callback(null, containerName);
         });
       } else {
         // If not then directly create the container
-        self._createContainer(imageName, containerName, function () {
+        self._createContainer(imageName, containerName, function (err, container) {
+          self.emit(ContainerStore.CLIENT_CONTAINER_EVENT, containerName, 'create');
           callback(null, containerName);
         });
       }
     });
   },
   containers: function() {
-    return this._containers;
+    return _containers;
   },
   container: function (name) {
-    return this._containers[name];
+    return _containers[name];
+  },
+  sorted: function () {
+    return _.values(_containers).sort(function (a, b) {
+      var active = function (container) {
+        return container.State.Running || container.State.Restarting || container.State.Downloading;
+      };
+      if (active(a) && !active(b)) {
+        return -1;
+      } else if (!active(a) && active(b)) {
+        return 1;
+      } else {
+        return a.Name.localeCompare(b.Name);
+      }
+    });
   },
   recommended: function () {
-    return this._recommended;
+    return _recommended;
   },
   progress: function (name) {
-    return this._progress[name];
+    return _progress[name];
   },
   logs: function (name) {
     return logs[name];
-  },
-  addChangeListener: function(eventType, callback) {
-    this.on(eventType, callback);
-  },
-  removeChangeListener: function(eventType, callback) {
-    this.removeListener(eventType, callback);
-  },
+  }
 });
 
 module.exports = ContainerStore;

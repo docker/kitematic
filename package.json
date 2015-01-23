@@ -11,7 +11,10 @@
   },
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
-    "start": "./script/run"
+    "start": "gulp",
+    "preinstall": "./script/deps",
+    "test": "gulp test",
+    "release": ". ./script/identity && gulp release"
   },
   "licenses": [
     {
@@ -24,26 +27,22 @@
   "dependencies": {
     "ansi-to-html": "0.2.0",
     "async": "^0.9.0",
+    "bugsnag-js": "git+https://git@github.com/bugsnag/bugsnag-js",
     "dockerode": "2.0.4",
     "exec": "0.1.2",
-    "flux-react": "^2.6.1",
+    "gulp-react": "^2.0.0",
     "jquery": "^2.1.3",
-    "leveldown": "^1.0.0",
-    "levelup": "git+https://github.com/kitematic/node-levelup.git",
     "minimist": "^1.1.0",
     "moment": "2.8.1",
-    "ncp": "0.6.0",
     "node-uuid": "1.4.1",
     "open": "0.0.5",
-    "raven": "^0.7.2",
-    "react": "^0.12.1",
+    "react": "^0.12.2",
     "react-bootstrap": "^0.13.2",
     "react-retina-image": "^1.1.2",
     "react-router": "^0.11.6",
     "request": "2.42.0",
     "request-progress": "0.3.1",
     "retina.js": "^1.1.0",
-    "tar": "0.1.20",
     "underscore": "^1.7.0"
   },
   "devDependencies": {
@@ -65,9 +64,9 @@
     "gulp-sourcemaps": "^1.2.8",
     "gulp-streamify": "0.0.5",
     "gulp-uglify": "^0.3.1",
+    "gulp-uglifyjs": "^0.5.0",
     "gulp-util": "^3.0.0",
     "jasmine-tagged": "^1.1.2",
-    "object-assign": "^2.0.0",
     "reactify": "^0.15.2",
     "run-sequence": "^1.0.2",
     "vinyl-source-stream": "^0.1.1",
