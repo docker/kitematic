@@ -183,7 +183,9 @@ var ContainerDetails = React.createClass({
           <div className="action">
             <a className="btn btn-action" onClick={this.handleClick}><span className="icon icon-window-code-3"></span> Terminal</a>
           </div>
-          <div className="action btn-group">
+        </div>
+        <div className="details-tabs">
+          <div className="tabs btn-group">
             <a className="btn btn-action only-icon active"><span className="icon icon-text-wrapping-2"></span></a>
             <a className="btn btn-action only-icon"><span className="icon icon-setting-gear"></span></a>
           </div>
