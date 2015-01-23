@@ -55,12 +55,6 @@ html, body {
     flex-direction: row;
     padding: 32px 32px;
 
-    .title {
-      color: #CCD3D5;
-      font-weight: 400;
-      font-size: 13px;
-    }
-
     aside.custom {
       flex: 0 auto;
       padding-left: 32px;
@@ -73,9 +67,20 @@ html, body {
       padding-right: 32px;
       border-right: 1px solid #eee;
 
+      .search-icon {
+        font-size: 20px;
+        color: @gray-normal;
+        position: absolute;
+        top: 40px;
+        left: 45px;
+      }
+
       .question {
         a {
-          color: #CCD3D5;
+          color: @gray-lightest;
+          &:hover {
+            color: darken(@gray-lightest, 10%);
+          }
         }
         font-size: 10px;
         text-align: right;
@@ -85,13 +90,15 @@ html, body {
         border-radius: 20px;
         font-size: 13px;
         height: 38px;
-        padding: 8px 16px;
-        font-weight: 400;
-        color: #666;
+        padding: 8px 16px 8px 40px;
+        font-weight: 300;
+        color: @gray-darkest;
+        margin-bottom: 3px;
+        border-color: lighten(@gray-lighter, 10%);
 
         &:focus {
           box-shadow: none;
-          border-color: #bbb;
+          border-color: @gray-lighter;
         }
 
         &::-webkit-input-placeholder {
@@ -108,17 +115,25 @@ html, body {
         }
 
         ul {
+          margin-top: 10px;
           list-style: none;
-          color: #555;
           padding: 0;
 
           li {
+            &:hover {
+              background-color: lighten(@gray-lightest, 17.5%);
+            }
             display: flex;
             flex-direction: row;
-            margin: 12px;
+            padding: 8px 14px 5px 14px;
+            //margin: 12px;
             border-bottom: 1px solid #eee;
+            &:last-child {
+              border-bottom: 0;
+            }
             .info {
               .name {
+                color: @gray-darkest;
                 max-width: 278px;
                 img {
                   margin-right: 6px;
@@ -130,7 +145,7 @@ html, body {
                 text-overflow: ellipsis;
               }
               .stars {
-                color: #A7A7A7;
+                color: @gray-lighter;
                 margin-top: 2px;
 
                 .star-count {
@@ -152,6 +167,8 @@ html, body {
               flex: 0 auto;
             }
             .action {
+              position: relative;
+              top: 5px;
               text-align: right;
               flex: 1 auto;
             }

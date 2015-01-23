@@ -14,7 +14,6 @@
       margin: 0;
       box-sizing: border-box;
       border-right: 1px solid #eee;
-      //padding: 10px 26px 0px 10px;
 
       .sidebar-header {
         flex: 0 auto;
@@ -221,6 +220,8 @@
         flex-direction: row;
         padding: 20px 40px 10px 40px;
         position: relative;
+        border-bottom: 1px solid transparent;
+        transition: border-bottom 0.25s;
         .action {
           margin-right: 24px;
         }
@@ -228,6 +229,7 @@
 
       .details-tabs {
         .tabs {
+          z-index: 0;
           float: right;
           margin-right: 40px;
           margin-top: -42px;
@@ -282,12 +284,16 @@
       .details-logs {
         flex: 1;
         overflow: auto;
+        h4 {
+          margin-top: 30px;
+          margin-left: 40px;
+        }
         .logs {
           user-select: text;
           font-family: Menlo;
           font-size: 12px;
-          padding: 44px 45px;
-          color: #595D5E;
+          padding: 18px 45px;
+          color: lighten(@gray-normal, 6%);
           white-space: pre-wrap;
           p {
             margin: 0 6px;

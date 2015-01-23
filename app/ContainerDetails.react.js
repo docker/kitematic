@@ -171,17 +171,17 @@ var ContainerDetails = React.createClass({
         </div>
         <div className="details-actions">
           <div className="action btn-group">
-            <a className="btn btn-action" onClick={this.handleClick}><span className="icon icon-preview-2"></span> View</a>
-            <a className="btn btn-action dropdown-toggle"><span className="icon-dropdown icon icon-arrow-37"></span></a>
+            <a className="btn btn-action with-icon" onClick={this.handleClick}><span className="icon icon-preview-2"></span> View</a>
+            <a className="btn btn-action with-icon dropdown-toggle"><span className="icon-dropdown icon icon-arrow-37"></span></a>
           </div>
           <div className="action">
-            <a className="btn btn-action dropdown-toggle" onClick={this.handleClick}><span className="icon icon-folder-1"></span> Volume <span className="icon-dropdown icon icon-arrow-37"></span></a>
+            <a className="btn btn-action with-icon dropdown-toggle" onClick={this.handleClick}><span className="icon icon-folder-1"></span> Volume <span className="icon-dropdown icon icon-arrow-37"></span></a>
           </div>
           <div className="action">
-            <a className="btn btn-action" onClick={this.handleClick}><span className="icon icon-refresh"></span> Restart</a>
+            <a className="btn btn-action with-icon" onClick={this.handleClick}><span className="icon icon-refresh"></span> Restart</a>
           </div>
           <div className="action">
-            <a className="btn btn-action" onClick={this.handleClick}><span className="icon icon-window-code-3"></span> Terminal</a>
+            <a className="btn btn-action with-icon" onClick={this.handleClick}><span className="icon icon-window-code-3"></span> Terminal</a>
           </div>
         </div>
         <div className="details-tabs">
