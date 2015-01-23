@@ -192,6 +192,7 @@ var ContainerDetails = React.createClass({
         </div>
         {progress}
         <div className="details-logs">
+          <h4>Container Logs</h4>
           <div className="logs">
             {logs}
           </div>
