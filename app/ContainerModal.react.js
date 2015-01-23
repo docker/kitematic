@@ -86,7 +86,10 @@ var ContainerModal = React.createClass({
             </div>
           </div>
           <div className="action">
-            <button className="btn btn-primary" name={r.name} onClick={self.handleClick}>Create</button>
+            <div className="btn-group">
+              <a className="btn btn-action" name={r.name} onClick={self.handleClick}>Create</a>
+              <a className="btn btn-action with-icon dropdown-toggle"><span className="icon-dropdown icon icon-arrow-37"></span></a>
+            </div>
           </div>
         </li>
       );
@@ -94,9 +97,9 @@ var ContainerModal = React.createClass({
 
     var title;
     if (this.state.query) {
-      title = <div className="title">Results</div>;
+      title = <h4 className="title">Results</h4>;
     } else {
-      title = <div className="title">Recommended</div>;
+      title = <h4 className="title">Recommended</h4>;
     }
 
     return (
@@ -104,6 +107,7 @@ var ContainerModal = React.createClass({
         <div className="modal-body">
           <section className="search">
             <input type="search" ref="searchInput" className="form-control" placeholder="Find an existing image" onChange={this.handleChange}/>
+            <div className="icon icon-magnifier search-icon"></div>
             <div className="question">
               <a href="#"><span>What&#39;s an image?</span></a>
             </div>
@@ -115,7 +119,7 @@ var ContainerModal = React.createClass({
             </div>
           </section>
           <aside className="custom">
-            <div className="title">Create a Custom Container</div>
+            <h4 className="title">Create a Custom Container</h4>
           </aside>
         </div>
       </Modal>
