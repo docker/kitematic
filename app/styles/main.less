@@ -77,9 +77,12 @@ html, body {
 
       .question {
         a {
+          transition: all 0.3s ease 0s;
+          cursor: default;
           color: @gray-lightest;
           &:hover {
             color: darken(@gray-lightest, 10%);
+            text-decoration: none;
           }
         }
         font-size: 10px;
