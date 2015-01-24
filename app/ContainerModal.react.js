@@ -5,6 +5,8 @@ var Router = require('react-router');
 var Modal = require('react-bootstrap/Modal');
 var RetinaImage = require('react-retina-image');
 var ContainerStore = require('./ContainerStore');
+var OverlayTrigger = require('react-bootstrap/OverlayTrigger');
+var Popover = require('react-bootstrap/Popover');
 
 var Navigation = Router.Navigation;
 
@@ -109,7 +111,9 @@ var ContainerModal = React.createClass({
             <input type="search" ref="searchInput" className="form-control" placeholder="Find an existing image" onChange={this.handleChange}/>
             <div className="icon icon-magnifier search-icon"></div>
             <div className="question">
-              <a href="#"><span>What&#39;s an image?</span></a>
+              <OverlayTrigger trigger="hover" placement="bottom" overlay={<Popover>An image is a template which a container can be created from.</Popover>}>
+                <a><span>What&#39;s an image?</span></a>
+              </OverlayTrigger>
             </div>
             <div className="results">
               {title}
