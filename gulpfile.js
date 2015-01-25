@@ -22,21 +22,28 @@ var downloadatomshell = require('gulp-download-atom-shell');
 var packagejson = require('./package.json');
 var http = require('http');
 var react = require('gulp-react');
+var fs = require('fs');
 
 var dependencies = Object.keys(packagejson.dependencies);
 var devDependencies = Object.keys(packagejson.devDependencies);
 var options = {
-  dev: process.argv.indexOf('release') === -1,
+  dev: process.argv.indexOf('release') === -1 && process.argv.indexOf('test') === -1,
   test: process.argv.indexOf('test') !== -1,
   filename: 'Kitematic.app',
   name: 'Kitematic',
-  signing_identity: process.env.XCODE_SIGNING_IDENTITY
+  signing_identity: fs.readFileSync('./identity')
 };
 
 gulp.task('js', function () {
   gulp.src('./app/**/*.js')
+    .pipe(plumber(function(error) {
+      gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.message));
+      // emit the end event, to properly end the task
+      this.emit('end');
+    }))
     .pipe(react())
-    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'));
+    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
+    .pipe(gulpif(options.dev, livereload()));
 });
 
 gulp.task('specs', function () {
@@ -74,7 +81,7 @@ gulp.task('images', function() {
       svgoPlugins: [{removeViewBox: false}]
     }))
     .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
-    .pipe(gulpif(options.dev && !options.test, livereload()));
+    .pipe(gulpif(options.dev, livereload()));
 });
 
 gulp.task('styles', function () {
@@ -103,11 +110,11 @@ gulp.task('download', function (cb) {
 gulp.task('copy', function () {
   gulp.src('./app/index.html')
     .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
-    .pipe(gulpif(options.dev && !options.test, livereload()));
+    .pipe(gulpif(options.dev, livereload()));
 
   gulp.src('./app/fonts/**')
     .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
-    .pipe(gulpif(options.dev && !options.test, livereload()));
+    .pipe(gulpif(options.dev, livereload()));
 });
 
 gulp.task('dist', function (cb) {

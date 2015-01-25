@@ -27,9 +27,9 @@ app.on('activate-with-no-open-windows', function () {
 
 app.on('ready', function() {
   var windowOptions = {
-    width: 1200,
-    height: 800,
-    'min-width': 960,
+    width: 1000,
+    height: 700,
+    'min-width': 1000,
     'min-height': 700,
     resizable: true,
     frame: false

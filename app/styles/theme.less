@@ -6,6 +6,12 @@
 @import "bootstrap/mixins.less";
 
 
+h4 {
+  font-size: 13px;
+  color: @gray-normal;
+  font-weight: 400;
+}
+
 //
 // Buttons
 // --------------------------------------------------
@@ -21,32 +27,83 @@
 }
 
 // Mixin for generating new styles
-.btn-styles(@btn-color: #555) {
+.btn-styles(@btn-color: @gray-normal) {
+  transition: all 0.1s;
   .reset-filter(); // Disable gradients for IE9 because filter bleeds through rounded corners
-  background-repeat: repeat-x;
-  // border-color: darken(@btn-color, 14%);
+  border-color: @btn-color;
+  color: @btn-color;
 
   &:hover,
-  &:focus  {
-    background-color: darken(@btn-color, 12%);
+  &:focus {
+    border-color: darken(@btn-color, 10%);
+    color: darken(@btn-color, 10%);
+    cursor: default;
+    box-shadow: none;
+  }
+
+  &:active {
+    background-color: lighten(@btn-color, 45%);
+    border-color: darken(@btn-color, 10%);
+    color: darken(@btn-color, 10%);
+    box-shadow: none;
+  }
+
+  &.active {
+    background-color: @btn-color;
+    color: white;
+    box-shadow: none;
+    box-shadow: none;
   }
 
   &:disabled,
   &[disabled] {
-    background-color: darken(@btn-color, 12%);
+    opacity: 0.5;
+  }
+}
+
+.btn-group {
+  .btn {
+    .icon-dropdown {
+      &.icon:before {
+        top: 7px;
+        margin-left: 0px;
+        margin-right: 4px;
+      }
+    }
   }
 }
 
 // Common styles
 .btn {
+  font-size: 12px;
+  background-color: transparent;
+  color: @gray-normal;
+  border: 1px solid @gray-normal;
   border-radius: 25px;
   box-shadow: none;
   font-weight: 400;
   text-shadow: none;
+  padding: 6px 14px 6px 14px;
+  height: 32px;
+  cursor: default;
+
+  .content {
+    position: relative;
+    top: -4px;
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+
+  .icon {
+    position: relative;
+    font-size: 16px;
+  }
+
   // Remove the gradient for the pressed/active state
   &:active,
   &.active {
     background-image: none;
+    box-shadow: none;
   }
 
   &:focus,
@@ -57,6 +114,9 @@
 }
 
 // Apply the mixin to the buttons
+.btn-action {
+  .btn-styles(@brand-action);
+}
 .btn-default { .btn-styles(@btn-default-bg); }
 .btn-primary { .btn-styles(@btn-primary-bg); }
 .btn-success { .btn-styles(@btn-success-bg); }

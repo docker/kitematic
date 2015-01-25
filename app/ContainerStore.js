@@ -1,6 +1,9 @@
 var EventEmitter = require('events').EventEmitter;
 var async = require('async');
 var assign = require('object-assign');
+var Stream = require('stream');
+var Convert = require('ansi-to-html');
+var convert = new Convert();
 var docker = require('./docker');
 var registry = require('./registry');
 var $ = require('jquery');
@@ -9,6 +12,7 @@ var _ = require('underscore');
 var _recommended = [];
 var _containers = {};
 var _progress = {};
+var _logs = {};
 
 var ContainerStore = assign(EventEmitter.prototype, {
   CLIENT_CONTAINER_EVENT: 'client_container',
@@ -19,10 +23,6 @@ var ContainerStore = assign(EventEmitter.prototype, {
   _pullScratchImage: function (callback) {
     var image = docker.client().getImage('scratch:latest');
     image.inspect(function (err, data) {
-      if (err) {
-        callback(err);
-        return;
-      }
       if (!data) {
         docker.client().pull('scratch:latest', function (err, stream) {
           if (err) {
@@ -69,6 +69,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
 
           stream.on('data', function (str) {
             var data = JSON.parse(str);
+            console.log(data);
 
             if (data.status === 'Already exists') {
               layerProgress[data.id] = 1;
@@ -97,6 +98,12 @@ var ContainerStore = assign(EventEmitter.prototype, {
       });
     });
   },
+  _escapeHTML: function (html) {
+    var text = document.createTextNode(html);
+    var div = document.createElement('div');
+    div.appendChild(text);
+    return div.innerHTML;
+  },
   _createContainer: function (image, name, callback) {
     var existing = docker.client().getContainer(name);
     var self = this;
@@ -124,7 +131,6 @@ var ContainerStore = assign(EventEmitter.prototype, {
     });
   },
   _createPlaceholderContainer: function (imageName, name, callback) {
-    console.log('_createPlaceholderContainer', imageName, name);
     var self = this;
     this._pullScratchImage(function (err) {
       if (err) {
@@ -194,7 +200,6 @@ var ContainerStore = assign(EventEmitter.prototype, {
 
     // If the event is delete, remove the container
     if (data.status === 'destroy') {
-      console.log('destroy');
       var container = _.findWhere(_.values(_containers), {Id: data.id});
       delete _containers[container.Name];
       this.emit(this.SERVER_CONTAINER_EVENT, container.Name, data.status);
@@ -278,6 +283,54 @@ var ContainerStore = assign(EventEmitter.prototype, {
       }
     });
   },
+  fetchLogs: function (name, callback) {
+    if (_logs[name]) {
+      callback();
+    }
+    _logs[name] = [];
+    var index = 0;
+    var self = this;
+    docker.client().getContainer(name).logs({
+      follow: false,
+      stdout: true,
+      stderr: true,
+      timestamps: true
+    }, function (err, stream) {
+      stream.setEncoding('utf8');
+      stream.on('data', function (buf) {
+        // Every other message is a header
+        if (index % 2 === 1) {
+          var time = buf.substr(0,buf.indexOf(' '));
+          var msg = buf.substr(buf.indexOf(' ')+1);
+          _logs[name].push(convert.toHtml(self._escapeHTML(msg)));
+          self.emit(self.SERVER_LOGS_EVENT, name);
+        }
+        index += 1;
+      });
+      stream.on('end', function (buf) {
+        callback();
+        docker.client().getContainer(name).logs({
+          follow: true,
+          stdout: true,
+          stderr: true,
+          timestamps: true,
+          tail: 0
+        }, function (err, stream) {
+          stream.setEncoding('utf8');
+          stream.on('data', function (buf) {
+            // Every other message is a header
+            if (index % 2 === 1) {
+              var time = buf.substr(0,buf.indexOf(' '));
+              var msg = buf.substr(buf.indexOf(' ')+1);
+              _logs[name].push(convert.toHtml(self._escapeHTML(msg)));
+              self.emit(self.SERVER_LOGS_EVENT, name);
+            }
+            index += 1;
+          });
+        });
+      });
+    });
+  },
   create: function (repository, tag, callback) {
     tag = tag || 'latest';
     var self = this;
@@ -338,7 +391,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
     return _progress[name];
   },
   logs: function (name) {
-    return logs[name];
+    return _logs[name] || [];
   }
 });
 

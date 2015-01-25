@@ -12,7 +12,7 @@
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
     "start": "gulp",
-    "preinstall": "./script/deps",
+    "preinstall": "./deps",
     "test": "gulp test",
     "release": ". ./script/identity && gulp release"
   },

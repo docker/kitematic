@@ -16,6 +16,14 @@ var ContainerModal = React.createClass({
   },
   componentDidMount: function () {
     this.refs.searchInput.getDOMNode().focus();
+    ContainerStore.on(ContainerStore.SERVER_RECOMMENDED_EVENT, this.update);
+  },
+  update: function () {
+    if (!this.state.query.length) {
+      this.setState({
+        results: ContainerStore.recommended()
+      });
+    }
   },
   search: function (query) {
     if (this._searchRequest) {
@@ -91,7 +99,10 @@ var ContainerModal = React.createClass({
               </div>
             </div>
             <div className="action">
-              <RetinaImage src="loading.png"/> <button className="btn btn-primary" name={r.name} onClick={self.handleClick}>Create</button>
+              <div className="btn-group">
+                <a className="btn btn-action" name={r.name} onClick={self.handleClick}>Create</a>
+                <a className="btn btn-action with-icon dropdown-toggle"><span className="icon-dropdown icon icon-arrow-58"></span></a>
+              </div>
             </div>
           </li>
         );
@@ -119,6 +130,12 @@ var ContainerModal = React.createClass({
       hidden: !this.state.loading,
       loading: true
     });
+    var magnifierClasses = React.addons.classSet({
+      hidden: this.state.loading,
+      icon: true,
+      'icon-magnifier': true,
+      'search-icon': true
+    });
 
     return (
       <Modal {...this.props} animation={false} className="create-modal">
@@ -126,6 +143,7 @@ var ContainerModal = React.createClass({
           <section className="search">
             <div className="search-bar">
               <input type="search" ref="searchInput" className="form-control" placeholder="Find an existing image" onChange={this.handleChange}/>
+              <div className={magnifierClasses}></div>
               <RetinaImage className={loadingClasses} src="loading.png"/>
             </div>
             <div className="question">
@@ -137,7 +155,7 @@ var ContainerModal = React.createClass({
             </div>
           </section>
           <aside className="custom">
-            <div className="title">Create a Custom Container</div>
+            <h4 className="title">Create a Custom Container</h4>
           </aside>
         </div>
       </Modal>

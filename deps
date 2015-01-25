@@ -1,7 +1,6 @@
 #!/bin/bash
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-BASE=$DIR/..
+BASE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export BOOT2DOCKER_CLI_VERSION=$(node -pe "JSON.parse(process.argv[1])['boot2docker-version']" "$(cat $BASE/package.json)")
 export BOOT2DOCKER_CLI_VERSION_FILE=boot2docker-$BOOT2DOCKER_CLI_VERSION
 
