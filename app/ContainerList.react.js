@@ -7,40 +7,16 @@ var Modal = require('react-bootstrap/Modal');
 var RetinaImage = require('react-retina-image');
 var ModalTrigger = require('react-bootstrap/ModalTrigger');
 var ContainerModal = require('./ContainerModal.react');
-var ContainerStore = require('./ContainerStore');
 var Header = require('./Header.react');
 var docker = require('./docker');
 
-var Link = Router.Link;
-var RouteHandler = Router.RouteHandler;
-var Navigation= Router.Navigation;
-
 var ContainerList = React.createClass({
-  getInitialState: function () {
-    return {
-      containers: []
-    };
-  },
-  componentDidMount: function () {
-    this.updateContainers();
-    ContainerStore.addChangeListener(ContainerStore.CONTAINERS, this.updateContainers);
-  },
   componentWillMount: function () {
     this._start = Date.now();
   },
-  componentWillUnmount: function () {
-    ContainerStore.removeChangeListener(ContainerStore.CONTAINERS, this.updateContainers);
-  },
-  updateContainers: function () {
-    // Sort by name
-    var containers = _.values(ContainerStore.containers()).sort(function (a, b) {
-      return a.Name.localeCompare(b.Name);
-    });
-    this.setState({containers: containers});
-  },
   render: function () {
     var self = this;
-    var containers = this.state.containers.map(function (container) {
+    var containers = this.props.containers.map(function (container) {
       var downloadingImage = null, downloading = false;
       var env = container.Config.Env;
       if (env.length) {
@@ -76,22 +52,20 @@ var ContainerList = React.createClass({
         state = <div className="state state-stopped"></div>;
       }
 
-      var name = container.Name.replace('/', '');
-
       return (
-        <Link key={name} data-container={name} to="container" params={{name: name}}>
+        <Router.Link key={container.Name} data-container={name} to="container" params={{name: container.Name}}>
           <li>
             {state}
             <div className="info">
               <div className="name">
-                {name}
+                {container.Name}
               </div>
               <div className="image">
                 {imageName}
               </div>
             </div>
           </li>
-        </Link>
+        </Router.Link>
       );
     });
     return (
