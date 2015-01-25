@@ -5,16 +5,10 @@ node_modules
 npm-debug.log
 
 # Signing Identity
-script/identity
+identity
 
 # Resources
-resources/virtualbox-*.pkg
 resources/boot2docker*
-resources/mongod
-resources/MONGOD_LICENSE.txt
-resources/node
-resources/NODE_LICENSE.txt
-resources/settings.json
 
 # Cache
 cache

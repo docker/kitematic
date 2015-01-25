@@ -1,4 +1,4 @@
-var React = require('react');
+var React = require('react/addons');
 var Router = require('react-router');
 var Radial = require('./Radial.react.js');
 var async = require('async');
@@ -134,6 +134,12 @@ var setupSteps = [
 
 var Setup = React.createClass({
   mixins: [ Router.Navigation ],
+  getInitialState: function () {
+    return {
+      message: '',
+      progress: 0
+    };
+  },
   render: function () {
     var radial;
     if (this.state.progress) {

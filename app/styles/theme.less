@@ -33,7 +33,7 @@ h4 {
 
 // Mixin for generating new styles
 .btn-styles(@btn-color: @gray-normal) {
-  transition: all 0.3s ease 0s;
+  transition: all 0.1s;
   .reset-filter(); // Disable gradients for IE9 because filter bleeds through rounded corners
   border-color: @btn-color;
   color: @btn-color;
@@ -42,17 +42,21 @@ h4 {
   &:focus {
     border-color: darken(@btn-color, 10%);
     color: darken(@btn-color, 10%);
+    cursor: default;
+    box-shadow: none;
   }
 
   &:active {
     background-color: lighten(@btn-color, 45%);
     border-color: darken(@btn-color, 10%);
     color: darken(@btn-color, 10%);
+    box-shadow: none;
   }
 
   &.active {
     background-color: @btn-color;
     color: white;
+    box-shadow: none;
     box-shadow: none;
   }
 
@@ -71,12 +75,6 @@ h4 {
         margin-right: 4px;
       }
     }
-    &.only-icon {
-      padding: 0px 14px 0px 14px;
-      .icon:before {
-        top: 5px;
-      }
-    }
   }
 }
 
@@ -92,37 +90,25 @@ h4 {
   text-shadow: none;
   padding: 6px 14px 6px 14px;
   height: 32px;
-  .icon:before {
-    width: 20px;
-    height: 20px;
+  cursor: default;
+
+  .content {
     position: relative;
-    top: 5px;
-    font-size: 20px;
-    margin-right: 4px;
+    top: -4px;
+    margin-left: 5px;
+    margin-right: 5px;
   }
-  &.with-icon {
-    padding: 0px 14px 6px 14px;
+
+  .icon {
+    position: relative;
+    font-size: 16px;
   }
-  &.only-icon {
-    padding: 0px 5px 10px 5px;
-    .icon:before {
-      position: relative;
-      margin-right: 0px;
-    }
-  }
-  .icon-dropdown {
-    &.icon:before {
-      font-size: 10px;
-      position: relative;
-      top: 1px;
-      margin-left: 4px;
-      margin-right: 0px;
-    }
-  }
+
   // Remove the gradient for the pressed/active state
   &:active,
   &.active {
     background-image: none;
+    box-shadow: none;
   }
 
   &:focus,

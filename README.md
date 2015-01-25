@@ -15,15 +15,15 @@ Kitematic's documentation and other information can be found at [http://kitemati
 ### Development
 
 - `sudo npm install -g less`
-- `./script/npm install`
+- `npm install`
 
 To run the app in development:
 
-- `./script/gulp`
+- `npm start`
 
 ### Building the Mac OS X Package
 
-- `./script/release`
+- `npm run release`
 
 ## Uninstalling
 
