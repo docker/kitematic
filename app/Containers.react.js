@@ -80,12 +80,10 @@ var Containers = React.createClass({
         <div className="containers-body">
           <div className="sidebar">
             <section className={sidebarHeaderClass}>
-              <h3>containers</h3>
+              <h4>My Containers</h4>
               <div className="create">
                 <ModalTrigger modal={<ContainerModal/>}>
-                  <div className="wrapper">
-                    <span className="icon icon-add-3"></span>
-                  </div>
+                  <a className="btn btn-action only-icon"><span className="icon icon-add-1"></span></a>
                 </ModalTrigger>
               </div>
             </section>
