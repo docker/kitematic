@@ -30,8 +30,8 @@ var options = {
   dev: process.argv.indexOf('release') === -1 && process.argv.indexOf('test') === -1,
   test: process.argv.indexOf('test') !== -1,
   filename: 'Kitematic.app',
-  name: 'Kitematic',
-  signing_identity: fs.readFileSync('./identity')
+  name: 'Kitematic'
+  //signing_identity: fs.readFileSync('./identity')
 };
 
 gulp.task('js', function () {
