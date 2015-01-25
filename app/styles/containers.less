@@ -22,7 +22,7 @@
         display: flex;
         border-bottom: 1px solid transparent;
         transition: border-bottom 0.25s;
-        padding: 0px 28px 0px 10px;
+        padding: 0px 10px 0px 10px;
 
         &.sep {
           border-bottom: 1px solid #eee;
@@ -32,20 +32,26 @@
         h4 {
           align-self: flex-start;
           padding: 0 24px;
-          margin: 10px 0 0;
+          margin: 14px 0 0;
           display: inline-block;
+          font-size: 14px;
           position: relative;
         }
 
         .create {
           flex: 1 auto;
           text-align: right;
-
-          .wrapper {
-            text-align: center;
-            display: inline-block;
+          .btn {
+            margin-top: 4px;
+            padding: 4px 7px;
+            font-size: 16px;
+            position: relative;
+            .icon {
+              position: relative;
+              top: 3px;
+              left: 1px;
+            }
           }
-
         }
       }
 
@@ -64,6 +70,7 @@
           margin: 0;
           min-width: 240px;
           padding: 0;
+          margin-top: 4px;
 
           display: flex;
           flex-direction: column;
@@ -72,9 +79,12 @@
             color: inherit;
             flex-shrink: 0;
             cursor: default;
-            margin: 0px 5px 0px 20px;
+            margin: 0px 3px 0px 8px;
+            outline: none;
+            padding: 4px 5px;
 
             &.active {
+<<<<<<< HEAD
               background: @brand-primary;
               li {
                 .name {
@@ -111,6 +121,38 @@
               }
               .state-stopped {
                 .at2x('still-white.png', 20px, 20px);
+=======
+              li {
+                border-bottom: none;
+                border-radius: 40px;
+                background: @brand-primary;
+                .name {
+                  color: white;
+                }
+                .image {
+                  color: white;
+                  opacity: 0.9;
+                }
+
+                .state-running {
+                  .at2x('running-white.png', 20px, 20px);
+
+                  .runningwave {
+                    .at2x('runningwave-white.png', 20px, 20px);
+                  }
+                }
+                .state-stopped {
+                  .at2x('stopped-white.png', 20px, 20px);
+                }
+
+                .state-downloading {
+                  .at2x('downloading-white.png', 20px, 20px);
+
+                  .downloading-arrow {
+                    .at2x('downloading-arrow-white.png', 20px, 20px);
+                  }
+                }
+>>>>>>> master
               }
             }
 
@@ -225,6 +267,22 @@
       }
     }
 
+    .no-containers {
+      flex: 1 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      position: relative;
+
+      h3 {
+        position: relative;
+        top: -44px;
+        font-size: 18px;
+        color: #C7D7D7;
+      }
+    }
+
     .details {
       margin: 0;
       padding: 0;
@@ -235,64 +293,72 @@
       display: flex;
       flex-direction: column;
 
-      .details-actions {
-        flex: 0 auto;
-        display: flex;
-        flex-direction: row;
-        padding: 20px 40px 10px 40px;
-        position: relative;
-        border-bottom: 1px solid transparent;
-        transition: border-bottom 0.25s;
-        .action {
-          margin-right: 24px;
-        }
-      }
-
-      .details-tabs {
-        .tabs {
-          z-index: 0;
-          float: right;
-          margin-right: 40px;
-          margin-top: -42px;
-        }
-      }
-
       .details-header {
         flex: 0 auto;
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         padding: 4px 40px 10px 40px;
         position: relative;
-        a {
-          position: absolute;
-          right: 30px;
-          top: -4px;
-        }
-        h1 {
-          margin: 0;
-          font-size: 20px;
-          margin: 0;
-          color: @gray-darkest;
-        }
-        h2 {
-          &.status {
-            margin: 8px 0px 0px 16px;
-            text-transform: uppercase;
-            font-weight: bold;
-            font-size: 10px;
-            &.running {
-              color: @brand-positive;
+        border-bottom: 1px solid #eee;
+
+        .details-header-actions {
+          flex: 0 auto;
+          display: flex;
+          flex-direction: row;
+          margin-top: 24px;
+          margin-bottom: 6px;
+          position: relative;
+          border-bottom: 1px solid transparent;
+          transition: border-bottom 0.25s;
+          .action {
+            flex: 0 auto;
+            margin-right: 24px;
+          }
+          .details-header-actions-rhs {
+            flex: 1 auto;
+            display: flex;
+            align-items: right;
+            justify-content: flex-end;
+            a.btn {
+              z-index: 0;
             }
           }
-          &.image-label {
-            margin: 8px 0px 0px 30px;
-            font-size: 10px;
-            color: @gray-lighter;
+        }
+
+        .details-header-info {
+          display: flex;
+          flex-direction: row;
+          a {
+            position: absolute;
+            right: 30px;
+            top: -4px;
           }
-          &.image {
-            margin: 5px 0px 0px 16px;
-            font-size: 14px;
-            color: @gray-normal;
+          h1 {
+            margin: 0;
+            font-size: 20px;
+            margin: 0;
+            color: @gray-darkest;
+          }
+          h2 {
+            &.status {
+              margin: 8px 0px 0px 16px;
+              text-transform: uppercase;
+              font-weight: bold;
+              font-size: 10px;
+              &.running {
+                color: @brand-positive;
+              }
+            }
+            &.image-label {
+              margin: 8px 0px 0px 30px;
+              font-size: 10px;
+              color: @gray-lighter;
+            }
+            &.image {
+              margin: 5px 0px 0px 16px;
+              font-size: 14px;
+              color: @gray-normal;
+            }
           }
         }
       }
@@ -306,11 +372,12 @@
         flex: 1;
         overflow: auto;
         h4 {
-          margin-top: 30px;
+          font-size: 14px;
+          margin-top: 16px;
           margin-left: 40px;
         }
         .logs {
-          user-select: text;
+          -webkit-user-select: text;
           font-family: Menlo;
           font-size: 12px;
           padding: 18px 45px;

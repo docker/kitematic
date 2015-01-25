@@ -13,8 +13,13 @@ html, body {
   width: 100%;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
-  user-select: none;
+  -webkit-user-select: none;
   font-family: 'Clear Sans', sans-serif;
+
+  cursor: default;
+  img {
+    pointer-events: none;
+  }
 }
 
 ::-webkit-scrollbar {
@@ -49,8 +54,10 @@ html, body {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
     border: none; //1px solid #ccc;
     height: 610px;
+    display: flex;
   }
   .modal-body {
+    flex: 1 auto;
     display: flex;
     flex-direction: row;
     padding: 32px 32px;
@@ -62,18 +69,9 @@ html, body {
     }
 
     section.search {
-      flex: 0 auto;
       min-width: 404px;
       padding-right: 32px;
       border-right: 1px solid #eee;
-
-      .search-icon {
-        font-size: 20px;
-        color: @gray-normal;
-        position: absolute;
-        top: 40px;
-        left: 45px;
-      }
 
       .question {
         a {
@@ -89,31 +87,62 @@ html, body {
         text-align: right;
       }
 
-      input {
-        border-radius: 20px;
-        font-size: 13px;
-        height: 38px;
-        padding: 8px 16px 8px 40px;
-        font-weight: 300;
-        color: @gray-darkest;
-        margin-bottom: 3px;
-        border-color: lighten(@gray-lighter, 10%);
-
-        &:focus {
-          box-shadow: none;
-          border-color: @gray-lighter;
+      .search-bar {
+        position: relative;
+        .loading {
+          position: absolute;
+          left: 13px;
+          top: 10px;
+          width: 20px;
+          height: 20px;
+          -webkit-animation-name: spin;
+          -webkit-animation-duration: 1.8s;
+          -webkit-animation-iteration-count: infinite;
+          -webkit-animation-timing-function: linear;
         }
+        .search-icon {
+          font-size: 20px;
+          color: @gray-lighter;
+          position: absolute;
+          top: 9px;
+          left: 14px;
+        }
+        input {
+          border-radius: 20px;
+          font-size: 13px;
+          height: 38px;
+          padding: 8px 16px 8px 40px;
+          color: @gray-darkest;
+          margin-bottom: 3px;
+          border-color: @gray-lightest;
+          box-shadow: none;
 
-        &::-webkit-input-placeholder {
-          color: #ddd;
-          font-weight: 300;
+          &:focus {
+            box-shadow: none;
+            border-color: @gray-lighter;
+          }
+
+          &::-webkit-input-placeholder {
+            color: #ddd;
+            font-weight: 300;
+          }
         }
       }
 
       .results {
         overflow: auto;
 
+        .no-results {
+          text-align: center;
+          h3 {
+            color: #ABC0C0;
+            font-size: 16px;
+            margin-top: 160px;
+          }
+        }
+
         .title {
+          flex: 0 auto;
           margin-top: 16px;
         }
 
@@ -147,7 +176,7 @@ html, body {
                 overflow: hidden;
                 text-overflow: ellipsis;
               }
-              .stars {
+              .properties {
                 color: @gray-lighter;
                 margin-top: 2px;
 
@@ -188,7 +217,7 @@ html, body {
   height: 100%;
 }
 
-@-webkit-keyframes translatedownload {
+@-webkit-keyframes spin {
   from {
     -webkit-transform: rotate(0deg);
   }
