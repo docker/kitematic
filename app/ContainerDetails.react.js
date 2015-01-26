@@ -186,16 +186,16 @@ var ContainerDetails = React.createClass({
           </div>
           <div className="details-header-actions">
             <div className="action btn-group">
-              <a className="btn btn-action with-icon" onClick={this.handleClick}><span className="icon icon-preview-2"></span><span className="content">View</span></a><a className="btn btn-action with-icon dropdown-toggle"><span className="icon-dropdown icon icon-arrow-37"></span></a>
+              <a className="btn btn-action" onClick={this.handleClick}><span className="icon icon-preview-2"></span><span className="content">View</span></a><a className="btn btn-action with-icon dropdown-toggle"><span className="icon-dropdown icon icon-arrow-37"></span></a>
             </div>
             <div className="action">
-              <a className="btn btn-action with-icon dropdown-toggle" onClick={this.handleClick}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
+              <a className="btn btn-action dropdown-toggle" onClick={this.handleClick}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
             </div>
             <div className="action">
-              <a className="btn btn-action with-icon" onClick={this.handleClick}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>
+              <a className="btn btn-action" onClick={this.handleClick}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>
             </div>
             <div className="action">
-              <a className="btn btn-action with-icon" onClick={this.handleClick}><span className="icon icon-window-code-3"></span> <span className="content">Terminal</span></a>
+              <a className="btn btn-action" onClick={this.handleClick}><span className="icon icon-window-code-3"></span> <span className="content">Terminal</span></a>
             </div>
             <div className="details-header-actions-rhs tabs btn-group">
               <a className={textButtonClasses} onClick={this.showLogs}><span className="icon icon-text-wrapping-2"></span></a>
