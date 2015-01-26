@@ -103,7 +103,7 @@ var ContainerModal = React.createClass({
             <div className="action">
               <div className="btn-group">
                 <a className="btn btn-action" name={r.name} onClick={self.handleClick}>Create</a>
-                <a className="btn btn-action with-icon dropdown-toggle"><span className="icon-dropdown icon icon-arrow-58"></span></a>
+                <a className="btn btn-action with-icon dropdown-toggle"><span className="icon-dropdown icon icon-arrow-37"></span></a>
               </div>
             </div>
           </li>

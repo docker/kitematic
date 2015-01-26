@@ -70,7 +70,9 @@ h4 {
   .btn {
     .icon-dropdown {
       &.icon:before {
-        top: 7px;
+        position: relative;
+        font-size: 10px;
+        top: -2px;
         margin-left: 0px;
         margin-right: 4px;
       }
@@ -99,6 +101,14 @@ h4 {
     margin-right: 5px;
   }
 
+  .icon-dropdown {
+    &.icon:before {
+      font-size: 10px;
+      position: relative;
+      top: -2px;
+    }
+  }
+
   .icon {
     position: relative;
     font-size: 16px;
@@ -115,6 +125,10 @@ h4 {
   &.focus {
     box-shadow: none;
     outline: none !important;
+  }
+
+  &.only-icon {
+    padding: 6px 7px 6px 7px;
   }
 }
 
