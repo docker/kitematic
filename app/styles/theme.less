@@ -17,6 +17,22 @@ h4 {
   font-size: 13px;
 }
 
+input[type="text"] {
+  &.line {
+    border: 0;
+    border-bottom: 1px solid @gray-normal;
+    color: @gray-normal;
+    font-weight: 300;
+    &:focus {
+      outline: 0;
+    }
+    &::-webkit-input-placeholder {
+      color: #ddd;
+      font-weight: 300;
+    }
+  }
+}
+
 //
 // Buttons
 // --------------------------------------------------
