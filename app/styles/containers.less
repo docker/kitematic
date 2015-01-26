@@ -329,24 +329,22 @@
         width: 300px;
       }
 
-      .details-logs {
+      .details-panel {
         flex: 1;
         overflow: auto;
-        h4 {
-          font-size: 14px;
-          margin-top: 16px;
-          margin-left: 40px;
-        }
         .logs {
           -webkit-user-select: text;
           font-family: Menlo;
           font-size: 12px;
-          padding: 18px 45px;
+          padding: 18px 35px;
           color: lighten(@gray-normal, 6%);
           white-space: pre-wrap;
           p {
             margin: 0 6px;
           }
+        }
+        .settings {
+          padding: 18px 35px;
         }
       }
     }

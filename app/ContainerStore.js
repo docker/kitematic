@@ -130,6 +130,47 @@ var ContainerStore = assign(EventEmitter.prototype, {
       });
     });
   },
+  rename: function (name, newName, callback) {
+    var existing = docker.client().getContainer(name);
+    var existingImage = existing.Image;
+    var self = this;
+    existing.remove(function (err, data) {
+      docker.client().createContainer({
+        Image: existingImage,
+        Tty: false,
+        name: newName,
+        User: 'root'
+      }, function (err, container) {
+        if (err) {
+          callback(err, null);
+          return;
+        }
+        container.start({
+          PublishAllPorts: true
+        }, function (err) {
+          if (err) {
+            callback(err);
+            return;
+          }
+          self.fetchContainer(newName, callback);
+        });
+      });
+    });
+  },
+  remove: function (name, callback) {
+    var existing = docker.client().getContainer(name);
+    existing.kill(function (err) {
+      if (err) {
+        console.log(err);
+      } else {
+        existing.remove(function (err) {
+          if (err) {
+            console.log(err);
+          }
+        });
+      }
+    });
+  },
   _createPlaceholderContainer: function (imageName, name, callback) {
     var self = this;
     this._pullScratchImage(function (err) {

@@ -102,6 +102,14 @@ var ContainerDetails = React.createClass({
       });
     });
   },
+  saveEnvVar: function () {
+    console.log('Saved Vars!');
+  },
+  deleteContainer: function () {
+    var container = this.props.container;
+    var name = container.Name.replace('/', '');
+    ContainerStore.remove(name);
+  },
   render: function () {
     var self = this;
 
@@ -135,6 +143,21 @@ var ContainerDetails = React.createClass({
       button = <a className="btn btn-primary disabled" onClick={this.handleClick}>View</a>;
     }
 
+    var name = this.props.container.Name;
+    var image = this.props.container.Config.Image;
+
+    var envVars = this.props.container.Config.Env.map(function (keyval) {
+      var keyvalTokens = keyval.split('=');
+      var key = keyvalTokens[0];
+      var val = keyvalTokens[1];
+      return (
+        <div className="keyval-row">
+          <input type="text" className="key line" defaultValue={key}></input>
+          <input type="text" className="val line" defaultValue={val}></input>
+        </div>
+      );
+    });
+
     var body;
     if (this.props.container.State.Downloading) {
       body = (
@@ -145,7 +168,7 @@ var ContainerDetails = React.createClass({
     } else {
       if (this.state.page === this.PAGE_LOGS) {
         body = (
-          <div className="details-logs">
+          <div className="details-panel">
             <div className="logs">
               {logs}
             </div>
@@ -153,8 +176,17 @@ var ContainerDetails = React.createClass({
         );
       } else {
         body = (
-          <div className="details-logs">
+          <div className="details-panel">
             <div className="settings">
+              <h4>Container Detail</h4>
+              <input id="input-container-name" type="text" className="line" placeholder="Container Name" defaultValue={name}></input>
+              <h4>Environment Variables</h4>
+              <div className="env-vars">
+                {envVars}
+              </div>
+              <a className="btn btn-action" onClick={this.saveEnvVar}>Save</a>
+              <h4>Delete Container</h4>
+              <a className="btn btn-action" onClick={this.deleteContainer}>Delete Container</a>
             </div>
           </div>
         );
@@ -174,9 +206,6 @@ var ContainerDetails = React.createClass({
       'only-icon': true,
       'active': this.state.page === this.PAGE_SETTINGS
     });
-
-    var name = this.props.container.Name;
-    var image = this.props.container.Config.Image;
 
     return (
       <div className="details">
