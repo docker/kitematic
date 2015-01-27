@@ -14,6 +14,7 @@ var _recommended = [];
 var _containers = {};
 var _progress = {};
 var _logs = {};
+var _muted = {};
 
 var ContainerStore = assign(EventEmitter.prototype, {
   CLIENT_CONTAINER_EVENT: 'client_container',
@@ -105,100 +106,32 @@ var ContainerStore = assign(EventEmitter.prototype, {
     div.appendChild(text);
     return div.innerHTML;
   },
-  _createContainer: function (name, data, callback) {
+  _createContainer: function (name, containerData, callback) {
     var existing = docker.client().getContainer(name);
     var self = this;
-    data.name = name;
-    existing.remove(function (err, data) {
-      docker.client().createContainer(data, function (err, container) {
-        if (err) {
-          callback(err, null);
-          return;
-        }
-        container.start({
-          PublishAllPorts: true
-        }, function (err) {
-          if (err) {
-            callback(err);
-            return;
-          }
-          self.fetchContainer(name, callback);
-        });
-      });
-    });
-  },
-  updateContainer: function (name, data) {
-    var fullData = assign(this._containers[name], data);
-    this._createContainer(name, fullData, function (err) {
-      console.log(err);
-    });
-  },
-  rename: function (name, newName, callback) {
-    var existing = docker.client().getContainer(name);
-    var existingImage = existing.Image;
-    var self = this;
-    existing.remove(function (err, data) {
-      docker.client().createContainer({
-        Image: existingImage,
-        Tty: false,
-        name: newName,
-        User: 'root'
-      }, function (err, container) {
-        if (err) {
-          callback(err, null);
-          return;
-        }
-        container.start({
-          PublishAllPorts: true
-        }, function (err) {
-          if (err) {
-            callback(err);
-            return;
-          }
-          self.fetchContainer(newName, callback);
-        });
-      });
-    });
-  },
-  remove: function (name, callback) {
-    var self = this;
-    var existing = docker.client().getContainer(name);
-    if (_containers[name].State.Paused) {
-      existing.unpause(function (err) {
-        if (err) {
-          callback(err);
-          return;
-        } else {
-          existing.kill(function (err) {
-            if (err) {
-              callback(err);
-              return;
-            } else {
-              existing.remove(function (err) {
-                if (err) {
-                  callback(err);
-                  return;
-                }
-              });
-            }
-          });
-        }
-      });
-    } else {
-      existing.kill(function (err) {
-        if (err) {
-          callback(err);
-          return;
-        } else {
-          existing.remove(function (err) {
-            if (err) {
-              callback(err);
-              return;
-            }
-          });
-        }
-      });
+    containerData.name = name;
+    if (containerData.Config && containerData.Config.Image) {
+      containerData.Image = containerData.Config.Image;
     }
+    existing.kill(function (err, data) {
+      existing.remove(function (err, data) {
+        docker.client().createContainer(containerData, function (err, container) {
+          if (err) {
+            callback(err, null);
+            return;
+          }
+          container.start({
+            PublishAllPorts: true
+          }, function (err) {
+            if (err) {
+              callback(err);
+              return;
+            }
+            self.fetchContainer(name, callback);
+          });
+        });
+      });
+    });
   },
   _createPlaceholderContainer: function (imageName, name, callback) {
     var self = this;
@@ -251,7 +184,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
         stream.setEncoding('utf8');
         stream.on('data', function (data) {});
         stream.on('end', function () {
-          self._createContainer(container.KitematicDownloadingImage, container.Name, function () {});
+          self._createContainer(container.Name, {Image: container.KitematicDownloadingImage}, function () {});
         });
       });
     });
@@ -271,11 +204,17 @@ var ContainerStore = assign(EventEmitter.prototype, {
     // If the event is delete, remove the container
     if (data.status === 'destroy') {
       var container = _.findWhere(_.values(_containers), {Id: data.id});
+      if (_muted[container.Name]) {
+        return;
+      }
       delete _containers[container.Name];
       this.emit(this.SERVER_CONTAINER_EVENT, container.Name, data.status);
     } else {
       this.fetchContainer(data.id, function (err) {
         var container = _.findWhere(_.values(_containers), {Id: data.id});
+        if (_muted[container.Name]) {
+          return;
+        }
         this.emit(this.SERVER_CONTAINER_EVENT, container ? container.Name : null, data.status);
       }.bind(this));
     }
@@ -367,6 +306,9 @@ var ContainerStore = assign(EventEmitter.prototype, {
       stderr: true,
       timestamps: true
     }, function (err, stream) {
+      if (err) {
+        return;
+      }
       stream.setEncoding('utf8');
       stream.on('data', function (buf) {
         // Every other message is a header
@@ -417,7 +359,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
           self.emit(self.CLIENT_CONTAINER_EVENT, containerName, 'create');
           _progress[containerName] = 0;
           self._pullImage(repository, tag, function () {
-            self._createContainer(imageName, containerName, function (err, container) {
+            self._createContainer(containerName, {Image: imageName}, function (err, container) {
               delete _progress[containerName];
             });
           }, function (progress) {
@@ -428,12 +370,61 @@ var ContainerStore = assign(EventEmitter.prototype, {
         });
       } else {
         // If not then directly create the container
-        self._createContainer(imageName, containerName, function (err, container) {
+        self._createContainer(containerName, {Image: imageName}, function (err, container) {
           self.emit(ContainerStore.CLIENT_CONTAINER_EVENT, containerName, 'create');
           callback(null, containerName);
         });
       }
     });
+  },
+  updateContainer: function (name, data) {
+    _muted[name] = true;
+    var fullData = assign(_containers[name], data);
+    this._createContainer(name, fullData, function (err) {
+      this.emit(this.CLIENT_CONTAINER_EVENT, name);
+      console.log(err);
+      _muted[name] = false;
+    }.bind(this));
+  },
+  remove: function (name, callback) {
+    var self = this;
+    var existing = docker.client().getContainer(name);
+    if (_containers[name].State.Paused) {
+      existing.unpause(function (err) {
+        if (err) {
+          callback(err);
+          return;
+        } else {
+          existing.kill(function (err) {
+            if (err) {
+              callback(err);
+              return;
+            } else {
+              existing.remove(function (err) {
+                if (err) {
+                  callback(err);
+                  return;
+                }
+              });
+            }
+          });
+        }
+      });
+    } else {
+      existing.kill(function (err) {
+        if (err) {
+          callback(err);
+          return;
+        } else {
+          existing.remove(function (err) {
+            if (err) {
+              callback(err);
+              return;
+            }
+          });
+        }
+      });
+    }
   },
   containers: function() {
     return _containers;
