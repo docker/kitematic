@@ -1,0 +1,217 @@
+.create-modal {
+  @modal-padding: 32px;
+  @search-width: 372px;
+  @custom-width: 270px;
+  .modal-dialog {
+    margin-top: 80px;
+    width: calc(@modal-padding + @search-width + 2 * @modal-padding + @custom-width);
+  }
+  .modal-content {
+    //box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
+    border: none; //1px solid #ccc;
+    height: 650px;
+    display: flex;
+
+  }
+  .modal-body {
+    flex: 1 auto;
+    display: flex;
+    flex-direction: row;
+    padding: 32px 32px;
+
+    aside.custom {
+      flex: 0 auto;
+      padding-left: 32px;
+      min-width: 270px;
+    }
+
+    .popover {
+      width: 180px;
+      text-align: center;
+
+      .popover-content {
+        max-height: 300px;
+        padding: 0;
+        overflow: auto;
+      }
+      ul {
+        padding: 0;
+        list-style: none;
+        margin: 0;
+        li {
+          padding: 8px 0;
+          border-bottom: 1px solid #eee;
+
+          &:hover {
+            color: white;
+            background: @brand-primary;
+          }
+        }
+      }
+      .tags-loading {
+        text-align: center;
+        margin: 14px auto;
+        text-align: center;
+        -webkit-animation-name: spin;
+        -webkit-animation-duration: 1.8s;
+        -webkit-animation-iteration-count: infinite;
+        -webkit-animation-timing-function: linear;
+      }
+    }
+
+    section.search {
+      min-width: 404px;
+      padding-right: 32px;
+      border-right: 1px solid #eee;
+
+      .question {
+        color: @gray-lightest;
+        font-size: 10px;
+        text-align: right;
+      }
+
+      .search-bar {
+        position: relative;
+        .loading {
+          position: absolute;
+          left: 13px;
+          top: 10px;
+          width: 20px;
+          height: 20px;
+          -webkit-animation-name: spin;
+          -webkit-animation-duration: 1.8s;
+          -webkit-animation-iteration-count: infinite;
+          -webkit-animation-timing-function: linear;
+        }
+        .search-icon {
+          font-size: 20px;
+          color: @gray-lighter;
+          position: absolute;
+          top: 9px;
+          left: 14px;
+        }
+        input {
+          border-radius: 20px;
+          font-size: 13px;
+          height: 38px;
+          padding: 8px 16px 8px 40px;
+          color: @gray-darkest;
+          margin-bottom: 3px;
+          border-color: @gray-lightest;
+          box-shadow: none;
+
+          &:focus {
+            box-shadow: none;
+            border-color: @gray-lighter;
+          }
+
+          &::-webkit-input-placeholder {
+            color: #ddd;
+            font-weight: 300;
+          }
+        }
+      }
+
+      .results {
+        overflow: auto;
+        padding-bottom: 80px;
+
+        .no-results {
+          text-align: center;
+          h3 {
+            color: #ABC0C0;
+            font-size: 16px;
+            margin-top: 160px;
+          }
+        }
+
+        .title {
+          flex: 0 auto;
+          margin-top: 16px;
+        }
+
+        ul {
+          margin-top: 10px;
+          list-style: none;
+          padding: 0;
+
+          li {
+            &:hover {
+              background-color: lighten(@gray-lightest, 17.5%);
+            }
+            display: flex;
+            flex-direction: row;
+            padding: 8px 14px 5px 14px;
+            //margin: 12px;
+            border-bottom: 1px solid #eee;
+            &:last-child {
+              border-bottom: 0;
+            }
+            .info {
+              .name {
+                color: @gray-darkest;
+                max-width: 278px;
+                img {
+                  margin-right: 6px;
+                  margin-left: 2px;
+                }
+                font-size: 16px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+              .properties {
+                color: @gray-lighter;
+                margin-top: 2px;
+
+                .star-count {
+                  font-size: 10px;
+                  display: inline-block;
+                  position: relative;
+                  top: -3px;
+                  left: 1px;
+                  height: 17px;
+                }
+
+                .icon {
+                  overflow: hidden;
+                  display: inline-block;
+                  font-size: 15px;
+                  height: 15px;
+                }
+              }
+              flex: 0 auto;
+            }
+            .action {
+              position: relative;
+              top: 5px;
+              text-align: right;
+              flex: 1 auto;
+              ul {
+                text-align: center;
+                ul {
+                  overflow: auto;
+                  max-height: 300px;
+                }
+              }
+
+
+              .icon {
+                position: relative;
+                top: 2px;
+                font-size: 11px;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.modal-backdrop.in {
+  background: rgba(227,230,230,0.95);
+  opacity: 1;
+  height: 100%;
+}

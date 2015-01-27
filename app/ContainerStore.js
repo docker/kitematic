@@ -269,12 +269,13 @@ var ContainerStore = assign(EventEmitter.prototype, {
         async.map(recommended, function (repository, callback) {
           $.get('https://registry.hub.docker.com/v1/search?q=' + repository, function (data) {
             var results = data.results;
+            console.log(repository, data);
             callback(null, _.find(results, function (r) {
               return r.name === repository;
             }));
           });
         }, function (err, results) {
-          _recommended = results;
+          _recommended = results.filter(function(r) { return !!r; });
           callback();
         });
       },

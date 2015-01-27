@@ -1,6 +1,5 @@
 var React = require('react/addons');
 var Router = require('react-router');
-var Modal = require('react-bootstrap/Modal');
 var RetinaImage = require('react-retina-image');
 var ModalTrigger = require('react-bootstrap/ModalTrigger');
 var ContainerModal = require('./ContainerModal.react');
