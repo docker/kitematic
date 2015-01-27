@@ -9,8 +9,6 @@ end try
 return doesExist
 EOF`
 
-echo $ITERM_EXISTS
-
 if [ $ITERM_EXISTS == "true" ]; then
   osascript > /dev/null <<EOF
 tell application "iTerm"
@@ -19,14 +17,14 @@ tell application "iTerm"
     tell the first terminal
       launch session "Default Session"
       tell the last session
-        write text "clear && $*"
+        write text "bash -c \"clear && $*\""
       end tell
     end tell
   on error
     tell (make new terminal)
       launch session "Default Session"
       tell the last session
-        write text "clear && $*"
+        write text "bash -c \"clear && $*\""
       end tell
     end tell
   end try
@@ -39,7 +37,7 @@ tell application "Terminal" to activate
 delay 0.4
 tell application "System Events" to keystroke "t" using command down
 tell application "Terminal"
-  do script "clear && $*" in window 1
+  do script "bash -c \"clear && $*\"" in window 1
 end tell
 
 EOF
