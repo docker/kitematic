@@ -5,6 +5,10 @@
 @import "bootstrap/variables.less";
 @import "bootstrap/mixins.less";
 
+h3 {
+  font-size: 14px;
+  color: @gray-darkest;
+}
 
 h4 {
   font-size: 13px;
@@ -20,11 +24,14 @@ h4 {
 input[type="text"] {
   &.line {
     border: 0;
-    border-bottom: 1px solid @gray-normal;
+    border-bottom: 1px solid @gray-lightest;
     color: @gray-normal;
     font-weight: 300;
+    padding: 5px;
+    transition: all 0.1s;
     &:focus {
       outline: 0;
+      border-bottom: 1px solid @brand-action;
     }
     &::-webkit-input-placeholder {
       color: #ddd;
@@ -115,6 +122,13 @@ input[type="text"] {
   height: 32px;
   cursor: default;
 
+  &.small {
+    height: 22px;
+    .icon {
+      font-size: 10px;
+    }
+  }
+
   .content {
     position: relative;
     top: -4px;
@@ -150,12 +164,18 @@ input[type="text"] {
 
   &.only-icon {
     padding: 6px 7px 6px 7px;
+    &.small {
+      padding: 2px 5px 3px 5px;
+    }
   }
 }
 
 // Apply the mixin to the buttons
 .btn-action {
   .btn-styles(@brand-action);
+}
+.btn-positive {
+  .btn-styles(@brand-positive);
 }
 .btn-default { .btn-styles(@btn-default-bg); }
 .btn-primary { .btn-styles(@btn-primary-bg); }

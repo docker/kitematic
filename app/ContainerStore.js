@@ -6,6 +6,7 @@ var Convert = require('ansi-to-html');
 var convert = new Convert();
 var docker = require('./docker');
 var registry = require('./registry');
+var ContainerUtil = require('./ContainerUtil');
 var $ = require('jquery');
 var _ = require('underscore');
 
@@ -158,18 +159,44 @@ var ContainerStore = assign(EventEmitter.prototype, {
     });
   },
   remove: function (name, callback) {
+    var self = this;
     var existing = docker.client().getContainer(name);
-    existing.kill(function (err) {
-      if (err) {
-        console.log(err);
-      } else {
-        existing.remove(function (err) {
-          if (err) {
-            console.log(err);
-          }
-        });
-      }
-    });
+    if (_containers[name].State.Paused) {
+      existing.unpause(function (err) {
+        if (err) {
+          callback(err);
+          return;
+        } else {
+          existing.kill(function (err) {
+            if (err) {
+              callback(err);
+              return;
+            } else {
+              existing.remove(function (err) {
+                if (err) {
+                  callback(err);
+                  return;
+                }
+              });
+            }
+          });
+        }
+      });
+    } else {
+      existing.kill(function (err) {
+        if (err) {
+          callback(err);
+          return;
+        } else {
+          existing.remove(function (err) {
+            if (err) {
+              callback(err);
+              return;
+            }
+          });
+        }
+      });
+    }
   },
   _createPlaceholderContainer: function (imageName, name, callback) {
     var self = this;
@@ -272,7 +299,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
         container.Name = container.Name.replace('/', '');
 
         // Add Downloading State (stored in environment variables) to containers for Kitematic
-        var env = _.object(container.Config.Env.map(function (e) { return e.split('='); }));
+        var env = ContainerUtil.env(container);
         container.State.Downloading = !!env.KITEMATIC_DOWNLOADING;
         container.KitematicDownloadingImage = env.KITEMATIC_DOWNLOADING_IMAGE;
 
@@ -413,16 +440,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
   },
   sorted: function () {
     return _.values(_containers).sort(function (a, b) {
-      var active = function (container) {
-        return container.State.Running || container.State.Restarting || container.State.Downloading;
-      };
-      if (active(a) && !active(b)) {
-        return -1;
-      } else if (!active(a) && active(b)) {
-        return 1;
-      } else {
-        return a.Name.localeCompare(b.Name);
-      }
+      return a.Name.localeCompare(b.Name);
     });
   },
   recommended: function () {
