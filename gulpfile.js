@@ -31,7 +31,6 @@ var options = {
   test: process.argv.indexOf('test') !== -1,
   filename: 'Kitematic.app',
   name: 'Kitematic'
-  //signing_identity: fs.readFileSync('./identity')
 };
 
 gulp.task('js', function () {
@@ -157,11 +156,16 @@ gulp.task('dist', function (cb) {
 });
 
 gulp.task('sign', function () {
-  return gulp.src('').pipe(shell([
-    'codesign --deep --force --verbose --sign "' + options.signing_identity + '" ' + options.filename
-  ], {
-    cwd: './dist/osx/'
-  }));
+  try {
+    var signing_identity = fs.readFileSync('./identity', 'utf8').trim();
+    return gulp.src('').pipe(shell([
+      'codesign --deep --force --verbose --sign "' + signing_identity + '" ' + options.filename
+    ], {
+      cwd: './dist/osx/'
+    }));
+  } catch (error) {
+    gutil.log(gutil.colors.red('Error: ' + error.message));
+  }
 });
 
 gulp.task('zip', function () {

@@ -72,6 +72,7 @@ var Containers = React.createClass({
       sidebarHeaderClass += ' sep';
     }
 
+    var container = this.getParams().name ? this.state.containers[this.getParams().name] : {};
     return (
       <div className="containers">
         <Header/>
@@ -89,7 +90,7 @@ var Containers = React.createClass({
               <ContainerList containers={this.state.sorted}/>
             </section>
           </div>
-          <Router.RouteHandler container={this.state.containers[this.getParams().name]}/>
+          <Router.RouteHandler container={container}/>
         </div>
       </div>
     );
