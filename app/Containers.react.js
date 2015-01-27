@@ -52,7 +52,6 @@ var Containers = React.createClass({
       sorted: ContainerStore.sorted()
     });
     if (status === 'create') {
-      console.log('transition');
       this.transitionTo('container', {name: name});
     }
   },
