@@ -10,6 +10,8 @@ var MenuItem = require('react-bootstrap/MenuItem');
 
 var RetinaImage = require('react-retina-image');
 var ContainerStore = require('./ContainerStore');
+var OverlayTrigger = require('react-bootstrap/OverlayTrigger');
+var Popover = require('react-bootstrap/Popover');
 
 var ContainerModal = React.createClass({
   _searchRequest: null,
@@ -152,8 +154,7 @@ var ContainerModal = React.createClass({
               <div className="btn-group">
                 <button type="button" className="btn btn-primary" onClick={self.handleClick.bind(self, r.name)}>Create</button>
                 <button type="button" className="btn btn-primary dropdown-toggle" onClick={self.handleDropdownClick.bind(self, r.name)} data-name={r.name}>
-                  <span className="caret"></span>
-                  <span className="sr-only">Toggle Dropdown</span>
+                  <span className="icon-dropdown icon icon-arrow-37"></span>
                 </button>
               </div>
             </div>

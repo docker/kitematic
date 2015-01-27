@@ -54,7 +54,13 @@ var Boot2Docker = {
     return path.join(process.cwd(), 'resources', 'boot2docker-' + this.version());
   },
   exists: function (callback) {
-    cmdExec([Boot2Docker.command(), 'info'], callback);
+    cmdExec([Boot2Docker.command(), 'info'], function (err, out) {
+      if (err) {
+        callback(null, false);
+      } else {
+        callback(null, true);
+      }
+    });
   },
   status: function (callback) {
     cmdExec([Boot2Docker.command(), 'status'], function (err, out) {

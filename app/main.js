@@ -24,7 +24,7 @@ Bugsnag.releaseStage = process.env.NODE_ENV === 'development' ? 'development' : 
 Bugsnag.notifyReleaseStages = [];
 Bugsnag.appVersion = app.getVersion();
 
-if (window.location.hash === '#/') {
+if (!window.location.hash.length || window.location.hash === '#/') {
   router.run(function (Handler) {
     React.render(<Handler/>, document.body);
   });

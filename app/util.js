@@ -6,9 +6,23 @@ var progress = require('request-progress');
 var exec = require('exec');
 
 var Util = {
+  supportDir: function (callback) {
+    var dirs = ['Application\ Support', 'Kitematic'];
+    var acc = process.env.HOME;
+    dirs.forEach(function (d) {
+      acc = path.join(acc, d);
+      if (!fs.existsSync(acc)) {
+        fs.mkdirSync(acc);
+      }
+    });
+    return acc;
+  },
   download: function (url, filename, checksum, callback, progressCallback) {
     var doDownload = function () {
-      progress(request(url), {
+      progress(request({
+        uri: url,
+        rejectUnauthorized: false
+      }), {
         throttle: 250
       }).on('progress', function (state) {
         progressCallback(state.percent);
