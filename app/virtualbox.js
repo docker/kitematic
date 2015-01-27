@@ -2,6 +2,7 @@ var fs = require('fs');
 var exec = require('exec');
 var path = require('path');
 var async = require('async');
+var util = require('./util');
 
 var VirtualBox = {
   REQUIRED_VERSION: '4.3.18',
@@ -16,7 +17,7 @@ var VirtualBox = {
   },
   install: function (callback) {
     // -W waits for the process to close before finishing.
-    exec('open -W ' + path.join(process.cwd(), 'resources', this.INSTALLER_FILENAME).replace(' ', '\\ '), function (stderr, stdout, code) {
+    exec('open -W ' + path.join(util.supportDir(), this.INSTALLER_FILENAME).replace(' ', '\\ '), function (stderr, stdout, code) {
       if (code) {
         callback(stderr);
         return;

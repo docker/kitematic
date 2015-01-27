@@ -2,10 +2,12 @@ var _ = require('underscore');
 var $ = require('jquery');
 var React = require('react/addons');
 var Router = require('react-router');
+var exec = require('exec');
+var remote = require('remote');
+var dialog = remote.require('dialog');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
 var docker = require('./docker');
-var exec = require('exec');
 var boot2docker = require('./boot2docker');
 var ProgressBar = require('react-bootstrap/ProgressBar');
 
@@ -29,10 +31,6 @@ var ContainerDetails = React.createClass({
     };
   },
   componentWillReceiveProps: function () {
-    if (this.state.page === this.PAGE_SETTINGS) {
-
-    }
-    console.log(this.props.container);
     this.init();
   },
   componentWillMount: function () {
@@ -155,11 +153,16 @@ var ContainerDetails = React.createClass({
     });
   },
   handleDeleteContainer: function () {
-    var container = this.props.container;
-    var name = container.Name.replace('/', '');
-    ContainerStore.remove(name, function (err) {
-      console.error(err);
-    });
+    dialog.showMessageBox({
+      message: 'Are you sure you want to delete this container?',
+      buttons: ['Delete', 'Cancel']
+    }, function (index) {
+      if (index === 0) {
+        ContainerStore.remove(this.props.container.Name, function (err) {
+          console.error(err);
+        });
+      }
+    }.bind(this));
   },
   render: function () {
     var self = this;
@@ -223,7 +226,7 @@ var ContainerDetails = React.createClass({
     } else {
       if (this.state.page === this.PAGE_LOGS) {
         body = (
-          <div className="details-panel">
+          <div className="details-panel details-logs">
             <div className="logs">
               {logs}
             </div>
@@ -281,7 +284,7 @@ var ContainerDetails = React.createClass({
       'btn-action': true,
       'only-icon': true,
       'active': this.state.page === this.PAGE_LOGS,
-      disabled: !this.props.container.State.Running
+      disabled: this.props.container.State.Downloading
     });
 
     var gearButtonClass = React.addons.classSet({
@@ -289,7 +292,7 @@ var ContainerDetails = React.createClass({
       'btn-action': true,
       'only-icon': true,
       'active': this.state.page === this.PAGE_SETTINGS,
-      disabled: !this.props.container.State.Running
+      disabled: this.props.container.State.Downloading
     });
 
     return (
