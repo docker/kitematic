@@ -1,7 +1,13 @@
 var async = require('async');
 var $ = require('jquery');
+var assign = require('object-assign');
 var React = require('react/addons');
-var Modal = require('react-bootstrap/Modal');
+var Modal = require('react-bootstrap').Modal;
+var OverlayTrigger = require('react-bootstrap');
+var Popover = require('react-bootstrap/Popover');
+var SplitButton = require('react-bootstrap/SplitButton');
+var MenuItem = require('react-bootstrap/MenuItem');
+
 var RetinaImage = require('react-retina-image');
 var ContainerStore = require('./ContainerStore');
 
@@ -12,6 +18,8 @@ var ContainerModal = React.createClass({
       query: '',
       results: ContainerStore.recommended(),
       loading: false,
+      tags: {},
+      active: null,
     };
   },
   componentDidMount: function () {
@@ -67,11 +75,52 @@ var ContainerModal = React.createClass({
       }, 200);
     }
   },
-  handleClick: function (event) {
-    var name = event.target.getAttribute('name');
-    var self = this;
+  handleClick: function (name, event) {
     ContainerStore.create(name, 'latest', function (err, containerName) {
-      self.props.onRequestHide();
+      this.props.onRequestHide();
+    }.bind(this));
+  },
+  handleTagClick: function (tag, name, event) {
+    ContainerStore.create(name, tag, function (err, containerName) {
+      this.props.onRequestHide();
+    }.bind(this));
+  },
+  handleDropdownClick: function (name, event) {
+    this.setState({
+      active: name
+    });
+    if (this.state.tags[name]) {
+      return;
+    }
+    $.get('https://registry.hub.docker.com/v1/repositories/' + name + '/tags', function (result) {
+      var res = {};
+      res[name] = result;
+      console.log(assign(this.state.tags, res));
+      this.setState({
+        tags: assign(this.state.tags, res)
+      });
+    }.bind(this));
+  },
+  handleModalClick: function (event) {
+    if (!this.state.active) {
+      return;
+    }
+    if (!$('.popover').is(event.target)) {
+      this.setState({
+        active: null
+      });
+    }
+  },
+  componentDidUpdate: function () {
+    if (!this.state.active) {
+      return;
+    }
+    var $dropdown = $(this.getDOMNode()).find('[data-name="' + this.state.active + '"]');
+    var $popover = $(this.getDOMNode()).find('.popover');
+
+    $popover.offset({
+      top: $dropdown.offset().top + 32,
+      left: $dropdown.offset().left - $popover.width() / 2 + 11
     });
   },
   render: function () {
@@ -87,6 +136,7 @@ var ContainerModal = React.createClass({
         } else {
           name = <span>{r.name}</span>;
         }
+
         return (
           <li key={r.name}>
             <div className="info">
@@ -100,8 +150,11 @@ var ContainerModal = React.createClass({
             </div>
             <div className="action">
               <div className="btn-group">
-                <a className="btn btn-action" name={r.name} onClick={self.handleClick}>Create</a>
-                <a className="btn btn-action with-icon dropdown-toggle"><span className="icon-dropdown icon icon-arrow-58"></span></a>
+                <button type="button" className="btn btn-primary" onClick={self.handleClick.bind(self, r.name)}>Create</button>
+                <button type="button" className="btn btn-primary dropdown-toggle" onClick={self.handleDropdownClick.bind(self, r.name)} data-name={r.name}>
+                  <span className="caret"></span>
+                  <span className="sr-only">Toggle Dropdown</span>
+                </button>
               </div>
             </div>
           </li>
@@ -137,26 +190,50 @@ var ContainerModal = React.createClass({
       'search-icon': true
     });
 
+    var question = (
+      <div className="question">
+        <OverlayTrigger trigger="hover" placement="bottom" overlay={<Popover>An image is a template for a container.</Popover>}>
+          <span>What&#39;s an image?</span>
+        </OverlayTrigger>
+      </div>
+    );
+
+    var tagData = self.state.tags[this.state.active];
+    if (tagData) {
+      var list = tagData.map(function (t) {
+        return <li key={t.name} onClick={self.handleTagClick.bind(self, t.name, self.state.active)}>{t.name}</li>;
+      });
+      tags = (
+        <ul>
+          {list}
+        </ul>
+      );
+    } else {
+      tags = <RetinaImage className="tags-loading" src="loading.png"/>;
+    }
+
+    var popoverClasses = React.addons.classSet({
+      popover: true,
+      hidden: !this.state.active
+    });
+
     return (
       <Modal {...this.props} animation={false} className="create-modal">
-        <div className="modal-body">
+        <div className="modal-body" onClick={this.handleModalClick}>
           <section className="search">
             <div className="search-bar">
               <input type="search" ref="searchInput" className="form-control" placeholder="Find an existing image" onChange={this.handleChange}/>
               <div className={magnifierClasses}></div>
               <RetinaImage className={loadingClasses} src="loading.png"/>
             </div>
-            <div className="question">
-              <a href="#"><span>What&#39;s an image?</span></a>
-            </div>
             <div className="results">
               <div className="title">{title}</div>
               {results}
             </div>
           </section>
-          <aside className="custom">
-            <h4 className="title">Create a Custom Container</h4>
-          </aside>
+          <Popover placement="bottom" className={popoverClasses}>
+            {tags}
+          </Popover>
         </div>
       </Modal>
     );

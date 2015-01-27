@@ -161,22 +161,41 @@ var ContainerDetails = React.createClass({
       }
     }
 
+    var name = this.props.container.Name;
+    var image = this.props.container.Config.Image;
+    var disabledClass = '';
+    if (!this.props.container.State.Running) {
+      disabledClass = 'disabled';
+    }
+
+    var buttonClass = React.addons.classSet({
+      btn: true, 'btn-action': true,
+      'with-icon': true,
+      disabled: !this.props.container.State.Running
+    });
+    var dropdownButtonClass = React.addons.classSet({
+      btn: true,
+      'btn-action': true,
+      'with-icon': true,
+      'dropdown-toggle': true,
+      disabled: !this.props.container.State.Running
+    });
+
     var textButtonClasses = React.addons.classSet({
       'btn': true,
       'btn-action': true,
       'only-icon': true,
-      'active': this.state.page === this.PAGE_LOGS
+      'active': this.state.page === this.PAGE_LOGS,
+      disabled: !this.props.container.State.Running
     });
 
     var gearButtonClass = React.addons.classSet({
       'btn': true,
       'btn-action': true,
       'only-icon': true,
-      'active': this.state.page === this.PAGE_SETTINGS
+      'active': this.state.page === this.PAGE_SETTINGS,
+      disabled: !this.props.container.State.Running
     });
-
-    var name = this.props.container.Name;
-    var image = this.props.container.Config.Image;
 
     return (
       <div className="details">
@@ -186,16 +205,16 @@ var ContainerDetails = React.createClass({
           </div>
           <div className="details-header-actions">
             <div className="action btn-group">
-              <a className="btn btn-action with-icon" onClick={this.handleClick}><span className="icon icon-preview-2"></span><span className="content">View</span></a><a className="btn btn-action with-icon dropdown-toggle"><span className="icon-dropdown icon icon-arrow-37"></span></a>
+              <a className={buttonClass} onClick={this.handleClick}><span className="icon icon-preview-2"></span><span className="content">View</span></a><a className={dropdownButtonClass}><span className="icon-dropdown icon icon-arrow-37"></span></a>
             </div>
             <div className="action">
-              <a className="btn btn-action with-icon dropdown-toggle" onClick={this.handleClick}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
+              <a className={dropdownButtonClass} onClick={this.handleClick}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
             </div>
             <div className="action">
-              <a className="btn btn-action with-icon" onClick={this.handleClick}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>
+              <a className={buttonClass} onClick={this.handleClick}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>
             </div>
             <div className="action">
-              <a className="btn btn-action with-icon" onClick={this.handleClick}><span className="icon icon-window-code-3"></span> <span className="content">Terminal</span></a>
+              <a className={buttonClass} onClick={this.handleClick}><span className="icon icon-window-code-3"></span> <span className="content">Terminal</span></a>
             </div>
             <div className="details-header-actions-rhs tabs btn-group">
               <a className={textButtonClasses} onClick={this.showLogs}><span className="icon icon-text-wrapping-2"></span></a>
