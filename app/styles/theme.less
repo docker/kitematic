@@ -5,11 +5,39 @@
 @import "bootstrap/variables.less";
 @import "bootstrap/mixins.less";
 
+h3 {
+  font-size: 14px;
+  color: @gray-darkest;
+}
 
 h4 {
   font-size: 13px;
   color: @gray-normal;
   font-weight: 400;
+}
+
+.popover-content {
+  color: @gray-normal;
+  font-size: 13px;
+}
+
+input[type="text"] {
+  &.line {
+    border: 0;
+    border-bottom: 1px solid @gray-lightest;
+    color: @gray-normal;
+    font-weight: 300;
+    padding: 5px;
+    transition: all 0.1s;
+    &:focus {
+      outline: 0;
+      border-bottom: 1px solid @brand-action;
+    }
+    &::-webkit-input-placeholder {
+      color: #ddd;
+      font-weight: 300;
+    }
+  }
 }
 
 //
@@ -63,10 +91,17 @@ h4 {
 }
 
 .btn-group {
+  &.tabs {
+    .btn {
+      padding: 6px 14px 6px 14px;
+    }
+  }
   .btn {
     .icon-dropdown {
       &.icon:before {
-        top: 7px;
+        position: relative;
+        font-size: 10px;
+        top: -2px;
         margin-left: 0px;
         margin-right: 4px;
       }
@@ -88,11 +123,26 @@ h4 {
   height: 32px;
   cursor: default;
 
+  &.small {
+    height: 22px;
+    .icon {
+      font-size: 10px;
+    }
+  }
+
   .content {
     position: relative;
     top: -4px;
     margin-left: 5px;
     margin-right: 5px;
+  }
+
+  .icon-dropdown {
+    &.icon:before {
+      font-size: 10px;
+      position: relative;
+      top: -2px;
+    }
   }
 
   .icon {
@@ -112,11 +162,21 @@ h4 {
     box-shadow: none;
     outline: none !important;
   }
+
+  &.only-icon {
+    padding: 6px 7px 6px 7px;
+    &.small {
+      padding: 2px 5px 3px 5px;
+    }
+  }
 }
 
 // Apply the mixin to the buttons
 .btn-action {
   .btn-styles(@brand-action);
+}
+.btn-positive {
+  .btn-styles(@brand-positive);
 }
 .btn-default { .btn-styles(@btn-default-bg); }
 .btn-primary { .btn-styles(@btn-primary-bg); }

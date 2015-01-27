@@ -3,7 +3,6 @@
 @import "clearsans.less";
 @import "theme.less";
 @import "icons.less";
-@import "icons-filled.less";
 @import "retina.less";
 @import "setup.less";
 @import "radial.less";
@@ -42,11 +41,14 @@ html, body {
   width: 7px;
   border-radius: 8px;
   background-color: rgba(0,0,0,0.2);
+
+  &:hover {
+    background-color: rgba(0,0,0,0.25);
+  }
 }
 
 .popover {
   font-family: 'Clear Sans', sans-serif;
-
   color: @gray-normal;
   font-weight: 400;
   font-size: 13px;

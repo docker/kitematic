@@ -12,7 +12,8 @@ var Radial = React.createClass({
     }
     var classes = React.addons.classSet({
       'radial-progress': true,
-      'radial-spinner': this.props.spin
+      'radial-spinner': this.props.spin,
+      'radial-negative': this.props.error
     });
     return (
       <div className={classes} data-progress={this.props.progress}>

@@ -14,9 +14,10 @@ var ContainerStore = require('./ContainerStore.js');
 var setupSteps = [
   {
     run: function (callback, progressCallback) {
+      console.log(util.supportDir());
       var installed = virtualbox.installed();
       if (!installed) {
-        util.download('https://s3.amazonaws.com/kite-installer/' + virtualbox.INSTALLER_FILENAME, path.join(process.cwd(), 'resources', virtualbox.INSTALLER_FILENAME), virtualbox.INSTALLER_CHECKSUM, function (err) {
+        util.download('https://s3.amazonaws.com/kite-installer/' + virtualbox.INSTALLER_FILENAME, path.join(util.supportDir(), virtualbox.INSTALLER_FILENAME), virtualbox.INSTALLER_CHECKSUM, function (err) {
           if (err) {callback(err); return;}
           virtualbox.install(function (err) {
             if (!virtualbox.installed()) {
@@ -144,15 +145,24 @@ var Setup = React.createClass({
     var radial;
     if (this.state.progress) {
       radial = <Radial progress={this.state.progress}/>;
-    } else {
-      radial = <Radial spin="true" progress="92"/>;
+    } else if (this.state.error) {
+      radial = <Radial error={true} spin="true" progress="100"/>;
     }
-    return (
-      <div className="setup">
-        {radial}
-        <p>{this.state.message}</p>
-      </div>
-    );
+    if (this.state.error) {
+      return (
+        <div className="setup">
+          {radial}
+          <p className="error">Error: {this.state.error}</p>
+        </div>
+      );
+    } else {
+      return (
+        <div className="setup">
+          {radial}
+          <p>{this.state.message}</p>
+        </div>
+      );
+    }
   },
   componentWillMount: function () {
     this.setState({});
@@ -160,10 +170,12 @@ var Setup = React.createClass({
   componentDidMount: function () {
     var self = this;
     this.setup(function (err) {
-      boot2docker.ip(function (err, ip) {
-        docker.setHost(ip);
-        self.transitionTo('containers');
-      });
+      if (!err) {
+        boot2docker.ip(function (err, ip) {
+          docker.setHost(ip);
+          self.transitionTo('containers');
+        });
+      }
     });
   },
   setup: function (callback) {
@@ -188,7 +200,7 @@ var Setup = React.createClass({
         // if any of the steps fail
         console.log('Kitematic setup failed at step ' + currentStep);
         console.log(err);
-        self.setState({error: err});
+        self.setState({error: err.message});
         callback(err);
       } else {
         // Setup Finished
