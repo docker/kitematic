@@ -227,6 +227,7 @@ var ContainerModal = React.createClass({
               <div className={magnifierClasses}></div>
               <RetinaImage className={loadingClasses} src="loading.png"/>
             </div>
+            {question}
             <div className="results">
               <div className="title">{title}</div>
               {results}

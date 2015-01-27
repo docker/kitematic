@@ -1,3 +1,28 @@
+.port-labels {
+  width: 100%;
+  font-size: 12px;
+  color: @gray-lightest;
+  margin-left: 5px;
+  margin-bottom: 5px;
+  .label-docker {
+    display: inline-block;
+    margin-right: 30px;
+    width: 20%;
+  }
+  .label-local {
+    display: inline-block;
+    width: 40%;
+  }
+}
+
+.popover-view {
+  min-width: 500px;
+}
+
+.popover-volume {
+  min-width: 500px;
+}
+
 .containers {
   height: 100%;
   display: flex;
@@ -346,6 +371,13 @@
         }
         .settings {
           padding: 18px 35px;
+        }
+      }
+
+      .container-name {
+        margin-bottom: 20px;
+        input {
+          width: 20%;
         }
       }
 
