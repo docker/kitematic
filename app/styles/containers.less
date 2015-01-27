@@ -347,6 +347,38 @@
           padding: 18px 35px;
         }
       }
+
+      .env-vars-labels {
+        width: 100%;
+        font-size: 12px;
+        color: @gray-lightest;
+        margin-left: 5px;
+        margin-bottom: 5px;
+        .label-key {
+          display: inline-block;
+          margin-right: 30px;
+          width: 20%;
+        }
+        .label-val {
+          display: inline-block;
+          width: 40%;
+        }
+      }
+      .env-vars {
+        margin-bottom: 20px;
+        .keyval-row {
+          margin-bottom: 5px;
+        }
+        input {
+          margin-right: 30px;
+          &.key {
+            width: 20%;
+          }
+          &.val {
+            width: 40%;
+          }
+        }
+      }
     }
   }
 }

@@ -3,6 +3,7 @@ var $ = require('jquery');
 var React = require('react/addons');
 var Router = require('react-router');
 var ContainerStore = require('./ContainerStore');
+var ContainerUtil = require('./ContainerUtil');
 var docker = require('./docker');
 var exec = require('exec');
 var boot2docker = require('./boot2docker');
@@ -22,22 +23,28 @@ var ContainerDetails = React.createClass({
   getInitialState: function () {
     return {
       logs: [],
-      page: this.PAGE_LOGS
+      page: this.PAGE_LOGS,
+      env: {},
+      pendingEnv: {}
     };
   },
   componentWillReceiveProps: function () {
-    this.setState({
-      page: this.PAGE_LOGS
-    });
-    ContainerStore.fetchLogs(this.getParams().name, function () {
-      this.updateLogs();
-    }.bind(this));
+    // active container changes
+    if (this.state.page === this.PAGE_SETTINGS) {
+
+    }
+    console.log(this.props.container);
+    this.init();
+  },
+  componentWillMount: function () {
+    this.init();
   },
   componentDidMount: function () {
     ContainerStore.on(ContainerStore.SERVER_PROGRESS_EVENT, this.updateProgress);
     ContainerStore.on(ContainerStore.SERVER_LOGS_EVENT, this.updateLogs);
   },
   componentWillUnmount: function () {
+    // app close
     ContainerStore.removeListener(ContainerStore.SERVER_PROGRESS_EVENT, this.updateProgress);
     ContainerStore.removeListener(ContainerStore.SERVER_LOGS_EVENT, this.updateLogs);
   },
@@ -51,6 +58,15 @@ var ContainerDetails = React.createClass({
       parent.scrollTop(parent[0].scrollHeight - parent.height());
     }
     this._oldHeight = parent[0].scrollHeight - parent.height();
+  },
+  init: function () {
+    this.setState({
+      page: this.PAGE_LOGS,
+      env: ContainerUtil.env(ContainerStore.container(this.getParams().name))
+    });
+    ContainerStore.fetchLogs(this.getParams().name, function () {
+      this.updateLogs();
+    }.bind(this));
   },
   updateLogs: function (name) {
     if (name && name !== this.getParams().name) {
@@ -78,7 +94,7 @@ var ContainerDetails = React.createClass({
       page: this.PAGE_SETTINGS
     });
   },
-  handleClick: function (name) {
+  handleView: function () {
     var container = this.props.container;
     boot2docker.ip(function (err, ip) {
       var ports = _.map(container.NetworkSettings.Ports, function (value, key) {
@@ -102,13 +118,45 @@ var ContainerDetails = React.createClass({
       });
     });
   },
-  saveEnvVar: function () {
-    console.log('Saved Vars!');
+  handleSaveEnvVar: function () {
+    var $rows = $('.env-vars .keyval-row');
+    var envVarList = [];
+    $rows.each(function () {
+      var key = $(this).find('.key').val();
+      var val = $(this).find('.val').val();
+      envVarList.push(key + '=' + val);
+    });
+    console.log(envVarList);
   },
-  deleteContainer: function () {
+  handleAddPendingEnvVar: function () {
+    var newKey = $('#new-env-key').val();
+    var newVal = $('#new-env-val').val();
+    var newEnv = {};
+    newEnv[newKey] = newVal;
+    this.setState({
+      pendingEnv: _.extend(this.state.pendingEnv, newEnv)
+    });
+    $('#new-env-key').val('');
+    $('#new-env-val').val('');
+  },
+  handleRemoveEnvVar: function (key) {
+    var newEnv = _.omit(this.state.env, key);
+    this.setState({
+      env: newEnv
+    });
+  },
+  handleRemovePendingEnvVar: function (key) {
+    var newEnv = _.omit(this.state.pendingEnv, key);
+    this.setState({
+      pendingEnv: newEnv
+    });
+  },
+  handleDeleteContainer: function () {
     var container = this.props.container;
     var name = container.Name.replace('/', '');
-    ContainerStore.remove(name);
+    ContainerStore.remove(name, function (err) {
+      console.error(err);
+    });
   },
   render: function () {
     var self = this;
@@ -145,15 +193,21 @@ var ContainerDetails = React.createClass({
 
     var name = this.props.container.Name;
     var image = this.props.container.Config.Image;
-
-    var envVars = this.props.container.Config.Env.map(function (keyval) {
-      var keyvalTokens = keyval.split('=');
-      var key = keyvalTokens[0];
-      var val = keyvalTokens[1];
+    var envVars = _.map(this.state.env, function (val, key) {
       return (
-        <div className="keyval-row">
+        <div key={key} className="keyval-row">
           <input type="text" className="key line" defaultValue={key}></input>
           <input type="text" className="val line" defaultValue={val}></input>
+          <a onClick={self.handleRemoveEnvVar.bind(self, key)} className="only-icon btn btn-action small"><span className="icon icon-cross"></span></a>
+        </div>
+      );
+    });
+    var pendingEnvVars = _.map(this.state.pendingEnv, function (val, key) {
+      return (
+        <div key={key} className="keyval-row">
+          <input type="text" className="key line" defaultValue={key}></input>
+          <input type="text" className="val line" defaultValue={val}></input>
+          <a onClick={self.handleRemovePendingEnvVar.bind(self, key)} className="only-icon btn btn-action small"><span className="icon icon-arrow-undo"></span></a>
         </div>
       );
     });
@@ -175,18 +229,29 @@ var ContainerDetails = React.createClass({
           </div>
         );
       } else {
+
         body = (
           <div className="details-panel">
             <div className="settings">
-              <h4>Container Detail</h4>
+              <h3>Container Detail</h3>
               <input id="input-container-name" type="text" className="line" placeholder="Container Name" defaultValue={name}></input>
-              <h4>Environment Variables</h4>
+              <h3>Environment Variables</h3>
+              <div className="env-vars-labels">
+                <div className="label-key">KEY</div>
+                <div className="label-val">VALUE</div>
+              </div>
               <div className="env-vars">
                 {envVars}
+                {pendingEnvVars}
+                <div className="keyval-row">
+                  <input id="new-env-key" type="text" className="key line"></input>
+                  <input id="new-env-val" type="text" className="val line"></input>
+                  <a onClick={this.handleAddPendingEnvVar} className="only-icon btn btn-positive small"><span className="icon icon-add-1"></span></a>
+                </div>
               </div>
-              <a className="btn btn-action" onClick={this.saveEnvVar}>Save</a>
-              <h4>Delete Container</h4>
-              <a className="btn btn-action" onClick={this.deleteContainer}>Delete Container</a>
+              <a className="btn btn-action" onClick={this.handleSaveEnvVar}>Save</a>
+              <h3>Delete Container</h3>
+              <a className="btn btn-action" onClick={this.handleDeleteContainer}>Delete Container</a>
             </div>
           </div>
         );
@@ -215,16 +280,16 @@ var ContainerDetails = React.createClass({
           </div>
           <div className="details-header-actions">
             <div className="action btn-group">
-              <a className="btn btn-action" onClick={this.handleClick}><span className="icon icon-preview-2"></span><span className="content">View</span></a><a className="btn btn-action with-icon dropdown-toggle"><span className="icon-dropdown icon icon-arrow-37"></span></a>
+              <a className="btn btn-action" onClick={this.handleView}><span className="icon icon-preview-2"></span><span className="content">View</span></a><a className="btn btn-action with-icon dropdown-toggle"><span className="icon-dropdown icon icon-arrow-37"></span></a>
             </div>
             <div className="action">
-              <a className="btn btn-action dropdown-toggle" onClick={this.handleClick}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
+              <a className="btn btn-action dropdown-toggle" onClick={this.handleView}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
             </div>
             <div className="action">
-              <a className="btn btn-action" onClick={this.handleClick}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>
+              <a className="btn btn-action" onClick={this.handleView}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>
             </div>
             <div className="action">
-              <a className="btn btn-action" onClick={this.handleClick}><span className="icon icon-window-code-3"></span> <span className="content">Terminal</span></a>
+              <a className="btn btn-action" onClick={this.handleView}><span className="icon icon-window-code-3"></span> <span className="content">Terminal</span></a>
             </div>
             <div className="details-header-actions-rhs tabs btn-group">
               <a className={textButtonClasses} onClick={this.showLogs}><span className="icon icon-text-wrapping-2"></span></a>
