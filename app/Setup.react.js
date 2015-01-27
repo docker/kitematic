@@ -173,7 +173,9 @@ var Setup = React.createClass({
       if (!err) {
         boot2docker.ip(function (err, ip) {
           docker.setHost(ip);
-          self.transitionTo('containers');
+          ContainerStore.init(function () {
+            self.transitionTo('containers');
+          });
         });
       }
     });
