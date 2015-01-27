@@ -46,10 +46,10 @@ app.on('ready', function() {
 
   process.on('uncaughtException', app.quit);
 
-  var saveVMOnQuit = true;
+  var saveVMOnQuit = false;
   app.on('will-quit', function (e) {
     if (saveVMOnQuit) {
-      // exec('VBoxManage controlvm boot2docker-vm savestate', function (stderr, stdout, code) {});
+      exec('VBoxManage controlvm boot2docker-vm savestate', function (stderr, stdout, code) {});
     }
   });
 
@@ -95,6 +95,10 @@ app.on('ready', function() {
         saveVMOnQuit = false;
         autoUpdater.quitAndInstall();
       }
+    });
+
+    ipc.on('vm', function (event, arg) {
+      saveVMOnQuit = arg;
     });
 
     autoUpdater.checkForUpdates();

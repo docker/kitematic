@@ -14,12 +14,6 @@ var ProgressBar = require('react-bootstrap/ProgressBar');
 var Popover = require('react-bootstrap/Popover');
 var OverlayTrigger = require('react-bootstrap/OverlayTrigger');
 
-var Route = Router.Route;
-var NotFoundRoute = Router.NotFoundRoute;
-var DefaultRoute = Router.DefaultRoute;
-var Link = Router.Link;
-var RouteHandler = Router.RouteHandler;
-
 var ContainerDetails = React.createClass({
   mixins: [Router.State],
   _oldHeight: 0,
@@ -32,21 +26,34 @@ var ContainerDetails = React.createClass({
       env: {},
       pendingEnv: {},
       ports: {},
-      volumes: {}
+      volumes: {},
+      popoverVolumeOpen: false,
+      popoverPortsOpen: false,
     };
   },
   componentWillReceiveProps: function () {
     this.init();
   },
   componentWillMount: function () {
-    this.init();
   },
   componentDidMount: function () {
+    this.init();
     ContainerStore.on(ContainerStore.SERVER_PROGRESS_EVENT, this.updateProgress);
     ContainerStore.on(ContainerStore.SERVER_LOGS_EVENT, this.updateLogs);
+
+    // Make clicking anywhere close popovers
+    $('body').on('click', function (e) {
+      console.log(e.target);
+      console.log($('.popover-volume'));
+      var volumeOpen = $('.popover-volume').is(e.target);
+      var viewOpen = $('.popover-view').is(e.target);
+      this.setState({
+        popoverViewOpen: viewOpen,
+        popoverVolumeOpen: volumeOpen
+      });
+    }.bind(this));
   },
   componentWillUnmount: function () {
-    // app close
     ContainerStore.removeListener(ContainerStore.SERVER_PROGRESS_EVENT, this.updateProgress);
     ContainerStore.removeListener(ContainerStore.SERVER_LOGS_EVENT, this.updateLogs);
   },
@@ -84,7 +91,6 @@ var ContainerDetails = React.createClass({
     });
   },
   updateProgress: function (name) {
-    console.log('progress', name, ContainerStore.progress(name));
     if (name === this.getParams().name) {
       this.setState({
         progress: ContainerStore.progress(name)
@@ -101,33 +107,14 @@ var ContainerDetails = React.createClass({
       page: this.PAGE_SETTINGS
     });
   },
-  handleView: function () {
-    var container = this.props.container;
-    boot2docker.ip(function (err, ip) {
-      var ports = _.map(container.NetworkSettings.Ports, function (value, key) {
-        var portProtocolPair = key.split('/');
-        var res = {
-          'port': portProtocolPair[0],
-          'protocol': portProtocolPair[1]
-        };
-        if (value && value.length) {
-          var port = value[0].HostPort;
-          res.host = ip;
-          res.port = port;
-          res.url = 'http://' + ip + ':' + port;
-        } else {
-          return null;
-        }
-        return res;
-      });
-      exec(['open', ports[0].url], function (err) {
-        if (err) { throw err; }
-      });
-    });
-  },
   handleViewLink: function (url) {
     exec(['open', url], function (err) {
       if (err) { throw err; }
+    });
+  },
+  handleRestart: function () {
+    ContainerStore.restart(this.props.container.Name, function (err) {
+      console.log(err);
     });
   },
   handleTerminal: function () {
@@ -370,6 +357,16 @@ var ContainerDetails = React.createClass({
       );
     });
 
+    var popoverVolumeClasses = React.addons.classSet({
+      'popover-volume': true,
+      hidden: !this.state.popoverVolumeOpen
+    });
+
+    var popoverViewClasses = React.addons.classSet({
+      'popover-volume': true,
+      hidden: !this.state.popoverViewOpen
+    });
+
     return (
       <div className="details">
         <div className="details-header">
@@ -379,37 +376,31 @@ var ContainerDetails = React.createClass({
           <div className="details-header-actions">
             <div className="action btn-group">
               <a className={buttonClass} onClick={this.handleView}><span className="icon icon-preview-2"></span><span className="content">View</span></a>
-              <OverlayTrigger trigger="click" placement="bottom" overlay={
-                <Popover className="popover-view">
-                  <div className="port-labels">
-                    <div className="label-docker">DOCKER PORT</div>
-                    <div className="label-local">LOCAL PORT</div>
-                  </div>
-                  <div className="ports">
-                    {ports}
-                  </div>
-                </Popover>
-              }>
-                <a className={dropdownButtonClass}><span className="icon-dropdown icon icon-arrow-37"></span></a>
-              </OverlayTrigger>
+              <Popover className={popoverViewClasses}>
+                <div className="port-labels">
+                  <div className="label-docker">DOCKER PORT</div>
+                  <div className="label-local">LOCAL PORT</div>
+                </div>
+                <div className="ports">
+                  {ports}
+                </div>
+              </Popover>
+              <a className={dropdownButtonClass}><span className="icon-dropdown icon icon-arrow-37"></span></a>
             </div>
             <div className="action">
-              <OverlayTrigger trigger="click" placement="bottom" overlay={
-                <Popover className="popover-volume">
-                  <div className="port-labels">
-                  <div className="label-docker">DOCKER FOLDER</div>
-                  <div className="label-local">LOCAL FOLDER</div>
-                  </div>
-                  <div className="ports">
-                    {volumes}
-                  </div>
-                </Popover>
-              }>
-                <a className={dropdownButtonClass}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
-              </OverlayTrigger>
+              <Popover className={popoverVolumeClasses}>
+                <div className="port-labels">
+                <div className="label-docker">DOCKER FOLDER</div>
+                <div className="label-local">LOCAL FOLDER</div>
+                </div>
+                <div className="ports">
+                  {volumes}
+                </div>
+              </Popover>
+              <a className={dropdownButtonClass}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
             </div>
             <div className="action">
-              <a className={buttonClass} onClick={this.handleView}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>
+              <a className={buttonClass} onClick={this.handleRestart}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>
             </div>
             <div className="action">
               <a className={buttonClass} onClick={this.handleTerminal}><span className="icon icon-window-code-3"></span> <span className="content">Terminal</span></a>
