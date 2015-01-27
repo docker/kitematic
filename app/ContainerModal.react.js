@@ -26,7 +26,7 @@ var ContainerModal = React.createClass({
   },
   componentDidMount: function () {
     this.refs.searchInput.getDOMNode().focus();
-    ContainerStore.on(ContainerStore.SERVER_RECOMMENDED_EVENT, this.update);
+    ContainerStore.on(ContainerStore.CLIENT_RECOMMENDED_EVENT, this.update);
   },
   update: function () {
     if (!this.state.query.length) {

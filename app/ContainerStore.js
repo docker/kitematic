@@ -19,9 +19,9 @@ var _muted = {};
 
 var ContainerStore = assign(EventEmitter.prototype, {
   CLIENT_CONTAINER_EVENT: 'client_container',
+  CLIENT_RECOMMENDED_EVENT: 'client_recommended_event',
   SERVER_CONTAINER_EVENT: 'server_container',
   SERVER_PROGRESS_EVENT: 'server_progress',
-  SERVER_RECOMMENDED_EVENT: 'server_recommended_event',
   SERVER_LOGS_EVENT: 'server_logs',
   _pullScratchImage: function (callback) {
     var image = docker.client().getImage('scratch:latest');
@@ -110,7 +110,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
   _createContainer: function (name, containerData, callback) {
     var existing = docker.client().getContainer(name);
     var self = this;
-    containerData.name = name;
+    containerData.name = containerData.Name;
     if (containerData.Config && containerData.Config.Image) {
       containerData.Image = containerData.Config.Image;
     }
@@ -232,11 +232,11 @@ var ContainerStore = assign(EventEmitter.prototype, {
     this.fetchAllContainers(function (err) {
       callback();
       this.emit(this.CLIENT_CONTAINER_EVENT);
-      this.fetchRecommended(function (err) {
-        this.emit(this.SERVER_RECOMMENDED_EVENT);
-      }.bind(this));
       this._resumePulling();
       this._startListeningToEvents();
+    }.bind(this));
+    this.fetchRecommended(function (err) {
+      this.emit(this.CLIENT_RECOMMENDED_EVENT);
     }.bind(this));
   },
   fetchContainer: function (id, callback) {
@@ -403,21 +403,27 @@ var ContainerStore = assign(EventEmitter.prototype, {
       _muted[name] = false;
     }.bind(this));
   },
+  restart: function (name, callback) {
+    var container = docker.client().getContainer(name);
+    container.restart(function (err) {
+      callback(err);
+    });
+  },
   remove: function (name, callback) {
     var self = this;
-    var existing = docker.client().getContainer(name);
+    var container = docker.client().getContainer(name);
     if (_containers[name].State.Paused) {
-      existing.unpause(function (err) {
+      container.unpause(function (err) {
         if (err) {
           callback(err);
           return;
         } else {
-          existing.kill(function (err) {
+          container.kill(function (err) {
             if (err) {
               callback(err);
               return;
             } else {
-              existing.remove(function (err) {
+              container.remove(function (err) {
                 if (err) {
                   callback(err);
                   return;
@@ -428,12 +434,12 @@ var ContainerStore = assign(EventEmitter.prototype, {
         }
       });
     } else {
-      existing.kill(function (err) {
+      container.kill(function (err) {
         if (err) {
           callback(err);
           return;
         } else {
-          existing.remove(function (err) {
+          container.remove(function (err) {
             if (err) {
               callback(err);
               return;

@@ -12,12 +12,6 @@ var docker = require('./docker');
 var boot2docker = require('./boot2docker');
 var ProgressBar = require('react-bootstrap/ProgressBar');
 
-var Route = Router.Route;
-var NotFoundRoute = Router.NotFoundRoute;
-var DefaultRoute = Router.DefaultRoute;
-var Link = Router.Link;
-var RouteHandler = Router.RouteHandler;
-
 var ContainerDetails = React.createClass({
   mixins: [Router.State],
   _oldHeight: 0,
@@ -35,9 +29,9 @@ var ContainerDetails = React.createClass({
     this.init();
   },
   componentWillMount: function () {
-    this.init();
   },
   componentDidMount: function () {
+    this.init();
     ContainerStore.on(ContainerStore.SERVER_PROGRESS_EVENT, this.updateProgress);
     ContainerStore.on(ContainerStore.SERVER_LOGS_EVENT, this.updateLogs);
   },
@@ -113,6 +107,11 @@ var ContainerDetails = React.createClass({
       exec(['open', ports[0].url], function (err) {
         if (err) { throw err; }
       });
+    });
+  },
+  handleRestart: function () {
+    ContainerStore.restart(this.props.container.Name, function (err) {
+      console.log(err);
     });
   },
   handleTerminal: function () {
@@ -320,7 +319,7 @@ var ContainerDetails = React.createClass({
               <a className={dropdownButtonClass} onClick={this.handleView}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
             </div>
             <div className="action">
-              <a className={buttonClass} onClick={this.handleView}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>
+              <a className={buttonClass} onClick={this.handleRestart}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>
             </div>
             <div className="action">
               <a className={buttonClass} onClick={this.handleTerminal}><span className="icon icon-window-code-3"></span> <span className="content">Terminal</span></a>

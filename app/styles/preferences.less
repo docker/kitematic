@@ -1,0 +1,42 @@
+@import "variables.less";
+
+.preferences {
+  flex: 1 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+
+
+  .preferences-content {
+    flex: 1 auto;
+    margin-top: 20px;
+    padding: 50px;
+    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+
+    .title {
+      margin-top: 40px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+      font-size: 18px;
+      font-weight: 400;
+      color: @gray-darker;
+    }
+
+    .option {
+      display: flex;
+      flex-direction: row;
+      margin-top: 14px;
+
+      .option-name {
+        flex: 0 auto;
+        color: @gray-light;
+      }
+      .option-value {
+        flex: 1 auto;
+        text-align: right;
+      }
+    }
+  }
+}
