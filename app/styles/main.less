@@ -1,12 +1,15 @@
 @import "bootstrap/bootstrap.less";
+@import "variables.less";
 @import "clearsans.less";
 @import "theme.less";
 @import "icons.less";
+@import "icons-filled.less";
 @import "retina.less";
 @import "setup.less";
 @import "radial.less";
 @import "header.less";
 @import "containers.less";
+@import "container-modal.less";
 
 html, body {
   height: 100%;
@@ -41,177 +44,14 @@ html, body {
   background-color: rgba(0,0,0,0.2);
 }
 
-.create-modal {
-  @modal-padding: 32px;
-  @search-width: 372px;
-  @custom-width: 270px;
-  .modal-dialog {
-    margin-top: 8%;
-    width: calc(@modal-padding + @search-width + 2 * @modal-padding + @custom-width);
-  }
-  .modal-content {
-    //box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
-    border: none; //1px solid #ccc;
-    height: 610px;
-    display: flex;
-  }
-  .modal-body {
-    flex: 1 auto;
-    display: flex;
-    flex-direction: row;
-    padding: 32px 32px;
+.popover {
+  font-family: 'Clear Sans', sans-serif;
 
-    aside.custom {
-      flex: 0 auto;
-      padding-left: 32px;
-      min-width: 270px;
-    }
-
-    section.search {
-      min-width: 404px;
-      padding-right: 32px;
-      border-right: 1px solid #eee;
-
-      .question {
-        a {
-          color: @gray-lightest;
-          &:hover {
-            color: darken(@gray-lightest, 10%);
-          }
-        }
-        font-size: 10px;
-        text-align: right;
-      }
-
-      .search-bar {
-        position: relative;
-        .loading {
-          position: absolute;
-          left: 13px;
-          top: 10px;
-          width: 20px;
-          height: 20px;
-          -webkit-animation-name: spin;
-          -webkit-animation-duration: 1.8s;
-          -webkit-animation-iteration-count: infinite;
-          -webkit-animation-timing-function: linear;
-        }
-        .search-icon {
-          font-size: 20px;
-          color: @gray-lighter;
-          position: absolute;
-          top: 9px;
-          left: 14px;
-        }
-        input {
-          border-radius: 20px;
-          font-size: 13px;
-          height: 38px;
-          padding: 8px 16px 8px 40px;
-          color: @gray-darkest;
-          margin-bottom: 3px;
-          border-color: @gray-lightest;
-          box-shadow: none;
-
-          &:focus {
-            box-shadow: none;
-            border-color: @gray-lighter;
-          }
-
-          &::-webkit-input-placeholder {
-            color: #ddd;
-            font-weight: 300;
-          }
-        }
-      }
-
-      .results {
-        overflow: auto;
-
-        .no-results {
-          text-align: center;
-          h3 {
-            color: #ABC0C0;
-            font-size: 16px;
-            margin-top: 160px;
-          }
-        }
-
-        .title {
-          flex: 0 auto;
-          margin-top: 16px;
-        }
-
-        ul {
-          margin-top: 10px;
-          list-style: none;
-          padding: 0;
-
-          li {
-            &:hover {
-              background-color: lighten(@gray-lightest, 17.5%);
-            }
-            display: flex;
-            flex-direction: row;
-            padding: 8px 14px 5px 14px;
-            //margin: 12px;
-            border-bottom: 1px solid #eee;
-            &:last-child {
-              border-bottom: 0;
-            }
-            .info {
-              .name {
-                color: @gray-darkest;
-                max-width: 278px;
-                img {
-                  margin-right: 6px;
-                  margin-left: 2px;
-                }
-                font-size: 16px;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-              }
-              .properties {
-                color: @gray-lighter;
-                margin-top: 2px;
-
-                .star-count {
-                  font-size: 10px;
-                  display: inline-block;
-                  position: relative;
-                  top: -3px;
-                  left: 1px;
-                  height: 17px;
-                }
-
-                .icon {
-                  overflow: hidden;
-                  display: inline-block;
-                  font-size: 15px;
-                  height: 15px;
-                }
-              }
-              flex: 0 auto;
-            }
-            .action {
-              position: relative;
-              top: 5px;
-              text-align: right;
-              flex: 1 auto;
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
-.modal-backdrop.in {
-  background: rgba(227,230,230,0.95);
-  opacity: 1;
-  height: 100%;
+  color: @gray-normal;
+  font-weight: 400;
+  font-size: 13px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.10);
+  border: 1px solid #ddd;
 }
 
 @-webkit-keyframes spin {
