@@ -29,7 +29,6 @@ var ContainerDetails = React.createClass({
     };
   },
   componentWillReceiveProps: function () {
-    // active container changes
     if (this.state.page === this.PAGE_SETTINGS) {
 
     }
@@ -61,7 +60,6 @@ var ContainerDetails = React.createClass({
   },
   init: function () {
     this.setState({
-      page: this.PAGE_LOGS,
       env: ContainerUtil.env(ContainerStore.container(this.getParams().name))
     });
     ContainerStore.fetchLogs(this.getParams().name, function () {
@@ -124,9 +122,14 @@ var ContainerDetails = React.createClass({
     $rows.each(function () {
       var key = $(this).find('.key').val();
       var val = $(this).find('.val').val();
+      if (!key.length || !val.length) {
+        return;
+      }
       envVarList.push(key + '=' + val);
     });
-    console.log(envVarList);
+    ContainerStore.updateContainer(this.props.container.Name, {
+      Env: envVarList
+    });
   },
   handleAddPendingEnvVar: function () {
     var newKey = $('#new-env-key').val();
