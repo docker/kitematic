@@ -11,6 +11,8 @@ var ContainerUtil = require('./ContainerUtil');
 var docker = require('./docker');
 var boot2docker = require('./boot2docker');
 var ProgressBar = require('react-bootstrap/ProgressBar');
+var Popover = require('react-bootstrap/Popover');
+var OverlayTrigger = require('react-bootstrap/OverlayTrigger');
 
 var Route = Router.Route;
 var NotFoundRoute = Router.NotFoundRoute;
@@ -28,7 +30,9 @@ var ContainerDetails = React.createClass({
       logs: [],
       page: this.PAGE_LOGS,
       env: {},
-      pendingEnv: {}
+      pendingEnv: {},
+      ports: {},
+      volumes: {}
     };
   },
   componentWillReceiveProps: function () {
@@ -59,8 +63,14 @@ var ContainerDetails = React.createClass({
   },
   init: function () {
     this.setState({
-      env: ContainerUtil.env(ContainerStore.container(this.getParams().name))
+      env: ContainerUtil.env(ContainerStore.container(this.getParams().name)),
+      volumes: ContainerUtil.volumes(ContainerStore.container(this.getParams().name))
     });
+    ContainerUtil.ports(ContainerStore.container(this.getParams().name), function (err, ports) {
+      this.setState({
+        ports: ports
+      });
+    }.bind(this));
     ContainerStore.fetchLogs(this.getParams().name, function () {
       this.updateLogs();
     }.bind(this));
@@ -115,6 +125,11 @@ var ContainerDetails = React.createClass({
       });
     });
   },
+  handleViewLink: function (url) {
+    exec(['open', url], function (err) {
+      if (err) { throw err; }
+    });
+  },
   handleTerminal: function () {
     var container = this.props.container;
     var terminal = path.join(process.cwd(), 'resources', 'terminal').replace(/ /g, '\\\\ ');
@@ -122,6 +137,18 @@ var ContainerDetails = React.createClass({
     exec(cmd, function (stderr, stdout, code) {
       if (code) {
         console.log(stderr);
+      }
+    });
+  },
+  handleSaveContainerName: function () {
+    var newName = $('#input-container-name').val();
+    var self = this;
+    console.log(newName);
+    ContainerStore.updateContainer(self.props.container.Name, {
+      name: newName
+    }, function (err) {
+      if (err) {
+        console.error(err);
       }
     });
   },
@@ -259,7 +286,10 @@ var ContainerDetails = React.createClass({
           <div className="details-panel">
             <div className="settings">
               <h3>Container Name</h3>
-              <input id="input-container-name" type="text" className="line" placeholder="Container Name" defaultValue={this.props.container.Name}></input>
+              <div className="container-name">
+                <input id="input-container-name" type="text" className="line" placeholder="Container Name" defaultValue={this.props.container.Name}></input>
+              </div>
+              <a className="btn btn-action" onClick={this.handleSaveContainerName}>Save</a>
               <h3>Environment Variables</h3>
               <div className="env-vars-labels">
                 <div className="label-key">KEY</div>
@@ -317,6 +347,29 @@ var ContainerDetails = React.createClass({
       disabled: this.props.container.State.Downloading
     });
 
+    var viewPopoverClasses = React.addons.classSet({
+      popover: true,
+      hidden: false
+    });
+
+    var ports = _.map(self.state.ports, function (val, key) {
+      return (
+        <div port={key} className="port-row">
+          <span>{key}</span>
+          <a onClick={self.handleViewLink.bind(self, val.url)}>{val.display}</a>
+        </div>
+      );
+    });
+
+    var volumes = _.map(self.state.volumes, function (val, key) {
+      return (
+        <div port={key} className="port-row">
+        <span>{key}</span>
+        <a>{val}</a>
+        </div>
+      );
+    });
+
     return (
       <div className="details">
         <div className="details-header">
@@ -325,10 +378,35 @@ var ContainerDetails = React.createClass({
           </div>
           <div className="details-header-actions">
             <div className="action btn-group">
-              <a className={buttonClass} onClick={this.handleView}><span className="icon icon-preview-2"></span><span className="content">View</span></a><a className={dropdownButtonClass}><span className="icon-dropdown icon icon-arrow-37"></span></a>
+              <a className={buttonClass} onClick={this.handleView}><span className="icon icon-preview-2"></span><span className="content">View</span></a>
+              <OverlayTrigger trigger="click" placement="bottom" overlay={
+                <Popover className="popover-view">
+                  <div className="port-labels">
+                    <div className="label-docker">DOCKER PORT</div>
+                    <div className="label-local">LOCAL PORT</div>
+                  </div>
+                  <div className="ports">
+                    {ports}
+                  </div>
+                </Popover>
+              }>
+                <a className={dropdownButtonClass}><span className="icon-dropdown icon icon-arrow-37"></span></a>
+              </OverlayTrigger>
             </div>
             <div className="action">
-              <a className={dropdownButtonClass} onClick={this.handleView}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
+              <OverlayTrigger trigger="click" placement="bottom" overlay={
+                <Popover className="popover-volume">
+                  <div className="port-labels">
+                  <div className="label-docker">DOCKER FOLDER</div>
+                  <div className="label-local">LOCAL FOLDER</div>
+                  </div>
+                  <div className="ports">
+                    {volumes}
+                  </div>
+                </Popover>
+              }>
+                <a className={dropdownButtonClass}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
+              </OverlayTrigger>
             </div>
             <div className="action">
               <a className={buttonClass} onClick={this.handleView}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>

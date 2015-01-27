@@ -397,7 +397,10 @@ var ContainerStore = assign(EventEmitter.prototype, {
   },
   updateContainer: function (name, data, callback) {
     _muted[name] = true;
+    console.log(data);
+    console.log(_containers[name]);
     var fullData = assign(_containers[name], data);
+    console.log(fullData);
     this._createContainer(name, fullData, function (err) {
       this.emit(this.CLIENT_CONTAINER_EVENT, name);
       _muted[name] = false;
