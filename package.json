@@ -14,7 +14,7 @@
     "start": "gulp",
     "preinstall": "./deps",
     "test": "gulp test",
-    "release": ". ./script/identity && gulp release"
+    "release": "gulp release"
   },
   "licenses": [
     {
@@ -68,6 +68,7 @@
     "gulp-uglifyjs": "^0.5.0",
     "gulp-util": "^3.0.0",
     "jasmine-tagged": "^1.1.2",
+    "livereload-js": "^2.2.1",
     "reactify": "^0.15.2",
     "run-sequence": "^1.0.2",
     "vinyl-source-stream": "^0.1.1",
