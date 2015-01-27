@@ -3,6 +3,7 @@ var $ = require('jquery');
 var React = require('react/addons');
 var Router = require('react-router');
 var exec = require('exec');
+var path =  require('path');
 var remote = require('remote');
 var dialog = remote.require('dialog');
 var ContainerStore = require('./ContainerStore');
@@ -112,6 +113,16 @@ var ContainerDetails = React.createClass({
       exec(['open', ports[0].url], function (err) {
         if (err) { throw err; }
       });
+    });
+  },
+  handleTerminal: function () {
+    var container = this.props.container;
+    var terminal = path.join(process.cwd(), 'resources', 'terminal').replace(/ /g, '\\\\ ');
+    var cmd = [terminal, boot2docker.command().replace(/ /g, '\\\\ '), 'ssh', '-t', 'sudo', 'docker', 'exec', '-i', '-t', container.Name, 'bash'];
+    exec(cmd, function (stderr, stdout, code) {
+      if (code) {
+        console.log(stderr);
+      }
     });
   },
   handleSaveEnvVar: function () {
@@ -303,7 +314,7 @@ var ContainerDetails = React.createClass({
           </div>
           <div className="details-header-actions">
             <div className="action btn-group">
-              <a className={buttonClass} onClick={this.handleView}><span className="icon icon-preview-2"></span><span className="content">View</span></a><a className="btn btn-action with-icon dropdown-toggle"><span className="icon-dropdown icon icon-arrow-37"></span></a>
+              <a className={buttonClass} onClick={this.handleView}><span className="icon icon-preview-2"></span><span className="content">View</span></a><a className={dropdownButtonClass}><span className="icon-dropdown icon icon-arrow-37"></span></a>
             </div>
             <div className="action">
               <a className={dropdownButtonClass} onClick={this.handleView}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
@@ -312,7 +323,7 @@ var ContainerDetails = React.createClass({
               <a className={buttonClass} onClick={this.handleView}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>
             </div>
             <div className="action">
-              <a className={buttonClass} onClick={this.handleView}><span className="icon icon-window-code-3"></span> <span className="content">Terminal</span></a>
+              <a className={buttonClass} onClick={this.handleTerminal}><span className="icon icon-window-code-3"></span> <span className="content">Terminal</span></a>
             </div>
             <div className="details-header-actions-rhs tabs btn-group">
               <a className={textButtonClasses} onClick={this.showLogs}><span className="icon icon-text-wrapping-2"></span></a>
