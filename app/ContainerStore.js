@@ -6,6 +6,7 @@ var Convert = require('ansi-to-html');
 var convert = new Convert();
 var docker = require('./docker');
 var registry = require('./registry');
+var ContainerUtil = require('./ContainerUtil');
 var $ = require('jquery');
 var _ = require('underscore');
 
@@ -104,16 +105,12 @@ var ContainerStore = assign(EventEmitter.prototype, {
     div.appendChild(text);
     return div.innerHTML;
   },
-  _createContainer: function (image, name, callback) {
+  _createContainer: function (name, data, callback) {
     var existing = docker.client().getContainer(name);
     var self = this;
+    data.name = name;
     existing.remove(function (err, data) {
-      docker.client().createContainer({
-        Image: image,
-        Tty: false,
-        name: name,
-        User: 'root'
-      }, function (err, container) {
+      docker.client().createContainer(data, function (err, container) {
         if (err) {
           callback(err, null);
           return;
@@ -129,6 +126,79 @@ var ContainerStore = assign(EventEmitter.prototype, {
         });
       });
     });
+  },
+  updateContainer: function (name, data) {
+    var fullData = assign(this._containers[name], data);
+    this._createContainer(name, fullData, function (err) {
+      console.log(err);
+    });
+  },
+  rename: function (name, newName, callback) {
+    var existing = docker.client().getContainer(name);
+    var existingImage = existing.Image;
+    var self = this;
+    existing.remove(function (err, data) {
+      docker.client().createContainer({
+        Image: existingImage,
+        Tty: false,
+        name: newName,
+        User: 'root'
+      }, function (err, container) {
+        if (err) {
+          callback(err, null);
+          return;
+        }
+        container.start({
+          PublishAllPorts: true
+        }, function (err) {
+          if (err) {
+            callback(err);
+            return;
+          }
+          self.fetchContainer(newName, callback);
+        });
+      });
+    });
+  },
+  remove: function (name, callback) {
+    var self = this;
+    var existing = docker.client().getContainer(name);
+    if (_containers[name].State.Paused) {
+      existing.unpause(function (err) {
+        if (err) {
+          callback(err);
+          return;
+        } else {
+          existing.kill(function (err) {
+            if (err) {
+              callback(err);
+              return;
+            } else {
+              existing.remove(function (err) {
+                if (err) {
+                  callback(err);
+                  return;
+                }
+              });
+            }
+          });
+        }
+      });
+    } else {
+      existing.kill(function (err) {
+        if (err) {
+          callback(err);
+          return;
+        } else {
+          existing.remove(function (err) {
+            if (err) {
+              callback(err);
+              return;
+            }
+          });
+        }
+      });
+    }
   },
   _createPlaceholderContainer: function (imageName, name, callback) {
     var self = this;
@@ -231,7 +301,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
         container.Name = container.Name.replace('/', '');
 
         // Add Downloading State (stored in environment variables) to containers for Kitematic
-        var env = _.object(container.Config.Env.map(function (e) { return e.split('='); }));
+        var env = ContainerUtil.env(container);
         container.State.Downloading = !!env.KITEMATIC_DOWNLOADING;
         container.KitematicDownloadingImage = env.KITEMATIC_DOWNLOADING_IMAGE;
 
@@ -373,16 +443,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
   },
   sorted: function () {
     return _.values(_containers).sort(function (a, b) {
-      var active = function (container) {
-        return container.State.Running || container.State.Restarting || container.State.Downloading;
-      };
-      if (active(a) && !active(b)) {
-        return -1;
-      } else if (!active(a) && active(b)) {
-        return 1;
-      } else {
-        return a.Name.localeCompare(b.Name);
-      }
+      return a.Name.localeCompare(b.Name);
     });
   },
   recommended: function () {
