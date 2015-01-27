@@ -41,7 +41,7 @@
         .create {
           flex: 1 auto;
           text-align: right;
-          .btn {
+          /*.btn {
             margin-top: 4px;
             padding: 4px 7px;
             font-size: 16px;
@@ -51,7 +51,7 @@
               top: 3px;
               left: 1px;
             }
-          }
+          }*/
         }
       }
 
@@ -329,23 +329,53 @@
         width: 300px;
       }
 
-      .details-logs {
+      .details-panel {
         flex: 1;
         overflow: auto;
-        h4 {
-          font-size: 14px;
-          margin-top: 16px;
-          margin-left: 40px;
-        }
         .logs {
           -webkit-user-select: text;
           font-family: Menlo;
           font-size: 12px;
-          padding: 18px 45px;
+          padding: 18px 35px;
           color: lighten(@gray-normal, 6%);
           white-space: pre-wrap;
           p {
             margin: 0 6px;
+          }
+        }
+        .settings {
+          padding: 18px 35px;
+        }
+      }
+
+      .env-vars-labels {
+        width: 100%;
+        font-size: 12px;
+        color: @gray-lightest;
+        margin-left: 5px;
+        margin-bottom: 5px;
+        .label-key {
+          display: inline-block;
+          margin-right: 30px;
+          width: 20%;
+        }
+        .label-val {
+          display: inline-block;
+          width: 40%;
+        }
+      }
+      .env-vars {
+        margin-bottom: 20px;
+        .keyval-row {
+          margin-bottom: 5px;
+        }
+        input {
+          margin-right: 30px;
+          &.key {
+            width: 20%;
+          }
+          &.val {
+            width: 40%;
           }
         }
       }
