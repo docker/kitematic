@@ -4,7 +4,6 @@ var ipc = require('ipc');
 
 // TODO: move this somewhere else
 if (localStorage.getItem('options')) {
-  console.log(JSON.parse(localStorage.getItem('options')));
   ipc.send('vm', JSON.parse(localStorage.getItem('options')).save_vm_on_quit);
 }
 

@@ -36,7 +36,6 @@ var ContainerDetails = React.createClass({
     ContainerStore.on(ContainerStore.SERVER_LOGS_EVENT, this.updateLogs);
   },
   componentWillUnmount: function () {
-    // app close
     ContainerStore.removeListener(ContainerStore.SERVER_PROGRESS_EVENT, this.updateProgress);
     ContainerStore.removeListener(ContainerStore.SERVER_LOGS_EVENT, this.updateLogs);
   },
@@ -68,7 +67,6 @@ var ContainerDetails = React.createClass({
     });
   },
   updateProgress: function (name) {
-    console.log('progress', name, ContainerStore.progress(name));
     if (name === this.getParams().name) {
       this.setState({
         progress: ContainerStore.progress(name)
