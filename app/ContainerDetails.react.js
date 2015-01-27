@@ -136,8 +136,19 @@ var ContainerDetails = React.createClass({
       }
       envVarList.push(key + '=' + val);
     });
-    ContainerStore.updateContainer(this.props.container.Name, {
+    var self = this;
+    ContainerStore.updateContainer(self.props.container.Name, {
       Env: envVarList
+    }, function (err) {
+      if (err) {
+        console.error(err);
+      } else {
+        self.setState({
+          pendingEnv: {}
+        });
+        $('#new-env-key').val('');
+        $('#new-env-val').val('');
+      }
     });
   },
   handleAddPendingEnvVar: function () {

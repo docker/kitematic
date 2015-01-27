@@ -395,12 +395,13 @@ var ContainerStore = assign(EventEmitter.prototype, {
       }
     });
   },
-  updateContainer: function (name, data) {
+  updateContainer: function (name, data, callback) {
     _muted[name] = true;
     var fullData = assign(_containers[name], data);
     this._createContainer(name, fullData, function (err) {
       this.emit(this.CLIENT_CONTAINER_EVENT, name);
       _muted[name] = false;
+      callback(err);
     }.bind(this));
   },
   remove: function (name, callback) {
