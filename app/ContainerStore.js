@@ -110,7 +110,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
   _createContainer: function (name, containerData, callback) {
     var existing = docker.client().getContainer(name);
     var self = this;
-    containerData.name = containerData.Name;
+    if (!containerData.name) containerData.name = containerData.Name;
     if (containerData.Config && containerData.Config.Image) {
       containerData.Image = containerData.Config.Image;
     }
