@@ -12,8 +12,6 @@ var ContainerUtil = require('./ContainerUtil');
 var docker = require('./docker');
 var boot2docker = require('./boot2docker');
 var ProgressBar = require('react-bootstrap/ProgressBar');
-var Popover = require('react-bootstrap/Popover');
-var OverlayTrigger = require('react-bootstrap/OverlayTrigger');
 
 var ContainerDetails = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -155,6 +153,11 @@ var ContainerDetails = React.createClass({
   handleVolumeDropdown: function(e) {
     this.setState({
       popoverVolumeOpen: !this.state.popoverVolumeOpen
+    });
+  },
+  handleRestart: function () {
+    ContainerStore.restart(this.props.container.Name, function (err) {
+      console.log(err);
     });
   },
   handleRestart: function () {
