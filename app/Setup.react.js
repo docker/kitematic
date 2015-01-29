@@ -125,7 +125,7 @@ var setupSteps = [
       boot2docker.ip(function (err, ip) {
         if (err) {callback(err); return;}
         console.log('Setting host IP to: ' + ip);
-        // Docker.setHost(ip);
+        docker.setHost(ip);
         callback(err);
       });
     },
@@ -147,6 +147,8 @@ var Setup = React.createClass({
       radial = <Radial progress={this.state.progress}/>;
     } else if (this.state.error) {
       radial = <Radial error={true} spin="true" progress="100"/>;
+    } else {
+      radial = <Radial spin="true" progress="100"/>;
     }
     if (this.state.error) {
       return (
