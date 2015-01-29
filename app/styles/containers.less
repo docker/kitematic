@@ -1,4 +1,119 @@
+.popover {
+
+  &.popover-view {
+    min-width: 290px;
+  }
+
+  &.popover-volume {
+    min-width: 400px;
+  }
+
+  .popover-content {
+    display: flex;
+    flex-direction: column;
+    padding: 14px 14px 20px;
+
+    .table {
+      margin-bottom: 0;
+      .icon-arrow-right {
+        color: #aaa;
+        margin: 2px 9px 0;
+        flex: 0 auto;
+        min-width: 13px;
+      }
+      .btn {
+        min-width: 22px;
+        margin-left: 10px;
+      }
+      .table-labels {
+        flex: 1 auto;
+        display: flex;
+        font-size: 12px;
+        color: @gray-lightest;
+        .label-left {
+          flex: 0 auto;
+          min-width: 80px;
+          margin-right: 30px;
+          text-align: right;
+        }
+        .label-right {
+          flex: 1 auto;
+          display: inline-block;
+          width: 40%;
+        }
+      }
+      .table-values {
+        flex: 1 auto;
+        display: flex;
+        flex-direction: row;
+        margin: 8px 0;
+        .value-left {
+          text-align: right;
+          min-width: 80px;
+          flex: 0 auto;
+        }
+        .value-right {
+          flex: 1 auto;
+          -webkit-user-select: text;
+          width: 154px;
+        }
+      }
+      .table-new {
+        margin-top: 10px;
+        flex: 1 auto;
+        display: flex;
+        input {
+          padding: 0;
+          font-weight: 400;
+        }
+        input.new-left {
+          flex: 0 auto;
+          text-align: right;
+          min-width: 80px;
+          max-width: 80px;
+        }
+        .new-right-wrapper {
+          position: relative;
+          display: flex;
+          flex: 1 auto;
+          .new-right-placeholder {
+            position: absolute;
+            top: 3px;
+            left: 0;
+            font-weight: 400;
+          }
+
+          input.new-right {
+            flex: 1 auto;
+            height: 24px;
+            position :relative;
+            padding-left: 107px;
+          }
+        }
+      }
+
+      &.volumes {
+        .label-left {
+          min-width: 120px;
+        }
+        .value-left {
+          min-width: 120px;
+        }
+        .icon {
+          color: #aaa;
+          margin: 2px 9px 0;
+        }
+      }
+    }
+
+    .question {
+      margin: 12px 6px 6px;
+    }
+  }
+}
+
 .containers {
+  box-sizing: border-box;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -346,6 +461,13 @@
         }
         .settings {
           padding: 18px 35px;
+        }
+      }
+
+      .container-name {
+        margin-bottom: 20px;
+        input {
+          width: 20%;
         }
       }
 

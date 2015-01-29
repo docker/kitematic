@@ -41,6 +41,10 @@ var ContainerModal = React.createClass({
       this._searchRequest = null;
     }
 
+    if (!query.length) {
+      return;
+    }
+
     this.setState({
       loading: true
     });
@@ -227,6 +231,7 @@ var ContainerModal = React.createClass({
               <div className={magnifierClasses}></div>
               <RetinaImage className={loadingClasses} src="loading.png"/>
             </div>
+            {question}
             <div className="results">
               <div className="title">{title}</div>
               {results}

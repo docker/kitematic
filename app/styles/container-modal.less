@@ -1,7 +1,7 @@
 .create-modal {
   @modal-padding: 32px;
   @search-width: 372px;
-  @custom-width: 270px;
+  @custom-width: 0;
   .modal-dialog {
     margin-top: 80px;
     width: calc(@modal-padding + @search-width + 2 * @modal-padding + @custom-width);
@@ -19,12 +19,6 @@
     display: flex;
     flex-direction: row;
     padding: 32px 32px;
-
-    aside.custom {
-      flex: 0 auto;
-      padding-left: 32px;
-      min-width: 270px;
-    }
 
     .popover {
       width: 180px;
@@ -62,12 +56,8 @@
 
     section.search {
       min-width: 404px;
-      padding-right: 32px;
-      border-right: 1px solid #eee;
 
       .question {
-        color: @gray-lightest;
-        font-size: 10px;
         text-align: right;
       }
 

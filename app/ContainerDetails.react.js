@@ -4,6 +4,7 @@ var React = require('react/addons');
 var Router = require('react-router');
 var exec = require('exec');
 var path =  require('path');
+var assign =  require('object-assign');
 var remote = require('remote');
 var dialog = remote.require('dialog');
 var ContainerStore = require('./ContainerStore');
@@ -13,7 +14,7 @@ var boot2docker = require('./boot2docker');
 var ProgressBar = require('react-bootstrap/ProgressBar');
 
 var ContainerDetails = React.createClass({
-  mixins: [Router.State],
+  mixins: [Router.State, Router.Navigation],
   _oldHeight: 0,
   PAGE_LOGS: 'logs',
   PAGE_SETTINGS: 'settings',
@@ -22,7 +23,12 @@ var ContainerDetails = React.createClass({
       logs: [],
       page: this.PAGE_LOGS,
       env: {},
-      pendingEnv: {}
+      pendingEnv: {},
+      ports: {},
+      defaultPort: null,
+      volumes: {},
+      popoverVolumeOpen: false,
+      popoverViewOpen: false,
     };
   },
   componentWillReceiveProps: function () {
@@ -34,29 +40,72 @@ var ContainerDetails = React.createClass({
     this.init();
     ContainerStore.on(ContainerStore.SERVER_PROGRESS_EVENT, this.updateProgress);
     ContainerStore.on(ContainerStore.SERVER_LOGS_EVENT, this.updateLogs);
+
+    // Make clicking anywhere close popovers
+    $('body').on('click', function (e) {
+      var popoverViewIsTarget = $('.popover-view').is(e.target) || $('.popover-view').has(e.target).length !== 0 || $('.dropdown-view').is(e.target) || $('.dropdown-view').has(e.target).length !== 0;
+      var popoverVolumeIsTarget = $('.popover-volume').is(e.target) || $('.popover-volume').has(e.target).length !== 0 || $('.dropdown-volume').is(e.target) || $('.dropdown-volume').has(e.target).length !== 0;
+      var state = {};
+      if (!popoverViewIsTarget) {
+        state.popoverViewOpen = false;
+      }
+      if (!popoverVolumeIsTarget) {
+        state.popoverVolumeOpen = false;
+      }
+      if (this.state.popoverViewOpen || this.state.popoverVolumeOpen) {
+        this.setState(state);
+      }
+    }.bind(this));
   },
   componentWillUnmount: function () {
     ContainerStore.removeListener(ContainerStore.SERVER_PROGRESS_EVENT, this.updateProgress);
     ContainerStore.removeListener(ContainerStore.SERVER_LOGS_EVENT, this.updateLogs);
   },
   componentDidUpdate: function () {
+    // Scroll logs to bottom
     var parent = $('.details-logs');
-    if (!parent.length) {
-      return;
+    if (parent.length) {
+      if (parent.scrollTop() >= this._oldHeight) {
+        parent.stop();
+        parent.scrollTop(parent[0].scrollHeight - parent.height());
+      }
+      this._oldHeight = parent[0].scrollHeight - parent.height();
     }
-    if (parent.scrollTop() >= this._oldHeight) {
-      parent.stop();
-      parent.scrollTop(parent[0].scrollHeight - parent.height());
+
+    var $viewDropdown = $(this.getDOMNode()).find('.dropdown-view');
+    var $volumeDropdown = $(this.getDOMNode()).find('.dropdown-volume');
+    var $viewPopover = $(this.getDOMNode()).find('.popover-view');
+    var $volumePopover = $(this.getDOMNode()).find('.popover-volume');
+
+    if ($viewDropdown && $volumeDropdown && $viewPopover && $volumePopover) {
+      $viewPopover.offset({
+        top: $viewDropdown.offset().top + 32,
+        left: $viewDropdown.offset().left - ($viewPopover.outerWidth() / 2) + 14
+      });
+
+      $volumePopover.offset({
+        top: $volumeDropdown.offset().top + 32,
+        left: $volumeDropdown.offset().left + $volumeDropdown.outerWidth() - $volumePopover.outerWidth() / 2 - 20
+      });
     }
-    this._oldHeight = parent[0].scrollHeight - parent.height();
   },
   init: function () {
+    var container = ContainerStore.container(this.getParams().name);
+    if (!container) {
+      return;
+    }
     this.setState({
-      env: ContainerUtil.env(ContainerStore.container(this.getParams().name))
+      env: ContainerUtil.env(container),
     });
-    ContainerStore.fetchLogs(this.getParams().name, function () {
-      this.updateLogs();
-    }.bind(this));
+    var ports = ContainerUtil.ports(container);
+    var webPorts = ['80', '8000', '8080', '3000', '5000', '2368'];
+    this.setState({
+      ports: ports,
+      defaultPort: _.find(_.keys(ports), function (port) {
+        return webPorts.indexOf(port) !== -1;
+      })
+    });
+    this.updateLogs();
   },
   updateLogs: function (name) {
     if (name && name !== this.getParams().name) {
@@ -84,27 +133,31 @@ var ContainerDetails = React.createClass({
     });
   },
   handleView: function () {
-    var container = this.props.container;
-    boot2docker.ip(function (err, ip) {
-      var ports = _.map(container.NetworkSettings.Ports, function (value, key) {
-        var portProtocolPair = key.split('/');
-        var res = {
-          'port': portProtocolPair[0],
-          'protocol': portProtocolPair[1]
-        };
-        if (value && value.length) {
-          var port = value[0].HostPort;
-          res.host = ip;
-          res.port = port;
-          res.url = 'http://' + ip + ':' + port;
-        } else {
-          return null;
-        }
-        return res;
-      });
-      exec(['open', ports[0].url], function (err) {
+    if (this.state.defaultPort) {
+      console.log(this.state.defaultPort);
+      exec(['open', this.state.ports[this.state.defaultPort].url], function (err) {
         if (err) { throw err; }
       });
+    }
+  },
+  handleViewLink: function (url) {
+    exec(['open', url], function (err) {
+      if (err) { throw err; }
+    });
+  },
+  handleViewDropdown: function(e) {
+    this.setState({
+      popoverViewOpen: !this.state.popoverViewOpen
+    });
+  },
+  handleVolumeDropdown: function(e) {
+    this.setState({
+      popoverVolumeOpen: !this.state.popoverVolumeOpen
+    });
+  },
+  handleRestart: function () {
+    ContainerStore.restart(this.props.container.Name, function (err) {
+      console.log(err);
     });
   },
   handleRestart: function () {
@@ -122,6 +175,17 @@ var ContainerDetails = React.createClass({
       }
     });
   },
+  handleSaveContainerName: function () {
+    var newName = $('#input-container-name').val();
+    ContainerStore.updateContainer(this.props.container.Name, {
+      name: newName
+    }, function (err) {
+      this.transitionTo('container', {name: newName});
+      if (err) {
+        console.error(err);
+      }
+    }.bind(this));
+  },
   handleSaveEnvVar: function () {
     var $rows = $('.env-vars .keyval-row');
     var envVarList = [];
@@ -133,8 +197,19 @@ var ContainerDetails = React.createClass({
       }
       envVarList.push(key + '=' + val);
     });
-    ContainerStore.updateContainer(this.props.container.Name, {
+    var self = this;
+    ContainerStore.updateContainer(self.props.container.Name, {
       Env: envVarList
+    }, function (err) {
+      if (err) {
+        console.error(err);
+      } else {
+        self.setState({
+          pendingEnv: {}
+        });
+        $('#new-env-key').val('');
+        $('#new-env-val').val('');
+      }
     });
   },
   handleAddPendingEnvVar: function () {
@@ -224,6 +299,66 @@ var ContainerDetails = React.createClass({
       );
     });
 
+    var disabledClass = '';
+    if (!this.props.container.State.Running) {
+      disabledClass = 'disabled';
+    }
+
+    var buttonClass = React.addons.classSet({
+      btn: true,
+      'btn-action': true,
+      'with-icon': true,
+      disabled: !this.props.container.State.Running
+    });
+
+    var viewButtonClass = React.addons.classSet({
+      btn: true,
+      'btn-action': true,
+      'with-icon': true,
+      disabled: !this.props.container.State.Running || !this.state.defaultPort
+    });
+
+    var textButtonClasses = React.addons.classSet({
+      'btn': true,
+      'btn-action': true,
+      'only-icon': true,
+      'active': this.state.page === this.PAGE_LOGS,
+      disabled: this.props.container.State.Downloading
+    });
+
+    var gearButtonClass = React.addons.classSet({
+      'btn': true,
+      'btn-action': true,
+      'only-icon': true,
+      'active': this.state.page === this.PAGE_SETTINGS,
+      disabled: this.props.container.State.Downloading
+    });
+
+    var viewPopoverClasses = React.addons.classSet({
+      popover: true,
+      hidden: false
+    });
+
+    var popoverVolumeClasses = React.addons.classSet({
+      'popover-volume': true,
+      hidden: !this.state.popoverVolumeOpen
+    });
+
+    var popoverViewClasses = React.addons.classSet({
+      'popover-view': true,
+      hidden: !this.state.popoverViewOpen
+    });
+
+    var dropdownClasses = {
+      btn: true,
+      'btn-action': true,
+      'with-icon': true,
+      'dropdown-toggle': true,
+      disabled: !this.props.container.State.Running
+    };
+    var dropdownViewButtonClass = React.addons.classSet(assign({'dropdown-view': true}, dropdownClasses));
+    var dropdownVolumeButtonClass = React.addons.classSet(assign({'dropdown-volume': true}, dropdownClasses));
+
     var body;
     if (this.props.container.State.Downloading) {
       body = (
@@ -245,7 +380,10 @@ var ContainerDetails = React.createClass({
           <div className="details-panel">
             <div className="settings">
               <h3>Container Name</h3>
-              <input id="input-container-name" type="text" className="line" placeholder="Container Name" defaultValue={this.props.container.Name}></input>
+              <div className="container-name">
+                <input id="input-container-name" type="text" className="line" placeholder="Container Name" defaultValue={this.props.container.Name}></input>
+              </div>
+              <a className="btn btn-action" onClick={this.handleSaveContainerName}>Save</a>
               <h3>Environment Variables</h3>
               <div className="env-vars-labels">
                 <div className="label-key">KEY</div>
@@ -269,38 +407,27 @@ var ContainerDetails = React.createClass({
       }
     }
 
-    var disabledClass = '';
-    if (!this.props.container.State.Running) {
-      disabledClass = 'disabled';
-    }
-
-    var buttonClass = React.addons.classSet({
-      btn: true, 'btn-action': true,
-      'with-icon': true,
-      disabled: !this.props.container.State.Running
-    });
-    var dropdownButtonClass = React.addons.classSet({
-      btn: true,
-      'btn-action': true,
-      'with-icon': true,
-      'dropdown-toggle': true,
-      disabled: !this.props.container.State.Running
+    var ports = _.map(_.pairs(self.state.ports), function (pair, index, list) {
+      var key = pair[0];
+      var val = pair[1];
+      return (
+        <div key={key} className="table-values">
+          <span className="value-left">{key}</span><span className="icon icon-arrow-right"></span>
+          <a className="value-right" onClick={self.handleViewLink.bind(self, val.url)}>{val.display}</a>
+        </div>
+      );
     });
 
-    var textButtonClasses = React.addons.classSet({
-      'btn': true,
-      'btn-action': true,
-      'only-icon': true,
-      'active': this.state.page === this.PAGE_LOGS,
-      disabled: this.props.container.State.Downloading
-    });
-
-    var gearButtonClass = React.addons.classSet({
-      'btn': true,
-      'btn-action': true,
-      'only-icon': true,
-      'active': this.state.page === this.PAGE_SETTINGS,
-      disabled: this.props.container.State.Downloading
+    var volumes = _.map(self.props.container.Volumes, function (val, key) {
+      if (!val || val.indexOf(process.env.HOME) === -1) {
+        val = 'No Host Folder';
+      }
+      return (
+        <div key={key} className="table-values">
+          <span className="value-left">{key}</span><span className="icon icon-arrow-right"></span>
+          <a className="value-right">{val.replace(process.env.HOME, '~')}</a>
+        </div>
+      );
     });
 
     return (
@@ -311,10 +438,11 @@ var ContainerDetails = React.createClass({
           </div>
           <div className="details-header-actions">
             <div className="action btn-group">
-              <a className={buttonClass} onClick={this.handleView}><span className="icon icon-preview-2"></span><span className="content">View</span></a><a className={dropdownButtonClass}><span className="icon-dropdown icon icon-arrow-37"></span></a>
+              <a className={viewButtonClass} onClick={this.handleView}><span className="icon icon-preview-2"></span><span className="content">View</span></a>
+              <a className={dropdownViewButtonClass} onClick={this.handleViewDropdown}><span className="icon-dropdown icon icon-arrow-37"></span></a>
             </div>
             <div className="action">
-              <a className={dropdownButtonClass} onClick={this.handleView}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
+              <a className={dropdownVolumeButtonClass} onClick={this.handleVolumeDropdown}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
             </div>
             <div className="action">
               <a className={buttonClass} onClick={this.handleRestart}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>
@@ -327,6 +455,24 @@ var ContainerDetails = React.createClass({
               <a className={gearButtonClass} onClick={this.showSettings}><span className="icon icon-setting-gear"></span></a>
             </div>
           </div>
+          <Popover className={popoverViewClasses} placement="bottom">
+            <div className="table ports">
+              <div className="table-labels">
+                <div className="label-left">DOCKER PORT</div>
+                <div className="label-right">MAC PORT</div>
+              </div>
+              {ports}
+            </div>
+          </Popover>
+          <Popover className={popoverVolumeClasses} placement="bottom">
+            <div className="table volumes">
+              <div className="table-labels">
+                <div className="label-left">DOCKER FOLDER</div>
+                <div className="label-right">MAC FOLDER</div>
+              </div>
+              {volumes}
+            </div>
+          </Popover>
         </div>
         {body}
       </div>
