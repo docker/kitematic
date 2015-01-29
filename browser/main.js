@@ -17,6 +17,7 @@ if (argv.test) {
 }
 
 process.env.NODE_PATH = __dirname + '/../node_modules';
+process.chdir(path.join(__dirname, '..'));
 
 app.on('activate-with-no-open-windows', function () {
   if (mainWindow) {
