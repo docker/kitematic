@@ -41,6 +41,10 @@ var ContainerModal = React.createClass({
       this._searchRequest = null;
     }
 
+    if (!query.length) {
+      return;
+    }
+
     this.setState({
       loading: true
     });
