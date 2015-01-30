@@ -49,7 +49,7 @@ var VirtualBox = {
       callback('VirtualBox not installed.');
       return;
     }
-    exec('list runningvms | sed -E \'s/.*\\{(.*)\\}/\\1/\' | xargs -L1 -I {} VBoxManage controlvm {} savestate', function (stderr, stdout, code) {
+    exec('/usr/bin/VBoxManage list runningvms | sed -E \'s/.*\\{(.*)\\}/\\1/\' | xargs -L1 -I {} /usr/bin/VBoxManage controlvm {} savestate', function (stderr, stdout, code) {
       if (code) {
         callback(stderr);
       } else {
@@ -84,7 +84,7 @@ var VirtualBox = {
     VirtualBox.vmState(name, function (err, state) {
       // No VM found
       if (err) { callback(null, false); return; }
-      VirtualBox.exec('controlvm ' + name + ' acpipowerbutton', function (stderr, stdout, code) {
+      exec('/usr/bin/VBoxManage controlvm ' + name + ' acpipowerbutton', function (stderr, stdout, code) {
         if (code) { callback(stderr, false); return; }
         var state = null;
 
@@ -97,7 +97,7 @@ var VirtualBox = {
             setTimeout(callback, 250);
           });
         }, function (err) {
-          VirtualBox.exec('unregistervm ' + name + ' --delete', function (stderr, stdout, code) {
+          exec('/usr/bin/VBoxManage unregistervm ' + name + ' --delete', function (stderr, stdout, code) {
             if (code) { callback(err); return; }
             callback();
           });

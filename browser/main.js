@@ -10,12 +10,6 @@ var app = require('app');
 var BrowserWindow = require('browser-window');
 var ipc = require('ipc');
 
-var argv = require('minimist')(process.argv);
-
-if (argv.test) {
-  console.log('Running tests');
-}
-
 process.env.NODE_PATH = __dirname + '/../node_modules';
 process.chdir(path.join(__dirname, '..'));
 
@@ -38,12 +32,7 @@ app.on('ready', function() {
 
   mainWindow = new BrowserWindow(windowOptions);
   mainWindow.hide();
-
-  if (argv.test) {
-    mainWindow.loadUrl('file://' + __dirname + '/../build/specs.html');
-  } else {
-    mainWindow.loadUrl('file://' + __dirname + '/../build/index.html');
-  }
+  mainWindow.loadUrl('file://' + __dirname + '/../build/index.html');
 
   process.on('uncaughtException', app.quit);
 

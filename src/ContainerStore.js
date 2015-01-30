@@ -226,14 +226,14 @@ var ContainerStore = assign(EventEmitter.prototype, {
     // If the event is delete, remove the container
     if (data.status === 'destroy') {
       var container = _.findWhere(_.values(_containers), {Id: data.id});
-      if (!container) {
-        return;
+      if (container) {
+        delete _containers[container.Name];
+        if (!_muted[container.Name]) {
+          this.emit(this.SERVER_CONTAINER_EVENT, container.Name, data.status);
+        }
+      } else {
+        this.emit(this.SERVER_CONTAINER_EVENT, data.status);
       }
-      delete _containers[container.Name];
-      if (_muted[container.Name]) {
-        return;
-      }
-      this.emit(this.SERVER_CONTAINER_EVENT, container.Name, data.status);
     } else {
       this.fetchContainer(data.id, function (err) {
         if (err) {
