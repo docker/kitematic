@@ -12,7 +12,7 @@ h3 {
 
 h4 {
   font-size: 13px;
-  color: @gray-normal;
+  color: @gray-darker;
   font-weight: 400;
 }
 
@@ -28,7 +28,7 @@ input[type="text"] {
     color: @gray-normal;
     font-weight: 300;
     padding: 5px;
-    transition: all 0.1s;
+    transition: all 0.25s;
     &:focus {
       outline: 0;
       border-bottom: 1px solid @brand-action;
@@ -56,7 +56,7 @@ input[type="text"] {
 
 // Mixin for generating new styles
 .btn-styles(@btn-color: @gray-normal) {
-  transition: all 0.1s;
+  transition: all 0.25s;
   .reset-filter(); // Disable gradients for IE9 because filter bleeds through rounded corners
   border-color: @btn-color;
   color: @btn-color;
@@ -111,7 +111,7 @@ input[type="text"] {
 
 // Common styles
 .btn {
-  font-size: 12px;
+  font-size: 13px;
   background-color: transparent;
   color: @gray-normal;
   border: 1px solid @gray-normal;
@@ -119,8 +119,8 @@ input[type="text"] {
   box-shadow: none;
   font-weight: 400;
   text-shadow: none;
-  padding: 6px 14px 6px 14px;
-  height: 32px;
+  padding: 4px 14px 4px 14px;
+  height: 28px;
   cursor: default;
 
   &.small {
@@ -166,7 +166,7 @@ input[type="text"] {
   &.only-icon {
     padding: 6px 7px 6px 7px;
     &.small {
-      padding: 2px 5px 3px 5px;
+      padding: 3px 5px 3px 5px;
     }
   }
 }
