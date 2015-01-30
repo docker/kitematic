@@ -2,7 +2,7 @@ var fs = require('fs');
 var exec = require('exec');
 var path = require('path');
 var async = require('async');
-var util = require('./util');
+var util = require('./Util');
 
 var VirtualBox = {
   REQUIRED_VERSION: '4.3.18',

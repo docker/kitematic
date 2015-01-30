@@ -1,14 +1,14 @@
+var $ = require('jquery');
+var _ = require('underscore');
 var EventEmitter = require('events').EventEmitter;
 var async = require('async');
 var path = require('path');
 var assign = require('object-assign');
 var Stream = require('stream');
 var Convert = require('ansi-to-html');
-var docker = require('./docker');
-var registry = require('./registry');
+var docker = require('./Docker');
+var registry = require('./Registry');
 var ContainerUtil = require('./ContainerUtil');
-var $ = require('jquery');
-var _ = require('underscore');
 
 var convert = new Convert();
 

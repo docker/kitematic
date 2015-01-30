@@ -1,5 +1,5 @@
 var _ = require('underscore');
-var docker = require('./docker');
+var docker = require('./Docker');
 
 var ContainerUtil = {
   env: function (container) {

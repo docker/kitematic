@@ -11,7 +11,7 @@
   },
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
-    "start": "rsync ./index.html ./build/ && rsync ./fonts/* ./build/ && rsync ./images/* ./build && jsx --watch src/ build/ & wess -w -m -i ./styles/main.less -o ./build/main.css & wiper -w ./build/**/*.* & ./cache/Atom.app/Contents/MacOS/Atom .",
+    "start": "rsync ./index.html ./build/ && rsync ./fonts/* ./build/ && rsync ./images/* ./build && jsx --watch src/ build/ & wess -w -m -i ./styles/main.less -o ./build/main.css & wiper -w ./build/**/*.* & ./cache/Atom.app/Contents/MacOS/Atom . && kill $(pgrep node)",
     "preinstall": "./deps",
     "test": "jest",
     "release": "./release"
@@ -33,7 +33,7 @@
   "dependencies": {
     "ansi-to-html": "0.2.0",
     "async": "^0.9.0",
-    "bugsnag-js": "git+https://git@github.com/bugsnag/bugsnag-js",
+    "bugsnag-js": "^2.4.6",
     "dockerode": "2.0.4",
     "exec": "0.1.2",
     "gulp-react": "^2.0.0",
