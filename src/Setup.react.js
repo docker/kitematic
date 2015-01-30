@@ -5,11 +5,11 @@ var async = require('async');
 var assign = require('object-assign');
 var fs = require('fs');
 var path = require('path');
-var boot2docker = require('./boot2docker.js');
-var virtualbox = require('./virtualbox.js');
-var util = require('./util.js');
-var docker = require('./docker.js');
-var ContainerStore = require('./ContainerStore.js');
+var boot2docker = require('./Boot2Docker');
+var virtualbox = require('./Virtualbox');
+var util = require('./Util');
+var docker = require('./Docker');
+var ContainerStore = require('./ContainerStore');
 
 var setupSteps = [
   {
