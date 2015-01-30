@@ -3,8 +3,18 @@
 BASE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 export BOOT2DOCKER_CLI_VERSION=$(node -pe "JSON.parse(process.argv[1])['boot2docker-version']" "$(cat $BASE/package.json)")
 export BOOT2DOCKER_CLI_VERSION_FILE=boot2docker-$BOOT2DOCKER_CLI_VERSION
+export ATOM_SHELL_VERSION=$(node -pe "JSON.parse(process.argv[1])['atom-shell-version']" "$(cat $BASE/package.json)")
+export ATOM_SHELL_VERSION_FILE=atom-shell-v$ATOM_SHELL_VERSION-darwin-x64.zip
 
 mkdir -p $BASE/cache
+pushd $BASE/cache > /dev/null
+if [ ! -f $ATOM_SHELL_VERSION_FILE ]; then
+  echo "-----> Downloading atom-shell..."
+  rm -rf atom-shell-*
+  curl -L -o $ATOM_SHELL_VERSION_FILE https://github.com/atom/atom-shell/releases/download/v$ATOM_SHELL_VERSION/atom-shell-v$ATOM_SHELL_VERSION-darwin-x64.zip
+  unzip $ATOM_SHELL_VERSION_FILE
+fi
+popd > /dev/null
 
 pushd $BASE/resources > /dev/null
 

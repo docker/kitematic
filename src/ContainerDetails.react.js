@@ -12,6 +12,7 @@ var ContainerUtil = require('./ContainerUtil');
 var docker = require('./docker');
 var boot2docker = require('./boot2docker');
 var ProgressBar = require('react-bootstrap/ProgressBar');
+var Popover = require('react-bootstrap/Popover');
 
 var ContainerDetails = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -33,8 +34,6 @@ var ContainerDetails = React.createClass({
   },
   componentWillReceiveProps: function () {
     this.init();
-  },
-  componentWillMount: function () {
   },
   componentDidMount: function () {
     this.init();
