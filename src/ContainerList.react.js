@@ -8,7 +8,7 @@ var RetinaImage = require('react-retina-image');
 var ModalTrigger = require('react-bootstrap/ModalTrigger');
 var ContainerModal = require('./ContainerModal.react');
 var Header = require('./Header.react');
-var docker = require('./docker');
+var docker = require('./Docker');
 
 var ContainerList = React.createClass({
   componentWillMount: function () {
