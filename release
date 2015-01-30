@@ -1,0 +1,35 @@
+#!/bin/bash
+BASE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export NAME=$(node -pe "JSON.parse(process.argv[1])['name']" "$(cat $BASE/package.json)")
+export VERSION=$(node -pe "JSON.parse(process.argv[1])['version']" "$(cat $BASE/package.json)")
+export FILENAME=$NAME.app
+export BUNDLE=com.kitematic.app
+
+rm -Rf ./dist
+mkdir -p ./dist/osx
+cp -R ./cache/Atom.app ./dist/osx/$FILENAME
+mv ./dist/osx/$FILENAME/Contents/MacOS/Atom ./dist/osx/$FILENAME/Contents/MacOS/$NAME
+mkdir -p ./dist/osx/$FILENAME/Contents/Resources/app
+cp -R browser dist/osx/$FILENAME/Contents/Resources/app
+cp package.json dist/osx/$FILENAME/Contents/Resources/app/
+mkdir -p dist/osx/$FILENAME/Contents/Resources/app/resources
+mkdir -p dist/osx/$FILENAME/Contents/Resources/app/node_modules
+cp -v resources/* dist/osx/$FILENAME/Contents/Resources/app/resources/ || :
+cp kitematic.icns dist/osx/$FILENAME/Contents/Resources/atom.icns
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion $VERSION" dist/osx/$FILENAME/Contents/Info.plist
+/usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName $NAME" dist/osx/$FILENAME/Contents/Info.plist
+/usr/libexec/PlistBuddy -c "Set :CFBundleName $NAME" dist/osx/$FILENAME/Contents/Info.plist
+/usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier $BUNDLE" dist/osx/$FILENAME/Contents/Info.plist
+/usr/libexec/PlistBuddy -c "Set :CFBundleExecutable $NAME" dist/osx/$FILENAME/Contents/Info.plist
+
+rsync ./index.html ./dist/osx/$FILENAME/Contents/Resources/app/build/
+rsync ./fonts/* ./dist/osx/$FILENAME/Contents/Resources/app/build/
+rsync ./images/* ./dist/osx/$FILENAME/Contents/Resources/app/build/
+jsx src/ ./dist/osx/$FILENAME/Contents/Resources/app/build/
+wess -m -i ./styles/main.less -o ./dist/osx/$FILENAME/Contents/Resources/app/build/main.css
+
+if [ -f $BASE/identity ]; then
+  codesign --deep --force --verbose --sign "$(cat $BASE/identity)" ./dist/osx/$FILENAME
+fi
+
+ditto -c -k --sequesterRsrc --keepParent ./dist/osx/$FILENAME ./dist/osx/$NAME-$VERSION.zip
