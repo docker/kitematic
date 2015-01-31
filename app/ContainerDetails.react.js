@@ -504,7 +504,7 @@ var ContainerDetails = React.createClass({
     return (
       <div className="details">
         <div className="details-header">
-          <h1>{this.props.container.Name}</h1><h2 className="image">{this.props.container.Config.Image}</h2>
+          <h1>{this.props.container.Name}</h1>{state}
           <div className="details-header-actions">
             <span className="icon icon-preview-2 action-icon view-icon" onClick={this.handleView}></span>
             <span className="icon icon-refresh action-icon" onClick={this.handleRestart}></span>
@@ -512,7 +512,7 @@ var ContainerDetails = React.createClass({
           </div>
         </div>
         <div className="details-subheader">
-          {state}
+          <span className="image">{this.props.container.Config.Image}</span>
           <div className="details-subheader-tabs">
             <span className={tabLogsClasses} onClick={this.showLogs}>Logs</span>
             <span className={tabPortsClasses} onClick={this.showPorts}>Ports</span>
