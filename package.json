@@ -14,7 +14,7 @@
     "start": "rsync ./index.html ./build/ && rsync ./fonts/* ./build/ && rsync ./images/* ./build && jsx --watch src/ build/ & wess -w -m -i ./styles/main.less -o ./build/main.css & wiper -w ./build/**/*.* & npm run start:$(uname) && kill $(pgrep node)",
     "start:Darwin": "NODE_ENV=development ./cache/darwin/Atom.app/Contents/MacOS/Atom .",
     "start:Linux": "NODE_ENV=development ./cache/linux/atom .",
-    "test": "jsx --watch src build/ & rsync ./images/* ./build && wess -m -i ./styles/main.less -o ./build/main.css && npm run test:$(uname)",
+    "test": "jsx --watch src build/ & rsync ./images/* ./build && wess -m -i ./styles/main.less -o ./build/main.css && npm run test:$(uname) && kill $(pgrep node)",
     "test:Darwin": "NODE_ENV=test ./cache/darwin/Atom.app/Contents/MacOS/Atom . --test",
     "test:Linux": "NODE_ENV=test ./cache/darwin/atom .",
     "release": "./release"
