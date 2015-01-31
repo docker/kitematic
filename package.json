@@ -11,9 +11,12 @@
   },
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
-    "start": "rsync ./index.html ./build/ && rsync ./fonts/* ./build/ && rsync ./images/* ./build && jsx --watch src/ build/ & wess -w -m -i ./styles/main.less -o ./build/main.css & wiper -w ./build/**/*.* & NODE_ENV=development ./cache/Atom.app/Contents/MacOS/Atom . && kill $(pgrep node)",
-    "preinstall": "./deps",
-    "test": "jsx src build/ && rsync ./images/* ./build && wess -m -i ./styles/main.less -o ./build/main.css & NODE_ENV=test ./cache/Atom.app/Contents/MacOS/Atom . --test",
+    "start": "rsync ./index.html ./build/ && rsync ./fonts/* ./build/ && rsync ./images/* ./build && jsx --watch src/ build/ & wess -w -m -i ./styles/main.less -o ./build/main.css & wiper -w ./build/**/*.* & npm run start:$(uname) && kill $(pgrep node)",
+    "start:Darwin": "NODE_ENV=development ./cache/darwin/Atom.app/Contents/MacOS/Atom .",
+    "start:Linux": "NODE_ENV=development ./cache/linux/atom .",
+    "test": "jsx --watch src build/ & rsync ./images/* ./build && wess -m -i ./styles/main.less -o ./build/main.css && npm run test:$(uname)",
+    "test:Darwin": "NODE_ENV=test ./cache/darwin/Atom.app/Contents/MacOS/Atom . --test",
+    "test:Linux": "NODE_ENV=test ./cache/darwin/atom .",
     "release": "./release"
   },
   "licenses": [
@@ -56,6 +59,7 @@
   "devDependencies": {
     "ecstatic": "^0.5.8",
     "glob": "^4.0.6",
+    "jasmine-node": "^1.14.5",
     "jasmine-reporters": "^1.0.1",
     "jasmine-tagged": "^1.1.2",
     "jasmine-terminal-reporter": "^0.9.1",
