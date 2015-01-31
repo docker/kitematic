@@ -10,6 +10,8 @@ var app = require('app');
 var BrowserWindow = require('browser-window');
 var ipc = require('ipc');
 
+var argv = require('minimist')(process.argv);
+
 process.env.NODE_PATH = __dirname + '/../node_modules';
 process.chdir(path.join(__dirname, '..'));
 
@@ -32,7 +34,11 @@ app.on('ready', function() {
 
   mainWindow = new BrowserWindow(windowOptions);
   mainWindow.hide();
-  mainWindow.loadUrl('file://' + __dirname + '/../build/index.html');
+  if (argv.test) {
+    mainWindow.loadUrl('file://' + __dirname + '/../specs/specs.html');
+  } else {
+    mainWindow.loadUrl('file://' + __dirname + '/../build/index.html');
+  }
 
   process.on('uncaughtException', app.quit);
 
@@ -54,38 +60,40 @@ app.on('ready', function() {
     mainWindow.setTitle('');
 
     // Auto Updates
-    autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion());
+    if (process.env.NODE_ENV !== 'dev' && process.env.NODE_ENV !== 'test') {
+      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion());
 
-    autoUpdater.on('checking-for-update', function (e) {
-      console.log('Checking for update...');
-    });
+      autoUpdater.on('checking-for-update', function (e) {
+        console.log('Checking for update...');
+      });
 
-    autoUpdater.on('update-available', function (e) {
-      console.log('Update available.');
-      console.log(e);
-    });
+      autoUpdater.on('update-available', function (e) {
+        console.log('Update available.');
+        console.log(e);
+      });
 
-    autoUpdater.on('update-not-available', function (e) {
-      console.log('Update not available.');
-    });
+      autoUpdater.on('update-not-available', function (e) {
+        console.log('Update not available.');
+      });
 
-    autoUpdater.on('update-downloaded', function (e, releaseNotes, releaseName, releaseDate, updateURL) {
-      console.log('Update downloaded.');
-      mainWindow.webContents.send('notify', 'window:update-available');
-    });
+      autoUpdater.on('update-downloaded', function (e, releaseNotes, releaseName, releaseDate, updateURL) {
+        console.log('Update downloaded.');
+        mainWindow.webContents.send('notify', 'window:update-available');
+      });
 
-    autoUpdater.on('error', function (e) {
-      console.log('An error occured while checking for updates.');
-      console.log(e);
-    });
+      autoUpdater.on('error', function (e) {
+        console.log('An error occured while checking for updates.');
+        console.log(e);
+      });
 
-    ipc.on('command', function (event, arg) {
-      console.log('Command: ' + arg);
-      if (arg === 'application:quit-install') {
-        saveVMOnQuit = false;
-        autoUpdater.quitAndInstall();
-      }
-    });
+      ipc.on('command', function (event, arg) {
+        console.log('Command: ' + arg);
+        if (arg === 'application:quit-install') {
+          saveVMOnQuit = false;
+          autoUpdater.quitAndInstall();
+        }
+      });
+    }
 
     ipc.on('vm', function (event, arg) {
       saveVMOnQuit = arg;
