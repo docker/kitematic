@@ -11,9 +11,12 @@
   },
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
-    "start": "rsync ./index.html ./build/ && rsync ./fonts/* ./build/ && rsync ./images/* ./build && jsx --watch src/ build/ & wess -w -m -i ./styles/main.less -o ./build/main.css & wiper -w ./build/**/*.* & ./cache/Atom.app/Contents/MacOS/Atom . && kill $(pgrep node)",
-    "preinstall": "./deps",
-    "test": "jest",
+    "start": "rsync ./index.html ./build/ && rsync ./fonts/* ./build/ && rsync ./images/* ./build && jsx --watch src/ build/ & wess -w -m -i ./styles/main.less -o ./build/main.css & wiper -w ./build/**/*.* & npm run start:$(uname) && kill $(pgrep node)",
+    "start:Darwin": "NODE_ENV=development ./cache/darwin/Atom.app/Contents/MacOS/Atom .",
+    "start:Linux": "NODE_ENV=development ./cache/linux/atom .",
+    "test": "jsx --watch src build/ & rsync ./images/* ./build && wess -m -i ./styles/main.less -o ./build/main.css && npm run test:$(uname)",
+    "test:Darwin": "NODE_ENV=test ./cache/darwin/Atom.app/Contents/MacOS/Atom . --test",
+    "test:Linux": "NODE_ENV=test ./cache/darwin/atom .",
     "release": "./release"
   },
   "licenses": [
@@ -23,9 +26,10 @@
     }
   ],
   "jest": {
-    "scriptPreprocessor": "spec/support/preprocessor.js",
     "unmockedModulePathPatterns": [
-      "node_modules/react"
+      "dockerode",
+      "react",
+      "debug"
     ]
   },
   "boot2docker-version": "1.3.2",
@@ -37,6 +41,7 @@
     "dockerode": "2.0.4",
     "exec": "0.1.2",
     "gulp-react": "^2.0.0",
+    "jest-cli": "^0.2.1",
     "jquery": "^2.1.3",
     "minimist": "^1.1.0",
     "node-uuid": "1.4.1",
@@ -54,10 +59,13 @@
   "devDependencies": {
     "ecstatic": "^0.5.8",
     "glob": "^4.0.6",
+    "jasmine-node": "^1.14.5",
     "jasmine-reporters": "^1.0.1",
     "jasmine-tagged": "^1.1.2",
+    "jasmine-terminal-reporter": "^0.9.1",
     "react-tools": "^0.12.2",
     "wess": "^0.2.2",
-    "wiper": "^1.0.2"
+    "wiper": "^1.0.2",
+    "zombie": "^2.5.1"
   }
 }
