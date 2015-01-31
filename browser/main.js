@@ -54,13 +54,12 @@ app.on('ready', function() {
   });
 
   mainWindow.webContents.on('did-finish-load', function() {
-    mainWindow.show();
+    mainWindow.show();  
     mainWindow.focus();
-
     mainWindow.setTitle('');
 
     // Auto Updates
-    if (process.env.NODE_ENV !== 'dev' && process.env.NODE_ENV !== 'test') {
+    if (process.env.NODE_ENV !== 'development' && !argv.test) {
       autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion());
 
       autoUpdater.on('checking-for-update', function (e) {
