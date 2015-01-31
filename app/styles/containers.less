@@ -84,7 +84,7 @@
       .sidebar-containers {
         position: relative;
         flex: 1 auto;
-        overflow-y: scroll;
+        overflow-y: auto;
         overflow-x: hidden;
         box-sizing: border-box;
         max-width: 260px;
@@ -310,23 +310,19 @@
         border-bottom: 1px solid @gray-lightest;
         background-color: white;
         height: 32px;
-        padding: 8px 10px 10px 24px;
-        font-size: 12px;
+        padding: 7px 10px 10px 24px;
+        font-size: 13px;
         color: @gray-normal;
-        .status {
-          font-weight: 500;
-          position: relative;
-          top: -2px;
-          &.running {
-            color: @brand-positive;
-          }
-          &.paused {
-            color: @gray-lighter;
-          }
-          &.stopped {
-            color: @gray-lighter;
-          }
+
+        .image {
+          flex: 1 auto;
+          //margin: 7px 0px 0px 16px;
+          margin-top: 1px;
+          font-size: 13px;
+          color: @gray-normal;
+          //font-weight: 300;
         }
+
         .details-subheader-tabs {
           flex: 1 auto;
           text-align: right;
@@ -335,6 +331,7 @@
             margin-left: 20px;
             padding: 3px 10px;
             transition: all 0.25s;
+            font-weight: 500;
             &:hover {
               color: @brand-action;
             }
@@ -363,21 +360,20 @@
           margin: 0;
           color: @gray-darkest;
         }
-        h2 {
-          &.status {
-            margin: 9px 0px 0px 12px;
-            font-weight: bold;
-            font-size: 10px;
-            &.running {
-              color: @brand-positive;
-            }
+        .status {
+          font-size: 10px;
+          font-weight: 500;
+          position: relative;
+          top: 8px;
+          left: 14px;
+          &.running {
+            color: @brand-positive;
           }
-          &.image {
-            flex: 1 auto;
-            margin: 7px 0px 0px 16px;
-            font-size: 12px;
-            color: @gray-normal;
-            font-weight: 300;
+          &.paused {
+            color: @gray-lighter;
+          }
+          &.stopped {
+            color: @gray-lighter;
           }
         }
 
@@ -440,7 +436,7 @@
           -webkit-user-select: text;
           font-family: Menlo;
           font-size: 12px;
-          padding: 20px 20px;
+          padding: 20px 18px;
           color: lighten(@gray-normal, 6%);
           white-space: pre-wrap;
           p {
