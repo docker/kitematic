@@ -505,14 +505,22 @@ var ContainerDetails = React.createClass({
       <div className="details">
         <div className="details-header">
           <h1>{this.props.container.Name}</h1>{state}
-          <div className="details-header-actions">
-            <span className="icon icon-preview-2 action-icon view-icon" onClick={this.handleView}></span>
-            <span className="icon icon-refresh action-icon" onClick={this.handleRestart}></span>
-            <span className="icon icon-window-code-3 action-icon" onClick={this.handleTerminal}></span>
-          </div>
         </div>
         <div className="details-subheader">
-          <span className="image">{this.props.container.Config.Image}</span>
+          <div className="details-header-actions">
+            <div className="action">
+              <span className="icon icon-play-2 action-icon" onClick={this.handleView}></span>
+              <span className="btn-label">View</span>
+            </div>
+            <div className="action">
+              <span className="icon icon-refresh action-icon" onClick={this.handleRestart}></span>
+              <span className="btn-label">Restart</span>
+            </div>
+            <div className="action">
+              <span className="icon icon-window-code-3 action-icon" onClick={this.handleTerminal}></span>
+              <span className="btn-label">Terminal</span>
+            </div>
+          </div>
           <div className="details-subheader-tabs">
             <span className={tabLogsClasses} onClick={this.showLogs}>Logs</span>
             <span className={tabPortsClasses} onClick={this.showPorts}>Ports</span>

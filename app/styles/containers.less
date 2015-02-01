@@ -307,9 +307,10 @@
         display: flex;
         flex-direction: row;
         position: relative;
-        border-bottom: 1px solid @gray-lightest;
-        background-color: white;
-        height: 32px;
+        //border-top: 1px solid #EEE;
+        border-bottom: 1px solid #EEE;
+        background-color: #F9F9F9;
+        height: 57px;
         padding: 6px 10px 10px 24px;
         font-size: 13px;
         color: @gray-normal;
@@ -321,24 +322,73 @@
           font-size: 13px;
           color: @gray-normal;
           //font-weight: 300;
+          img {
+            width: 30px;
+            height: 18px;
+            position: relative;
+            top: -2px;
+            margin-right: 10px;
+          }
+        }
+
+        .details-header-actions {
+          flex: 1 auto;
+          text-align: left;
+          margin-top: -10px;
+          .action {
+            display: inline-block;
+            .action-icon {
+              &.icon:before {
+                text-align: center;
+              }
+              /*background: linear-gradient(-180deg, #24B8EB 4%, #24A3EB 100%);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;*/
+              color: @gray-normal;
+              font-size: 32px;
+              margin-right: 35px;
+              //color: @gray-darker;
+              transition: all 0.25s;
+              &:hover {
+                color: @brand-action;
+                /*background: linear-gradient(-180deg, darken(#24B8EB, 10%) 4%, darken(#24A3EB, 10%) 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;*/
+              }
+              &.view-icon {
+                position: relative;
+                top: 1px;
+                font-size: 35px;
+                //color: @gray-darkest;
+              }
+            }
+            .btn-label {
+              position: relative;
+              top: -9px;
+              display: block;
+              color: @brand-action;
+              font-size: 10px;
+              display: none;
+            }
+          }
         }
 
         .details-subheader-tabs {
           flex: 1 auto;
           text-align: right;
-          margin-right: 0px;
+          margin-right: 3px;
           .tab {
-            margin-left: 20px;
+            margin-left: 16px;
             padding: 3px 10px;
             transition: all 0.25s;
-            font-weight: 500;
+            font-weight: 400;
             &:hover {
               color: @brand-action;
             }
             &.active {
-              background-color: lighten(@brand-action, 38%);
+              background-color: #D2EEF8;
               border-radius: 4px;
-              color: darken(@brand-action, 25%);
+              color: #365B64;
             }
           }
         }
@@ -350,13 +400,12 @@
         flex-direction: row;
         padding: 31px 24px 18px 24px;
         position: relative;
-        border-bottom: 1px solid #DCE2E2;
-        background-color: #F9F9f9;
+        background-color: #F9F9F9;
         height: 75px;
         h1 {
           margin: 0;
           font-size: 20px;
-          font-weight: 300;
+          font-weight: 400;
           margin: 0;
           color: @gray-darkest;
         }
@@ -374,27 +423,6 @@
           }
           &.stopped {
             color: @gray-lighter;
-          }
-        }
-
-        .details-header-actions {
-          flex: 1 auto;
-          text-align: right;
-          margin-top: -6px;
-          .action-icon {
-            font-size: 23px;
-            margin-left: 24px;
-            color: @gray-darker;
-            transition: all 0.25s;
-            &:hover {
-              color: @brand-action;
-            }
-            &.view-icon {
-              position: relative;
-              top: 2px;
-              font-size: 27px;
-              //color: @gray-darkest;
-            }
           }
         }
 
@@ -431,8 +459,8 @@
       .details-panel {
         flex: 1;
         overflow: auto;
+        background-color: white;
         .logs {
-          background-color: #FEFEFE;
           -webkit-user-select: text;
           font-family: Menlo;
           font-size: 12px;
