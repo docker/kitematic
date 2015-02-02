@@ -11,9 +11,17 @@ var BrowserWindow = require('browser-window');
 var ipc = require('ipc');
 
 var argv = require('minimist')(process.argv);
+var saveVMOnQuit = false;
 
 process.env.NODE_PATH = __dirname + '/../node_modules';
+process.env.RESOURCES_PATH = __dirname + '/../resources';
 process.chdir(path.join(__dirname, '..'));
+
+if (argv.integration) {
+  process.env.TEST_TYPE = 'integration';
+} else {
+  process.env.TEST_TYPE = 'test';
+}
 
 app.on('activate-with-no-open-windows', function () {
   if (mainWindow) {
@@ -23,38 +31,35 @@ app.on('activate-with-no-open-windows', function () {
 });
 
 app.on('ready', function() {
-  var windowOptions = {
+  mainWindow = new BrowserWindow({
     width: 1000,
     height: 700,
     'min-width': 1000,
     'min-height': 700,
     resizable: true,
-    frame: false
-  };
+    frame: false,
+    show: false
+  });
 
-  mainWindow = new BrowserWindow(windowOptions);
-  mainWindow.hide();
   if (argv.test) {
-    mainWindow.loadUrl('file://' + __dirname + '/../specs/specs.html');
+    mainWindow.loadUrl('file://' + __dirname + '/../tests/tests.html');
   } else {
     mainWindow.loadUrl('file://' + __dirname + '/../build/index.html');
+    app.on('will-quit', function (e) {
+      if (saveVMOnQuit) {
+        exec('VBoxManage controlvm boot2docker-vm savestate', function (stderr, stdout, code) {});
+      }
+    });
   }
-
-  process.on('uncaughtException', app.quit);
-
-  var saveVMOnQuit = false;
-  app.on('will-quit', function (e) {
-    if (saveVMOnQuit) {
-      exec('VBoxManage controlvm boot2docker-vm savestate', function (stderr, stdout, code) {});
-    }
-  });
 
   mainWindow.webContents.on('new-window', function (e) {
     e.preventDefault();
   });
 
   mainWindow.webContents.on('did-finish-load', function() {
-    mainWindow.show();  
+    if (!argv.test) {
+      mainWindow.show();
+    }
     mainWindow.focus();
     mainWindow.setTitle('');
 
@@ -92,12 +97,12 @@ app.on('ready', function() {
           autoUpdater.quitAndInstall();
         }
       });
+
+      autoUpdater.checkForUpdates();
     }
 
     ipc.on('vm', function (event, arg) {
       saveVMOnQuit = arg;
     });
-
-    autoUpdater.checkForUpdates();
   });
 });

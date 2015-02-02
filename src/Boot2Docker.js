@@ -84,7 +84,13 @@ var Boot2Docker = {
     cmdExec([Boot2Docker.command(), 'upgrade'], callback);
   },
   ip: function (callback) {
-    cmdExec([Boot2Docker.command(), 'ip'], callback);
+    exec([Boot2Docker.command(), 'ip'], function (stderr, stdout, code) {
+      if (code) {
+        callback(stderr);
+      } else {
+        callback(null, stdout.trim().replace('\n', ''));
+      }
+    });
   },
   erase: function (callback) {
     var VMFileLocation = path.join(homeDir(), 'VirtualBox\\ VMs/boot2docker-vm');

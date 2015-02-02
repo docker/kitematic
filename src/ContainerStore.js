@@ -18,7 +18,6 @@ var _progress = {};
 var _logs = {};
 var _streams = {};
 var _muted = {};
-var _config = {};
 
 var ContainerStore = assign(EventEmitter.prototype, {
   CLIENT_CONTAINER_EVENT: 'client_container',
@@ -250,7 +249,12 @@ var ContainerStore = assign(EventEmitter.prototype, {
   init: function (callback) {
     // TODO: Load cached data from db on loading
     this.fetchAllContainers(function (err) {
-      callback();
+      if (err) {
+        callback(err);
+        return;
+      } else {
+        callback();
+      }
       this.emit(this.CLIENT_CONTAINER_EVENT);
       this._resumePulling();
       this._startListeningToEvents();
@@ -366,7 +370,6 @@ var ContainerStore = assign(EventEmitter.prototype, {
       });
       stream.on('end', function () {
         delete _streams[name];
-        console.log('end', name);
       });
     });
   },
@@ -381,6 +384,10 @@ var ContainerStore = assign(EventEmitter.prototype, {
       if (!data) {
         // Pull image
         self._createPlaceholderContainer(imageName, containerName, function (err, container) {
+          if (err) {
+            callback(err);
+            return;
+          }
           _containers[containerName] = container;
           self.emit(self.CLIENT_CONTAINER_EVENT, containerName, 'create');
           _muted[containerName] = true;

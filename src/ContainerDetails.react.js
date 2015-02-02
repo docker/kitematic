@@ -76,7 +76,7 @@ var ContainerDetails = React.createClass({
     var $viewPopover = $(this.getDOMNode()).find('.popover-view');
     var $volumePopover = $(this.getDOMNode()).find('.popover-volume');
 
-    if ($viewDropdown && $volumeDropdown && $viewPopover && $volumePopover) {
+    if ($viewDropdown.offset() && $volumeDropdown.offset()) {
       $viewPopover.offset({
         top: $viewDropdown.offset().top + 32,
         left: $viewDropdown.offset().left - ($viewPopover.outerWidth() / 2) + 14
@@ -94,16 +94,19 @@ var ContainerDetails = React.createClass({
       return;
     }
     this.setState({
+      progress: ContainerStore.progress(this.getParams().name),
       env: ContainerUtil.env(container),
     });
     var ports = ContainerUtil.ports(container);
     var webPorts = ['80', '8000', '8080', '3000', '5000', '2368'];
+    console.log(ports);
     this.setState({
       ports: ports,
       defaultPort: _.find(_.keys(ports), function (port) {
         return webPorts.indexOf(port) !== -1;
       })
     });
+    console.log(this.state);
     this.updateLogs();
   },
   updateLogs: function (name) {
@@ -134,6 +137,7 @@ var ContainerDetails = React.createClass({
   handleView: function () {
     if (this.state.defaultPort) {
       console.log(this.state.defaultPort);
+      console.log(this.state.ports[this.state.defaultPort].url);
       exec(['open', this.state.ports[this.state.defaultPort].url], function (err) {
         if (err) { throw err; }
       });
@@ -152,11 +156,6 @@ var ContainerDetails = React.createClass({
   handleVolumeDropdown: function(e) {
     this.setState({
       popoverVolumeOpen: !this.state.popoverVolumeOpen
-    });
-  },
-  handleRestart: function () {
-    ContainerStore.restart(this.props.container.Name, function (err) {
-      console.log(err);
     });
   },
   handleRestart: function () {
@@ -310,6 +309,13 @@ var ContainerDetails = React.createClass({
       disabled: !this.props.container.State.Running
     });
 
+    var restartButtonClass = React.addons.classSet({
+      btn: true,
+      'btn-action': true,
+      'with-icon': true,
+      disabled: this.props.container.State.Restarting
+    });
+
     var viewButtonClass = React.addons.classSet({
       btn: true,
       'btn-action': true,
@@ -444,7 +450,7 @@ var ContainerDetails = React.createClass({
               <a className={dropdownVolumeButtonClass} onClick={this.handleVolumeDropdown}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
             </div>
             <div className="action">
-              <a className={buttonClass} onClick={this.handleRestart}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>
+              <a className={restartButtonClass} onClick={this.handleRestart}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>
             </div>
             <div className="action">
               <a className={buttonClass} onClick={this.handleTerminal}><span className="icon icon-window-code-3"></span> <span className="content">Terminal</span></a>
