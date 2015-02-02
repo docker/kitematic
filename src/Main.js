@@ -6,18 +6,17 @@ var docker = require('./docker');
 var router = require('./router');
 var boot2docker = require('./boot2docker');
 var ContainerStore = require('./ContainerStore');
+var SetupStore = require('./ContainerStore');
 var Menu = require('./Menu');
 var remote = require('remote');
 var app = remote.require('app');
 var ipc = require('ipc');
-
 
 var Route = Router.Route;
 var NotFoundRoute = Router.NotFoundRoute;
 var DefaultRoute = Router.DefaultRoute;
 var Link = Router.Link;
 var RouteHandler = Router.RouteHandler;
-
 
 if (process.env.NODE_ENV === 'development') {
   var script = document.createElement('script');
@@ -28,8 +27,16 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 if (!window.location.hash.length || window.location.hash === '#/') {
-  router.run(function (Handler) {
-    React.render(<Handler/>, document.body);
+  SetupStore.run(function (err) {
+    boot2docker.ip(function (err, ip) {
+      docker.setHost(ip);
+      router.transitionTo('containers');
+      ContainerStore.init(function () {
+        router.run(function (Handler) {
+          React.render(<Handler/>, document.body);
+        });
+      });
+    });
   });
 } else {
   boot2docker.ip(function (err, ip) {
