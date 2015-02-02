@@ -13,7 +13,7 @@
   "scripts": {
     "start": "gulp",
     "test": "gulp test --silent",
-    "integration-tests": "gulp test --silent --integration",
+    "test:integration": "gulp test --silent --integration",
     "all-tests": "npm test && npm run integration-tests",
     "release": "gulp run release",
     "preinstall": "./deps"

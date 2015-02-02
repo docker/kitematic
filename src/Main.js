@@ -2,7 +2,7 @@ var React = require('react');
 var Router = require('react-router');
 var RetinaImage = require('react-retina-image');
 var async = require('async');
-var docker = require('./docker');
+var docker = require('./Docker');
 var router = require('./router');
 var boot2docker = require('./boot2docker');
 var ContainerStore = require('./ContainerStore');
@@ -29,9 +29,11 @@ if (process.env.NODE_ENV === 'development') {
 if (!window.location.hash.length || window.location.hash === '#/') {
   SetupStore.run(function (err) {
     boot2docker.ip(function (err, ip) {
+      if (err) console.log(err);
       docker.setHost(ip);
       router.transitionTo('containers');
-      ContainerStore.init(function () {
+      ContainerStore.init(function (err) {
+        if (err) console.log(err);
         router.run(function (Handler) {
           React.render(<Handler/>, document.body);
         });
@@ -40,8 +42,10 @@ if (!window.location.hash.length || window.location.hash === '#/') {
   });
 } else {
   boot2docker.ip(function (err, ip) {
+    if (err) console.log(err);
     docker.setHost(ip);
-    ContainerStore.init(function () {
+    ContainerStore.init(function (err) {
+      if (err) console.log(err);
       router.run(function (Handler) {
         React.render(<Handler/>, document.body);
       });
