@@ -17,12 +17,10 @@ describe('Setup', function () {
       if (fs.existsSync(virtualboxFile)) {
         fs.unlinkSync(virtualboxFile);
       }
-      spyOn(virtualbox, 'installed').andCallFake(function (callback) {
-        callback(false);
-      });
+      spyOn(virtualbox, 'installed').and.returnValue(false);
     });
 
-    it('downloads virtualbox', function (done) {
+    it('downloads virtualbox from the official website', function (done) {
       SetupStore.downloadVirtualboxStep.run(function (err) {
         expect(err).toBeFalsy();
         expect(fs.existsSync(virtualboxFile)).toBe(true);
@@ -51,6 +49,7 @@ describe('Setup', function () {
     it('does install virtualbox', function (done) {
       SetupStore.installVirtualboxStep.run(function (err) {
         expect(err).toBeFalsy();
+        expect(fs.existsSync(virtualbox.command())).toBe(true);
         done();
       });
     });
