@@ -6,6 +6,8 @@ var exec = require('exec');
 var path =  require('path');
 var assign =  require('object-assign');
 var remote = require('remote');
+var rimraf = require('rimraf');
+var fs = require('fs');
 var dialog = remote.require('dialog');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
@@ -27,7 +29,6 @@ var ContainerDetails = React.createClass({
       pendingEnv: {},
       ports: {},
       defaultPort: null,
-      volumes: {},
       popoverVolumeOpen: false,
       popoverViewOpen: false,
     };
@@ -71,19 +72,20 @@ var ContainerDetails = React.createClass({
       this._oldHeight = parent[0].scrollHeight - parent.height();
     }
 
-    var $viewDropdown = $(this.getDOMNode()).find('.dropdown-view');
+    var $viewDropdown = $(this.getDOMNode()).find('.dropdown-view > .icon-dropdown');
     var $volumeDropdown = $(this.getDOMNode()).find('.dropdown-volume');
     var $viewPopover = $(this.getDOMNode()).find('.popover-view');
     var $volumePopover = $(this.getDOMNode()).find('.popover-volume');
 
-    if ($viewDropdown.offset() && $volumeDropdown.offset()) {
+    if ($viewDropdown.offset()) {
       $viewPopover.offset({
-        top: $viewDropdown.offset().top + 32,
-        left: $viewDropdown.offset().left - ($viewPopover.outerWidth() / 2) + 14
+        top: $viewDropdown.offset().top + 27,
+        left: $viewDropdown.offset().left - ($viewPopover.outerWidth() / 2) + 5
       });
-
+    }
+    if ($volumeDropdown.offset()) {
       $volumePopover.offset({
-        top: $volumeDropdown.offset().top + 32,
+        top: $volumeDropdown.offset().top + 33,
         left: $volumeDropdown.offset().left + $volumeDropdown.outerWidth() - $volumePopover.outerWidth() / 2 - 20
       });
     }
@@ -96,17 +98,16 @@ var ContainerDetails = React.createClass({
     this.setState({
       progress: ContainerStore.progress(this.getParams().name),
       env: ContainerUtil.env(container),
+      page: this.PAGE_LOGS
     });
     var ports = ContainerUtil.ports(container);
     var webPorts = ['80', '8000', '8080', '3000', '5000', '2368'];
-    console.log(ports);
     this.setState({
       ports: ports,
       defaultPort: _.find(_.keys(ports), function (port) {
         return webPorts.indexOf(port) !== -1;
       })
     });
-    console.log(this.state);
     this.updateLogs();
   },
   updateLogs: function (name) {
@@ -136,8 +137,6 @@ var ContainerDetails = React.createClass({
   },
   handleView: function () {
     if (this.state.defaultPort) {
-      console.log(this.state.defaultPort);
-      console.log(this.state.ports[this.state.defaultPort].url);
       exec(['open', this.state.ports[this.state.defaultPort].url], function (err) {
         if (err) { throw err; }
       });
@@ -148,14 +147,48 @@ var ContainerDetails = React.createClass({
       if (err) { throw err; }
     });
   },
+  handleChangeDefaultPort: function (port) {
+    this.setState({
+      defaultPort: port
+    });
+  },
   handleViewDropdown: function(e) {
     this.setState({
       popoverViewOpen: !this.state.popoverViewOpen
     });
   },
   handleVolumeDropdown: function(e) {
-    this.setState({
-      popoverVolumeOpen: !this.state.popoverVolumeOpen
+    var self = this;
+    if (_.keys(this.props.container.Volumes).length) {
+      exec(['open', path.join(process.env.HOME, 'Kitematic', self.props.container.Name)], function (err) {
+        if (err) { throw err; }
+      });
+    }
+  },
+  handleChooseVolumeClick: function (dockerVol) {
+    var self = this;
+    dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']}, function (filenames) {
+      if (!filenames) {
+        return;
+      }
+      var directory = filenames[0];
+      if (directory) {
+        var volumes = _.clone(self.props.container.Volumes);
+        volumes[dockerVol] = directory;
+        var binds = _.pairs(volumes).map(function (pair) {
+          return pair[1] + ':' + pair[0];
+        });
+        ContainerStore.updateContainer(self.props.container.Name, {
+          Binds: binds
+        }, function (err) {
+          if (err) console.log(err);
+        });
+      }
+    });
+  },
+  handleOpenVolumeClick: function (path) {
+    exec(['open', path], function (err) {
+      if (err) { throw err; }
     });
   },
   handleRestart: function () {
@@ -165,16 +198,24 @@ var ContainerDetails = React.createClass({
   },
   handleTerminal: function () {
     var container = this.props.container;
-    var terminal = path.join(process.cwd(), 'resources', 'terminal').replace(/ /g, '\\\\ ');
-    var cmd = [terminal, boot2docker.command().replace(/ /g, '\\\\ '), 'ssh', '-t', 'sudo', 'docker', 'exec', '-i', '-t', container.Name, 'bash'];
+    var terminal = path.join(process.cwd(), 'resources', 'terminal');
+    var cmd = [terminal, boot2docker.command().replace(/ /g, '\\\\\\\\ ').replace(/\(/g, '\\\\\\\\(').replace(/\)/g, '\\\\\\\\)'), 'ssh', '-t', 'sudo', 'docker', 'exec', '-i', '-t', container.Name, 'sh'];
     exec(cmd, function (stderr, stdout, code) {
+      console.log(stderr);
+      console.log(stdout);
       if (code) {
         console.log(stderr);
       }
     });
   },
   handleSaveContainerName: function () {
+    if (newName === this.props.container.Name) {
+      return;
+    }
     var newName = $('#input-container-name').val();
+    if (fs.existsSync(path.join(process.env.HOME, 'Kitematic', this.props.container.Name))) {
+      fs.renameSync(path.join(process.env.HOME, 'Kitematic', this.props.container.Name), path.join(process.env.HOME, 'Kitematic', newName));
+    }
     ContainerStore.updateContainer(this.props.container.Name, {
       name: newName
     }, function (err) {
@@ -238,6 +279,12 @@ var ContainerDetails = React.createClass({
       message: 'Are you sure you want to delete this container?',
       buttons: ['Delete', 'Cancel']
     }, function (index) {
+      var volumePath = path.join(process.env.HOME, 'Kitematic', this.props.container.Name);
+      if (fs.existsSync(volumePath)) {
+        rimraf(volumePath, function (err) {
+          console.log(err);
+        });
+      }
       if (index === 0) {
         ContainerStore.remove(this.props.container.Name, function (err) {
           console.error(err);
@@ -313,7 +360,7 @@ var ContainerDetails = React.createClass({
       btn: true,
       'btn-action': true,
       'with-icon': true,
-      disabled: this.props.container.State.Restarting
+      disabled: this.props.container.State.Downloading || this.props.container.State.Restarting
     });
 
     var viewButtonClass = React.addons.classSet({
@@ -321,6 +368,17 @@ var ContainerDetails = React.createClass({
       'btn-action': true,
       'with-icon': true,
       disabled: !this.props.container.State.Running || !this.state.defaultPort
+    });
+
+    var kitematicVolumes = _.pairs(this.props.container.Volumes).filter(function (pair) {
+      return pair[1].indexOf(path.join(process.env.HOME, 'Kitematic')) !== -1;
+    });
+
+    var volumesButtonClass = React.addons.classSet({
+      btn: true,
+      'btn-action': true,
+      'with-icon': true,
+      disabled: !kitematicVolumes.length
     });
 
     var textButtonClasses = React.addons.classSet({
@@ -362,15 +420,19 @@ var ContainerDetails = React.createClass({
       disabled: !this.props.container.State.Running
     };
     var dropdownViewButtonClass = React.addons.classSet(assign({'dropdown-view': true}, dropdownClasses));
-    var dropdownVolumeButtonClass = React.addons.classSet(assign({'dropdown-volume': true}, dropdownClasses));
 
     var body;
     if (this.props.container.State.Downloading) {
-      body = (
-        <div className="details-progress">
-          <ProgressBar now={this.state.progress * 100} label="%(percent)s%" />
-        </div>
-      );
+      if (this.state.progress) {
+        body = (
+          <div className="details-progress">
+            <h3>Downloading</h3>
+            <ProgressBar now={this.state.progress * 100} label="%(percent)s%"/>
+          </div>
+        );
+      } else {
+
+      }
     } else {
       if (this.state.page === this.PAGE_LOGS) {
         body = (
@@ -381,14 +443,19 @@ var ContainerDetails = React.createClass({
           </div>
         );
       } else {
+        var rename = (
+          <div>
+            <h3>Container Name</h3>
+            <div className="container-name">
+              <input id="input-container-name" type="text" className="line" placeholder="Container Name" defaultValue={this.props.container.Name}></input>
+            </div>
+            <a className="btn btn-action" onClick={this.handleSaveContainerName}>Save</a>
+          </div>
+        );
         body = (
           <div className="details-panel">
             <div className="settings">
-              <h3>Container Name</h3>
-              <div className="container-name">
-                <input id="input-container-name" type="text" className="line" placeholder="Container Name" defaultValue={this.props.container.Name}></input>
-              </div>
-              <a className="btn btn-action" onClick={this.handleSaveContainerName}>Save</a>
+              {rename}
               <h3>Environment Variables</h3>
               <div className="env-vars-labels">
                 <div className="label-key">KEY</div>
@@ -419,21 +486,40 @@ var ContainerDetails = React.createClass({
         <div key={key} className="table-values">
           <span className="value-left">{key}</span><span className="icon icon-arrow-right"></span>
           <a className="value-right" onClick={self.handleViewLink.bind(self, val.url)}>{val.display}</a>
+          <input onChange={self.handleChangeDefaultPort.bind(self, key)} type="radio" checked={self.state.defaultPort === key}/> <label>Default</label>
         </div>
       );
     });
 
     var volumes = _.map(self.props.container.Volumes, function (val, key) {
       if (!val || val.indexOf(process.env.HOME) === -1) {
-        val = 'No Host Folder';
+        val = <span>No folder<a className="btn btn-primary btn-xs" onClick={self.handleChooseVolumeClick.bind(self, key)}>Choose</a></span>;
+      } else {
+        val = <span><a className="value-right" onClick={self.handleOpenVolumeClick.bind(self, val)}>{val.replace(process.env.HOME, '~')}</a> <a className="btn btn-primary btn-xs" onClick={self.handleChooseVolumeClick.bind(self, key)}>Choose</a></span>;
       }
       return (
         <div key={key} className="table-values">
           <span className="value-left">{key}</span><span className="icon icon-arrow-right"></span>
-          <a className="value-right">{val.replace(process.env.HOME, '~')}</a>
+          {val}
         </div>
       );
     });
+
+    var view;
+    if (this.state.defaultPort) {
+      view = (
+        <div className="action btn-group">
+          <a className={viewButtonClass} onClick={this.handleView}><span className="icon icon-preview-2"></span><span className="content">View</span></a>
+          <a className={dropdownViewButtonClass} onClick={this.handleViewDropdown}><span className="icon-dropdown icon icon-arrow-37"></span></a>
+        </div>
+      );
+    } else {
+      view = (
+        <div className="action">
+          <a className={dropdownViewButtonClass} onClick={this.handleViewDropdown}><span className="icon icon-preview-2"></span> <span className="content">Ports</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
+        </div>
+      );
+    }
 
     return (
       <div className="details">
@@ -442,12 +528,9 @@ var ContainerDetails = React.createClass({
             <h1>{this.props.container.Name}</h1>{state}<h2 className="image-label">Image</h2><h2 className="image">{this.props.container.Config.Image}</h2>
           </div>
           <div className="details-header-actions">
-            <div className="action btn-group">
-              <a className={viewButtonClass} onClick={this.handleView}><span className="icon icon-preview-2"></span><span className="content">View</span></a>
-              <a className={dropdownViewButtonClass} onClick={this.handleViewDropdown}><span className="icon-dropdown icon icon-arrow-37"></span></a>
-            </div>
+            {view}
             <div className="action">
-              <a className={dropdownVolumeButtonClass} onClick={this.handleVolumeDropdown}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span> <span className="icon-dropdown icon icon-arrow-37"></span></a>
+              <a className={volumesButtonClass} onClick={this.handleVolumeDropdown}><span className="icon icon-folder-1"></span> <span className="content">Volumes</span></a>
             </div>
             <div className="action">
               <a className={restartButtonClass} onClick={this.handleRestart}><span className="icon icon-refresh"></span> <span className="content">Restart</span></a>
@@ -472,7 +555,7 @@ var ContainerDetails = React.createClass({
           <Popover className={popoverVolumeClasses} placement="bottom">
             <div className="table volumes">
               <div className="table-labels">
-                <div className="label-left">DOCKER FOLDER</div>
+                <div className="label-left">DOCKER VOLUME</div>
                 <div className="label-right">MAC FOLDER</div>
               </div>
               {volumes}

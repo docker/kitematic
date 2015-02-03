@@ -11,7 +11,7 @@ var BrowserWindow = require('browser-window');
 var ipc = require('ipc');
 
 var argv = require('minimist')(process.argv);
-var saveVMOnQuit = false;
+var settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
 
 process.env.NODE_PATH = __dirname + '/../node_modules';
 process.env.RESOURCES_PATH = __dirname + '/../resources';
@@ -41,10 +41,12 @@ app.on('ready', function() {
     show: false
   });
 
+  var saveVMOnQuit = false;
+
   if (argv.test) {
-    mainWindow.loadUrl('file://' + __dirname + '/../tests/tests.html');
+    mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'tests/tests.html')));
   } else {
-    mainWindow.loadUrl('file://' + __dirname + '/../build/index.html');
+    mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/index.html')));
     app.on('will-quit', function (e) {
       if (saveVMOnQuit) {
         exec('VBoxManage controlvm boot2docker-vm savestate', function (stderr, stdout, code) {});

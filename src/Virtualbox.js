@@ -2,7 +2,6 @@ var fs = require('fs');
 var exec = require('exec');
 var path = require('path');
 var async = require('async');
-var util = require('./Util');
 
 var VirtualBox = {
   command: function () {
