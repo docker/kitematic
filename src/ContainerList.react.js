@@ -9,12 +9,13 @@ var ModalTrigger = require('react-bootstrap/ModalTrigger');
 var ContainerModal = require('./ContainerModal.react');
 var ContainerListItem = require('./ContainerListItem.react');
 var Header = require('./Header.react');
-var docker = require('./docker');
+var docker = require('./Docker');
 
 var ContainerList = React.createClass({
   render: function () {
     var self = this;
     var containers = this.props.containers.map(function (container) {
+      console.log(container);
       return (
         <ContainerListItem container={container} />
       );

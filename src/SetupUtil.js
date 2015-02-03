@@ -1,13 +1,13 @@
-var path = require('path');
-var fs = require('fs');
-var nodeCrypto = require('crypto');
 var request = require('request');
 var progress = require('request-progress');
+var path = require('path');
+var crypto = require('crypto');
+var fs = require('fs');
 var exec = require('exec');
 
-var Util = {
+var SetupUtil = {
   supportDir: function (callback) {
-    var dirs = ['Application\ Support', 'Kitematic'];
+    var dirs = ['Library', 'Application\ Support', 'Kitematic'];
     var acc = process.env.HOME;
     dirs.forEach(function (d) {
       acc = path.join(acc, d);
@@ -16,6 +16,19 @@ var Util = {
       }
     });
     return acc;
+  },
+  resourceDir: function (callback) {
+    return process.env.RESOURCES_PATH;
+  },
+  isSudo: function (callback) {
+    exec(['sudo', '-n', '-u', 'root', 'true'], function (stderr, stdout, code) {
+      if (code) {
+        callback(stderr);
+      } else {
+        var isSudo = stderr.indexOf('a password is required') === -1;
+        callback(null, isSudo);
+      }
+    });
   },
   download: function (url, filename, checksum, callback, progressCallback) {
     var doDownload = function () {
@@ -37,8 +50,7 @@ var Util = {
 
     // Compare checksum to see if it already exists first
     if (fs.existsSync(filename)) {
-      var existingChecksum = nodeCrypto.createHash('sha256').update(fs.readFileSync(filename), 'utf8').digest('hex');
-      console.log(existingChecksum);
+      var existingChecksum = crypto.createHash('sha256').update(fs.readFileSync(filename), 'utf8').digest('hex');
       if (existingChecksum !== checksum) {
         fs.unlinkSync(filename);
         doDownload();
@@ -48,6 +60,22 @@ var Util = {
     } else {
       doDownload();
     }
+  },
+  virtualboxSHA256: function (version, filename, callback) {
+    var checksumUrl = 'http://dlc-cdn.sun.com/virtualbox/' + version + '/SHA256SUMS';
+    request(checksumUrl, function (error, response, body) {
+      if (error) {
+        callback(error);
+        return;
+      }
+      var checksums = body.split('\n').map(function (line) {
+        return line.split(' *');
+      }).reduce(function (obj, pair) {
+        obj[pair[1]] = pair[0];
+        return obj;
+      }, {});
+      callback(null, checksums[filename]);
+    });
   },
   compareVersions: function (v1, v2, options) {
     var lexicographical = options && options.lexicographical,
@@ -100,4 +128,4 @@ var Util = {
   }
 };
 
-module.exports = Util;
+module.exports = SetupUtil;

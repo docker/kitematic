@@ -12,9 +12,11 @@
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
     "start": "gulp",
-    "preinstall": "./deps",
-    "test": "gulp test",
-    "release": "gulp release"
+    "test": "gulp test --silent",
+    "test:integration": "gulp test --silent --integration",
+    "all-tests": "npm test && npm run integration-tests",
+    "release": "gulp run release",
+    "preinstall": "./deps"
   },
   "licenses": [
     {
@@ -22,18 +24,27 @@
       "url": "https://raw.githubusercontent.com/kitematic/kitematic/master/LICENSE"
     }
   ],
-  "boot2docker-version": "1.3.2",
-  "atom-shell-version": "0.20.6",
+  "jest": {
+    "unmockedModulePathPatterns": [
+      "dockerode",
+      "react",
+      "debug"
+    ]
+  },
+  "boot2docker-version": "1.4.1",
+  "atom-shell-version": "0.21.0",
+  "virtualbox-version": "4.3.20",
+  "virtualbox-filename": "VirtualBox-4.3.20-96996-OSX.dmg",
+  "virtualbox-required-version": "4.3.18",
   "dependencies": {
     "ansi-to-html": "0.2.0",
     "async": "^0.9.0",
     "bugsnag-js": "git+https://git@github.com/bugsnag/bugsnag-js",
     "dockerode": "2.0.4",
     "exec": "0.1.2",
-    "gulp-react": "^2.0.0",
+    "jest-cli": "^0.2.1",
     "jquery": "^2.1.3",
     "minimist": "^1.1.0",
-    "moment": "2.8.1",
     "node-uuid": "1.4.1",
     "object-assign": "^2.0.0",
     "open": "0.0.5",
@@ -41,7 +52,7 @@
     "react-bootstrap": "^0.13.2",
     "react-retina-image": "^1.1.2",
     "react-router": "^0.11.6",
-    "request": "2.42.0",
+    "request": "^2.51.0",
     "request-progress": "0.3.1",
     "retina.js": "^1.1.0",
     "underscore": "^1.7.0"
@@ -61,17 +72,19 @@
     "gulp-livereload": "^2.1.1",
     "gulp-notify": "^1.4.2",
     "gulp-plumber": "^0.6.6",
+    "gulp-react": "^2.0.0",
     "gulp-shell": "^0.2.11",
     "gulp-sourcemaps": "^1.2.8",
     "gulp-streamify": "0.0.5",
     "gulp-uglify": "^0.3.1",
     "gulp-uglifyjs": "^0.5.0",
     "gulp-util": "^3.0.0",
-    "jasmine-tagged": "^1.1.2",
-    "livereload-js": "^2.2.1",
     "reactify": "^0.15.2",
+    "rimraf": "^2.2.8",
     "run-sequence": "^1.0.2",
+    "time-require": "^0.1.2",
     "vinyl-source-stream": "^0.1.1",
-    "watchify": "^2.1.1"
+    "watchify": "^2.1.1",
+    "zombie": "^2.5.1"
   }
 }

@@ -1,5 +1,5 @@
 var _ = require('underscore');
-var docker = require('./docker');
+var docker = require('./Docker');
 
 var ContainerUtil = {
   env: function (container) {
@@ -15,7 +15,6 @@ var ContainerUtil = {
   ports: function (container, callback) {
     var res = {};
     var ip = docker.host;
-    console.log(container);
     _.each(container.NetworkSettings.Ports, function (value, key) {
       var dockerPort = key.split('/')[0];
       var localUrl = null;
