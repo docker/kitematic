@@ -12,11 +12,14 @@ var ContainerUtil = require('./ContainerUtil');
 var docker = require('./Docker');
 var boot2docker = require('./Boot2Docker');
 var ProgressBar = require('react-bootstrap/ProgressBar');
-var Popover = require('react-bootstrap/Popover');
+var ContainerDetailsHeader = require('./ContainerDetailsHeader.react');
+var ContainerHome = require('./ContainerHome.react');
+
 
 var ContainerDetails = React.createClass({
   mixins: [Router.State, Router.Navigation],
   _oldHeight: 0,
+  PAGE_HOME: 'home',
   PAGE_LOGS: 'logs',
   PAGE_SETTINGS: 'settings',
   PAGE_PORTS: 'ports',
@@ -24,14 +27,12 @@ var ContainerDetails = React.createClass({
   getInitialState: function () {
     return {
       logs: [],
-      page: this.PAGE_LOGS,
+      page: this.PAGE_HOME,
       env: {},
       pendingEnv: {},
       ports: {},
       defaultPort: null,
-      volumes: {},
-      popoverVolumeOpen: false,
-      popoverViewOpen: false,
+      volumes: {}
     };
   },
   componentWillReceiveProps: function () {
@@ -41,22 +42,6 @@ var ContainerDetails = React.createClass({
     this.init();
     ContainerStore.on(ContainerStore.SERVER_PROGRESS_EVENT, this.updateProgress);
     ContainerStore.on(ContainerStore.SERVER_LOGS_EVENT, this.updateLogs);
-
-    // Make clicking anywhere close popovers
-    $('body').on('click', function (e) {
-      var popoverViewIsTarget = $('.popover-view').is(e.target) || $('.popover-view').has(e.target).length !== 0 || $('.dropdown-view').is(e.target) || $('.dropdown-view').has(e.target).length !== 0;
-      var popoverVolumeIsTarget = $('.popover-volume').is(e.target) || $('.popover-volume').has(e.target).length !== 0 || $('.dropdown-volume').is(e.target) || $('.dropdown-volume').has(e.target).length !== 0;
-      var state = {};
-      if (!popoverViewIsTarget) {
-        state.popoverViewOpen = false;
-      }
-      if (!popoverVolumeIsTarget) {
-        state.popoverVolumeOpen = false;
-      }
-      if (this.state.popoverViewOpen || this.state.popoverVolumeOpen) {
-        this.setState(state);
-      }
-    }.bind(this));
   },
   componentWillUnmount: function () {
     ContainerStore.removeListener(ContainerStore.SERVER_PROGRESS_EVENT, this.updateProgress);
@@ -72,23 +57,6 @@ var ContainerDetails = React.createClass({
       }
       this._oldHeight = parent[0].scrollHeight - parent.height();
     }
-
-    var $viewDropdown = $(this.getDOMNode()).find('.dropdown-view');
-    var $volumeDropdown = $(this.getDOMNode()).find('.dropdown-volume');
-    var $viewPopover = $(this.getDOMNode()).find('.popover-view');
-    var $volumePopover = $(this.getDOMNode()).find('.popover-volume');
-
-    /*if ($viewDropdown.offset() && $volumeDropdown.offset()) {
-      $viewPopover.offset({
-        top: $viewDropdown.offset().top + 32,
-        left: $viewDropdown.offset().left - ($viewPopover.outerWidth() / 2) + 14
-      });
-
-      $volumePopover.offset({
-        top: $volumeDropdown.offset().top + 32,
-        left: $volumeDropdown.offset().left + $volumeDropdown.outerWidth() - $volumePopover.outerWidth() / 2 - 20
-      });
-    }*/
   },
   init: function () {
     var container = ContainerStore.container(this.getParams().name);
@@ -126,6 +94,11 @@ var ContainerDetails = React.createClass({
       });
     }
   },
+  showHome: function () {
+    this.setState({
+      page: this.PAGE_HOME
+    });
+  },
   showLogs: function () {
     this.setState({
       page: this.PAGE_LOGS
@@ -159,16 +132,6 @@ var ContainerDetails = React.createClass({
   handleViewLink: function (url) {
     exec(['open', url], function (err) {
       if (err) { throw err; }
-    });
-  },
-  handleViewDropdown: function(e) {
-    this.setState({
-      popoverViewOpen: !this.state.popoverViewOpen
-    });
-  },
-  handleVolumeDropdown: function(e) {
-    this.setState({
-      popoverVolumeOpen: !this.state.popoverVolumeOpen
     });
   },
   handleRestart: function () {
@@ -273,19 +236,6 @@ var ContainerDetails = React.createClass({
       return false;
     }
 
-    var state;
-    if (this.props.container.State.Running) {
-      state = <span className="status running">RUNNING</span>;
-    } else if (this.props.container.State.Restarting) {
-      state = <span className="status restarting">RESTARTING</span>;
-    } else if (this.props.container.State.Paused) {
-      state = <span className="status paused">PAUSED</span>;
-    } else if (this.props.container.State.Downloading) {
-      state = <span className="status downloading">DOWNLOADING</span>;
-    } else {
-      state = <span className="status stopped">STOPPED</span>;
-    }
-
     var button;
     if (this.state.progress === 1) {
       button = <a className="btn btn-primary" onClick={this.handleClick}>View</a>;
@@ -354,31 +304,6 @@ var ContainerDetails = React.createClass({
       disabled: this.props.container.State.Downloading
     });
 
-    var viewPopoverClasses = React.addons.classSet({
-      popover: true,
-      hidden: false
-    });
-
-    var popoverVolumeClasses = React.addons.classSet({
-      'popover-volume': true,
-      hidden: !this.state.popoverVolumeOpen
-    });
-
-    var popoverViewClasses = React.addons.classSet({
-      'popover-view': true,
-      hidden: !this.state.popoverViewOpen
-    });
-
-    var dropdownClasses = {
-      btn: true,
-      'btn-action': true,
-      'with-icon': true,
-      'dropdown-toggle': true,
-      disabled: !this.props.container.State.Running
-    };
-    var dropdownViewButtonClass = React.addons.classSet(assign({'dropdown-view': true}, dropdownClasses));
-    var dropdownVolumeButtonClass = React.addons.classSet(assign({'dropdown-volume': true}, dropdownClasses));
-
     var ports = _.map(_.pairs(self.state.ports), function (pair, index, list) {
       var key = pair[0];
       var val = pair[1];
@@ -410,7 +335,11 @@ var ContainerDetails = React.createClass({
         </div>
       );
     } else {
-      if (this.state.page === this.PAGE_LOGS) {
+      if (this.state.page === this.PAGE_HOME) {
+        body = (
+          <ContainerHome />
+        );
+      } else if (this.state.page === this.PAGE_LOGS) {
         body = (
           <div className="details-panel details-logs">
             <div className="logs">
@@ -449,12 +378,6 @@ var ContainerDetails = React.createClass({
           </div>
         );
       } else {
-        var preview;
-        if (this.state.defaultPort) {
-          preview = (
-            <iframe src={this.state.ports[this.state.defaultPort].url} autosize="on"></iframe>
-          );
-        }
         body = (
           <div className="details-panel">
             <div className="settings">
@@ -492,6 +415,12 @@ var ContainerDetails = React.createClass({
       }
     }
 
+    var tabHomeClasses = React.addons.classSet({
+      'tab': true,
+      'active': this.state.page === this.PAGE_HOME,
+      disabled: this.props.container.State.Downloading
+    });
+
     var tabLogsClasses = React.addons.classSet({
       'tab': true,
       'active': this.state.page === this.PAGE_LOGS,
@@ -518,14 +447,12 @@ var ContainerDetails = React.createClass({
 
     return (
       <div className="details">
-        <div className="details-header">
-          <h1>{this.props.container.Name}</h1>{state}
-        </div>
+        <ContainerDetailsHeader container={this.props.container} />
         <div className="details-subheader">
           <div className="details-header-actions">
             <div className="action">
               <span className="icon icon-play-2 action-icon" onClick={this.handleView}></span>
-              <span className="btn-label">View</span>
+              <span className="btn-label">Run</span>
             </div>
             <div className="action">
               <span className="icon icon-refresh action-icon" onClick={this.handleRestart}></span>
@@ -537,29 +464,12 @@ var ContainerDetails = React.createClass({
             </div>
           </div>
           <div className="details-subheader-tabs">
+            <span className={tabHomeClasses} onClick={this.showHome}>Home</span>
             <span className={tabLogsClasses} onClick={this.showLogs}>Logs</span>
             <span className={tabSettingsClasses} onClick={this.showSettings}>Settings</span>
           </div>
         </div>
         {body}
-        <Popover className={popoverViewClasses} placement="bottom">
-            <div className="table ports">
-            <div className="table-labels">
-            <div className="label-left">DOCKER PORT</div>
-            <div className="label-right">MAC PORT</div>
-            </div>
-          {ports}
-          </div>
-          </Popover>
-          <Popover className={popoverVolumeClasses} placement="bottom">
-          <div className="table volumes">
-          <div className="table-labels">
-          <div className="label-left">DOCKER FOLDER</div>
-          <div className="label-right">MAC FOLDER</div>
-          </div>
-        {volumes}
-        </div>
-        </Popover>
       </div>
     );
   }

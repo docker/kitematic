@@ -9,6 +9,8 @@ var ModalTrigger = require('react-bootstrap/ModalTrigger');
 var ContainerModal = require('./ContainerModal.react');
 var Header = require('./Header.react');
 var docker = require('./docker');
+var remote = require('remote');
+var dialog = remote.require('dialog');
 
 var ContainerListItem = React.createClass({
   componentWillMount: function () {
@@ -21,6 +23,18 @@ var ContainerListItem = React.createClass({
   handleItemMouseLeave: function () {
     var $action = $(this.getDOMNode()).find('.action');
     $action.hide();
+  },
+  handleDeleteContainer: function () {
+    dialog.showMessageBox({
+      message: 'Are you sure you want to delete this container?',
+      buttons: ['Delete', 'Cancel']
+    }, function (index) {
+      if (index === 0) {
+        ContainerStore.remove(this.props.container.Name, function (err) {
+          console.error(err);
+        });
+      }
+    }.bind(this));
   },
   render: function () {
     var self = this;
@@ -73,7 +87,7 @@ var ContainerListItem = React.createClass({
             </div>
           </div>
           <div className="action">
-            <span className="icon icon-delete-3 btn-delete"></span>
+            <span className="icon icon-delete-3 btn-delete" onClick={this.handleDeleteContainer}></span>
           </div>
         </li>
       </Router.Link>
