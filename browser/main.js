@@ -67,7 +67,7 @@ app.on('ready', function() {
 
     // Auto Updates
     if (process.env.NODE_ENV !== 'development' && !argv.test) {
-      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion());
+      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion() + '&beta=' + settingsjson.beta);
 
       autoUpdater.on('checking-for-update', function (e) {
         console.log('Checking for update...');
