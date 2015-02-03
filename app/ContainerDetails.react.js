@@ -440,6 +440,12 @@ var ContainerDetails = React.createClass({
           </div>
         );
       } else {
+        var preview;
+        if (this.state.defaultPort) {
+          preview = (
+            <iframe src={this.state.ports[this.state.defaultPort].url} autosize="on"></iframe>
+          );
+        }
         body = (
           <div className="details-panel">
             <div className="settings">
@@ -523,8 +529,6 @@ var ContainerDetails = React.createClass({
           </div>
           <div className="details-subheader-tabs">
             <span className={tabLogsClasses} onClick={this.showLogs}>Logs</span>
-            <span className={tabPortsClasses} onClick={this.showPorts}>Ports</span>
-            <span className={tabVolumesClasses} onClick={this.showVolumes}>Volumes</span>
             <span className={tabSettingsClasses} onClick={this.showSettings}>Settings</span>
           </div>
         </div>
