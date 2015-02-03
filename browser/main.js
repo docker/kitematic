@@ -1,7 +1,3 @@
-var child_process = require('child_process');
-var net = require('net');
-var os = require('os');
-var fs = require('fs');
 var path = require('path');
 var exec = require('exec');
 
@@ -23,6 +19,16 @@ if (argv.integration) {
   process.env.TEST_TYPE = 'test';
 }
 
+var mainWindow = new BrowserWindow({
+  width: 1000,
+  height: 700,
+  'min-width': 1000,
+  'min-height': 700,
+  resizable: true,
+  frame: false,
+  show: false
+});
+
 app.on('activate-with-no-open-windows', function () {
   if (mainWindow) {
     mainWindow.show();
@@ -31,23 +37,14 @@ app.on('activate-with-no-open-windows', function () {
 });
 
 app.on('ready', function() {
-  mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 700,
-    'min-width': 1000,
-    'min-height': 700,
-    resizable: true,
-    frame: false,
-    show: false
-  });
 
   if (argv.test) {
     mainWindow.loadUrl('file://' + __dirname + '/../tests/tests.html');
   } else {
     mainWindow.loadUrl('file://' + __dirname + '/../build/index.html');
-    app.on('will-quit', function (e) {
+    app.on('will-quit', function () {
       if (saveVMOnQuit) {
-        exec('VBoxManage controlvm boot2docker-vm savestate', function (stderr, stdout, code) {});
+        exec('VBoxManage controlvm boot2docker-vm savestate', function () {});
       }
     });
   }
@@ -67,7 +64,7 @@ app.on('ready', function() {
     if (process.env.NODE_ENV !== 'development' && !argv.test) {
       autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion());
 
-      autoUpdater.on('checking-for-update', function (e) {
+      autoUpdater.on('checking-for-update', function () {
         console.log('Checking for update...');
       });
 
@@ -76,12 +73,13 @@ app.on('ready', function() {
         console.log(e);
       });
 
-      autoUpdater.on('update-not-available', function (e) {
+      autoUpdater.on('update-not-available', function () {
         console.log('Update not available.');
       });
 
       autoUpdater.on('update-downloaded', function (e, releaseNotes, releaseName, releaseDate, updateURL) {
         console.log('Update downloaded.');
+        console.log(releaseNotes, releaseName, releaseDate, updateURL);
         mainWindow.webContents.send('notify', 'window:update-available');
       });
 
