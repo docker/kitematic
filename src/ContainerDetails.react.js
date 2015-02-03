@@ -147,10 +147,16 @@ var ContainerDetails = React.createClass({
       if (err) { throw err; }
     });
   },
-  handleChangeDefaultPort: function (port) {
-    this.setState({
-      defaultPort: port
-    });
+  handleChangeDefaultPort: function (port, e) {
+    if (e.target.checked) {
+      this.setState({
+        defaultPort: null
+      });
+    } else {
+      this.setState({
+        defaultPort: port
+      });
+    }
   },
   handleViewDropdown: function(e) {
     this.setState({
@@ -486,7 +492,7 @@ var ContainerDetails = React.createClass({
         <div key={key} className="table-values">
           <span className="value-left">{key}</span><span className="icon icon-arrow-right"></span>
           <a className="value-right" onClick={self.handleViewLink.bind(self, val.url)}>{val.display}</a>
-          <input onChange={self.handleChangeDefaultPort.bind(self, key)} type="radio" checked={self.state.defaultPort === key}/> <label>Default</label>
+          <input onChange={self.handleChangeDefaultPort.bind(self, key)} type="checkbox" checked={self.state.defaultPort === key}/> <label>Default</label>
         </div>
       );
     });
