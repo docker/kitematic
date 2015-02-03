@@ -11,7 +11,7 @@ var packagejson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package
 
 var _currentStep = null;
 var _error = null;
-var _progress = null;
+var _progress = 0;
 
 var SetupStore = assign(EventEmitter.prototype, {
   PROGRESS_EVENT: 'setup_progress',
@@ -48,26 +48,31 @@ var SetupStore = assign(EventEmitter.prototype, {
       }
     },
     name: 'downloading_virtualbox',
-    message: 'Downloading Virtualbox',
   },
   installVirtualboxStep: {
     _install: function (callback) {
-      exec(['hdiutil', 'attach', path.join(setupUtil.supportDir(), 'VirtualBox-4.3.20-96996-OSX.dmg')], function (stderr, stdout, code) {
+      console.log('attaching');
+      exec(['hdiutil', 'attach', path.join(setupUtil.supportDir(), packagejson['virtualbox-filename'])], function (stderr, stdout, code) {
         if (code) {
           callback(stderr);
           return;
         }
+        console.log('Attached.');
         var iconPath = path.join(setupUtil.resourceDir(), 'kitematic.icns');
         setupUtil.isSudo(function (err, isSudo) {
+          console.log(isSudo);
           sudoCmd = isSudo ? ['sudo'] : [path.join(setupUtil.resourceDir(), 'cocoasudo'), '--icon=' + iconPath, '--prompt=Kitematic requires administrative privileges to install VirtualBox and copy itself to the Applications folder.'];
           sudoCmd.push.apply(sudoCmd, ['installer', '-pkg', '/Volumes/VirtualBox/VirtualBox.pkg', '-target', '/']);
           exec(sudoCmd, function (stderr, stdout, code) {
+            console.log(stdout);
+            console.log('Ran installer.');
             if (code) {
               console.log(stderr);
               console.log(stdout);
               callback('Could not install virtualbox.');
             } else {
               exec(['hdiutil', 'detach', '/Volumes/VirtualBox'], function(stderr, stdout, code) {
+                console.log('detaching');
                 if (code) {
                   callback(stderr);
                 } else {
@@ -101,7 +106,6 @@ var SetupStore = assign(EventEmitter.prototype, {
       }
     },
     name: 'installing_virtualbox',
-    message: 'Installing VirtualBox',
   },
   cleanupKitematicStep: {
     run: function (callback) {
@@ -113,7 +117,6 @@ var SetupStore = assign(EventEmitter.prototype, {
       });
     },
     name: 'cleanup_kitematic',
-    message: 'Cleaning up existing Kitematic install...'
   },
   initBoot2DockerStep: {
     run: function (callback) {
@@ -143,7 +146,6 @@ var SetupStore = assign(EventEmitter.prototype, {
       });
     },
     name: 'init_boot2docker',
-    message: 'Setting up the Docker VM...'
   },
   startBoot2DockerStep: {
     run: function (callback) {
@@ -161,31 +163,30 @@ var SetupStore = assign(EventEmitter.prototype, {
       });
     },
     name: 'start_boot2docker',
-    message: 'Starting the Docker VM...'
   },
-  step: function () {
-    return _currentStep;
+  stepName: function () {
+    return _currentStep.name;
   },
-  progress: function () {
+  stepProgress: function () {
     return _progress;
   },
   run: function (callback) {
     var self = this;
     var steps = [this.downloadVirtualboxStep, this.installVirtualboxStep, this.cleanupKitematicStep, this.initBoot2DockerStep, this.startBoot2DockerStep];
     async.eachSeries(steps, function (step, callback) {
-      console.log(step.name);
       _currentStep = step;
-      _progress = null;
+      _progress = 0;
+      self.emit(self.STEP_EVENT);
+
       step.run(function (err) {
         if (err) {
           callback(err);
         } else {
-          self.emit(self.STEP_EVENT);
           callback();
         }
       }, function (progress) {
-        self.emit(self.PROGRESS_EVENT, progress);
         _progress = progress;
+        self.emit(self.PROGRESS_EVENT, progress);
       });
     }, function (err) {
       if (err) {
