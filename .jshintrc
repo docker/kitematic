@@ -1,0 +1,23 @@
+{
+  "curly": false,
+  "noempty": true,
+  "newcap": true,
+  "eqeqeq": true,
+  "eqnull": true,
+  "esnext": true,
+  "undef": true,
+  "unused": true,
+  "devel": true,
+  "node": true,
+  "browser": true,
+  "evil": false,
+  "latedef": true,
+  "nonew": true,
+  "trailing": true,
+  "immed": true,
+  "smarttabs": true,
+  "strict": false,
+  "globals": {
+    "define": true
+  }
+}

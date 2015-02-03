@@ -35,7 +35,6 @@ var Header = React.createClass({
     this.update();
   },
   render: function () {
-    var buttons;
     if (this.state.fullscreen) {
       return (
         <div className="header no-drag">

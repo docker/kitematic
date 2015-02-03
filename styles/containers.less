@@ -309,7 +309,7 @@
         position: relative;
         //border-top: 1px solid #EEE;
         border-bottom: 1px solid #DCE2E2;
-        background-color: #F9F9F9;
+        background-color: white;
         height: 57px;
         padding: 6px 10px 10px 24px;
         font-size: 13px;
@@ -341,25 +341,15 @@
               &.icon:before {
                 text-align: center;
               }
-              /*background: linear-gradient(-180deg, #24B8EB 4%, #24A3EB 100%);
-              -webkit-background-clip: text;
-              -webkit-text-fill-color: transparent;*/
               color: @gray-normal;
               font-size: 30px;
-              margin-right: 35px;
-              //color: @gray-darker;
+              margin-right: 30px;
               transition: all 0.25s;
               &:hover {
                 color: @brand-action;
                 /*background: linear-gradient(-180deg, darken(#24B8EB, 10%) 4%, darken(#24A3EB, 10%) 100%);
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;*/
-              }
-              &.view-icon {
-                position: relative;
-                top: 1px;
-                font-size: 35px;
-                //color: @gray-darkest;
               }
             }
             .btn-label {
@@ -380,18 +370,16 @@
           margin-top: 6px;
           .tab {
             margin-left: 16px;
-            padding: 3px 10px;
-            transition: all 0.25s;
+            padding: 6px 10px;
             font-weight: 400;
             &:hover {
-              color: @brand-action;
+              border-radius: 40px;
+              background-color: #F9F9F9;
             }
             &.active {
-              background-color: #D2EEF8;
-              background-color: @brand-action;
               border-radius: 40px;
-              color: #365B64;
               color: white;
+              background-image: linear-gradient(-180deg, #24B8EB 4%, #24A3EB 100%);
             }
           }
         }
@@ -403,7 +391,7 @@
         flex-direction: row;
         padding: 31px 24px 18px 24px;
         position: relative;
-        background-color: #F9F9F9;
+        background-color: white;
         height: 75px;
         h1 {
           margin: 0;

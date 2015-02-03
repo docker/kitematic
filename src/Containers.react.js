@@ -1,15 +1,11 @@
-var async = require('async');
-var _ = require('underscore');
-var $ = require('jquery');
 var React = require('react/addons');
 var Router = require('react-router');
-var RetinaImage = require('react-retina-image');
 var ModalTrigger = require('react-bootstrap/ModalTrigger');
 var ContainerModal = require('./ContainerModal.react');
 var ContainerStore = require('./ContainerStore');
 var ContainerList = require('./ContainerList.react');
 var Header = require('./Header.react');
-var docker = require('./Docker');
+
 var Containers = React.createClass({
   mixins: [Router.Navigation, Router.State],
   getInitialState: function () {

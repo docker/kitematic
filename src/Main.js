@@ -1,22 +1,9 @@
 var React = require('react');
-var Router = require('react-router');
-var RetinaImage = require('react-retina-image');
-var async = require('async');
 var docker = require('./Docker');
 var router = require('./router');
 var boot2docker = require('./boot2docker');
 var ContainerStore = require('./ContainerStore');
 var SetupStore = require('./ContainerStore');
-var Menu = require('./Menu');
-var remote = require('remote');
-var app = remote.require('app');
-var ipc = require('ipc');
-
-var Route = Router.Route;
-var NotFoundRoute = Router.NotFoundRoute;
-var DefaultRoute = Router.DefaultRoute;
-var Link = Router.Link;
-var RouteHandler = Router.RouteHandler;
 
 if (process.env.NODE_ENV === 'development') {
   var script = document.createElement('script');
@@ -27,7 +14,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 if (!window.location.hash.length || window.location.hash === '#/') {
-  SetupStore.run(function (err) {
+  SetupStore.run(function () {
     boot2docker.ip(function (err, ip) {
       if (err) console.log(err);
       docker.setHost(ip);

@@ -1,8 +1,6 @@
 var fs = require('fs');
 var exec = require('exec');
-var path = require('path');
 var async = require('async');
-var util = require('./Util');
 
 var VirtualBox = {
   command: function () {
@@ -68,7 +66,7 @@ var VirtualBox = {
   },
   vmdestroy: function (name, callback) {
     var self = this;
-    this.vmstate(name, function (err, state) {
+    this.vmstate(name, function (err) {
       // No VM found
       if (err) { callback(null, false); return; }
       exec('/usr/bin/VBoxManage controlvm ' + name + ' acpipowerbutton', function (stderr, stdout, code) {

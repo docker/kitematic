@@ -6,7 +6,7 @@ var fs = require('fs');
 var exec = require('exec');
 
 var SetupUtil = {
-  supportDir: function (callback) {
+  supportDir: function () {
     var dirs = ['Library', 'Application\ Support', 'Kitematic'];
     var acc = process.env.HOME;
     dirs.forEach(function (d) {
@@ -17,7 +17,7 @@ var SetupUtil = {
     });
     return acc;
   },
-  resourceDir: function (callback) {
+  resourceDir: function () {
     return process.env.RESOURCES_PATH;
   },
   isSudo: function (callback) {
