@@ -1,5 +1,5 @@
 {
-  "curly": false,
+  "curly": true,
   "noempty": true,
   "newcap": true,
   "eqeqeq": true,
@@ -17,6 +17,10 @@
   "immed": true,
   "smarttabs": true,
   "strict": false,
+  "quotmark": false,
+  "nonbsp": true,
+  "noempty": true,
+  "camelcase": false,
   "globals": {
     "define": true
   }
