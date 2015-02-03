@@ -12,16 +12,16 @@
 .radial-progress {
 
   &.radial-spinner {
-    -webkit-animation: rotating 1.2s linear infinite;
+    -webkit-animation: rotating 2.4s linear infinite;
   }
 
-  @circle-size: 96px;
-  @circle-background: transparent;
-  @inset-size: 92px;
+  @circle-size: 140px;
+  @circle-background: #F2F2F2;
+  @inset-size: 136px;
   @inset-color: white;
   @transition-length: 1s;
   // @percentage-color: #3FD899;
-  @percentage-font-size: 14px;
+  @percentage-font-size: 24px;
   @percentage-text-width: 57px;
   margin: 0 auto;
 
@@ -70,7 +70,7 @@
       line-height: 1;
       text-align:  center;
 
-      // color:       @percentage-color;
+      color:       @brand-primary;
       font-weight: 500;
       font-size:   @percentage-font-size;
     }

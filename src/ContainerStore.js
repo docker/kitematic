@@ -20,11 +20,11 @@ var _streams = {};
 var _muted = {};
 
 var ContainerStore = assign(EventEmitter.prototype, {
-  CLIENT_CONTAINER_EVENT: 'client_container',
+  CLIENT_CONTAINER_EVENT: 'client_container_event',
   CLIENT_RECOMMENDED_EVENT: 'client_recommended_event',
-  SERVER_CONTAINER_EVENT: 'server_container',
-  SERVER_PROGRESS_EVENT: 'server_progress',
-  SERVER_LOGS_EVENT: 'server_logs',
+  SERVER_CONTAINER_EVENT: 'server_container_event',
+  SERVER_PROGRESS_EVENT: 'server_progress_event',
+  SERVER_LOGS_EVENT: 'server_logs_event',
   _pullScratchImage: function (callback) {
     var image = docker.client().getImage('scratch:latest');
     image.inspect(function (err, data) {
@@ -121,15 +121,24 @@ var ContainerStore = assign(EventEmitter.prototype, {
       containerData.Image = containerData.Config.Image;
     }
     existing.kill(function (err, data) {
+      if (err) {
+        console.log(err);
+      }
       existing.remove(function (err, data) {
+        if (err) {
+          console.log(err);
+        }
         docker.client().getImage(containerData.Image).inspect(function (err, data) {
+          if (err) {
+            callback(err);
+            return;
+          }
           var binds = [];
           if (data.Config.Volumes) {
             _.each(data.Config.Volumes, function (value, key) {
               binds.push(path.join(process.env.HOME, 'Kitematic', containerData.name, key)+ ':' + key);
             });
           }
-
           docker.client().createContainer(containerData, function (err, container) {
             if (err) {
               callback(err, null);
@@ -311,11 +320,13 @@ var ContainerStore = assign(EventEmitter.prototype, {
     var self = this;
     $.ajax({
       url: 'https://kitematic.com/recommended.json',
+      cache: false,
       dataType: 'json',
       success: function (res, status) {
         var recommended = res.recommended;
         async.map(recommended, function (repository, callback) {
           $.get('https://registry.hub.docker.com/v1/search?q=' + repository, function (data) {
+            console.log(data);
             var results = data.results;
             callback(null, _.find(results, function (r) {
               return r.name === repository;
@@ -379,38 +390,27 @@ var ContainerStore = assign(EventEmitter.prototype, {
     var imageName = repository + ':' + tag;
     var containerName = this._generateName(repository);
     var image = docker.client().getImage(imageName);
-
-    image.inspect(function (err, data) {
-      if (!data) {
-        // Pull image
-        self._createPlaceholderContainer(imageName, containerName, function (err, container) {
-          if (err) {
-            callback(err);
-            return;
-          }
-          _containers[containerName] = container;
-          self.emit(self.CLIENT_CONTAINER_EVENT, containerName, 'create');
-          _muted[containerName] = true;
-          _progress[containerName] = 0;
-          self._pullImage(repository, tag, function () {
-            self._createContainer(containerName, {Image: imageName}, function (err, container) {
-              delete _progress[containerName];
-              _muted[containerName] = false;
-              self.emit(self.CLIENT_CONTAINER_EVENT, containerName);
-            });
-          }, function (progress) {
-            _progress[containerName] = progress;
-            self.emit(self.SERVER_PROGRESS_EVENT, containerName);
-          });
-          callback(null, containerName);
-        });
-      } else {
-        // If not then directly create the container
-        self._createContainer(containerName, {Image: imageName}, function (err, container) {
-          self.emit(ContainerStore.CLIENT_CONTAINER_EVENT, containerName, 'create');
-          callback(null, containerName);
-        });
+    // Pull image
+    self._createPlaceholderContainer(imageName, containerName, function (err, container) {
+      if (err) {
+        callback(err);
+        return;
       }
+      _containers[containerName] = container;
+      self.emit(self.CLIENT_CONTAINER_EVENT, containerName, 'create');
+      _muted[containerName] = true;
+      _progress[containerName] = 0;
+      self._pullImage(repository, tag, function () {
+        self._createContainer(containerName, {Image: imageName}, function (err, container) {
+          delete _progress[containerName];
+          _muted[containerName] = false;
+          self.emit(self.CLIENT_CONTAINER_EVENT, containerName);
+        });
+      }, function (progress) {
+        _progress[containerName] = progress;
+        self.emit(self.SERVER_PROGRESS_EVENT, containerName);
+      });
+      callback(null, containerName);
     });
   },
   updateContainer: function (name, data, callback) {
@@ -419,10 +419,10 @@ var ContainerStore = assign(EventEmitter.prototype, {
       data.name = data.Name;
     }
     var fullData = assign(_containers[name], data);
-    console.log(fullData);
     this._createContainer(name, fullData, function (err) {
-      callback(err);
       _muted[name] = false;
+      this.emit(this.CLIENT_CONTAINER_EVENT, name);
+      callback(err);
     }.bind(this));
   },
   restart: function (name, callback) {

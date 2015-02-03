@@ -1,11 +1,11 @@
 .popover {
 
   &.popover-view {
-    min-width: 290px;
+    min-width: 364px;
   }
 
   &.popover-volume {
-    min-width: 400px;
+    min-width: 480px;
   }
 
   .popover-content {
@@ -53,9 +53,15 @@
           flex: 0 auto;
         }
         .value-right {
-          flex: 1 auto;
+          position: relative;
+          flex: 0 auto;
           -webkit-user-select: text;
           width: 154px;
+          white-space: nowrap;
+          a {
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
         }
       }
       .table-new {
@@ -92,6 +98,13 @@
         }
       }
 
+      &.ports {
+        input {
+          margin-left: 6px;
+          margin-right: 5px;
+        }
+      }
+
       &.volumes {
         .label-left {
           min-width: 120px;
@@ -99,9 +112,21 @@
         .value-left {
           min-width: 120px;
         }
-        .icon {
+        .icon-arrow-right {
           color: #aaa;
           margin: 2px 9px 0;
+        }
+        .icon-folder-1 {
+          position: relative;
+          top: 4px;
+          font-size: 16px;
+          padding-right: 4px;
+        }
+        .btn-xs {
+          padding: 1px 5px;
+          font-size: 12px;
+          line-height: 1.5;
+          height: 22px;
         }
       }
     }
@@ -195,15 +220,14 @@
             color: inherit;
             flex-shrink: 0;
             cursor: default;
-            margin: 0px 3px 0px 8px;
+            margin: 0px 3px 0px 0;
             outline: none;
-            padding: 4px 5px;
+            padding: 4px 13px;
 
             &.active {
+              background: @brand-primary;
               li {
                 border-bottom: none;
-                border-radius: 40px;
-                background: @brand-primary;
                 .name {
                   color: white;
                 }
@@ -388,6 +412,11 @@
           border-bottom: 1px solid transparent;
           transition: border-bottom 0.25s;
           .action {
+
+            a {
+              -webkit-transition: none;
+            }
+            transition: none;
             flex: 0 auto;
             margin-right: 24px;
           }
@@ -442,6 +471,7 @@
 
       .details-progress {
         margin: 26% auto 0;
+        text-align: center;
         width: 300px;
       }
 

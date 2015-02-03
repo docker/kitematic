@@ -17,12 +17,15 @@ var packagejson = require('./package.json');
 
 var dependencies = Object.keys(packagejson.dependencies);
 var devDependencies = Object.keys(packagejson.devDependencies);
+var isBeta = process.argv.indexOf('--beta') !== -1;
 var options = {
   dev: process.argv.indexOf('release') === -1 && process.argv.indexOf('test') === -1,
   test: process.argv.indexOf('test') !== -1,
   integration: process.argv.indexOf('--integration') !== -1,
-  filename: 'Kitematic.app',
-  name: 'Kitematic'
+  beta: isBeta,
+  filename: isBeta ? 'Kitematic (Beta).app' : 'Kitematic.app',
+  name: isBeta ? 'Kitematic (Beta)' : 'Kitematic',
+  icon: isBeta ? 'kitematic-beta.icns' : 'kitematic.icns'
 };
 
 gulp.task('js', function () {
@@ -83,11 +86,13 @@ gulp.task('dist', function (cb) {
     'cp -R ./cache/Atom.app ./dist/osx/<%= filename %>',
     'mv ./dist/osx/<%= filename %>/Contents/MacOS/Atom ./dist/osx/<%= filename %>/Contents/MacOS/<%= name %>',
     'mkdir -p ./dist/osx/<%= filename %>/Contents/Resources/app',
+    'mkdir -p ./dist/osx/<%= filename %>/Contents/Resources/app/node_modules',
     'cp -R browser dist/osx/<%= filename %>/Contents/Resources/app',
     'cp package.json dist/osx/<%= filename %>/Contents/Resources/app/',
+    'cp settings.json dist/osx/<%= filename %>/Contents/Resources/app/',
     'mkdir -p dist/osx/<%= filename %>/Contents/Resources/app/resources',
     'cp -v resources/* dist/osx/<%= filename %>/Contents/Resources/app/resources/ || :',
-    'cp kitematic.icns dist/osx/<%= filename %>/Contents/Resources/atom.icns',
+    'cp <%= icon %> dist/osx/<%= filename %>/Contents/Resources/atom.icns',
     '/usr/libexec/PlistBuddy -c "Set :CFBundleVersion <%= version %>" dist/osx/<%= filename %>/Contents/Info.plist',
     '/usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName <%= name %>" dist/osx/<%= filename %>/Contents/Info.plist',
     '/usr/libexec/PlistBuddy -c "Set :CFBundleName <%= name %>" dist/osx/<%= filename %>/Contents/Info.plist',
@@ -95,10 +100,11 @@ gulp.task('dist', function (cb) {
     '/usr/libexec/PlistBuddy -c "Set :CFBundleExecutable <%= name %>" dist/osx/<%= filename %>/Contents/Info.plist'
     ], {
       templateData: {
-        filename: options.filename,
-        name: options.name,
+        filename: options.filename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)'),
+        name: options.name.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)'),
         version: packagejson.version,
-        bundle: 'com.kitematic.app'
+        bundle: 'com.kitematic.app',
+        icon: options.icon
       }
   }));
 
@@ -107,7 +113,7 @@ gulp.task('dist', function (cb) {
       'cp -R node_modules/' + d + ' dist/osx/<%= filename %>/Contents/Resources/app/node_modules/'
     ], {
       templateData: {
-        filename: options.filename
+        filename: options.filename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)')
       }
     }));
   });
@@ -119,7 +125,7 @@ gulp.task('sign', function () {
   try {
     var signing_identity = fs.readFileSync('./identity', 'utf8').trim();
     return gulp.src('').pipe(shell([
-      'codesign --deep --force --verbose --sign "' + signing_identity + '" ' + options.filename
+      'codesign --deep --force --verbose --sign "' + signing_identity + '" ' + options.filename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)')
     ], {
       cwd: './dist/osx/'
     }));
@@ -130,7 +136,7 @@ gulp.task('sign', function () {
 
 gulp.task('zip', function () {
   return gulp.src('').pipe(shell([
-    'ditto -c -k --sequesterRsrc --keepParent ' + options.filename + ' ' + options.name + '-' + packagejson.version + '.zip'
+    'ditto -c -k --sequesterRsrc --keepParent ' +  options.filename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)') + ' ' +  options.name.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)') + '-' + packagejson.version + '.zip'
   ], {
     cwd: './dist/osx/'
   }));
