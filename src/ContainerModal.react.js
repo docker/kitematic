@@ -1,13 +1,9 @@
-var async = require('async');
 var $ = require('jquery');
 var assign = require('object-assign');
 var React = require('react/addons');
 var Modal = require('react-bootstrap').Modal;
 var OverlayTrigger = require('react-bootstrap');
 var Popover = require('react-bootstrap/Popover');
-var SplitButton = require('react-bootstrap/SplitButton');
-var MenuItem = require('react-bootstrap/MenuItem');
-
 var RetinaImage = require('react-retina-image');
 var ContainerStore = require('./ContainerStore');
 var OverlayTrigger = require('react-bootstrap/OverlayTrigger');
@@ -81,20 +77,20 @@ var ContainerModal = React.createClass({
       }, 200);
     }
   },
-  handleClick: function (name, event) {
-    ContainerStore.create(name, 'latest', function (err, containerName) {
+  handleClick: function (name) {
+    ContainerStore.create(name, 'latest', function (err) {
       if (err) {
         throw err;
       }
       this.props.onRequestHide();
     }.bind(this));
   },
-  handleTagClick: function (tag, name, event) {
-    ContainerStore.create(name, tag, function (err, containerName) {
+  handleTagClick: function (tag, name) {
+    ContainerStore.create(name, tag, function () {
       this.props.onRequestHide();
     }.bind(this));
   },
-  handleDropdownClick: function (name, event) {
+  handleDropdownClick: function (name) {
     this.setState({
       active: name
     });
@@ -207,6 +203,7 @@ var ContainerModal = React.createClass({
     );
 
     var tagData = self.state.tags[this.state.active];
+    var tags;
     if (tagData) {
       var list = tagData.map(function (t) {
         return <li key={t.name} onClick={self.handleTagClick.bind(self, t.name, self.state.active)}>{t.name}</li>;

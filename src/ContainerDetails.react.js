@@ -4,17 +4,14 @@ var React = require('react/addons');
 var Router = require('react-router');
 var exec = require('exec');
 var path =  require('path');
-var assign =  require('object-assign');
 var remote = require('remote');
 var dialog = remote.require('dialog');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
-var docker = require('./Docker');
 var boot2docker = require('./Boot2Docker');
 var ProgressBar = require('react-bootstrap/ProgressBar');
 var ContainerDetailsHeader = require('./ContainerDetailsHeader.react');
 var ContainerHome = require('./ContainerHome.react');
-
 
 var ContainerDetails = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -121,6 +118,8 @@ var ContainerDetails = React.createClass({
   },
   handleView: function () {
     console.log('CLICKED');
+    console.log(this.state.ports);
+    console.log(this.state.defaultPort);
     if (this.state.defaultPort) {
       console.log(this.state.defaultPort);
       console.log(this.state.ports[this.state.defaultPort].url);
@@ -267,7 +266,7 @@ var ContainerDetails = React.createClass({
       disabledClass = 'disabled';
     }
 
-    var buttonClass = React.addons.classSet({
+    /*var buttonClass = React.addons.classSet({
       btn: true,
       'btn-action': true,
       'with-icon': true,
@@ -302,9 +301,9 @@ var ContainerDetails = React.createClass({
       'only-icon': true,
       'active': this.state.page === this.PAGE_SETTINGS,
       disabled: this.props.container.State.Downloading
-    });
+    });*/
 
-    var ports = _.map(_.pairs(self.state.ports), function (pair, index, list) {
+    var ports = _.map(_.pairs(self.state.ports), function (pair) {
       var key = pair[0];
       var val = pair[1];
       return (
@@ -427,7 +426,7 @@ var ContainerDetails = React.createClass({
       disabled: this.props.container.State.Downloading
     });
 
-    var tabPortsClasses = React.addons.classSet({
+    /*var tabPortsClasses = React.addons.classSet({
       'tab': true,
       'active': this.state.page === this.PAGE_PORTS,
       disabled: this.props.container.State.Downloading
@@ -437,7 +436,7 @@ var ContainerDetails = React.createClass({
       'tab': true,
       'active': this.state.page === this.PAGE_VOLUMES,
       disabled: this.props.container.State.Downloading
-    });
+    });*/
 
     var tabSettingsClasses = React.addons.classSet({
       'tab': true,
@@ -451,7 +450,7 @@ var ContainerDetails = React.createClass({
         <div className="details-subheader">
           <div className="details-header-actions">
             <div className="action">
-              <span className="icon icon-play-2 action-icon" onClick={this.handleView}></span>
+              <span className="icon icon-play-2 action-icon run-icon" onClick={this.handleView}></span>
               <span className="btn-label">Run</span>
             </div>
             <div className="action">

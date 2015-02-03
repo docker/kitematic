@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var exec = require('exec');
 var path = require('path');
 var fs = require('fs');
@@ -54,7 +55,7 @@ var Boot2Docker = {
     return path.join(process.cwd(), 'resources', 'boot2docker-' + this.version());
   },
   exists: function (callback) {
-    cmdExec([Boot2Docker.command(), 'info'], function (err, out) {
+    cmdExec([Boot2Docker.command(), 'info'], function (err) {
       if (err) {
         callback(null, false);
       } else {
@@ -170,7 +171,7 @@ var Boot2Docker = {
     });
   },
   createScratchImage: function (callback) {
-    cmdExec([Boot2Docker.command(), 'ssh', 'tar cv --files-from /dev/null | docker import - scratch'], function (err, out) {
+    cmdExec([Boot2Docker.command(), 'ssh', 'tar cv --files-from /dev/null | docker import - scratch'], function (err) {
       callback(err);
     });
   },

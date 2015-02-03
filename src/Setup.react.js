@@ -1,12 +1,6 @@
 var React = require('react/addons');
 var Router = require('react-router');
 var Radial = require('./Radial.react.js');
-var async = require('async');
-var assign = require('object-assign');
-var fs = require('fs');
-var path = require('path');
-var virtualbox = require('./Virtualbox');
-var util = require('./Util');
 var SetupStore = require('./SetupStore');
 
 var Setup = React.createClass({
@@ -23,7 +17,7 @@ var Setup = React.createClass({
   componentDidMount: function () {
   },
   update: function () {
-    
+
   },
   render: function () {
     var radial;

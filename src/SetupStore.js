@@ -59,7 +59,7 @@ var SetupStore = assign(EventEmitter.prototype, {
         }
         var iconPath = path.join(setupUtil.resourceDir(), 'kitematic.icns');
         setupUtil.isSudo(function (err, isSudo) {
-          sudoCmd = isSudo ? ['sudo'] : [path.join(setupUtil.resourceDir(), 'cocoasudo'), '--icon=' + iconPath, '--prompt=Kitematic requires administrative privileges to install VirtualBox and copy itself to the Applications folder.'];
+          var sudoCmd = isSudo ? ['sudo'] : [path.join(setupUtil.resourceDir(), 'cocoasudo'), '--icon=' + iconPath, '--prompt=Kitematic requires administrative privileges to install VirtualBox and copy itself to the Applications folder.'];
           sudoCmd.push.apply(sudoCmd, ['installer', '-pkg', '/Volumes/VirtualBox/VirtualBox.pkg', '-target', '/']);
           exec(sudoCmd, function (stderr, stdout, code) {
             if (code) {
@@ -105,7 +105,7 @@ var SetupStore = assign(EventEmitter.prototype, {
   },
   cleanupKitematicStep: {
     run: function (callback) {
-      virtualbox.vmdestroy('kitematic-vm', function (err, removed) {
+      virtualbox.vmdestroy('kitematic-vm', function (err) {
         if (err) {
           console.log(err);
         }
@@ -129,7 +129,7 @@ var SetupStore = assign(EventEmitter.prototype, {
           } else {
             boot2docker.isoVersion(function (err, version) {
               if (err || setupUtil.compareVersions(version, boot2docker.version()) < 0) {
-                boot2docker.stop(function(err) {
+                boot2docker.stop(function() {
                   boot2docker.upgrade(function (err) {
                     callback(err);
                   });
@@ -147,7 +147,7 @@ var SetupStore = assign(EventEmitter.prototype, {
   },
   startBoot2DockerStep: {
     run: function (callback) {
-      boot2docker.waitWhileStatus('saving', function (err) {
+      boot2docker.waitWhileStatus('saving', function () {
         boot2docker.status(function (err, status) {
           if (err) {callback(err); return;}
           if (status !== 'running') {

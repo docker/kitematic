@@ -1,10 +1,14 @@
+var async = require('async');
 var _ = require('underscore');
 var $ = require('jquery');
 var React = require('react/addons');
 var Router = require('react-router');
-var remote = require('remote');
-var dialog = remote.require('dialog');
-var ContainerStore = require('./ContainerStore');
+var Modal = require('react-bootstrap/Modal');
+var RetinaImage = require('react-retina-image');
+var ModalTrigger = require('react-bootstrap/ModalTrigger');
+var ContainerModal = require('./ContainerModal.react');
+var Header = require('./Header.react');
+var docker = require('./docker');
 
 var ContainerListItem = React.createClass({
   componentWillMount: function () {
@@ -17,18 +21,6 @@ var ContainerListItem = React.createClass({
   handleItemMouseLeave: function () {
     var $action = $(this.getDOMNode()).find('.action');
     $action.hide();
-  },
-  handleDeleteContainer: function () {
-    dialog.showMessageBox({
-      message: 'Are you sure you want to delete this container?',
-      buttons: ['Delete', 'Cancel']
-    }, function (index) {
-      if (index === 0) {
-        ContainerStore.remove(this.props.container.Name, function (err) {
-          console.error(err);
-        });
-      }
-    }.bind(this));
   },
   render: function () {
     var self = this;
@@ -81,7 +73,7 @@ var ContainerListItem = React.createClass({
             </div>
           </div>
           <div className="action">
-            <span className="icon icon-delete-3 btn-delete" onClick={this.handleDeleteContainer}></span>
+            <span className="icon icon-delete-3 btn-delete"></span>
           </div>
         </li>
       </Router.Link>

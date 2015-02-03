@@ -4,14 +4,12 @@ var EventEmitter = require('events').EventEmitter;
 var async = require('async');
 var path = require('path');
 var assign = require('object-assign');
-var Stream = require('stream');
 var Convert = require('ansi-to-html');
 var docker = require('./Docker');
 var registry = require('./Registry');
 var ContainerUtil = require('./ContainerUtil');
 
 var convert = new Convert();
-
 var _recommended = [];
 var _containers = {};
 var _progress = {};
@@ -35,7 +33,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
             return;
           }
           stream.setEncoding('utf8');
-          stream.on('data', function (data) {});
+          stream.on('data', function () {});
           stream.on('end', function () {
             callback();
           });
@@ -120,8 +118,8 @@ var ContainerStore = assign(EventEmitter.prototype, {
     if (containerData.Config && containerData.Config.Image) {
       containerData.Image = containerData.Config.Image;
     }
-    existing.kill(function (err, data) {
-      existing.remove(function (err, data) {
+    existing.kill(function () {
+      existing.remove(function () {
         docker.client().getImage(containerData.Image).inspect(function (err, data) {
           var binds = [];
           if (data.Config.Volumes) {
@@ -170,7 +168,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
         ],
         Cmd: 'placeholder',
         name: name
-      }, function (err, container) {
+      }, function (err) {
         if (err) {
           callback(err);
           return;
@@ -203,7 +201,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
     downloading.forEach(function (container) {
       docker.client().pull(container.KitematicDownloadingImage, function (err, stream) {
         stream.setEncoding('utf8');
-        stream.on('data', function (data) {});
+        stream.on('data', function () {});
         stream.on('end', function () {
           self._createContainer(container.Name, {Image: container.KitematicDownloadingImage}, function () {});
         });
@@ -259,7 +257,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
       this._resumePulling();
       this._startListeningToEvents();
     }.bind(this));
-    this.fetchRecommended(function (err) {
+    this.fetchRecommended(function () {
       this.emit(this.CLIENT_RECOMMENDED_EVENT);
     }.bind(this));
   },
@@ -280,7 +278,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
         container.State.Downloading = !!env.KITEMATIC_DOWNLOADING;
         container.KitematicDownloadingImage = env.KITEMATIC_DOWNLOADING_IMAGE;
 
-        this.fetchLogs(container.Name, function (err) {
+        this.fetchLogs(container.Name, function () {
         }.bind(this));
 
         _containers[container.Name] = container;
@@ -299,7 +297,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
         self.fetchContainer(container.Id, function (err) {
           callback(err);
         });
-      }, function (err, results) {
+      }, function (err) {
         callback(err);
       });
     });
@@ -308,11 +306,10 @@ var ContainerStore = assign(EventEmitter.prototype, {
     if (_recommended.length) {
      return;
    }
-    var self = this;
     $.ajax({
       url: 'https://kitematic.com/recommended.json',
       dataType: 'json',
-      success: function (res, status) {
+      success: function (res) {
         var recommended = res.recommended;
         async.map(recommended, function (repository, callback) {
           $.get('https://registry.hub.docker.com/v1/search?q=' + repository, function (data) {
@@ -354,7 +351,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
       stream.on('data', function (buf) {
         // Every other message is a header
         if (index % 2 === 1) {
-          var time = buf.substr(0,buf.indexOf(' '));
+          //var time = buf.substr(0,buf.indexOf(' '));
           var msg = buf.substr(buf.indexOf(' ')+1);
           if (timeout) {
             clearTimeout(timeout);
@@ -393,7 +390,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
           _muted[containerName] = true;
           _progress[containerName] = 0;
           self._pullImage(repository, tag, function () {
-            self._createContainer(containerName, {Image: imageName}, function (err, container) {
+            self._createContainer(containerName, {Image: imageName}, function () {
               delete _progress[containerName];
               _muted[containerName] = false;
               self.emit(self.CLIENT_CONTAINER_EVENT, containerName);
@@ -406,7 +403,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
         });
       } else {
         // If not then directly create the container
-        self._createContainer(containerName, {Image: imageName}, function (err, container) {
+        self._createContainer(containerName, {Image: imageName}, function () {
           self.emit(ContainerStore.CLIENT_CONTAINER_EVENT, containerName, 'create');
           callback(null, containerName);
         });
@@ -432,7 +429,6 @@ var ContainerStore = assign(EventEmitter.prototype, {
     });
   },
   remove: function (name, callback) {
-    var self = this;
     var container = docker.client().getContainer(name);
     if (_containers[name].State.Paused) {
       container.unpause(function (err) {
