@@ -1,14 +1,14 @@
+var $ = require('jquery');
+var _ = require('underscore');
 var EventEmitter = require('events').EventEmitter;
 var async = require('async');
 var path = require('path');
 var assign = require('object-assign');
 var Stream = require('stream');
 var Convert = require('ansi-to-html');
-var docker = require('./docker');
-var registry = require('./registry');
+var docker = require('./Docker');
+var registry = require('./Registry');
 var ContainerUtil = require('./ContainerUtil');
-var $ = require('jquery');
-var _ = require('underscore');
 
 var convert = new Convert();
 
@@ -18,7 +18,6 @@ var _progress = {};
 var _logs = {};
 var _streams = {};
 var _muted = {};
-var _config = {};
 
 var ContainerStore = assign(EventEmitter.prototype, {
   CLIENT_CONTAINER_EVENT: 'client_container',
@@ -226,14 +225,14 @@ var ContainerStore = assign(EventEmitter.prototype, {
     // If the event is delete, remove the container
     if (data.status === 'destroy') {
       var container = _.findWhere(_.values(_containers), {Id: data.id});
-      if (!container) {
-        return;
+      if (container) {
+        delete _containers[container.Name];
+        if (!_muted[container.Name]) {
+          this.emit(this.SERVER_CONTAINER_EVENT, container.Name, data.status);
+        }
+      } else {
+        this.emit(this.SERVER_CONTAINER_EVENT, data.status);
       }
-      delete _containers[container.Name];
-      if (_muted[container.Name]) {
-        return;
-      }
-      this.emit(this.SERVER_CONTAINER_EVENT, container.Name, data.status);
     } else {
       this.fetchContainer(data.id, function (err) {
         if (err) {
@@ -250,7 +249,12 @@ var ContainerStore = assign(EventEmitter.prototype, {
   init: function (callback) {
     // TODO: Load cached data from db on loading
     this.fetchAllContainers(function (err) {
-      callback();
+      if (err) {
+        callback(err);
+        return;
+      } else {
+        callback();
+      }
       this.emit(this.CLIENT_CONTAINER_EVENT);
       this._resumePulling();
       this._startListeningToEvents();
@@ -366,7 +370,6 @@ var ContainerStore = assign(EventEmitter.prototype, {
       });
       stream.on('end', function () {
         delete _streams[name];
-        console.log('end', name);
       });
     });
   },
@@ -381,6 +384,10 @@ var ContainerStore = assign(EventEmitter.prototype, {
       if (!data) {
         // Pull image
         self._createPlaceholderContainer(imageName, containerName, function (err, container) {
+          if (err) {
+            callback(err);
+            return;
+          }
           _containers[containerName] = container;
           self.emit(self.CLIENT_CONTAINER_EVENT, containerName, 'create');
           _muted[containerName] = true;

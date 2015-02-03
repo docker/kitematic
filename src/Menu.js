@@ -3,7 +3,7 @@ var app = remote.require('app');
 var Menu = remote.require('menu');
 var MenuItem = remote.require('menu-item');
 var BrowserWindow = remote.require('browser-window');
-var router = require('./router');
+var router = require('./Router');
 
 // main.js
 var template = [
