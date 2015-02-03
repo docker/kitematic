@@ -19,16 +19,18 @@ if (argv.integration) {
   process.env.TEST_TYPE = 'test';
 }
 
+var windowOptions = {
+  width: 1000,
+  height: 700,
+  'min-width': 1000,
+  'min-height': 700,
+  resizable: true,
+  frame: false,
+  show: false
+};
+
 app.on('activate-with-no-open-windows', function () {
-  var mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 700,
-    'min-width': 1000,
-    'min-height': 700,
-    resizable: true,
-    frame: false,
-    show: false
-  });
+  var mainWindow = new BrowserWindow(windowOptions);
   if (mainWindow) {
     mainWindow.show();
   }
@@ -36,15 +38,7 @@ app.on('activate-with-no-open-windows', function () {
 });
 
 app.on('ready', function() {
-  var mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 700,
-    'min-width': 1000,
-    'min-height': 700,
-    resizable: true,
-    frame: false,
-    show: false
-  });
+  var mainWindow = new BrowserWindow(windowOptions);
   if (argv.test) {
     mainWindow.loadUrl('file://' + __dirname + '/../tests/tests.html');
   } else {

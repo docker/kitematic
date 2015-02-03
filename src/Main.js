@@ -16,11 +16,11 @@ if (process.env.NODE_ENV === 'development') {
 if (!window.location.hash.length || window.location.hash === '#/') {
   SetupStore.run(function () {
     boot2docker.ip(function (err, ip) {
-      if (err) console.log(err);
+      if (err) { console.log(err); }
       docker.setHost(ip);
       router.transitionTo('containers');
       ContainerStore.init(function (err) {
-        if (err) console.log(err);
+        if (err) { console.log(err); }
         router.run(function (Handler) {
           React.render(<Handler/>, document.body);
         });
@@ -29,10 +29,10 @@ if (!window.location.hash.length || window.location.hash === '#/') {
   });
 } else {
   boot2docker.ip(function (err, ip) {
-    if (err) console.log(err);
+    if (err) { console.log(err); }
     docker.setHost(ip);
     ContainerStore.init(function (err) {
-      if (err) console.log(err);
+      if (err) { console.log(err); }
       router.run(function (Handler) {
         React.render(<Handler/>, document.body);
       });

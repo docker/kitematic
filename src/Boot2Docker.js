@@ -131,8 +131,8 @@ var Boot2Docker = {
         var totalGb = parseInt(tokens[3], 10) / 1000000;
         var percent = parseInt(tokens[4].replace('%', ''), 10);
         callback(null, {
-          used_gb: usedGb.toFixed(2),
-          total_gb: totalGb.toFixed(2),
+          usedGb: usedGb.toFixed(2),
+          totalGb: totalGb.toFixed(2),
           percent: percent
         });
       } catch (error) {
@@ -160,9 +160,9 @@ var Boot2Docker = {
         var totalGb = usedGb + freeGb;
         var percent = Math.round(usedGb / totalGb * 100);
         callback(null, {
-          used_gb: usedGb.toFixed(2),
-          total_gb: totalGb.toFixed(2),
-          free_gb: freeGb.toFixed(2),
+          usedGb: usedGb.toFixed(2),
+          totalGb: totalGb.toFixed(2),
+          freeGb: freeGb.toFixed(2),
           percent: percent
         });
       } catch (error) {
