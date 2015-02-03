@@ -308,7 +308,7 @@
         flex-direction: row;
         position: relative;
         //border-top: 1px solid #EEE;
-        border-bottom: 1px solid #EEE;
+        border-bottom: 1px solid #DCE2E2;
         background-color: #F9F9F9;
         height: 57px;
         padding: 6px 10px 10px 24px;
@@ -377,6 +377,7 @@
           flex: 1 auto;
           text-align: right;
           margin-right: 3px;
+          margin-top: 6px;
           .tab {
             margin-left: 16px;
             padding: 3px 10px;
@@ -387,8 +388,10 @@
             }
             &.active {
               background-color: #D2EEF8;
-              border-radius: 4px;
+              background-color: @brand-action;
+              border-radius: 40px;
               color: #365B64;
+              color: white;
             }
           }
         }
@@ -459,7 +462,7 @@
       .details-panel {
         flex: 1;
         overflow: auto;
-        background-color: white;
+        background-color: #FFF;
         .logs {
           -webkit-user-select: text;
           font-family: Menlo;
