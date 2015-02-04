@@ -16,8 +16,9 @@
     "test:integration": "gulp test --silent --integration",
     "all-tests": "npm test && npm run integration-tests",
     "release": "gulp run release",
+    "release:beta": "gulp release --beta",
     "preinstall": "./deps",
-    "lint": "jsxhint src/**/*"
+    "lint": "jsxhint src/"
   },
   "licenses": [
     {
@@ -33,7 +34,7 @@
     ]
   },
   "boot2docker-version": "1.4.1",
-  "atom-shell-version": "0.21.0",
+  "atom-shell-version": "0.20.0",
   "virtualbox-version": "4.3.20",
   "virtualbox-filename": "VirtualBox-4.3.20-96996-OSX.dmg",
   "virtualbox-required-version": "4.3.18",
@@ -56,7 +57,8 @@
     "request": "^2.51.0",
     "request-progress": "0.3.1",
     "retina.js": "^1.1.0",
-    "underscore": "^1.7.0"
+    "underscore": "^1.7.0",
+    "rimraf": "^2.2.8"
   },
   "devDependencies": {
     "browserify": "^6.2.0",
@@ -81,7 +83,6 @@
     "gulp-uglifyjs": "^0.5.0",
     "gulp-util": "^3.0.0",
     "reactify": "^0.15.2",
-    "rimraf": "^2.2.8",
     "run-sequence": "^1.0.2",
     "time-require": "^0.1.2",
     "vinyl-source-stream": "^0.1.1",

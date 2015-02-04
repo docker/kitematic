@@ -1,13 +1,13 @@
 var path = require('path');
 var exec = require('exec');
-
+var fs = require('fs');
 var autoUpdater = require('auto-updater');
 var app = require('app');
 var BrowserWindow = require('browser-window');
 var ipc = require('ipc');
 
 var argv = require('minimist')(process.argv);
-var saveVMOnQuit = false;
+var settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
 
 process.env.NODE_PATH = __dirname + '/../node_modules';
 process.env.RESOURCES_PATH = __dirname + '/../resources';
@@ -39,10 +39,11 @@ app.on('activate-with-no-open-windows', function () {
 
 app.on('ready', function() {
   var mainWindow = new BrowserWindow(windowOptions);
+  var saveVMOnQuit = false;
   if (argv.test) {
-    mainWindow.loadUrl('file://' + __dirname + '/../tests/tests.html');
+    mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'tests/tests.html')));
   } else {
-    mainWindow.loadUrl('file://' + __dirname + '/../build/index.html');
+    mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/index.html')));
     app.on('will-quit', function () {
       if (saveVMOnQuit) {
         exec('VBoxManage controlvm boot2docker-vm savestate', function () {});
@@ -63,7 +64,7 @@ app.on('ready', function() {
 
     // Auto Updates
     if (process.env.NODE_ENV !== 'development' && !argv.test) {
-      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion());
+      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion() + '&beta=' + settingsjson.beta);
 
       autoUpdater.on('checking-for-update', function () {
         console.log('Checking for update...');
