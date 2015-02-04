@@ -12,3 +12,5 @@ resources/boot2docker*
 
 # Cache
 cache
+
+resources/settings*

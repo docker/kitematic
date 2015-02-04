@@ -1,11 +1,11 @@
 .popover {
 
   &.popover-view {
-    min-width: 290px;
+    min-width: 364px;
   }
 
   &.popover-volume {
-    min-width: 400px;
+    min-width: 480px;
   }
 
   .popover-content {
@@ -165,8 +165,8 @@
             flex-shrink: 0;
             cursor: default;
             outline: none;
-
             &.active {
+              background: @brand-primary;
               li {
                 border-bottom: none;
                 background-image: linear-gradient(-180deg, #24B8EB 4%, #24A3EB 100%);
@@ -488,6 +488,11 @@
           border-bottom: 1px solid transparent;
           transition: border-bottom 0.25s;
           .action {
+
+            a {
+              -webkit-transition: none;
+            }
+            transition: none;
             flex: 0 auto;
             margin-right: 24px;
           }
@@ -505,6 +510,7 @@
 
       .details-progress {
         margin: 26% auto 0;
+        text-align: center;
         width: 300px;
       }
 

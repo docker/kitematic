@@ -12,7 +12,7 @@ var Docker = {
       return;
     }
     this._client = new dockerode({
-      host: '192.168.59.103',
+      host: host,
       port: 2376,
       ca: fs.readFileSync(path.join(certDir, 'ca.pem')),
       cert: fs.readFileSync(path.join(certDir, 'cert.pem')),

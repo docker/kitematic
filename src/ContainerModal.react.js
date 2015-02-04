@@ -77,18 +77,17 @@ var ContainerModal = React.createClass({
       }, 200);
     }
   },
-  handleClick: function (name) {
-    ContainerStore.create(name, 'latest', function (err) {
+  handleClick: function (name, event) {
+    this.props.onRequestHide();
+    ContainerStore.create(name, 'latest', function (err, containerName) {
       if (err) {
         throw err;
       }
-      this.props.onRequestHide();
     }.bind(this));
   },
-  handleTagClick: function (tag, name) {
-    ContainerStore.create(name, tag, function () {
-      this.props.onRequestHide();
-    }.bind(this));
+  handleTagClick: function (tag, name, event) {
+    this.props.onRequestHide();
+    ContainerStore.create(name, tag, function (err, containerName) {});
   },
   handleDropdownClick: function (name) {
     this.setState({
