@@ -42,7 +42,10 @@ if (!window.location.hash.length || window.location.hash === '#/') {
     React.render(<Handler/>, document.body);
   });
   SetupStore.run(function (err) {
-    router.transitionTo('setup');
+    if (err) {
+      bugsnag.notify(err);
+      return;
+    }
     boot2docker.ip(function (err, ip) {
       if (err) console.log(err);
       docker.setHost(ip);
@@ -52,14 +55,14 @@ if (!window.location.hash.length || window.location.hash === '#/') {
     });
   });
 } else {
+  router.run(function (Handler) {
+    React.render(<Handler/>, document.body);
+  });
   boot2docker.ip(function (err, ip) {
     if (err) console.log(err);
     docker.setHost(ip);
     ContainerStore.init(function (err) {
       if (err) console.log(err);
-      router.run(function (Handler) {
-        React.render(<Handler/>, document.body);
-      });
     });
   });
 }
