@@ -11,7 +11,7 @@ var packagejson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package
 
 var _currentStep = null;
 var _progress = 0;
-var _error = error;
+var _error = null;
 
 var SetupStore = assign(EventEmitter.prototype, {
   PROGRESS_EVENT: 'setup_progress',
@@ -165,7 +165,11 @@ var SetupStore = assign(EventEmitter.prototype, {
     name: 'start_boot2docker',
   },
   stepName: function () {
-    return _currentStep.name;
+    if (_currentStep) {
+      return _currentStep.name;
+    } else {
+      return '';
+    }
   },
   stepProgress: function () {
     return _progress;
