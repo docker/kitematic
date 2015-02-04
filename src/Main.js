@@ -14,6 +14,9 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 if (!window.location.hash.length || window.location.hash === '#/') {
+  router.run(function (Handler) {
+    React.render(<Handler/>, document.body);
+  });
   SetupStore.run(function () {
     boot2docker.ip(function (err, ip) {
       if (err) { console.log(err); }
@@ -21,21 +24,18 @@ if (!window.location.hash.length || window.location.hash === '#/') {
       router.transitionTo('containers');
       ContainerStore.init(function (err) {
         if (err) { console.log(err); }
-        router.run(function (Handler) {
-          React.render(<Handler/>, document.body);
-        });
       });
     });
   });
 } else {
+  router.run(function (Handler) {
+    React.render(<Handler/>, document.body);
+  });
   boot2docker.ip(function (err, ip) {
     if (err) { console.log(err); }
     docker.setHost(ip);
     ContainerStore.init(function (err) {
       if (err) { console.log(err); }
-      router.run(function (Handler) {
-        React.render(<Handler/>, document.body);
-      });
     });
   });
 }
