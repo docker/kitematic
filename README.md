@@ -14,7 +14,6 @@ Kitematic's documentation and other information can be found at [http://kitemati
 
 ### Development
 
-- `sudo npm install -g less`
 - `npm install`
 
 To run the app in development:
