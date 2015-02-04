@@ -400,14 +400,12 @@ var ContainerDetails = React.createClass({
     } else {
       if (this.state.page === this.PAGE_HOME) {
         body = (
-          <ContainerHome />
+          <ContainerHome ports={this.state.ports} defaultPort={this.state.defaultPort} logs={logs} />
         );
       } else if (this.state.page === this.PAGE_LOGS) {
         body = (
-          <div className="details-panel details-logs">
-            <div className="logs">
-              {logs}
-            </div>
+          <div className="details-panel details-logs logs">
+            {logs}
           </div>
         );
       } else if (this.state.page === this.PAGE_PORTS) {

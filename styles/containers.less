@@ -633,15 +633,43 @@
         flex: 1;
         overflow: auto;
         background-color: #FFF;
-        .logs {
+        &.home {
+          background-color: #F9F9F9;
+          flex: 1;
+          .widget {
+            border-radius: 4px;
+            border: 1px solid @gray-lightest;
+            &.web-preview {
+              iframe {
+                border: 0;
+                border-radius: 4px;
+              }
+            }
+            &.mini-logs {
+              background-color: @gray-darkest;
+              color: @gray-lightest;
+              padding: 10px;
+              width: 300px;
+              height: 300px;
+              overflow: hidden;
+              font-family: Menlo;
+              font-size: 8px;
+              p {
+                margin-bottom: 5px;
+              }
+            }
+          }
+        }
+        &.logs {
+          background-color: @gray-darkest;
           -webkit-user-select: text;
           font-family: Menlo;
           font-size: 12px;
           padding: 20px 18px;
-          color: lighten(@gray-normal, 6%);
+          color: @gray-lightest;
           white-space: pre-wrap;
           p {
-            margin: 0 6px;
+            margin-bottom: 8px;
           }
         }
         .settings {
