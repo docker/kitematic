@@ -16,7 +16,8 @@
     "test:integration": "gulp test --silent --integration",
     "all-tests": "npm test && npm run integration-tests",
     "release": "gulp run release",
-    "preinstall": "./deps"
+    "preinstall": "./deps",
+    "lint": "jsxhint src/**/*"
   },
   "licenses": [
     {

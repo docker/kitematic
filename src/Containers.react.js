@@ -5,6 +5,7 @@ var ContainerModal = require('./ContainerModal.react');
 var ContainerStore = require('./ContainerStore');
 var ContainerList = require('./ContainerList.react');
 var Header = require('./Header.react');
+var router = require('./Router');
 
 var Containers = React.createClass({
   mixins: [Router.Navigation, Router.State],
@@ -61,6 +62,9 @@ var Containers = React.createClass({
       });
     }
   },
+  handleNewContainer: function () {
+    this.transitionTo('new');
+  },
   render: function () {
     var sidebarHeaderClass = 'sidebar-header';
     if (this.state.sidebarOffset) {
@@ -76,9 +80,7 @@ var Containers = React.createClass({
             <section className={sidebarHeaderClass}>
               <h4>Containers</h4>
               <div className="create">
-                <ModalTrigger modal={<ContainerModal/>}>
-                  <span className="btn-new icon icon-add-3"></span>
-                </ModalTrigger>
+                <span className="btn-new icon icon-add-3" onClick={this.handleNewContainer}></span>
               </div>
             </section>
             <section className="sidebar-containers" onScroll={this.handleScroll}>
