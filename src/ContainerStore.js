@@ -118,11 +118,11 @@ var ContainerStore = assign(EventEmitter.prototype, {
     if (containerData.Config && containerData.Config.Image) {
       containerData.Image = containerData.Config.Image;
     }
-    existing.kill(function (err, data) {
+    existing.kill(function (err) {
       if (err) {
         console.log(err);
       }
-      existing.remove(function (err, data) {
+      existing.remove(function (err) {
         if (err) {
           console.log(err);
         }
@@ -386,7 +386,6 @@ var ContainerStore = assign(EventEmitter.prototype, {
     var self = this;
     var imageName = repository + ':' + tag;
     var containerName = this._generateName(repository);
-    var image = docker.client().getImage(imageName);
     // Pull image
     self._createPlaceholderContainer(imageName, containerName, function (err, container) {
       if (err) {
@@ -398,7 +397,7 @@ var ContainerStore = assign(EventEmitter.prototype, {
       _muted[containerName] = true;
       _progress[containerName] = 0;
       self._pullImage(repository, tag, function () {
-        self._createContainer(containerName, {Image: imageName}, function (err, container) {
+        self._createContainer(containerName, {Image: imageName}, function () {
           delete _progress[containerName];
           _muted[containerName] = false;
           self.emit(self.CLIENT_CONTAINER_EVENT, containerName);

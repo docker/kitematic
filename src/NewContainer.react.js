@@ -2,6 +2,7 @@ var $ = require('jquery');
 var React = require('react/addons');
 var RetinaImage = require('react-retina-image');
 var ContainerStore = require('./ContainerStore');
+var assign = require('object-assign');
 
 var NewContainer = React.createClass({
   _searchRequest: null,
@@ -71,7 +72,92 @@ var NewContainer = React.createClass({
       }, 200);
     }
   },
+  handleClick: function (name) {
+    ContainerStore.create(name, 'latest', function (err) {
+      if (err) {
+        throw err;
+      }
+    }.bind(this));
+  },
+  handleDropdownClick: function (name) {
+    this.setState({
+      active: name
+    });
+    if (this.state.tags[name]) {
+      return;
+    }
+    $.get('https://registry.hub.docker.com/v1/repositories/' + name + '/tags', function (result) {
+      var res = {};
+      res[name] = result;
+      console.log(assign(this.state.tags, res));
+      this.setState({
+        tags: assign(this.state.tags, res)
+      });
+    }.bind(this));
+  },
   render: function () {
+    var self = this;
+    var title = this.state.query ? 'Results' : 'Recommended';
+    var data = this.state.results.slice(0, 7);
+
+    var results;
+    if (data.length) {
+      var items = data.map(function (r) {
+        var name;
+        if (r.is_official) {
+          name = <span><RetinaImage src="official.png"/>{r.name}</span>;
+        } else {
+          name = <span>{r.name}</span>;
+        }
+        var description;
+        if (r.description) {
+          description = r.description;
+        } else {
+          description = "No description.";
+        }
+        return (
+          <div key={r.name} className="image-item">
+            <div className="logo">
+            </div>
+            <div className="card">
+              <div className="name">
+                {name}
+              </div>
+              <div className="description">
+                {description}
+              </div>
+              <div className="actions">
+                <div className="stars">
+                  <span className="icon icon-star-9"></span>
+                  <span className="text">{r.star_count}</span>
+                </div>
+                <div className="tags">
+                  <span className="icon icon-tag-1"></span>
+                  <span className="text">latest</span>
+                </div>
+                <div className="action">
+                  <a className="btn btn-action" onClick={self.handleClick.bind(self, r.name)}>Create</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      });
+
+      results = (
+        <div className="result-grid">
+          {items}
+        </div>
+      );
+    } else {
+      results = (
+        <div className="no-results">
+          <h3>
+            No Results
+          </h3>
+        </div>
+      );
+    }
     var loadingClasses = React.addons.classSet({
       hidden: !this.state.loading,
       loading: true
@@ -97,6 +183,10 @@ var NewContainer = React.createClass({
                   <RetinaImage className={loadingClasses} src="loading.png"/>
                 </div>
               </div>
+            </div>
+            <div className="results">
+              <h4>{title}</h4>
+              {results}
             </div>
           </div>
         </div>

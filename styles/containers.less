@@ -19,9 +19,109 @@
   }
 }
 
+.result-grid {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  margin-top: 20px;
+  overflow: auto;
+  .image-item {
+    display: flex;
+    .logo {
+      min-width: 90px;
+      height: 100%;
+      background-color: @brand-action;
+    }
+    .card {
+      padding: 10px 20px 10px 20px;
+      .name {
+        font-size: 18px;
+        color: @gray-darkest;
+        margin-bottom: 5px;
+        img {
+          margin-right: 7px;
+          position: relative;
+          top: -1px;
+        }
+      }
+      .description {
+        font-size: 12px;
+        color: @gray-normal;
+        height: 70px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 4;
+        display: -webkit-box;
+        word-wrap: break-word;
+      }
+      .actions {
+        width: 190px;
+        padding-top: 25px;
+        .stars {
+          height: 15px;
+          font-size: 10px;
+          color: @gray-darker;
+          border-right: 1px solid @gray-lightest;
+          padding-right: 10px;
+          .icon {
+            position: relative;
+            font-size: 16px;
+            margin-right: 3px;
+            top: -1px;
+            color: @gray-darkest;
+          }
+          .text {
+            position: relative;
+            top: -6px;
+          }
+        }
+        .tags {
+          height: 15px;
+          font-size: 10px;
+          color: @gray-darker;
+          padding-left: 10px;
+          .icon {
+            position: relative;
+            font-size: 11px;
+            margin-right: 5px;
+            top: 2px;
+            color: @gray-darkest;
+          }
+          .text {
+            position: relative;
+            top: 0px;
+          }
+        }
+        .action {
+          flex: 1 auto;
+          .btn {
+            text-align: right;
+            position: relative;
+            float: right;
+            top: -7px;
+          }
+        }
+        display: flex;
+        flex-direaction: row;
+        position: relative;
+        bottom: 0px;
+      }
+    }
+    width: 320px;
+    height: 170px;
+    border-radius: 4px;
+    border: 1px solid @gray-lightest;
+    background-color: white;
+    margin-right: 20px;
+    margin-bottom: 20px;
+  }
+}
+
 .new-container {
   padding: 35px 20px 32px 25px;
   .new-container-header {
+    margin-bottom: 20px;
     display: flex;
     flex: 1;
     .text {
@@ -160,6 +260,13 @@
           display: flex;
           flex-direction: column;
 
+          .new-container-item {
+            .info {
+              position: relative;
+              top: 9px;
+            }
+          }
+
           a {
             color: inherit;
             flex-shrink: 0;
@@ -168,6 +275,7 @@
             &.active {
               background: @brand-primary;
               li {
+                height: 57px;
                 border-bottom: none;
                 background-image: linear-gradient(-180deg, #24B8EB 4%, #24A3EB 100%);
                 .name {
@@ -187,6 +295,9 @@
                     color: white;
                   }
                 }
+                .state-new {
+                  .at2x('container-white.png', 20px, 20px);
+                }
                 .state-running {
                   .at2x('running-white.png', 20px, 20px);
 
@@ -197,7 +308,6 @@
                 .state-stopped {
                   .at2x('stopped-white.png', 20px, 20px);
                 }
-
                 .state-downloading {
                   .at2x('downloading-white.png', 20px, 20px);
 
@@ -223,6 +333,7 @@
 
             display: flex;
             flex-direction: row;
+            height: 57px;
 
 
             .info {
@@ -281,6 +392,10 @@
 
             .state-paused {
               .at2x('paused.png', 20px, 20px);
+            }
+
+            .state-new {
+              .at2x('container.png', 20px, 20px);
             }
 
             .state-downloading {
