@@ -98,7 +98,7 @@ var NewContainer = React.createClass({
   render: function () {
     var self = this;
     var title = this.state.query ? 'Results' : 'Recommended';
-    var data = this.state.results.slice(0, 7);
+    var data = this.state.results.slice(0, 6);
 
     var results;
     if (data.length) {
