@@ -1,11 +1,9 @@
+var $ = require('jquery');
 var React = require('react/addons');
 var Router = require('react-router');
-var ModalTrigger = require('react-bootstrap/ModalTrigger');
-var ContainerModal = require('./ContainerModal.react');
 var ContainerStore = require('./ContainerStore');
 var ContainerList = require('./ContainerList.react');
 var Header = require('./Header.react');
-var router = require('./Router');
 
 var Containers = React.createClass({
   mixins: [Router.Navigation, Router.State],
@@ -13,7 +11,7 @@ var Containers = React.createClass({
     return {
       sidebarOffset: 0,
       containers: ContainerStore.containers(),
-      sorted: ContainerStore.sorted(),
+      sorted: ContainerStore.sorted()
     };
   },
   componentDidMount: function () {
@@ -63,6 +61,8 @@ var Containers = React.createClass({
     }
   },
   handleNewContainer: function () {
+    console.log($(this.getDOMNode()).find('.new-container-item'));
+    $(this.getDOMNode()).find('.new-container-item').parent().fadeIn();
     this.transitionTo('new');
   },
   render: function () {
@@ -84,7 +84,7 @@ var Containers = React.createClass({
               </div>
             </section>
             <section className="sidebar-containers" onScroll={this.handleScroll}>
-              <ContainerList containers={this.state.sorted}/>
+              <ContainerList containers={this.state.sorted} newContainer={this.state.newContainer} />
             </section>
           </div>
           <Router.RouteHandler container={container}/>

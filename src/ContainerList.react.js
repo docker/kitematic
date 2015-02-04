@@ -1,5 +1,6 @@
 var React = require('react/addons');
 var ContainerListItem = require('./ContainerListItem.react');
+var ContainerListNewItem = require('./ContainerListNewItem.react');
 
 var ContainerList = React.createClass({
   render: function () {
@@ -11,6 +12,7 @@ var ContainerList = React.createClass({
     });
     return (
       <ul>
+        <ContainerListNewItem containers={this.props.containers} />
         {containers}
       </ul>
     );

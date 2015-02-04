@@ -34,7 +34,7 @@
     ]
   },
   "boot2docker-version": "1.4.1",
-  "atom-shell-version": "0.20.0",
+  "atom-shell-version": "0.21.1",
   "virtualbox-version": "4.3.20",
   "virtualbox-filename": "VirtualBox-4.3.20-96996-OSX.dmg",
   "virtualbox-required-version": "4.3.18",
