@@ -10,8 +10,8 @@ var setupUtil = require('./SetupUtil');
 var packagejson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
 
 var _currentStep = null;
-var _error = null;
 var _progress = 0;
+var _error = error;
 
 var SetupStore = assign(EventEmitter.prototype, {
   PROGRESS_EVENT: 'setup_progress',
@@ -170,6 +170,9 @@ var SetupStore = assign(EventEmitter.prototype, {
   stepProgress: function () {
     return _progress;
   },
+  error: function () {
+    return _error;
+  },
   run: function (callback) {
     var self = this;
     var steps = [this.downloadVirtualboxStep, this.installVirtualboxStep, this.cleanupKitematicStep, this.initBoot2DockerStep, this.startBoot2DockerStep];
@@ -189,8 +192,9 @@ var SetupStore = assign(EventEmitter.prototype, {
         self.emit(self.PROGRESS_EVENT, progress);
       });
     }, function (err) {
+      _error = err;
       if (err) {
-        self.emit(self.ERROR_EVENT, _error);
+        self.emit(self.ERROR_EVENT);
         callback(err);
       } else {
         callback();

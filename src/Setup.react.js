@@ -20,13 +20,16 @@ var Setup = React.createClass({
   componentWillMount: function () {
     SetupStore.on(SetupStore.PROGRESS_EVENT, this.update);
     SetupStore.on(SetupStore.STEP_EVENT, this.update);
+    SetupStore.on(SetupStore.ERROR_EVENT, this.update);
   },
   componentDidMount: function () {
+    this.update();
   },
   update: function () {
     this.setState({
       progress: SetupStore.stepProgress(),
-      step: SetupStore.stepName()
+      step: SetupStore.stepName(),
+      error: SetupStore.error()
     });
   },
   renderDownloadingVirtualboxStep: function () {
