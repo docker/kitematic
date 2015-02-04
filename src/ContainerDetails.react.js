@@ -65,7 +65,7 @@ var ContainerDetails = React.createClass({
     this.setState({
       progress: ContainerStore.progress(this.getParams().name),
       env: ContainerUtil.env(container),
-      page: this.PAGE_LOGS
+      page: this.PAGE_HOME
     });
     var ports = ContainerUtil.ports(container);
     var webPorts = ['80', '8000', '8080', '3000', '5000', '2368'];

@@ -7,9 +7,6 @@ var dialog = remote.require('dialog');
 var ContainerStore = require('./ContainerStore');
 
 var ContainerListItem = React.createClass({
-  componentWillMount: function () {
-    this._start = Date.now();
-  },
   handleItemMouseEnter: function () {
     var $action = $(this.getDOMNode()).find('.action');
     $action.show();
@@ -49,7 +46,7 @@ var ContainerListItem = React.createClass({
 
     // Synchronize all animations
     var style = {
-      WebkitAnimationDelay: (self._start - Date.now()) + 'ms'
+      WebkitAnimationDelay: (self.props.start - Date.now()) + 'ms'
     };
 
     var state;
