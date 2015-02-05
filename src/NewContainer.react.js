@@ -118,6 +118,7 @@ var NewContainer = React.createClass({
         return (
           <div key={r.name} className="image-item">
             <div className="logo">
+              <RetinaImage src={'https://kitematic.com/recommended/img/' + r.img}/>
             </div>
             <div className="card">
               <div className="name">

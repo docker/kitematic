@@ -425,7 +425,7 @@ var ContainerDetails = React.createClass({
     } else {
       if (this.state.page === this.PAGE_HOME) {
         body = (
-          <ContainerHome ports={this.state.ports} defaultPort={this.state.defaultPort} logs={logs} />
+          <ContainerHome ports={this.state.ports} defaultPort={this.state.defaultPort} logs={logs} container={this.props.container} />
         );
       } else if (this.state.page === this.PAGE_LOGS) {
         body = (
