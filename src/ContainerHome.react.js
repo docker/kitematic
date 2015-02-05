@@ -1,5 +1,8 @@
+var _ = require('underscore');
 var $ = require('jquery');
 var React = require('react/addons');
+var RetinaImage = require('react-retina-image');
+var path = require('path');
 
 var ContainerHome = React.createClass({
   handleResize: function () {
@@ -42,6 +45,21 @@ var ContainerHome = React.createClass({
         </div>
       );
     }
+    console.log(this.props.container.Volumes);
+    var folders = _.map(this.props.container.Volumes, function (val, key) {
+      var firstFolder = key.split(path.sep)[1];
+      if (!val || val.indexOf(process.env.HOME) === -1) {
+        return;
+      } else {
+        return (
+          <div key={key} className="folder">
+            <RetinaImage src="folder.png" />
+            <div className="text">{firstFolder}</div>
+          </div>
+        );
+      }
+
+    });
     return (
       <div className="details-panel home">
         <div className="content">
@@ -58,7 +76,7 @@ var ContainerHome = React.createClass({
             <div className="folders">
               <h4>Edit Files</h4>
               <div className="widget">
-                <p>Buncha folders</p>
+                {folders}
               </div>
             </div>
           </div>

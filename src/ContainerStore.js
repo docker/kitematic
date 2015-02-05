@@ -316,18 +316,19 @@ var ContainerStore = assign(EventEmitter.prototype, {
      return;
    }
     $.ajax({
-      url: 'https://kitematic.com/recommended.json',
+      url: 'https://kitematic.com/recommended/recommended.json',
       cache: false,
       dataType: 'json',
       success: function (res) {
         var recommended = res.recommended;
-        async.map(recommended, function (repository, callback) {
-          $.get('https://registry.hub.docker.com/v1/search?q=' + repository, function (data) {
+        async.map(recommended, function (rec, callback) {
+          $.get('https://registry.hub.docker.com/v1/search?q=' + rec.repo, function (data) {
             console.log(data);
             var results = data.results;
-            callback(null, _.find(results, function (r) {
-              return r.name === repository;
-            }));
+            var result = _.find(results, function (r) {
+              return r.name === rec.repo;
+            });
+            callback(null, _.extend(result, rec));
           });
         }, function (err, results) {
           _recommended = results.filter(function(r) { return !!r; });
