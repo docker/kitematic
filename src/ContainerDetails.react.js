@@ -14,6 +14,7 @@ var boot2docker = require('./Boot2Docker');
 var ProgressBar = require('react-bootstrap/ProgressBar');
 var ContainerDetailsHeader = require('./ContainerDetailsHeader.react');
 var ContainerHome = require('./ContainerHome.react');
+var RetinaImage = require('react-retina-image');
 
 var ContainerDetails = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -269,6 +270,30 @@ var ContainerDetails = React.createClass({
         });
       }
     }.bind(this));
+  },
+  handleItemMouseEnterRun: function () {
+    var $action = $(this.getDOMNode()).find('.action .run');
+    $action.css("visibility", "visible");
+  },
+  handleItemMouseLeaveRun: function () {
+    var $action = $(this.getDOMNode()).find('.action .run');
+    $action.css("visibility", "hidden");
+  },
+  handleItemMouseEnterRestart: function () {
+    var $action = $(this.getDOMNode()).find('.action .restart');
+    $action.css("visibility", "visible");
+  },
+  handleItemMouseLeaveRestart: function () {
+    var $action = $(this.getDOMNode()).find('.action .restart');
+    $action.css("visibility", "hidden");
+  },
+  handleItemMouseEnterTerminal: function () {
+    var $action = $(this.getDOMNode()).find('.action .terminal');
+    $action.css("visibility", "visible");
+  },
+  handleItemMouseLeaveTerminal: function () {
+    var $action = $(this.getDOMNode()).find('.action .terminal');
+    $action.css("visibility", "hidden");
   },
   render: function () {
     var self = this;
@@ -544,17 +569,17 @@ var ContainerDetails = React.createClass({
         <ContainerDetailsHeader container={this.props.container} />
         <div className="details-subheader">
           <div className="details-header-actions">
-            <div className="action">
-              <span className="icon icon-play-2 action-icon run-icon" onClick={this.handleView}></span>
-              <span className="btn-label">Run</span>
+            <div className="action" onMouseEnter={this.handleItemMouseEnterRun} onMouseLeave={this.handleItemMouseLeaveRun}>
+              <span className="action-icon" onClick={this.handleView}><RetinaImage src="button-run.png"/></span>
+              <span className="btn-label run">Run</span>
             </div>
-            <div className="action">
-              <span className="icon icon-refresh action-icon" onClick={this.handleRestart}></span>
-              <span className="btn-label">Restart</span>
+            <div className="action" onMouseEnter={this.handleItemMouseEnterRestart} onMouseLeave={this.handleItemMouseLeaveRestart}>
+              <span className="action-icon" onClick={this.handleRestart}><RetinaImage src="button-restart.png"/></span>
+              <span className="btn-label restart">Restart</span>
             </div>
-            <div className="action">
-              <span className="icon icon-window-code-3 action-icon" onClick={this.handleTerminal}></span>
-              <span className="btn-label">Terminal</span>
+            <div className="action" onMouseEnter={this.handleItemMouseEnterTerminal} onMouseLeave={this.handleItemMouseLeaveTerminal}>
+              <span className="action-icon" onClick={this.handleTerminal}><RetinaImage src="button-terminal.png"/></span>
+              <span className="btn-label terminal">Terminal</span>
             </div>
           </div>
           <div className="details-subheader-tabs">
