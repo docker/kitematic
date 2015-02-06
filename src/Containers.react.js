@@ -61,7 +61,6 @@ var Containers = React.createClass({
     }
   },
   handleNewContainer: function () {
-    console.log($(this.getDOMNode()).find('.new-container-item'));
     $(this.getDOMNode()).find('.new-container-item').parent().fadeIn();
     this.transitionTo('new');
   },

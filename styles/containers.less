@@ -23,10 +23,17 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: flex-start;
-  margin-top: 20px;
+  margin-top: 10px;
   overflow: auto;
   .image-item {
     display: flex;
+    width: 320px;
+    height: 170px;
+    border-radius: 4px;
+    border: 1px solid @gray-lightest;
+    background-color: white;
+    margin-right: 20px;
+    margin-bottom: 20px;
     .logo {
       flex: 1 auto;
       min-width: 90px;
@@ -113,22 +120,28 @@
         bottom: 0px;
       }
     }
-    width: 320px;
-    height: 170px;
-    border-radius: 4px;
-    border: 1px solid @gray-lightest;
-    background-color: white;
-    margin-right: 20px;
-    margin-bottom: 20px;
   }
 }
 
 .new-container {
+  display: flex;
+  flex: 1 auto;
+  flex-direction: column;
   padding: 35px 20px 32px 25px;
-  .new-container-header {
-    margin-bottom: 28px;
+  .results {
     display: flex;
-    flex: 1;
+    flex-direction: column;
+    flex: 1 auto;
+    .no-results {
+      flex: 1 auto;
+      display: flex;
+      align-items: center;
+    }
+  }
+  .new-container-header {
+    margin-bottom: 8px;
+    display: flex;
+    flex: 0 auto;
     .text {
       flex: 1 auto;
       width: 50%;

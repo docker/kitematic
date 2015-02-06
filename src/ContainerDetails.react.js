@@ -418,7 +418,6 @@ var ContainerDetails = React.createClass({
       if (this.state.progress) {
         body = (
           <div className="details-progress">
-            <h3>Downloading</h3>
             <Radial progress={Math.round(this.state.progress * 100)}/>
           </div>
         );
