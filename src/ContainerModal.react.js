@@ -206,6 +206,7 @@ var ContainerModal = React.createClass({
     );
 
     var tagData = self.state.tags[this.state.active];
+    var tags;
     if (tagData) {
       var list = tagData.map(function (t) {
         return <li key={t.name} onClick={self.handleTagClick.bind(self, t.name, self.state.active)}>{t.name}</li>;

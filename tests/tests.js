@@ -7,6 +7,7 @@ var app = require('remote').require('app');
 jasmine.getEnv().addReporter(new consoleReporter.ConsoleReporter()({
     showColors: true,
     timer: new jasmine.Timer(),
+    verbose: true,
     print: function() {
       process.stdout.write.apply(process.stdout, arguments);
     },

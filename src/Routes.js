@@ -25,8 +25,7 @@ var routes = (
       <Route name="preferences" path="/preferences" handler={Preferences}/>
       <DefaultRoute handler={NoContainers}/>
     </Route>
-    <Route name="setup" handler={Setup}></Route>
-    <DefaultRoute handler={Setup}/>
+    <DefaultRoute name="setup" handler={Setup}/>
   </Route>
 );
 
