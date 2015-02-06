@@ -323,7 +323,6 @@ var ContainerStore = assign(EventEmitter.prototype, {
         var recommended = res.repos;
         async.map(recommended, function (rec, callback) {
           $.get('https://registry.hub.docker.com/v1/search?q=' + rec.repo, function (data) {
-            console.log(data);
             var results = data.results;
             var result = _.find(results, function (r) {
               return r.name === rec.repo;

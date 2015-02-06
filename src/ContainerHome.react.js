@@ -40,7 +40,7 @@ var ContainerHome = React.createClass({
         <div className="web-preview">
           <h4>Web Preview</h4>
           <div className="widget">
-            <iframe src={this.props.ports[this.props.defaultPort].url}></iframe>
+            <iframe name="disable-x-frame-options" src={this.props.ports[this.props.defaultPort].url}></iframe>
           </div>
         </div>
       );

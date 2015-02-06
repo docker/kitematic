@@ -9,7 +9,6 @@ var ContainerList = React.createClass({
   render: function () {
     var self = this;
     var containers = this.props.containers.map(function (container) {
-      console.log(container);
       return (
         <ContainerListItem container={container} start={self._start}/>
       );
