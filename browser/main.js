@@ -21,26 +21,27 @@ if (argv.integration) {
 app.commandLine.appendSwitch('js-flags', '--harmony');
 
 var mainWindow = null;
+var windowOptions = {
+  width: 1000,
+  height: 700,
+  'min-width': 1000,
+  'min-height': 700,
+  resizable: true,
+  frame: false,
+  show: false
+};
+
 app.on('activate-with-no-open-windows', function () {
+  var mainWindow = new BrowserWindow(windowOptions);
   if (mainWindow) {
     mainWindow.show();
   }
   return false;
 });
 
-app.on('ready', function () {
-  mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 700,
-    'min-width': 1000,
-    'min-height': 700,
-    resizable: true,
-    frame: false,
-    show: false
-  });
-
+app.on('ready', function() {
+  mainWindow = new BrowserWindow(windowOptions);
   var saveVMOnQuit = false;
-
   if (argv.test) {
     mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/tests.html')));
   } else {
@@ -83,6 +84,7 @@ app.on('ready', function () {
       autoUpdater.on('update-downloaded', function (e, releaseNotes, releaseName, releaseDate, updateURL) {
         console.log(e, releaseNotes, releaseName, releaseDate, updateURL);
         console.log('Update downloaded.');
+        console.log(releaseNotes, releaseName, releaseDate, updateURL);
         mainWindow.webContents.send('notify', 'window:update-available');
       });
 

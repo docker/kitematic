@@ -1,9 +1,10 @@
 @import "bootstrap/bootstrap.less";
 
 .header {
+  position: absolute;
   min-width: 100%;
   flex: 0;
-  min-height: 50px;
+  min-height: 30px;
   -webkit-app-region: drag;
   -webkit-user-select: none;
   // border-bottom: 1px solid #efefef;
@@ -15,8 +16,8 @@
   .buttons {
     display: inline-block;
     position: relative;
-    top: 16px;
-    left: 20px;
+    top: 10px;
+    left: 15px;
 
     &:hover {
       .button-minimize.enabled {
@@ -44,7 +45,18 @@
       border-radius: 6px;
       box-shadow: 0px 1px 1px 0px rgba(234,234,234,0.50);
       -webkit-app-region: no-drag;
-
+      &.red {
+        background-color: #FF5F52;
+        border-color: #E33E32;
+      }
+      &.yellow {
+        background-color: #FFBE05;
+        border-color: #E2A100;
+      }
+      &.green {
+        background-color: #15CC35;
+        border-color: #17B230;
+      }
       &.disabled {
         border: 1px solid #E8EEEF;
       }
