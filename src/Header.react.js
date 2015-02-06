@@ -1,5 +1,6 @@
 var React = require('react/addons');
 var remote = require('remote');
+var RetinaImage = require('react-retina-image');
 
 var Header = React.createClass({
   getInitialState: function () {
@@ -43,6 +44,7 @@ var Header = React.createClass({
             <div className="button button-minimize yellow disabled"></div>
             <div className="button button-fullscreenclose green enabled" onClick={this.handleFullscreen}></div>
           </div>
+          <RetinaImage className="logo" src="logo.png"/>
         </div>
       );
     } else {
@@ -53,6 +55,7 @@ var Header = React.createClass({
             <div className="button button-minimize yellow enabled" onClick={this.handleMinimize}></div>
             <div className="button button-fullscreen green enabled" onClick={this.handleFullscreen}></div>
           </div>
+          <RetinaImage className="logo" src="logo.png"/>
         </div>
       );
     }

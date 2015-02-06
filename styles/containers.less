@@ -598,6 +598,9 @@
           &.stopped {
             color: @gray-lighter;
           }
+          &.downloading {
+            color: @brand-action;
+          }
         }
 
         /*.details-header-actions {
@@ -631,9 +634,12 @@
       }
 
       .details-progress {
-        margin: 26% auto 0;
+        margin: 20% auto 0;
         text-align: center;
         width: 300px;
+        h2 {
+          margin-bottom: 20px;
+        }
       }
 
       .details-panel {
@@ -642,6 +648,7 @@
         background-color: #FFF;
         &.home {
           background-color: #F9F9F9;
+          overflow: hidden;
           .content {
             display: flex;
             flex: 1 auto;
@@ -652,17 +659,54 @@
               flex-direction: column;
               .web-preview {
                 margin-right: 30px;
+                .subtext {
+                  text-align: right;
+                  color: @gray-lightest;
+                  margin-top: 2px;
+                }
                 .widget {
                   background-color: white;
                   width: 100%;
                   height: 100%;
                   border-radius: 4px;
                   border: 1px solid @gray-lightest;
+                  position: relative;
                   iframe {
                     border: 0;
                     border-radius: 4px;
+                    /*width: 100%;
+                    height: 100%;*/
+                    position: relative;
+                    top: -50%;
+                    left: -50%;
+                    width: 200%;
+                    height: 200%;
+                    transform: scale(0.5);
+                  }
+                  .iframe-overlay {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
                     width: 100%;
                     height: 100%;
+                    z-index: 100;
+                    color: transparent;
+                    transition: all 0.25s;
+                    .icon {
+                      margin-top: 40%;
+                      display: block;
+                      font-size: 60px;
+                      text-align: center;
+                    }
+                    .text {
+                      font-size: 20px;
+                      text-align: center;
+                    }
+                    &:hover {
+                      color: white;
+                      background-color: @gray-darkest;
+                      opacity: 0.75;
+                    }
                   }
                 }
               }
@@ -673,22 +717,54 @@
               .mini-logs {
                 margin-bottom: 50px;
                 .widget {
+                  position: relative;
                   border-radius: 4px;
                   border: 1px solid @gray-lightest;
                   background-color: @gray-darkest;
                   color: @gray-lightest;
                   height: 100%;
                   padding: 10px;
-                  overflow: scroll;
+                  overflow: hidden;
                   font-family: Menlo;
                   font-size: 8px;
                   white-space: pre-wrap;
                   p {
                     margin-bottom: 0px;
                   }
+                  .mini-logs-overlay {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    z-index: 100;
+                    color: transparent;
+                    transition: all 0.25s;
+                    .icon {
+                      margin-top: 25%;
+                      display: block;
+                      font-size: 60px;
+                      text-align: center;
+                    }
+                    .text {
+                      font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+                      font-size: 20px;
+                      text-align: center;
+                    }
+                    &:hover {
+                      color: white;
+                      background-color: @gray-darkest;
+                      opacity: 0.75;
+                    }
+                  }
                 }
               }
               .folders {
+                .subtext {
+                  text-align: right;
+                  color: @gray-lightest;
+                  margin-top: 2px;
+                }
                 .widget {
                   padding: 20px 10px;
                   background-color: white;
