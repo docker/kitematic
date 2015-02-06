@@ -86,7 +86,7 @@ var ContainerHome = React.createClass({
               <h4>Logs</h4>
               <div className="widget">
                 {this.props.logs}
-                <div className="mini-logs-overlay"><span className="icon icon-scale-spread-1"></span><div className="text">Full Logs</div></div>
+                <div className="mini-logs-overlay"><span className="icon icon-scale-spread-1"></span><div className="text">View Logs</div></div>
               </div>
             </div>
             <div className="folders">
