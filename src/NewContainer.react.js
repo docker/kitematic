@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var $ = require('jquery');
 var React = require('react/addons');
 var RetinaImage = require('react-retina-image');
@@ -14,9 +15,13 @@ var NewContainer = React.createClass({
       loading: false,
       tags: {},
       active: null,
+      creating: []
     };
   },
   componentDidMount: function () {
+    this.setState({
+      creating: []
+    });
     this.refs.searchInput.getDOMNode().focus();
     ContainerStore.on(ContainerStore.CLIENT_RECOMMENDED_EVENT, this.update);
   },
@@ -126,6 +131,12 @@ var NewContainer = React.createClass({
         } else {
           imgsrc = 'https://kitematic.com/recommended/kitematic_html.png';
         }
+        var action;
+        if (_.find(self.state.creating, r.name)) {
+          action = <RetinaImage src="loading.png"/>;
+        } else {
+          action = <a className="btn btn-action" onClick={self.handleClick.bind(self, r.name)}>Create</a>;
+        }
         return (
           <div key={r.name} className="image-item">
             <div className="logo" style={logoStyle}>
@@ -148,7 +159,7 @@ var NewContainer = React.createClass({
                   <span className="text">latest</span>
                 </div>
                 <div className="action">
-                  <a className="btn btn-action" onClick={self.handleClick.bind(self, r.name)}>Create</a>
+                  {action}
                 </div>
               </div>
             </div>
