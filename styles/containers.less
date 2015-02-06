@@ -585,6 +585,9 @@
           &.stopped {
             color: @gray-lighter;
           }
+          &.downloading {
+            color: @brand-action;
+          }
         }
 
         /*.details-header-actions {
@@ -618,9 +621,12 @@
       }
 
       .details-progress {
-        margin: 26% auto 0;
+        margin: 20% auto 0;
         text-align: center;
         width: 300px;
+        h2 {
+          margin-bottom: 20px;
+        }
       }
 
       .details-panel {
