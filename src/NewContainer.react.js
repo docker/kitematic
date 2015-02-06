@@ -127,9 +127,9 @@ var NewContainer = React.createClass({
         };
         var imgsrc;
         if (r.img) {
-          imgsrc = `https://kitematic.com/recommended/${r.img}`;
+          imgsrc = `http://kitematic.com/recommended/${r.img}`;
         } else {
-          imgsrc = 'https://kitematic.com/recommended/kitematic_html.png';
+          imgsrc = 'http://kitematic.com/recommended/kitematic_html.png';
         }
         var action;
         if (_.find(self.state.creating, r.name)) {
