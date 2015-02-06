@@ -5,18 +5,17 @@ var fs = require('fs');
 var gulp = require('gulp');
 var gulpif = require('gulp-if');
 var gutil = require('gulp-util');
-var http = require('http');
 var less = require('gulp-less');
 var livereload = require('gulp-livereload');
 var plumber = require('gulp-plumber');
 var react = require('gulp-react');
+var to5 = require('gulp-6to5');
 var runSequence = require('run-sequence');
 var shell = require('gulp-shell');
 var sourcemaps = require('gulp-sourcemaps');
 var packagejson = require('./package.json');
 
 var dependencies = Object.keys(packagejson.dependencies);
-var devDependencies = Object.keys(packagejson.devDependencies);
 var isBeta = process.argv.indexOf('--beta') !== -1;
 var options = {
   dev: process.argv.indexOf('release') === -1 && process.argv.indexOf('test') === -1,
@@ -35,9 +34,29 @@ gulp.task('js', function () {
       // emit the end event, to properly end the task
       this.emit('end');
     }))
+    .pipe(sourcemaps.init())
     .pipe(react())
+    .pipe(to5({blacklist: ['regenerator']}))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest((options.dev || options.test) ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
     .pipe(gulpif(options.dev, livereload()));
+});
+
+gulp.task('tests', function () {
+  gulp.src('tests/*.js')
+    .pipe(plumber(function(error) {
+      gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.message));
+      // emit the end event, to properly end the task
+      this.emit('end');
+    }))
+    .pipe(sourcemaps.init())
+    .pipe(react())
+    .pipe(to5())
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest('./build'));
+
+  gulp.src('./tests/tests.html').pipe(gulp.dest('./build'));
+  gulp.src('./tests/jasmine-2.1.3/*').pipe(gulp.dest('./build/jasmine-2.1.3'));
 });
 
 gulp.task('images', function() {
@@ -79,7 +98,7 @@ gulp.task('copy', function () {
     .pipe(gulpif(options.dev, livereload()));
 });
 
-gulp.task('dist', function (cb) {
+gulp.task('dist', function () {
   var stream = gulp.src('').pipe(shell([
     'rm -Rf ./dist',
     'mkdir -p ./dist/osx',
@@ -146,7 +165,7 @@ gulp.task('release', function () {
   runSequence('download', 'dist', ['copy', 'images', 'js', 'styles'], 'sign', 'zip');
 });
 
-gulp.task('test', ['download', 'copy', 'js'], function () {
+gulp.task('test', ['download', 'copy', 'js', 'tests'], function () {
   var env = process.env;
   env.NODE_ENV = 'test';
   if (options.integration) {

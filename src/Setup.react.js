@@ -1,11 +1,6 @@
 var React = require('react/addons');
 var Router = require('react-router');
 var Radial = require('./Radial.react.js');
-var async = require('async');
-var assign = require('object-assign');
-var fs = require('fs');
-var path = require('path');
-var virtualbox = require('./Virtualbox');
 var SetupStore = require('./SetupStore');
 var RetinaImage = require('react-retina-image');
 
@@ -27,8 +22,8 @@ var Setup = React.createClass({
   },
   update: function () {
     this.setState({
-      progress: SetupStore.stepProgress(),
-      step: SetupStore.stepName(),
+      progress: SetupStore.percent(),
+      step: SetupStore.step(),
       error: SetupStore.error()
     });
   },
@@ -118,9 +113,9 @@ var Setup = React.createClass({
   },
   renderStep: function () {
     switch(this.state.step) {
-      case 'downloading_virtualbox':
+      case 'download_virtualbox':
         return this.renderDownloadingVirtualboxStep();
-      case 'installing_virtualbox':
+      case 'install_virtualbox':
         return this.renderInstallingVirtualboxStep();
       case 'cleanup_kitematic':
         return this.renderInitBoot2DockerStep();
@@ -133,21 +128,11 @@ var Setup = React.createClass({
     }
   },
   render: function () {
-    var radial;
-    if (this.state.progress) {
-      radial = <Radial progress={this.state.progress}/>;
-    } else if (this.state.error) {
-      radial = <Radial error={true} spin="true" progress="100"/>;
-    } else {
-      radial = <Radial spin="true" progress="100"/>;
-    }
-
     var step = this.renderStep();
-
     if (this.state.error) {
       return (
         <div className="setup">
-          {radial}
+          <Radial error={true} spin="true" progress="100"/>;
           <p className="error">Error: {this.state.error}</p>
         </div>
       );

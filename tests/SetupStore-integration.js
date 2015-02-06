@@ -3,57 +3,12 @@ var SetupStore = require('../build/SetupStore');
 var setupUtil = require('../build/SetupUtil');
 var path = require('path');
 var fs = require('fs');
-var child_process = require('child_process');
-var exec = require('exec');
-var rimraf = require('rimraf');
+var Promise = require('bluebird');
 var packagejson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000; // 5 minutes
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 300000; // 5 minutes for integration tests
 
 describe('Setup', function () {
-  describe('without virtualbox installed or downloaded', function () {
-    var virtualboxFile = path.join(setupUtil.supportDir(), packagejson['virtualbox-filename']);
-    beforeEach(function () {
-      if (fs.existsSync(virtualboxFile)) {
-        fs.unlinkSync(virtualboxFile);
-      }
-      spyOn(virtualbox, 'installed').and.returnValue(false);
-    });
-
-    it('downloads virtualbox from the official website', function (done) {
-      SetupStore.downloadVirtualboxStep.run(function (err) {
-        expect(err).toBeFalsy();
-        expect(fs.existsSync(virtualboxFile)).toBe(true);
-        done();
-      }, function (progress) {
-
-      });
-    });
-  });
-
-  describe('with virtualbox downloaded but not installed', function () {
-    beforeEach(function (done) {
-      // 5 minute timeout per test
-
-      SetupStore.downloadVirtualboxStep.run(function (err) {
-        if (virtualbox.installed()) {
-          virtualbox.kill(function (callback) {
-            done();
-          });
-        } else {
-          done();
-        }
-      }, function (progress) {});
-    });
-
-    it('does install virtualbox', function (done) {
-      SetupStore.installVirtualboxStep.run(function (err) {
-        expect(err).toBeFalsy();
-        expect(fs.existsSync(virtualbox.command())).toBe(true);
-        done();
-      });
-    });
-  });
 
   describe('with virtualbox installed', function () {
 
@@ -96,4 +51,41 @@ describe('Setup', function () {
     });
   });
 
+  /*describe('with virtualbox downloaded', function () {
+    beforeEach(function (done) {
+      Promise.coroutine(SetupStore.downloadVirtualboxStep)().finally(function () {
+        if (virtualbox.installed()) {
+          virtualbox.kill().finally(function () {
+            done();
+          });
+        } else {
+          done();
+        }
+      });
+    });
+
+    it('install virtualbox succeeds', function (done) {
+      Promise.coroutine(SetupStore.installVirtualboxStep)().finally(function () {
+        expect(virtualbox.installed()).toBe(true);
+        done();
+      });
+    });
+  });*/
+
+  /*describe('without virtualbox installed or downloaded', function () {
+    var virtualboxFile = path.join(setupUtil.supportDir(), packagejson['virtualbox-filename']);
+    beforeEach(function () {
+      if (fs.existsSync(virtualboxFile)) {
+        fs.unlinkSync(virtualboxFile);
+      }
+      spyOn(virtualbox, 'installed').and.returnValue(false);
+    });
+
+    it('downloads virtualbox from the official website', function (done) {
+      Promise.coroutine(SetupStore.downloadVirtualboxStep)().finally(function () {
+        expect(fs.existsSync(virtualboxFile)).toBe(true);
+        done();
+      });
+    });
+  });*/
 });
