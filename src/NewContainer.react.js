@@ -2,6 +2,7 @@ var $ = require('jquery');
 var React = require('react/addons');
 var RetinaImage = require('react-retina-image');
 var ContainerStore = require('./ContainerStore');
+var Radial = require('./Radial.react');
 var assign = require('object-assign');
 
 var NewContainer = React.createClass({
@@ -118,10 +119,16 @@ var NewContainer = React.createClass({
         var logoStyle = {
           backgroundImage: `linear-gradient(-180deg, ${r.gradient_start} 4%, ${r.gradient_end}  100%)`
         };
+        var imgsrc;
+        if (r.img) {
+          imgsrc = `https://kitematic.com/recommended/${r.img}`;
+        } else {
+          imgsrc = 'https://kitematic.com/recommended/kitematic_html.png';
+        }
         return (
           <div key={r.name} className="image-item">
             <div className="logo" style={logoStyle}>
-              <RetinaImage src={'https://kitematic.com/recommended/' + r.img}/>
+              <RetinaImage src={imgsrc}/>
             </div>
             <div className="card">
               <div className="name">
@@ -156,9 +163,7 @@ var NewContainer = React.createClass({
     } else {
       results = (
         <div className="no-results">
-          <h3>
-            No Results
-          </h3>
+          <Radial spin="true" progress={90}/>
         </div>
       );
     }
@@ -174,24 +179,22 @@ var NewContainer = React.createClass({
     });
     return (
       <div className="details">
-        <div className="detail-panel">
-          <div className="new-container">
-            <div className="new-container-header">
-              <div className="text">
-                Pick an image to create new container.
-              </div>
-              <div className="search">
-                <div className="search-bar">
-                  <input type="search" ref="searchInput" className="form-control" placeholder="Find an existing image" onChange={this.handleChange}/>
-                  <div className={magnifierClasses}></div>
-                  <RetinaImage className={loadingClasses} src="loading.png"/>
-                </div>
+        <div className="new-container">
+          <div className="new-container-header">
+            <div className="text">
+              Pick an image to create new container.
+            </div>
+            <div className="search">
+              <div className="search-bar">
+                <input type="search" ref="searchInput" className="form-control" placeholder="Find an existing image" onChange={this.handleChange}/>
+                <div className={magnifierClasses}></div>
+                <RetinaImage className={loadingClasses} src="loading.png"/>
               </div>
             </div>
-            <div className="results">
-              <h4>{title}</h4>
-              {results}
-            </div>
+          </div>
+          <div className="results">
+            <h4>{title}</h4>
+            {results}
           </div>
         </div>
       </div>

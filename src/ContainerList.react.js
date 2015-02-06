@@ -10,12 +10,12 @@ var ContainerList = React.createClass({
     var self = this;
     var containers = this.props.containers.map(function (container) {
       return (
-        <ContainerListItem container={container} start={self._start}/>
+        <ContainerListItem key={container.Id} container={container} start={self._start}/>
       );
     });
     return (
       <ul>
-        <ContainerListNewItem containers={this.props.containers} />
+        <ContainerListNewItem key={'newcontainer'} containers={this.props.containers} />
         {containers}
       </ul>
     );
