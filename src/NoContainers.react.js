@@ -1,5 +1,4 @@
 var React = require('react/addons');
-var RetinaImage = require('react-retina-image');
 
 var NoContainers = React.createClass({
   render: function () {

@@ -1,3 +1,4 @@
+var _ = require('underscore');
 var path = require('path');
 var Promise = require('bluebird');
 var _ = require('underscore');
@@ -92,11 +93,11 @@ var Boot2Docker = {
         var usedGb = parseInt(tokens[2], 10) / 1000000;
         var totalGb = parseInt(tokens[3], 10) / 1000000;
         var percent = parseInt(tokens[4].replace('%', ''), 10);
-        Promise.resolve({
+        return {
           used_gb: usedGb.toFixed(2),
           total_gb: totalGb.toFixed(2),
           percent: percent
-        });
+        };
       } catch (err) {
         return Promise.reject(err);
       }
@@ -117,12 +118,12 @@ var Boot2Docker = {
         var freeGb = parseInt(tokens[3], 10) / 1000;
         var totalGb = usedGb + freeGb;
         var percent = Math.round(usedGb / totalGb * 100);
-        return Promise.resolve({
+        return {
           used_gb: usedGb.toFixed(2),
           total_gb: totalGb.toFixed(2),
           free_gb: freeGb.toFixed(2),
           percent: percent
-        });
+        };
       } catch (err) {
         return Promise.reject(err);
       }

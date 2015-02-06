@@ -17,7 +17,8 @@
     "test:all": "npm test && npm run test:integration",
     "release": "gulp release",
     "release:beta": "gulp release --beta",
-    "preinstall": "./deps"
+    "preinstall": "./deps",
+    "lint": "jsxhint src/"
   },
   "licenses": [
     {
