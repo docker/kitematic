@@ -34,10 +34,10 @@ gulp.task('js', function () {
       // emit the end event, to properly end the task
       this.emit('end');
     }))
-    .pipe(sourcemaps.init())
+    .pipe(gulpif(options.dev || options.test, sourcemaps.init()))
     .pipe(react())
     .pipe(to5({blacklist: ['regenerator']}))
-    .pipe(sourcemaps.write('.'))
+    .pipe(gulpif(options.dev || options.test, sourcemaps.write('.')))
     .pipe(gulp.dest((options.dev || options.test) ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
     .pipe(gulpif(options.dev, livereload()));
 });

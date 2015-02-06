@@ -32,7 +32,6 @@ var windowOptions = {
 };
 
 app.on('activate-with-no-open-windows', function () {
-  var mainWindow = new BrowserWindow(windowOptions);
   if (mainWindow) {
     mainWindow.show();
   }
