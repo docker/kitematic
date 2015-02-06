@@ -28,9 +28,14 @@
   .image-item {
     display: flex;
     .logo {
+      flex: 1 auto;
       min-width: 90px;
-      height: 100%;
       background-color: @brand-action;
+      justify-content: center;
+      text-align: center;
+      img {
+        margin-top: 15px;
+      }
     }
     .card {
       padding: 10px 20px 10px 20px;
