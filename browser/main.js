@@ -1,15 +1,10 @@
-var child_process = require('child_process');
-var net = require('net');
-var os = require('os');
+var app = require('app');
 var fs = require('fs');
 var path = require('path');
 var exec = require('exec');
-
 var autoUpdater = require('auto-updater');
-var app = require('app');
 var BrowserWindow = require('browser-window');
 var ipc = require('ipc');
-
 var argv = require('minimist')(process.argv);
 var settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
 
@@ -23,6 +18,9 @@ if (argv.integration) {
   process.env.TEST_TYPE = 'test';
 }
 
+app.commandLine.appendSwitch('js-flags', '--harmony');
+
+var mainWindow = null;
 app.on('activate-with-no-open-windows', function () {
   if (mainWindow) {
     mainWindow.show();
@@ -30,7 +28,7 @@ app.on('activate-with-no-open-windows', function () {
   return false;
 });
 
-app.on('ready', function() {
+app.on('ready', function () {
   mainWindow = new BrowserWindow({
     width: 1000,
     height: 700,
@@ -44,12 +42,12 @@ app.on('ready', function() {
   var saveVMOnQuit = false;
 
   if (argv.test) {
-    mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'tests/tests.html')));
+    mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/tests.html')));
   } else {
     mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/index.html')));
-    app.on('will-quit', function (e) {
+    app.on('will-quit', function () {
       if (saveVMOnQuit) {
-        exec('VBoxManage controlvm boot2docker-vm savestate', function (stderr, stdout, code) {});
+        exec('VBoxManage controlvm boot2docker-vm savestate', function () {});
       }
     });
   }
@@ -69,7 +67,7 @@ app.on('ready', function() {
     if (process.env.NODE_ENV !== 'development' && !argv.test) {
       autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion() + '&beta=' + settingsjson.beta);
 
-      autoUpdater.on('checking-for-update', function (e) {
+      autoUpdater.on('checking-for-update', function () {
         console.log('Checking for update...');
       });
 
@@ -78,11 +76,12 @@ app.on('ready', function() {
         console.log(e);
       });
 
-      autoUpdater.on('update-not-available', function (e) {
+      autoUpdater.on('update-not-available', function () {
         console.log('Update not available.');
       });
 
       autoUpdater.on('update-downloaded', function (e, releaseNotes, releaseName, releaseDate, updateURL) {
+        console.log(e, releaseNotes, releaseName, releaseDate, updateURL);
         console.log('Update downloaded.');
         mainWindow.webContents.send('notify', 'window:update-available');
       });
