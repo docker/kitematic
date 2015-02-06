@@ -11,7 +11,6 @@ var dialog = remote.require('dialog');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
 var boot2docker = require('./Boot2Docker');
-var ProgressBar = require('react-bootstrap/ProgressBar');
 var ContainerDetailsHeader = require('./ContainerDetailsHeader.react');
 var ContainerHome = require('./ContainerHome.react');
 var RetinaImage = require('react-retina-image');
