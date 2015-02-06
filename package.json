@@ -12,9 +12,9 @@
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
     "start": "gulp",
-    "test": "gulp test --silent",
-    "test:integration": "gulp test --silent --integration",
-    "all-tests": "npm test && npm run integration-tests",
+    "test": "gulp test",
+    "test:integration": "gulp test --integration",
+    "test:all": "npm test && npm run test:integration",
     "release": "gulp release",
     "release:beta": "gulp release --beta",
     "preinstall": "./deps"
@@ -33,17 +33,17 @@
     ]
   },
   "boot2docker-version": "1.4.1",
-  "atom-shell-version": "0.21.0",
+  "atom-shell-version": "0.21.1",
   "virtualbox-version": "4.3.20",
   "virtualbox-filename": "VirtualBox-4.3.20-96996-OSX.dmg",
   "virtualbox-required-version": "4.3.18",
   "dependencies": {
     "ansi-to-html": "0.2.0",
     "async": "^0.9.0",
+    "bluebird": "^2.9.6",
     "bugsnag-js": "git+https://git@github.com/bugsnag/bugsnag-js",
     "dockerode": "2.0.4",
     "exec": "0.1.2",
-    "jest-cli": "^0.2.1",
     "jquery": "^2.1.3",
     "minimist": "^1.1.0",
     "node-uuid": "1.4.1",
@@ -55,15 +55,17 @@
     "react-router": "^0.11.6",
     "request": "^2.51.0",
     "request-progress": "0.3.1",
+    "request-promise": "^0.3.3",
     "retina.js": "^1.1.0",
-    "underscore": "^1.7.0",
-    "rimraf": "^2.2.8"
+    "rimraf": "^2.2.8",
+    "underscore": "^1.7.0"
   },
   "devDependencies": {
     "browserify": "^6.2.0",
     "ecstatic": "^0.5.8",
     "glob": "^4.0.6",
     "gulp": "^3.8.10",
+    "gulp-6to5": "^3.0.0",
     "gulp-atom": "0.0.5",
     "gulp-concat": "^2.3.4",
     "gulp-cssmin": "^0.1.6",
