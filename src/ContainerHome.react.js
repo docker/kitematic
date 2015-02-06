@@ -3,6 +3,7 @@ var $ = require('jquery');
 var React = require('react/addons');
 var RetinaImage = require('react-retina-image');
 var path = require('path');
+var exec = require('exec');
 
 var ContainerHome = React.createClass({
   handleResize: function () {
@@ -33,6 +34,18 @@ var ContainerHome = React.createClass({
       this._oldHeight = parent[0].scrollHeight - parent.height();
     }
   },
+  handleClickFolder: function (path) {
+    exec(['open', path], function (err) {
+      if (err) { throw err; }
+    });
+  },
+  handleClickPreview: function () {
+    if (this.props.defaultPort) {
+      exec(['open', this.props.ports[this.props.defaultPort].url], function (err) {
+        if (err) { throw err; }
+      });
+    }
+  },
   render: function () {
     var preview;
     if (this.props.defaultPort) {
@@ -40,19 +53,22 @@ var ContainerHome = React.createClass({
         <div className="web-preview">
           <h4>Web Preview</h4>
           <div className="widget">
-            <iframe name="disable-x-frame-options" src={this.props.ports[this.props.defaultPort].url}></iframe>
+            <iframe sandbox="allow-same-origin allow-scripts" src={this.props.ports[this.props.defaultPort].url} scrolling="no"></iframe>
+            <div className="iframe-overlay" onClick={this.handleClickPreview}><span className="icon icon-upload-2"></span><div className="text">Open in Browser</div></div>
           </div>
+          <div className="subtext">Not showing correctly?</div>
         </div>
       );
     }
     console.log(this.props.container.Volumes);
-    var folders = _.map(this.props.container.Volumes, function (val, key) {
+    var self = this;
+    var folders = _.map(self.props.container.Volumes, function (val, key) {
       var firstFolder = key.split(path.sep)[1];
       if (!val || val.indexOf(process.env.HOME) === -1) {
         return;
       } else {
         return (
-          <div key={key} className="folder">
+          <div key={key} className="folder" onClick={self.handleClickFolder.bind(self, val)}>
             <RetinaImage src="folder.png" />
             <div className="text">{firstFolder}</div>
           </div>
@@ -70,6 +86,7 @@ var ContainerHome = React.createClass({
               <h4>Logs</h4>
               <div className="widget">
                 {this.props.logs}
+                <div className="mini-logs-overlay"><span className="icon icon-scale-spread-1"></span><div className="text">Full Logs</div></div>
               </div>
             </div>
             <div className="folders">
@@ -77,6 +94,7 @@ var ContainerHome = React.createClass({
               <div className="widget">
                 {folders}
               </div>
+              <div className="subtext">Change Folders</div>
             </div>
           </div>
         </div>
