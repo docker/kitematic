@@ -15,6 +15,7 @@ var ProgressBar = require('react-bootstrap/ProgressBar');
 var ContainerDetailsHeader = require('./ContainerDetailsHeader.react');
 var ContainerHome = require('./ContainerHome.react');
 var RetinaImage = require('react-retina-image');
+var Radial = require('./Radial.react');
 
 var ContainerDetails = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -418,7 +419,7 @@ var ContainerDetails = React.createClass({
         body = (
           <div className="details-progress">
             <h3>Downloading</h3>
-            <ProgressBar now={this.state.progress * 100} label="%(percent)s%"/>
+            <Radial progress={Math.round(this.state.progress * 100)}/>
           </div>
         );
       }

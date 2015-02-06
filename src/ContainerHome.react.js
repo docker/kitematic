@@ -58,7 +58,6 @@ var ContainerHome = React.createClass({
           </div>
         );
       }
-
     });
     return (
       <div className="details-panel home">
