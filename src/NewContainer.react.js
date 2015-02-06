@@ -77,6 +77,7 @@ var NewContainer = React.createClass({
       if (err) {
         throw err;
       }
+      $(document.body).find('.new-container-item').parent().fadeOut();
     }.bind(this));
   },
   handleDropdownClick: function (name) {

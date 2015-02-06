@@ -11,7 +11,6 @@ var dialog = remote.require('dialog');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
 var boot2docker = require('./Boot2Docker');
-var ProgressBar = require('react-bootstrap/ProgressBar');
 var ContainerDetailsHeader = require('./ContainerDetailsHeader.react');
 var ContainerHome = require('./ContainerHome.react');
 var RetinaImage = require('react-retina-image');
@@ -418,7 +417,7 @@ var ContainerDetails = React.createClass({
       if (this.state.progress) {
         body = (
           <div className="details-progress">
-            <h3>Downloading</h3>
+            <h2>Downloading</h2>
             <Radial progress={Math.round(this.state.progress * 100)}/>
           </div>
         );
