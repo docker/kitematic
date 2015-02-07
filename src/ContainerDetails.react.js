@@ -578,7 +578,7 @@ var ContainerDetails = React.createClass({
           <div className="details-header-actions">
             <div className="action" onMouseEnter={this.handleItemMouseEnterRun} onMouseLeave={this.handleItemMouseLeaveRun}>
               <span className="action-icon" onClick={this.handleView}><RetinaImage src="button-run.png"/></span>
-              <span className="btn-label run">Preview</span>
+              <span className="btn-label run">Run</span>
             </div>
             <div className="action" onMouseEnter={this.handleItemMouseEnterRestart} onMouseLeave={this.handleItemMouseLeaveRestart}>
               <span className="action-icon" onClick={this.handleRestart}><RetinaImage src="button-restart.png"/></span>
