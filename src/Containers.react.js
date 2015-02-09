@@ -73,7 +73,7 @@ var Containers = React.createClass({
     var container = this.getParams().name ? this.state.containers[this.getParams().name] : {};
     return (
       <div className="containers">
-        <Header/>
+        <Header />
         <div className="containers-body">
           <div className="sidebar">
             <section className={sidebarHeaderClass}>
