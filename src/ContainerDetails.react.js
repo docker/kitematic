@@ -417,14 +417,14 @@ var ContainerDetails = React.createClass({
       if (this.state.progress) {
         body = (
           <div className="details-progress">
-            <h2>Downloading</h2>
+            <h2>Downloading Image</h2>
             <Radial progress={Math.round(this.state.progress * 100)}/>
           </div>
         );
       } else {
         body = (
           <div className="details-progress">
-            <h2>Connecting</h2>
+            <h2>Connecting to Docker Hub</h2>
             <Radial spin="true" progress="90"/>
           </div>
         );
