@@ -17,3 +17,4 @@ resources/settings*
 
 # Tests
 .test
+settings.json
