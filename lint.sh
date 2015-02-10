@@ -1,1 +1,0 @@
-jsxhint src/**/* && jsxhint browser/**/*

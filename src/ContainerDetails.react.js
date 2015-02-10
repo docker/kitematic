@@ -16,9 +16,10 @@ var ContainerHome = require('./ContainerHome.react');
 var RetinaImage = require('react-retina-image');
 var Radial = require('./Radial.react');
 
+var _oldHeight = 0;
+
 var ContainerDetails = React.createClass({
   mixins: [Router.State, Router.Navigation],
-  _oldHeight: 0,
   PAGE_HOME: 'home',
   PAGE_LOGS: 'logs',
   PAGE_SETTINGS: 'settings',
@@ -31,8 +32,8 @@ var ContainerDetails = React.createClass({
       env: {},
       pendingEnv: {},
       ports: {},
-      defaultPort: null,
-      volumes: {}
+      volumes: {},
+      defaultPort: null
     };
   },
   componentWillReceiveProps: function () {
@@ -51,11 +52,11 @@ var ContainerDetails = React.createClass({
     // Scroll logs to bottom
     var parent = $('.details-logs');
     if (parent.length) {
-      if (parent.scrollTop() >= this._oldHeight) {
+      if (parent.scrollTop() >= _oldHeight) {
         parent.stop();
         parent.scrollTop(parent[0].scrollHeight - parent.height());
       }
-      this._oldHeight = parent[0].scrollHeight - parent.height();
+      _oldHeight = parent[0].scrollHeight - parent.height();
     }
   },
   init: function () {

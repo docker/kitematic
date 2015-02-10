@@ -2,12 +2,19 @@ var _ = require('underscore');
 var path = require('path');
 var Promise = require('bluebird');
 var _ = require('underscore');
-var fs = Promise.promisifyAll(require('fs'));
+var fs = require('fs');
 var util = require('./Util');
 
 var Boot2Docker = {
+  command: function () {
+    return path.join(process.cwd(), 'resources', 'boot2docker-' + this.version());
+  },
   version: function () {
-    return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'))['boot2docker-version'];
+    try {
+      return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'))['boot2docker-version'];
+    } catch (err) {
+      return null;
+    }
   },
   cliversion: function () {
     return util.exec([Boot2Docker.command(), 'version']).then(stdout => {
@@ -22,17 +29,17 @@ var Boot2Docker = {
     });
   },
   isoversion: function () {
-    return fs.readFileAsync(path.join(util.home(), '.boot2docker', 'boot2docker.iso'), 'utf8').then(data => {
+    try {
+      var data = fs.readFileSync(path.join(util.home(), '.boot2docker', 'boot2docker.iso'), 'utf8');
       var match = data.match(/Boot2Docker-v(\d+\.\d+\.\d+)/);
       if (match) {
-        return Promise.resolve(match[1]);
+        return match[1];
       } else {
-        return Promise.resolve(null);
+        return null;
       }
-    });
-  },
-  command: function () {
-    return path.join(process.cwd(), 'resources', 'boot2docker-' + this.version());
+    } catch (err) {
+      return null;
+    }
   },
   exists: function () {
     return util.exec([Boot2Docker.command(), 'status']).then(() => {
