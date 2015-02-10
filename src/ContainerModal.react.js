@@ -1,13 +1,9 @@
-var async = require('async');
 var $ = require('jquery');
 var assign = require('object-assign');
 var React = require('react/addons');
 var Modal = require('react-bootstrap').Modal;
 var OverlayTrigger = require('react-bootstrap');
 var Popover = require('react-bootstrap/Popover');
-var SplitButton = require('react-bootstrap/SplitButton');
-var MenuItem = require('react-bootstrap/MenuItem');
-
 var RetinaImage = require('react-retina-image');
 var ContainerStore = require('./ContainerStore');
 var OverlayTrigger = require('react-bootstrap/OverlayTrigger');
@@ -81,19 +77,19 @@ var ContainerModal = React.createClass({
       }, 200);
     }
   },
-  handleClick: function (name, event) {
+  handleClick: function (name) {
     this.props.onRequestHide();
-    ContainerStore.create(name, 'latest', function (err, containerName) {
+    ContainerStore.create(name, 'latest', function (err) {
       if (err) {
         throw err;
       }
     }.bind(this));
   },
-  handleTagClick: function (tag, name, event) {
+  handleTagClick: function (tag, name) {
     this.props.onRequestHide();
-    ContainerStore.create(name, tag, function (err, containerName) {});
+    ContainerStore.create(name, tag, function () {});
   },
-  handleDropdownClick: function (name, event) {
+  handleDropdownClick: function (name) {
     this.setState({
       active: name
     });

@@ -14,3 +14,6 @@ resources/boot2docker*
 cache
 
 resources/settings*
+
+# Tests
+.test

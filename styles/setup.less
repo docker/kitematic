@@ -3,7 +3,7 @@
   height: 100%;
   width: 100%;
   flex-direction: row;
-  -webkit-app-region: drag;
+  //-webkit-app-region: drag;
 
   .image {
     display: flex;
@@ -13,12 +13,13 @@
     align-items: center;
     justify-content: flex-end;
     padding-right: 40px;
+    padding-left: 80px;
 
     .contents {
       position: relative;
       .detail {
         position: absolute;
-        right: 0;
+        right: -20px;
         bottom: 0;
       }
     }
@@ -36,13 +37,24 @@
       max-width: 320px;
 
       h1 {
-        margin-top: -30px;
+        color: @gray-darkest;
         font-size: 24px;
       }
-
+      h4 {
+        color: @gray-lightest;
+        font-size: 13px;
+        margin-top: -30px;
+      }
       p {
         font-size: 13px;
         color: @gray-normal;
+        &.error {
+          color: @brand-negative;
+          background-color: lighten(@brand-negative, 32%);
+          padding: 10px;
+          border-radius: 4px;
+          -webkit-user-select: text;
+        }
       }
     }
 

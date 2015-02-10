@@ -28,35 +28,17 @@ var options = {
 };
 
 gulp.task('js', function () {
-  gulp.src('src/**/*.js')
+  return gulp.src('src/**/*.js')
     .pipe(plumber(function(error) {
       gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.message));
-      // emit the end event, to properly end the task
       this.emit('end');
     }))
-    .pipe(sourcemaps.init())
+    .pipe(gulpif(options.dev || options.test, sourcemaps.init()))
     .pipe(react())
     .pipe(to5({blacklist: ['regenerator']}))
-    .pipe(sourcemaps.write('.'))
+    .pipe(gulpif(options.dev || options.test, sourcemaps.write('.')))
     .pipe(gulp.dest((options.dev || options.test) ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
     .pipe(gulpif(options.dev, livereload()));
-});
-
-gulp.task('tests', function () {
-  gulp.src('tests/*.js')
-    .pipe(plumber(function(error) {
-      gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.message));
-      // emit the end event, to properly end the task
-      this.emit('end');
-    }))
-    .pipe(sourcemaps.init())
-    .pipe(react())
-    .pipe(to5())
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('./build'));
-
-  gulp.src('./tests/tests.html').pipe(gulp.dest('./build'));
-  gulp.src('./tests/jasmine-2.1.3/*').pipe(gulp.dest('./build/jasmine-2.1.3'));
 });
 
 gulp.task('images', function() {
@@ -163,20 +145,6 @@ gulp.task('zip', function () {
 
 gulp.task('release', function () {
   runSequence('download', 'dist', ['copy', 'images', 'js', 'styles'], 'sign', 'zip');
-});
-
-gulp.task('test', ['download', 'copy', 'js', 'tests'], function () {
-  var env = process.env;
-  env.NODE_ENV = 'test';
-  if (options.integration) {
-    gulp.src('').pipe(shell(['./cache/Atom.app/Contents/MacOS/Atom . --test --integration'], {
-      env: env
-    }));
-  } else {
-    gulp.src('').pipe(shell(['./cache/Atom.app/Contents/MacOS/Atom . --test'], {
-      env: env
-    }));
-  }
 });
 
 gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function () {

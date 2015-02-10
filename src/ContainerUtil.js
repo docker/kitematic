@@ -12,7 +12,7 @@ var ContainerUtil = {
       return splits;
     }));
   },
-  ports: function (container, callback) {
+  ports: function (container) {
     var res = {};
     var ip = docker.host;
     _.each(container.NetworkSettings.Ports, function (value, key) {
