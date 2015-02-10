@@ -15,7 +15,7 @@ var Preferences = React.createClass({
       report_analytics: true
     }, data || {});
   },
-  handleChange: function (key, e) {
+  handleChange: function (key) {
     var change = {};
     change[key] = !this.state[key];
     console.log(change);

@@ -22,7 +22,7 @@ var Registry = {
       headers: {
         Authorization: 'Token ' + token
       },
-      success: function (layers, status, xhr) {
+      success: function (layers) {
         callback(null, layers);
       },
       error: function (err) {
@@ -36,7 +36,7 @@ var Registry = {
       headers: {
         Authorization: 'Token ' + token
       },
-      success: function (res, status, xhr) {
+      success: function (res) {
         callback(null, res);
       },
       error: function (err) {

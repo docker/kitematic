@@ -1,5 +1,6 @@
 var React = require('react/addons');
 var remote = require('remote');
+var RetinaImage = require('react-retina-image');
 
 var Header = React.createClass({
   getInitialState: function () {
@@ -35,25 +36,26 @@ var Header = React.createClass({
     this.update();
   },
   render: function () {
-    var buttons;
     if (this.state.fullscreen) {
       return (
         <div className="header no-drag">
           <div className="buttons">
-            <div className="button button-close disabled"></div>
-            <div className="button button-minimize disabled"></div>
-            <div className="button button-fullscreenclose enabled" onClick={this.handleFullscreen}></div>
+            <div className="button button-close red disabled"></div>
+            <div className="button button-minimize yellow disabled"></div>
+            <div className="button button-fullscreenclose green enabled" onClick={this.handleFullscreen}></div>
           </div>
+          <RetinaImage className="logo" src="logo.png"/>
         </div>
       );
     } else {
       return (
         <div className="header">
           <div className="buttons">
-            <div className="button button-close enabled" onClick={this.handleClose}></div>
-            <div className="button button-minimize enabled" onClick={this.handleMinimize}></div>
-            <div className="button button-fullscreen enabled" onClick={this.handleFullscreen}></div>
+            <div className="button button-close red enabled" onClick={this.handleClose}></div>
+            <div className="button button-minimize yellow enabled" onClick={this.handleMinimize}></div>
+            <div className="button button-fullscreen green enabled" onClick={this.handleFullscreen}></div>
           </div>
+          <RetinaImage className="logo" src="logo.png"/>
         </div>
       );
     }
