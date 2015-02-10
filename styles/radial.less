@@ -12,12 +12,12 @@
 .radial-progress {
 
   &.radial-spinner {
-    -webkit-animation: rotating 2.4s linear infinite;
+    -webkit-animation: rotating 1.6s linear infinite;
   }
 
   @circle-size: 140px;
   @circle-background: #F2F2F2;
-  @inset-size: 136px;
+  @inset-size: @circle-size - 4;
   @inset-color: white;
   @transition-length: 1s;
   // @percentage-color: #3FD899;
@@ -28,7 +28,6 @@
   width:  @circle-size;
   height: @circle-size;
 
-  background-color: @circle-background;
   border-radius: 100%;
   .circle {
     .mask, .fill, .shadow {

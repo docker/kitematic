@@ -7,12 +7,9 @@ var VirtualBox = {
     return '/usr/bin/VBoxManage';
   },
   installed: function () {
-    return fs.existsSync('/usr/bin/VBoxManage') && fs.existsSync('/Applications/VirtualBox.app/Contents/MacOS/VirtualBox');
+    return fs.existsSync('/usr/bin/VBoxManage') && fs.existsSync('/Applications/VirtualBox.app');
   },
   version: function () {
-    if (!this.installed()) {
-      return Promise.reject('VirtualBox not installed.');
-    }
     return new Promise((resolve, reject) => {
         util.exec([this.command(), '-v']).then(stdout => {
         var match = stdout.match(/(\d+\.\d+\.\d+).*/);
@@ -29,7 +26,7 @@ var VirtualBox = {
     }
     return util.exec(this.command() + ' list runningvms | sed -E \'s/.*\\{(.*)\\}/\\1/\' | xargs -L1 -I {} ' + this.command() + ' controlvm {} poweroff');
   },
-  kill: function () {
+  killall: function () {
     if (!this.installed()) {
       return Promise.reject('VirtualBox not installed.');
     }
@@ -51,16 +48,18 @@ var VirtualBox = {
     });
   },
   vmdestroy: function (name) {
-    if (!this.installed()) {
-      throw Promise.reject('VirtualBox not installed.');
-    }
-    return util.exec([this.command(), 'controlvm', name, 'poweroff']).then(() => {
-      return util.exec([this.command(), 'unregistervm', name, '--delete']).then(() => {
-        return true;
-      });
-    }).catch(() => {
-      return false;
-    });
+    return Promise.coroutine(function* () {
+      if (!this.installed()) {
+        return Promise.reject('VirtualBox not installed.');
+      }
+      try {
+        var state = yield this.vmstate(name);
+        if (state === 'running') {
+          yield util.exec([this.command(), 'controlvm', name, 'poweroff']);
+        }
+        yield util.exec([this.command(), 'unregistervm', name, '--delete']);
+      } catch (err) {}
+    }.bind(this))();
   }
 };
 
