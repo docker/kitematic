@@ -56,7 +56,6 @@ Keep track of development and community news.
 
 - Follow [@kitematic on Twitter](https://twitter.com/kitematic).
 - Read and subscribe to [The Kitematic Blog](http://blog.kitematic.com).
-- Chat with developers using Kitematic in our [HipChat room](http://www.hipchat.com/giAT9Fqb5).
 
 ## Versioning
 
