@@ -13,8 +13,8 @@ var _percent = 0;
 var _currentStep = null;
 var _error = null;
 
-var VIRTUALBOX_FILE = `http://download.virtualbox.org/virtualbox/${packagejson['virtualbox-version']}/${packagejson['virtualbox-filename']}`;
-var SUDO_PROMPT = 'Kitematic requires administrative privileges to install VirtualBox and copy itself to the Applications folder.';
+var VIRTUALBOX_FILE = `https://github.com/kitematic/virtualbox/releases/download/${packagejson['virtualbox-version']}/${packagejson['virtualbox-filename']}`;
+var SUDO_PROMPT = 'Kitematic requires administrative privileges to install VirtualBox.';
 
 var SetupStore = assign(EventEmitter.prototype, {
   PROGRESS_EVENT: 'setup_progress',
@@ -27,8 +27,7 @@ var SetupStore = assign(EventEmitter.prototype, {
         return;
       }
     }
-    var checksum = yield setupUtil.virtualboxSHA256(packagejson['virtualbox-version'], packagejson['virtualbox-filename']);
-    yield setupUtil.download(VIRTUALBOX_FILE, path.join(setupUtil.supportDir(), packagejson['virtualbox-filename']), checksum, percent => {
+    yield setupUtil.download(VIRTUALBOX_FILE, path.join(setupUtil.supportDir(), packagejson['virtualbox-filename']), packagejson.checksum, percent => {
       _percent = percent;
       SetupStore.emit(SetupStore.PROGRESS_EVENT);
     });
@@ -39,15 +38,13 @@ var SetupStore = assign(EventEmitter.prototype, {
       if (setupUtil.compareVersions(version, packagejson['virtualbox-required-version']) >= 0) {
         return;
       }
-      yield virtualbox.kill();
+      yield virtualbox.killall();
     }
-    yield util.exec(['hdiutil', 'attach', path.join(setupUtil.supportDir(), packagejson['virtualbox-filename'])]);
     var isSudo = yield setupUtil.isSudo();
     var iconPath = path.join(setupUtil.resourceDir(), 'kitematic.icns');
     var sudoCmd = isSudo ? ['sudo'] : [path.join(setupUtil.resourceDir(), 'cocoasudo'), '--icon=' + iconPath, `--prompt=${SUDO_PROMPT}`];
-    sudoCmd.push.apply(sudoCmd, ['installer', '-pkg', '/Volumes/VirtualBox/VirtualBox.pkg', '-target', '/']);
+    sudoCmd.push.apply(sudoCmd, ['installer', '-pkg', path.join(setupUtil.supportDir(), packagejson['virtualbox-filename']), '-target', '/']);
     yield util.exec(sudoCmd);
-    yield util.exec(['hdiutil', 'detach', '/Volumes/VirtualBox']);
   }),
   cleanupKitematicStep: function () {
     return virtualbox.vmdestroy('kitematic-vm');
@@ -60,10 +57,10 @@ var SetupStore = assign(EventEmitter.prototype, {
     }
 
     if (!boot2docker.haskeys()) {
-      throw new Error('Boot2Docker SSH key doesn\'t exist. Fix by removing the existing Boot2Docker VM and re-run the installer. This usually occurs because an old version of Boot2Docker is installed.');
+      throw new Error('Boot2Docker SSH keys do not exist. Fix this by removing the existing Boot2Docker VM setup and re-run the installer. This usually occurs because an old version of Boot2Docker is installed.');
     }
 
-    var isoversion = yield boot2docker.isoversion();
+    var isoversion = boot2docker.isoversion();
     if (!isoversion || setupUtil.compareVersions(isoversion, boot2docker.version()) < 0) {
       yield boot2docker.stop();
       yield boot2docker.upgrade();
@@ -116,6 +113,7 @@ var SetupStore = assign(EventEmitter.prototype, {
       try {
         yield step.run();
       } catch (err) {
+        console.log(err);
         _error = err;
         this.emit(this.ERROR_EVENT);
         throw err;

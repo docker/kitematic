@@ -1,7 +1,6 @@
 var remote = require('remote');
 var app = remote.require('app');
 var Menu = remote.require('menu');
-var MenuItem = remote.require('menu-item');
 var BrowserWindow = remote.require('browser-window');
 var router = require('./Router');
 
@@ -136,7 +135,7 @@ var template = [
 },
 ];
 
-menu = Menu.buildFromTemplate(template);
+var menu = Menu.buildFromTemplate(template);
 Menu.setApplicationMenu(menu);
 
 module.exports = menu;
