@@ -3,6 +3,7 @@ var Router = require('react-router');
 var Radial = require('./Radial.react.js');
 var SetupStore = require('./SetupStore');
 var RetinaImage = require('react-retina-image');
+var Header = require('./Header.react');
 
 var Setup = React.createClass({
   mixins: [ Router.Navigation ],
@@ -28,9 +29,10 @@ var Setup = React.createClass({
     });
   },
   renderDownloadingVirtualboxStep: function () {
-    var message = 'Kitematic needs VirtualBox to run containers. VirtualBox is being downloaded from Oracle\'s website.';
+    var message = "VirtualBox is being downloaded from Oracle's servers. Kitematic requires VirtualBox to run.";
     return (
       <div className="setup">
+        <Header />
         <div className="image">
           <div className="contents">
             <RetinaImage img src="virtualbox.png"/>
@@ -41,6 +43,7 @@ var Setup = React.createClass({
         </div>
         <div className="desc">
           <div className="content">
+            <h4>Step 1 out of 4</h4>
             <h1>Downloading VirtualBox</h1>
             <p>{message}</p>
           </div>
@@ -49,9 +52,10 @@ var Setup = React.createClass({
     );
   },
   renderInstallingVirtualboxStep: function () {
-    var message = 'VirtualBox is being installed. Administrative privileges are required.';
+    var message = 'VirtualBox is being installed in the background. We may need you to type in your password to continue.';
     return (
       <div className="setup">
+        <Header />
         <div className="image">
           <div className="contents">
             <RetinaImage img src="virtualbox.png"/>
@@ -62,6 +66,7 @@ var Setup = React.createClass({
         </div>
         <div className="desc">
           <div className="content">
+            <h4>Step 2 out of 4</h4>
             <h1>Installing VirtualBox</h1>
             <p>{message}</p>
           </div>
@@ -70,9 +75,10 @@ var Setup = React.createClass({
     );
   },
   renderInitBoot2DockerStep: function () {
-    var message = 'Containers run in a virtual machine provided by Boot2Docker. Kitematic is setting up that Linux VM.';
+    var message = 'To run Docker containers on your computer, we are setting up a Linux virtual machine provided by boot2docker.';
     return (
       <div className="setup">
+        <Header />
         <div className="image">
           <div className="contents">
             <RetinaImage img src="boot2docker.png"/>
@@ -83,7 +89,8 @@ var Setup = React.createClass({
         </div>
         <div className="desc">
           <div className="content">
-            <h1>Setting up the Docker VM</h1>
+            <h4>Step 3 out of 4</h4>
+            <h1>Setting up Docker VM</h1>
             <p>{message}</p>
           </div>
         </div>
@@ -91,9 +98,10 @@ var Setup = React.createClass({
     );
   },
   renderStartBoot2DockerStep: function () {
-    var message = 'Kitematic is starting the Boot2Docker Linux VM.';
+    var message = 'Kitematic is starting the boot2docker VM. This may take about a minute.';
     return (
       <div className="setup">
+        <Header />
         <div className="image">
           <div className="contents">
             <RetinaImage img src="boot2docker.png"/>
@@ -104,7 +112,8 @@ var Setup = React.createClass({
         </div>
         <div className="desc">
           <div className="content">
-            <h1>Starting the Docker VM</h1>
+            <h4>Step 4 out of 4</h4>
+            <h1>Starting Docker VM</h1>
             <p>{message}</p>
           </div>
         </div>
@@ -132,8 +141,22 @@ var Setup = React.createClass({
     if (this.state.error) {
       return (
         <div className="setup">
-          <Radial error={true} spin="true" progress="100"/>;
-          <p className="error">Error: {this.state.error}</p>
+          <Header />
+          <div className="image">
+            <div className="contents">
+              <RetinaImage img src="install-error.png"/>
+              <div className="detail">
+              </div>
+            </div>
+          </div>
+          <div className="desc">
+            <div className="content">
+              <h4>Installation Error</h4>
+              <h1>We&#39;re Sorry!</h1>
+              <p>There seem to be an unexpected error with Kitematic:</p>
+              <p className="error">{this.state.error}</p>
+            </div>
+          </div>
         </div>
       );
     } else {

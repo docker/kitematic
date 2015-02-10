@@ -23,7 +23,9 @@
   "camelcase": false,
   "jasmine": true,
   "globals": {
-    "define": true
+    "define": true,
+    "jest": true,
+    "pit": true
   },
   "predef": [ "-Promise" ]
 }
