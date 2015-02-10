@@ -28,12 +28,6 @@ To run the app in development:
 
 - `npm test`
 
-### Integration Tests
-
-Note that integration tests need to be run a Mac and _will_ remove your existing Boot2Docker VM, containers etc.
-
-- `npm run test:integration`
-
 ## Uninstalling
 
 - Remove Kitematic.app
