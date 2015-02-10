@@ -4,7 +4,6 @@ var path = require('path');
 var crypto = require('crypto');
 var fs = require('fs');
 var exec = require('exec');
-var rp = require('request-promise');
 var Promise = require('bluebird');
 
 var SetupUtil = {
@@ -44,7 +43,9 @@ var SetupUtil = {
       }
 
       progress(request({ uri: url, rejectUnauthorized: false }), { throttle: 250 }).on('progress', state => {
-        percentCallback(state.percent);
+        if (percentCallback) {
+          percentCallback(state.percent);
+        }
       }).on('error', err => {
         reject(err);
       }).pipe(fs.createWriteStream(filename)).on('error', err => {
@@ -55,17 +56,6 @@ var SetupUtil = {
         }
         resolve();
       });
-    });
-  },
-  virtualboxSHA256: function (version, filename) {
-    return rp(`http://dlc-cdn.sun.com/virtualbox/${version}/SHA256SUMS`).then((body) => {
-      var checksums = body.split('\n').map(line => {
-        return line.split(' *');
-      }).reduce((obj, pair) => {
-        obj[pair[1]] = pair[0];
-        return obj;
-      }, {});
-      return Promise.resolve(checksums[filename]);
     });
   },
   compareVersions: function (v1, v2, options) {

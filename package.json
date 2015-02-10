@@ -12,13 +12,11 @@
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
     "start": "gulp",
-    "test": "gulp test",
-    "test:integration": "gulp test --integration",
-    "test:all": "npm test && npm run test:integration",
+    "test": "jest",
     "release": "gulp release",
     "release:beta": "gulp release --beta",
     "preinstall": "./deps",
-    "lint": "jsxhint src/"
+    "lint": "jsxhint src/**/* && jsxhint browser/**/*"
   },
   "licenses": [
     {
@@ -27,16 +25,19 @@
     }
   ],
   "jest": {
+    "scriptPreprocessor": "preprocessor.js",
     "unmockedModulePathPatterns": [
-      "dockerode",
-      "react",
-      "debug"
+      "node_modules/request",
+      "node_modules/react",
+      "node_modules/bluebird",
+      "node_modules/6to5"
     ]
   },
   "boot2docker-version": "1.4.1",
   "atom-shell-version": "0.21.1",
   "virtualbox-version": "4.3.20",
-  "virtualbox-filename": "VirtualBox-4.3.20-96996-OSX.dmg",
+  "virtualbox-filename": "VirtualBox-4.3.20.pkg",
+  "virtualbox-checksum": "89edac4cc7298c8a04fd4bb646ff2197e7673137c6566c7757f0e9cd6265d0c5",
   "virtualbox-required-version": "4.3.18",
   "dependencies": {
     "ansi-to-html": "0.2.0",
@@ -63,6 +64,9 @@
     "underscore": "^1.7.0"
   },
   "devDependencies": {
+    "6to5": "^3.4.1",
+    "6to5-core": "^3.4.1",
+    "6to5-jest": "^3.0.0",
     "browserify": "^6.2.0",
     "ecstatic": "^0.5.8",
     "glob": "^4.0.6",
@@ -85,11 +89,14 @@
     "gulp-uglify": "^0.3.1",
     "gulp-uglifyjs": "^0.5.0",
     "gulp-util": "^3.0.0",
+    "jest-cli": "^0.2.2",
+    "merge-stream": "^0.1.7",
+    "react-tools": "^0.12.2",
     "reactify": "^0.15.2",
+    "regenerator": "^0.8.9",
     "run-sequence": "^1.0.2",
     "time-require": "^0.1.2",
     "vinyl-source-stream": "^0.1.1",
-    "watchify": "^2.1.1",
-    "zombie": "^2.5.1"
+    "watchify": "^2.1.1"
   }
 }
