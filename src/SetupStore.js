@@ -1,57 +1,74 @@
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
-var fs = require('fs');
+var _ = require('underscore');
 var path = require('path');
 var Promise = require('bluebird');
 var boot2docker = require('./Boot2Docker');
-var virtualbox = require('./Virtualbox');
+var virtualBox = require('./VirtualBox');
 var setupUtil = require('./SetupUtil');
 var util = require('./Util');
-var packagejson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
 
-var _percent = 0;
+var SUDO_PROMPT = 'Kitematic requires administrative privileges to install VirtualBox.';
 var _currentStep = null;
 var _error = null;
 
-var VIRTUALBOX_FILE = `https://github.com/kitematic/virtualbox/releases/download/${packagejson['virtualbox-version']}/${packagejson['virtualbox-filename']}`;
-var SUDO_PROMPT = 'Kitematic requires administrative privileges to install VirtualBox.';
-
-var SetupStore = assign(EventEmitter.prototype, {
-  PROGRESS_EVENT: 'setup_progress',
-  STEP_EVENT: 'setup_step',
-  ERROR_EVENT: 'setup_error',
-  downloadVirtualboxStep: Promise.coroutine(function* () {
-    if (virtualbox.installed()) {
-      var version = yield virtualbox.version();
+var _steps = [{
+  name: 'downloadVirtualBox',
+  title: 'Downloading VirtualBox',
+  message: 'VirtualBox is being downloaded. Kitematic requires VirtualBox to run containers.',
+  totalPercent: 35,
+  percent: 0,
+  run: Promise.coroutine(function* (progressCallback) {
+    var packagejson = util.packagejson();
+    if (virtualBox.installed()) {
+      var version = yield virtualBox.version();
       if (setupUtil.compareVersions(version, packagejson['virtualbox-required-version']) >= 0) {
         return;
       }
     }
-    yield setupUtil.download(VIRTUALBOX_FILE, path.join(setupUtil.supportDir(), packagejson['virtualbox-filename']), packagejson.checksum, percent => {
-      _percent = percent;
-      SetupStore.emit(SetupStore.PROGRESS_EVENT);
+    var virtualBoxFile = `https://github.com/kitematic/virtualbox/releases/download/${packagejson['virtualbox-version']}/${packagejson['virtualbox-filename']}`;
+    yield setupUtil.download(virtualBoxFile, path.join(setupUtil.supportDir(), packagejson['virtualbox-filename']), packagejson['virtualbox-checksum'], percent => {
+      progressCallback(percent);
     });
-  }),
-  installVirtualboxStep: Promise.coroutine(function* () {
-    if (virtualbox.installed()) {
-      var version = yield virtualbox.version();
+  })
+}, {
+  name: 'installVirtualBox',
+  title: 'Installing VirtualBox',
+  message: "VirtualBox is being installed in the background. We may need you to type in your password to continue.",
+  totalPercent: 5,
+  percent: 0,
+  seconds: 5,
+  run: Promise.coroutine(function* () {
+    var packagejson = util.packagejson();
+    if (virtualBox.installed()) {
+      var version = yield virtualBox.version();
       if (setupUtil.compareVersions(version, packagejson['virtualbox-required-version']) >= 0) {
         return;
       }
-      yield virtualbox.killall();
+      yield virtualBox.killall();
     }
     var isSudo = yield setupUtil.isSudo();
     var iconPath = path.join(setupUtil.resourceDir(), 'kitematic.icns');
     var sudoCmd = isSudo ? ['sudo'] : [path.join(setupUtil.resourceDir(), 'cocoasudo'), '--icon=' + iconPath, `--prompt=${SUDO_PROMPT}`];
     sudoCmd.push.apply(sudoCmd, ['installer', '-pkg', path.join(setupUtil.supportDir(), packagejson['virtualbox-filename']), '-target', '/']);
-    yield util.exec(sudoCmd);
-  }),
-  cleanupKitematicStep: function () {
-    return virtualbox.vmdestroy('kitematic-vm');
-  },
-  initBoot2DockerStep: Promise.coroutine(function* () {
+    try {
+      yield util.exec(sudoCmd);
+    } catch (err) {
+      console.log('Could not install virtualbox...');
+    }
+  })
+}, {
+  name: 'initBoot2Docker',
+  title: 'Setting up Docker VM',
+  message: "To run Docker containers on your computer, we are setting up a Linux virtual machine provided by boot2docker.",
+  totalPercent: 15,
+  percent: 0,
+  seconds: 11,
+  run: Promise.coroutine(function* (progressCallback) {
+    yield virtualBox.vmdestroy('kitematic-vm');
     var exists = yield boot2docker.exists();
     if (!exists) {
+      setupUtil.simulateProgress(this.seconds, progressCallback);
       yield boot2docker.init();
       return;
     }
@@ -62,63 +79,77 @@ var SetupStore = assign(EventEmitter.prototype, {
 
     var isoversion = boot2docker.isoversion();
     if (!isoversion || setupUtil.compareVersions(isoversion, boot2docker.version()) < 0) {
+      setupUtil.simulateProgress(this.seconds, progressCallback);
       yield boot2docker.stop();
       yield boot2docker.upgrade();
     }
-  }),
-  startBoot2DockerStep: function () {
+  })
+}, {
+  name: 'startBoot2Docker',
+  title: 'Starting Docker VM',
+  message: "Kitematic is starting the boot2docker VM. This may take about a minute.",
+  totalPercent: 45,
+  percent: 0,
+  seconds: 35,
+  run: function (progressCallback) {
     return boot2docker.waitstatus('saving').then(boot2docker.status).then(status => {
+      setupUtil.simulateProgress(this.seconds, progressCallback);
       if (status !== 'running') {
         return boot2docker.start();
       }
     });
-  },
+  }
+}];
+
+var SetupStore = assign(EventEmitter.prototype, {
+  PROGRESS_EVENT: 'setup_progress',
+  STEP_EVENT: 'setup_step',
+  ERROR_EVENT: 'setup_error',
   step: function () {
-    if (_currentStep) {
-      return _currentStep;
-    } else {
-      return '';
-    }
+    return _currentStep || _steps[0];
+  },
+  steps: function () {
+    return _.indexBy(_steps, 'name');
+  },
+  stepCount: function () {
+    return _steps.length;
+  },
+  number: function () {
+    return _.indexOf(_steps, _currentStep) + 1;
   },
   percent: function () {
-    return _percent;
+    var total = 0;
+    _.each(_steps, step => {
+      total += step.totalPercent * step.percent / 100;
+    });
+    return Math.min(Math.round(total), 99);
   },
   error: function () {
     return _error;
   },
-  run: Promise.coroutine(function* () {
-    var steps = [{
-      name: 'download_virtualbox',
-      run: this.downloadVirtualboxStep
-    }, {
-      name: 'install_virtualbox',
-      run: this.installVirtualboxStep
-    }, {
-      name: 'cleanup_kitematic',
-      run: this.cleanupKitematicStep
-    }, {
-      name: 'init_boot2docker',
-      run: this.initBoot2DockerStep
-    }, {
-      name: 'start_boot2docker',
-      run: this.startBoot2DockerStep
-    }];
-
-    _error = null;
-    for (let step of steps) {
-      console.log(step.name);
-      _currentStep = step.name;
-      _percent = 0;
-      this.emit(this.STEP_EVENT);
+  run: Promise.coroutine(function* (startAt) {
+    startAt = startAt || 0;
+    for (let step of _steps.slice(startAt)) {
+      _currentStep = step;
+      step.percent = 0;
       try {
-        yield step.run();
+        console.log(step.name);
+        this.emit(this.STEP_EVENT);
+        yield step.run(percent => {
+          if (_currentStep) {
+            step.percent = percent;
+            this.emit(this.PROGRESS_EVENT);
+          }
+        });
+        step.percent = 100;
       } catch (err) {
-        console.log(err);
+        console.log(err.stack);
         _error = err;
         this.emit(this.ERROR_EVENT);
         throw err;
       }
     }
+    _currentStep = null;
   })
 });
 

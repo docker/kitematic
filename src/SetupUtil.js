@@ -1,9 +1,10 @@
+var _ = require('underscore');
+var crypto = require('crypto');
+var exec = require('exec');
+var fs = require('fs');
 var request = require('request');
 var progress = require('request-progress');
 var path = require('path');
-var crypto = require('crypto');
-var fs = require('fs');
-var exec = require('exec');
 var Promise = require('bluebird');
 
 var SetupUtil = {
@@ -31,18 +32,29 @@ var SetupUtil = {
       });
     });
   },
+  simulateProgress: function (estimateSeconds, progress) {
+    var times = _.range(0, estimateSeconds * 1000, 200);
+    var timers = [];
+    _.each(times, time => {
+      var timer = setTimeout(() => {
+        progress(100 * time / (estimateSeconds * 1000));
+      }, time);
+      timers.push(timer);
+    });
+  },
   download: function (url, filename, checksum, percentCallback) {
     return new Promise((resolve, reject) => {
       if (fs.existsSync(filename)) {
         var existingChecksum = crypto.createHash('sha256').update(fs.readFileSync(filename), 'utf8').digest('hex');
         if (existingChecksum === checksum) {
           resolve();
+          return;
         } else {
           fs.unlinkSync(filename);
         }
       }
 
-      progress(request({ uri: url, rejectUnauthorized: false }), { throttle: 250 }).on('progress', state => {
+      progress(request({ uri: url, rejectUnauthorized: false }), { throttle: 10 }).on('progress', state => {
         if (percentCallback) {
           percentCallback(state.percent);
         }

@@ -6,7 +6,12 @@ var autoUpdater = require('auto-updater');
 var BrowserWindow = require('browser-window');
 var ipc = require('ipc');
 var argv = require('minimist')(process.argv);
-var settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
+var settingsjson;
+try {
+  settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
+} catch (err) {
+  settingsjson = {};
+}
 
 process.env.NODE_PATH = __dirname + '/../node_modules';
 process.env.RESOURCES_PATH = __dirname + '/../resources';
@@ -65,7 +70,7 @@ app.on('ready', function() {
 
     // Auto Updates
     if (process.env.NODE_ENV !== 'development' && !argv.test) {
-      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion() + '&beta=' + settingsjson.beta);
+      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion() + '&beta=' + !!settingsjson.beta);
 
       autoUpdater.on('checking-for-update', function () {
         console.log('Checking for update...');

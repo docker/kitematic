@@ -9,7 +9,12 @@ var router = require('./router');
 var boot2docker = require('./boot2docker');
 var ContainerStore = require('./ContainerStore');
 var SetupStore = require('./ContainerStore');
-var settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
+var settingsjson;
+try {
+  settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
+} catch (err) {
+  settingsjson = {};
+}
 
 if (process.env.NODE_ENV === 'development') {
   var head = document.getElementsByTagName('head')[0];
