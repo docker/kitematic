@@ -1,5 +1,5 @@
-jest.dontMock('../src/Virtualbox');
-var virtualBox = require('../src/Virtualbox');
+jest.dontMock('../src/VirtualBox');
+var virtualBox = require('../src/VirtualBox');
 var util = require('../src/Util');
 var Promise = require('bluebird');
 
