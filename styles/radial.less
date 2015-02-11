@@ -16,13 +16,14 @@
   }
 
   @circle-size: 140px;
-  @circle-background: #F2F2F2;
+  @circle-background: red;
   @inset-size: @circle-size - 4;
   @inset-color: white;
   @transition-length: 1s;
   // @percentage-color: #3FD899;
   @percentage-font-size: 24px;
   @percentage-text-width: 57px;
+  background: white;
   margin: 0 auto;
 
   width:  @circle-size;
@@ -82,6 +83,37 @@
 
   &.radial-positive .circle .mask .fill {
     background-color: @brand-positive;
+  }
+
+  &.radial-thick {
+    @inset-size: @circle-size - 10;
+    .inset {
+      width:       @inset-size;
+      height:      @inset-size;
+      position:    absolute;
+      margin-left: (@circle-size - @inset-size) / 2.0;
+      margin-top:  (@circle-size - @inset-size) / 2.0;
+
+      background-color: @inset-color;
+      border-radius: 100%;
+      .percentage {
+        width:       @percentage-text-width;
+        position:    absolute;
+        top:         (@inset-size - @percentage-font-size) / 2.0;
+        left:        (@inset-size - @percentage-text-width) / 2.0;
+
+        line-height: 1;
+        text-align:  center;
+
+        color:       @brand-primary;
+        font-weight: 500;
+        font-size:   @percentage-font-size;
+      }
+    }
+  }
+
+  &.radial-gray {
+    background: #EEE;
   }
 
   @i: 0;

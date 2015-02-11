@@ -194,7 +194,7 @@ var NewContainer = React.createClass({
         <div className="new-container">
           <div className="new-container-header">
             <div className="text">
-              Pick an image to create new container.
+              Select an image to create a new container.
             </div>
             <div className="search">
               <div className="search-bar">
