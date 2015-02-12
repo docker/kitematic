@@ -11,6 +11,7 @@ var util = require('./Util');
 var SUDO_PROMPT = 'Kitematic requires administrative privileges to install VirtualBox.';
 var _currentStep = null;
 var _error = null;
+var _cancelled = false;
 
 var _steps = [{
   name: 'downloadVirtualBox',
@@ -54,7 +55,8 @@ var _steps = [{
     try {
       yield util.exec(sudoCmd);
     } catch (err) {
-      console.log('Could not install virtualbox...');
+      _cancelled = true;
+      throw err;
     }
   })
 }, {
@@ -127,9 +129,14 @@ var SetupStore = assign(EventEmitter.prototype, {
   error: function () {
     return _error;
   },
-  run: Promise.coroutine(function* (startAt) {
-    startAt = startAt || 0;
-    for (let step of _steps.slice(startAt)) {
+  cancelled: function () {
+    return _cancelled;
+  },
+  run: Promise.coroutine(function* () {
+    _error = null;
+    _cancelled = false;
+    var steps = _currentStep ? _steps.slice(_steps.indexOf(_currentStep)) : _steps;
+    for (let step of steps) {
       _currentStep = step;
       step.percent = 0;
       try {
@@ -149,7 +156,6 @@ var SetupStore = assign(EventEmitter.prototype, {
         throw err;
       }
     }
-    _currentStep = null;
   })
 });
 

@@ -4,6 +4,7 @@ var Radial = require('./Radial.react.js');
 var SetupStore = require('./SetupStore');
 var RetinaImage = require('react-retina-image');
 var Header = require('./Header.react');
+var Util = require('./Util');
 
 var Setup = React.createClass({
   mixins: [ Router.Navigation ],
@@ -26,11 +27,18 @@ var Setup = React.createClass({
     SetupStore.removeListener(SetupStore.STEP_EVENT, this.update);
     SetupStore.removeListener(SetupStore.ERROR_EVENT, this.update);
   },
+  handleRetry: function () {
+    SetupStore.run().catch(() => {});
+  },
+  handleOpenWebsite: function () {
+    Util.exec(['open', 'https://www.virtualbox.org/wiki/Downloads']);
+  },
   update: function () {
     this.setState({
       progress: SetupStore.percent(),
       step: SetupStore.step(),
-      error: SetupStore.error()
+      error: SetupStore.error(),
+      cancelled: SetupStore.cancelled()
     });
   },
   renderContents: function () {
@@ -64,6 +72,25 @@ var Setup = React.createClass({
       </div>
     );
   },
+  renderCancelled: function () {
+    return (
+      <div className="setup">
+        <Header />
+        <div className="image">
+          {this.renderContents()}
+        </div>
+        <div className="desc">
+          <div className="content">
+            <h4>Installation Cancelled</h4>
+            <h1>Couldn&#39;t Install VirtualBox</h1>
+            <p>Kitematic did not receive the administrative privileges required to install VirtualBox.</p>
+            <p>Please retry or download &amp; install VirutalBox manually from the <a onClick={this.handleOpenWebsite}>official Oracle website</a>.</p>
+            <button className="btn btn-action" onClick={this.handleRetry}>Retry</button>
+          </div>
+        </div>
+      </div>
+    );
+  },
   renderError: function () {
     return (
       <div className="setup">
@@ -90,7 +117,9 @@ var Setup = React.createClass({
     if (!SetupStore.step()) {
       return false;
     }
-    if (this.state.error) {
+    if (this.state.cancelled) {
+      return this.renderCancelled();
+    } else if (this.state.error) {
       return this.renderError();
     } else {
       return this.renderStep();
