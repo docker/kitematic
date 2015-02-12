@@ -12,6 +12,7 @@ var SUDO_PROMPT = 'Kitematic requires administrative privileges to install Virtu
 var _currentStep = null;
 var _error = null;
 var _cancelled = false;
+var _retryPromise = null;
 
 var _steps = [{
   name: 'downloadVirtualBox',
@@ -55,8 +56,7 @@ var _steps = [{
     try {
       yield util.exec(sudoCmd);
     } catch (err) {
-      _cancelled = true;
-      throw err;
+      throw null;
     }
   })
 }, {
@@ -132,30 +132,48 @@ var SetupStore = assign(EventEmitter.prototype, {
   cancelled: function () {
     return _cancelled;
   },
-  run: Promise.coroutine(function* () {
+  retry: function () {
     _error = null;
     _cancelled = false;
-    var steps = _currentStep ? _steps.slice(_steps.indexOf(_currentStep)) : _steps;
-    for (let step of steps) {
+    _retryPromise.resolve();
+  },
+  wait: function () {
+    _retryPromise = Promise.defer();
+    return _retryPromise.promise;
+  },
+  run: Promise.coroutine(function* () {
+    var exists = yield boot2docker.exists();
+    if (exists) {
+      this.steps().startBoot2Docker.seconds = 13;
+    }
+
+    for (let step of _steps) {
       _currentStep = step;
       step.percent = 0;
-      try {
-        console.log(step.name);
-        this.emit(this.STEP_EVENT);
-        yield step.run(percent => {
-          if (_currentStep) {
-            step.percent = percent;
-            this.emit(this.PROGRESS_EVENT);
+      while (true) {
+        try {
+          this.emit(this.STEP_EVENT);
+          yield step.run(percent => {
+            if (_currentStep) {
+              step.percent = percent;
+              this.emit(this.PROGRESS_EVENT);
+            }
+          });
+          step.percent = 100;
+          break;
+        } catch (err) {
+          if (err) {
+            _error = err;
+            this.emit(this.ERROR_EVENT);
+          } else {
+            _cancelled = true;
+            this.emit(this.STEP_EVENT);
           }
-        });
-        step.percent = 100;
-      } catch (err) {
-        console.log(err.stack);
-        _error = err;
-        this.emit(this.ERROR_EVENT);
-        throw err;
+          yield this.wait();
+        }
       }
     }
+    _currentStep = null;
   })
 });
 

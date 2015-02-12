@@ -28,7 +28,7 @@ var Setup = React.createClass({
     SetupStore.removeListener(SetupStore.ERROR_EVENT, this.update);
   },
   handleRetry: function () {
-    SetupStore.run().catch(() => {});
+    SetupStore.retry();
   },
   handleOpenWebsite: function () {
     Util.exec(['open', 'https://www.virtualbox.org/wiki/Downloads']);
