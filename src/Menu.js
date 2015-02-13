@@ -2,13 +2,10 @@ var remote = require('remote');
 var app = remote.require('app');
 var path = require('path');
 var docker = require('./Docker');
-var boot2docker = require('./Boot2Docker');
-var _ = require('underscore');
 var Menu = remote.require('menu');
 var BrowserWindow = remote.require('browser-window');
 var router = require('./Router');
 var util = require('./Util');
-var assign = require('object-assign');
 
 // main.js
 var template = [
