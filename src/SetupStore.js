@@ -39,11 +39,13 @@ var _steps = [{
     var base = util.copyBinariesCmd() + ' && ' + util.fixBinariesCmd();
     if (!virtualBox.installed() || setupUtil.compareVersions(yield virtualBox.version(), packagejson['virtualbox-required-version']) < 0) {
       yield virtualBox.killall();
-      base += ` && installer -pkg ${path.join(util.supportDir(), packagejson['virtualbox-filename'])} -target /`;
+      base += ` && installer -pkg ${util.escapePath(path.join(util.supportDir(), packagejson['virtualbox-filename']))} -target /`;
     }
-    var cmd = `${util.escapePath(path.join(util.resourceDir(), 'cocoasudo'))} --prompt="Kitematic requires administrative privileges to install VirtualBox." bash -c \"${base}\"`;
+    console.log(base);
+    var cmd = `${util.escapePath(path.join(util.resourceDir(), 'cocoasudo'))} --prompt="Kitematic requires administrative privileges to install VirtualBox." sudo -u root bash -c \"${base}\"`;
     try {
-      yield util.exec(cmd);
+      var stdout = yield util.exec(cmd);
+      console.log(stdout);
     } catch (err) {
       throw null;
     }
