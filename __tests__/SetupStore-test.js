@@ -12,7 +12,7 @@ describe('SetupStore', function () {
     pit('downloads virtualbox if it is not installed', function () {
       virtualBox.installed.mockReturnValue(false);
       setupUtil.download.mockReturnValue(Promise.resolve());
-      return setupStore.steps().downloadVirtualBox.run().then(() => {
+      return setupStore.steps().download.run().then(() => {
         // TODO: make sure download was called with the right args
         expect(setupUtil.download).toBeCalled();
       });
@@ -23,7 +23,7 @@ describe('SetupStore', function () {
       virtualBox.version.mockReturnValue(Promise.resolve('4.3.16'));
       setupUtil.compareVersions.mockReturnValue(-1);
       setupUtil.download.mockReturnValue(Promise.resolve());
-      return setupStore.steps().downloadVirtualBox.run().then(() => {
+      return setupStore.steps().download.run().then(() => {
         expect(setupUtil.download).toBeCalled();
       });
     });
@@ -33,7 +33,6 @@ describe('SetupStore', function () {
     pit('installs virtualbox if it is not installed', function () {
       virtualBox.installed.mockReturnValue(false);
       virtualBox.killall.mockReturnValue(Promise.resolve());
-      setupUtil.isSudo.mockReturnValue(Promise.resolve(false));
       util.exec.mockReturnValue(Promise.resolve());
       return setupStore.steps().install.run().then(() => {
         // TODO: make sure that the right install command was executed
@@ -45,7 +44,6 @@ describe('SetupStore', function () {
       virtualBox.installed.mockReturnValue(true);
       virtualBox.version.mockReturnValue(Promise.resolve('4.3.16'));
       virtualBox.killall.mockReturnValue(Promise.resolve());
-      setupUtil.isSudo.mockReturnValue(Promise.resolve(false));
       setupUtil.compareVersions.mockReturnValue(-1);
       util.exec.mockReturnValue(Promise.resolve());
       return setupStore.steps().install.run().then(() => {
