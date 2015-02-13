@@ -1,8 +1,14 @@
 var remote = require('remote');
 var app = remote.require('app');
+var path = require('path');
+var docker = require('./Docker');
+var boot2docker = require('./Boot2Docker');
+var _ = require('underscore');
 var Menu = remote.require('menu');
 var BrowserWindow = remote.require('browser-window');
 var router = require('./Router');
+var util = require('./Util');
+var assign = require('object-assign');
 
 // main.js
 var template = [
@@ -55,6 +61,28 @@ var template = [
     accelerator: 'Command+Q',
     click: function() {
       app.quit();
+    }
+  },
+  ]
+},
+{
+  label: 'File',
+  submenu: [
+  {
+    label: 'New Container',
+    accelerator: 'Command+N',
+    selector: 'undo:'
+  },
+  {
+    type: 'separator'
+  },
+  {
+    label: 'Open Docker Terminal',
+    accelerator: 'Command+Shift+T',
+    click: function() {
+      var terminal = path.join(process.cwd(), 'resources', 'terminal');
+      var cmd = [terminal, `DOCKER_HOST=${'tcp://' + docker.host + ':2376'} DOCKER_CERT_PATH=${path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], '.boot2docker/certs/boot2docker-vm')} DOCKER_TLS_VERIFY=1 $SHELL`];
+      util.exec(cmd).then(() => {});
     }
   },
   ]

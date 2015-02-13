@@ -10,6 +10,8 @@ var boot2docker = require('./boot2docker');
 var ContainerStore = require('./ContainerStore');
 var SetupStore = require('./SetupStore');
 var settingsjson;
+var Menu = require('./Menu');
+
 try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
 } catch (err) {

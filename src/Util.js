@@ -4,9 +4,11 @@ var fs = require('fs');
 var path = require('path');
 
 module.exports = {
-  exec: function (args) {
+  exec: function (args, options) {
+    options = options || {};
     return new Promise((resolve, reject) => {
-      exec(args, (stderr, stdout, code) => {
+      console.log(options);
+      exec(args, options, (stderr, stdout, code) => {
         if (code) {
           reject(stderr);
         }
