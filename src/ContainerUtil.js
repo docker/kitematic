@@ -22,7 +22,7 @@ var ContainerUtil = {
       if (value && value.length) {
         var port = value[0].HostPort;
         localUrl = 'http://' + ip + ':' + port;
-        localUrlDisplay = ip + ': ' + port;
+        localUrlDisplay = ip + ':' + port;
       }
       res[dockerPort] = {
         url: localUrl,

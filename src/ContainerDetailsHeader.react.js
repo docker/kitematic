@@ -3,7 +3,10 @@ var React = require('react/addons');
 var ContainerDetailsHeader = React.createClass({
   render: function () {
     var state;
-    if (this.props.container.State.Running) {
+    if (!this.props.container) {
+      return false;
+    }
+    if (this.props.container.State.Running && !this.props.container.State.Paused && !this.props.container.State.Restarting) {
       state = <span className="status running">RUNNING</span>;
     } else if (this.props.container.State.Restarting) {
       state = <span className="status restarting">RESTARTING</span>;

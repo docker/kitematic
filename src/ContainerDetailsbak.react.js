@@ -18,7 +18,7 @@ var Radial = require('./Radial.react');
 
 var _oldHeight = 0;
 
-var ContainerDetails = React.createClass({
+var ContainerDetailsbak = React.createClass({
   mixins: [Router.State, Router.Navigation],
   PAGE_HOME: 'home',
   PAGE_LOGS: 'logs',
@@ -94,15 +94,32 @@ var ContainerDetails = React.createClass({
       });
     }
   },
+  disableRun: function () {
+    return (!this.props.container.State.Running || !this.state.defaultPort);
+  },
+  disableRestart: function () {
+    return (this.props.container.State.Downloading || this.props.container.State.Restarting);
+  },
+  disableTerminal: function () {
+    return (!this.props.container.State.Running);
+  },
+  disableTab: function () {
+    return (this.props.container.State.Downloading);
+  },
   showHome: function () {
-    this.setState({
-      page: this.PAGE_HOME
-    });
+    if (!this.disableTab()) {
+      /*this.setState({
+        page: this.PAGE_HOME
+      });*/
+      this.transitionTo('containerHome', {name: this.getParams().name});
+    }
   },
   showLogs: function () {
-    this.setState({
-      page: this.PAGE_LOGS
-    });
+    if (!this.disableTab()) {
+      this.setState({
+        page: this.PAGE_LOGS
+      });
+    }
   },
   showPorts: function () {
     this.setState({
@@ -115,17 +132,37 @@ var ContainerDetails = React.createClass({
     });
   },
   showSettings: function () {
-    this.setState({
-      page: this.PAGE_SETTINGS
-    });
+    if (!this.disableTab()) {
+      this.setState({
+        page: this.PAGE_SETTINGS
+      });
+    }
   },
-  handleView: function () {
-    console.log('CLICKED');
-    console.log(this.state.ports);
-    console.log(this.state.defaultPort);
-    if (this.state.defaultPort) {
+  handleRun: function () {
+    if (this.state.defaultPort && !this.disableRun()) {
       exec(['open', this.state.ports[this.state.defaultPort].url], function (err) {
         if (err) { throw err; }
+      });
+    }
+  },
+  handleRestart: function () {
+    if (!this.disableRestart()) {
+      ContainerStore.restart(this.props.container.Name, function (err) {
+        console.log(err);
+      });
+    }
+  },
+  handleTerminal: function () {
+    if (!this.disableTerminal()) {
+      var container = this.props.container;
+      var terminal = path.join(process.cwd(), 'resources', 'terminal');
+      var cmd = [terminal, boot2docker.command().replace(/ /g, '\\\\\\\\ ').replace(/\(/g, '\\\\\\\\(').replace(/\)/g, '\\\\\\\\)'), 'ssh', '-t', 'sudo', 'docker', 'exec', '-i', '-t', container.Name, 'sh'];
+      exec(cmd, function (stderr, stdout, code) {
+        console.log(stderr);
+        console.log(stdout);
+        if (code) {
+          console.log(stderr);
+        }
       });
     }
   },
@@ -169,23 +206,6 @@ var ContainerDetails = React.createClass({
   handleOpenVolumeClick: function (path) {
     exec(['open', path], function (err) {
       if (err) { throw err; }
-    });
-  },
-  handleRestart: function () {
-    ContainerStore.restart(this.props.container.Name, function (err) {
-      console.log(err);
-    });
-  },
-  handleTerminal: function () {
-    var container = this.props.container;
-    var terminal = path.join(process.cwd(), 'resources', 'terminal');
-    var cmd = [terminal, boot2docker.command().replace(/ /g, '\\\\\\\\ ').replace(/\(/g, '\\\\\\\\(').replace(/\)/g, '\\\\\\\\)'), 'ssh', '-t', 'sudo', 'docker', 'exec', '-i', '-t', container.Name, 'sh'];
-    exec(cmd, function (stderr, stdout, code) {
-      console.log(stderr);
-      console.log(stdout);
-      if (code) {
-        console.log(stderr);
-      }
     });
   },
   handleSaveContainerName: function () {
@@ -515,19 +535,19 @@ var ContainerDetails = React.createClass({
     var tabHomeClasses = React.addons.classSet({
       'tab': true,
       'active': this.state.page === this.PAGE_HOME,
-      disabled: this.props.container.State.Downloading
+      disabled: this.disableTab()
     });
 
     var tabLogsClasses = React.addons.classSet({
       'tab': true,
       'active': this.state.page === this.PAGE_LOGS,
-      disabled: this.props.container.State.Downloading
+      disabled: this.disableTab()
     });
 
     var tabSettingsClasses = React.addons.classSet({
       'tab': true,
       'active': this.state.page === this.PAGE_SETTINGS,
-      disabled: this.props.container.State.Downloading
+      disabled: this.disableTab()
     });
 
     /*var ports = _.map(_.pairs(self.state.ports), function (pair, index, list) {
@@ -572,20 +592,35 @@ var ContainerDetails = React.createClass({
       );
     }*/
 
+    var runActionClass = React.addons.classSet({
+      action: true,
+      disabled: this.disableRun()
+    });
+
+    var restartActionClass = React.addons.classSet({
+      action: true,
+      disabled: this.disableRestart()
+    });
+
+    var terminalActionClass = React.addons.classSet({
+      action: true,
+      disabled: this.disableTerminal()
+    });
+
     return (
       <div className="details">
         <ContainerDetailsHeader container={this.props.container} />
         <div className="details-subheader">
           <div className="details-header-actions">
-            <div className="action" onMouseEnter={this.handleItemMouseEnterRun} onMouseLeave={this.handleItemMouseLeaveRun}>
-              <span className="action-icon" onClick={this.handleView}><RetinaImage src="button-run.png"/></span>
+            <div className={runActionClass} onMouseEnter={this.handleItemMouseEnterRun} onMouseLeave={this.handleItemMouseLeaveRun}>
+              <span className="action-icon" onClick={this.handleRun}><RetinaImage src="button-run.png"/></span>
               <span className="btn-label run">Run</span>
             </div>
-            <div className="action" onMouseEnter={this.handleItemMouseEnterRestart} onMouseLeave={this.handleItemMouseLeaveRestart}>
+            <div className={restartActionClass} onMouseEnter={this.handleItemMouseEnterRestart} onMouseLeave={this.handleItemMouseLeaveRestart}>
               <span className="action-icon" onClick={this.handleRestart}><RetinaImage src="button-restart.png"/></span>
               <span className="btn-label restart">Restart</span>
             </div>
-            <div className="action" onMouseEnter={this.handleItemMouseEnterTerminal} onMouseLeave={this.handleItemMouseLeaveTerminal}>
+            <div className={terminalActionClass} onMouseEnter={this.handleItemMouseEnterTerminal} onMouseLeave={this.handleItemMouseLeaveTerminal}>
               <span className="action-icon" onClick={this.handleTerminal}><RetinaImage src="button-terminal.png"/></span>
               <span className="btn-label terminal">Terminal</span>
             </div>
@@ -602,4 +637,4 @@ var ContainerDetails = React.createClass({
   }
 });
 
-module.exports = ContainerDetails;
+module.exports = ContainerDetailsbak;

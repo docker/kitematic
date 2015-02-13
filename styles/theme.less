@@ -68,8 +68,8 @@ input[type="text"] {
 
   &:hover,
   &:focus {
-    border-color: darken(@btn-color, 10%);
-    color: darken(@btn-color, 10%);
+    border-color: darken(@btn-color, 15%);
+    color: darken(@btn-color, 15%);
     cursor: default;
     box-shadow: none;
     background: none;
@@ -77,8 +77,8 @@ input[type="text"] {
 
   &:active {
     background-color: lighten(@btn-color, 45%);
-    border-color: darken(@btn-color, 10%);
-    color: darken(@btn-color, 10%);
+    border-color: darken(@btn-color, 15%);
+    color: darken(@btn-color, 15%);
     box-shadow: none;
   }
 
@@ -131,11 +131,13 @@ input[type="text"] {
   box-shadow: none;
   font-weight: 400;
   text-shadow: none;
-  padding: 4px 14px 4px 14px;
-  height: 28px;
+  padding: 5px 14px 5px 14px;
+  height: 30px;
   cursor: default;
 
   &.small {
+    font-size: 11px;
+    padding: 3px 8px 3px 8px;
     height: 22px;
     .icon {
       font-size: 10px;
@@ -179,7 +181,7 @@ input[type="text"] {
     padding: 6px 7px 6px 7px;
     &.small {
       width: 22px;
-      padding: 2px 5px 3px 5px;
+      padding: 4px 5px 4px 5px;
     }
   }
 }

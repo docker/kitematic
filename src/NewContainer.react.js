@@ -11,7 +11,7 @@ var NewContainer = React.createClass({
   getInitialState: function () {
     return {
       query: '',
-      results: ContainerStore.recommended(),
+      results: [],
       loading: false,
       tags: {},
       active: null,
@@ -24,6 +24,7 @@ var NewContainer = React.createClass({
     });
     this.refs.searchInput.getDOMNode().focus();
     ContainerStore.on(ContainerStore.CLIENT_RECOMMENDED_EVENT, this.update);
+    this.update();
   },
   update: function () {
     if (!this.state.query.length) {
@@ -105,8 +106,10 @@ var NewContainer = React.createClass({
   render: function () {
     var self = this;
     var title = this.state.query ? 'Results' : 'Recommended';
-    var data = this.state.results.slice(0, 6);
-
+    var data = [];
+    if (this.state.results) {
+      data = this.state.results.slice(0, 6);
+    }
     var results;
     if (data.length) {
       var items = data.map(function (r) {
@@ -173,11 +176,22 @@ var NewContainer = React.createClass({
         </div>
       );
     } else {
-      results = (
-        <div className="no-results">
-          <Radial spin="true" progress={90}/>
-        </div>
-      );
+      if (this.state.results.length === 0 && this.state.query === '') {
+        results = (
+          <div className="no-results">
+            <div className="loader">
+              <h2>Loading Images</h2>
+              <Radial spin="true" progress={90} thick={true} transparent={true} />
+            </div>
+          </div>
+        );
+      } else {
+        results = (
+          <div className="no-results">
+            <h1>Cannot find a matching image.</h1>
+          </div>
+        );
+      }
     }
     var loadingClasses = React.addons.classSet({
       hidden: !this.state.loading,
@@ -198,7 +212,7 @@ var NewContainer = React.createClass({
             </div>
             <div className="search">
               <div className="search-bar">
-                <input type="search" ref="searchInput" className="form-control" placeholder="Find an existing image" onChange={this.handleChange}/>
+                <input type="search" ref="searchInput" className="form-control" placeholder="Find an image from Docker Hub" onChange={this.handleChange}/>
                 <div className={magnifierClasses}></div>
                 <RetinaImage className={loadingClasses} src="loading.png"/>
               </div>

@@ -16,7 +16,7 @@
     "release": "gulp release",
     "release:beta": "gulp release --beta",
     "preinstall": "./deps",
-    "lint": "jsxhint src/**/* && jsxhint browser/**/*"
+    "lint": "jsxhint src && jsxhint browser"
   },
   "licenses": [
     {

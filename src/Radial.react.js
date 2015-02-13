@@ -15,7 +15,8 @@ var Radial = React.createClass({
       'radial-spinner': this.props.spin,
       'radial-negative': this.props.error,
       'radial-thick': this.props.thick || false,
-      'radial-gray': this.props.gray || false
+      'radial-gray': this.props.gray || false,
+      'radial-transparent': this.props.transparent || false
     });
     return (
       <div className={classes} data-progress={this.props.progress}>

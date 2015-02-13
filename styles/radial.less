@@ -90,30 +90,25 @@
     .inset {
       width:       @inset-size;
       height:      @inset-size;
-      position:    absolute;
       margin-left: (@circle-size - @inset-size) / 2.0;
       margin-top:  (@circle-size - @inset-size) / 2.0;
-
-      background-color: @inset-color;
-      border-radius: 100%;
       .percentage {
-        width:       @percentage-text-width;
-        position:    absolute;
         top:         (@inset-size - @percentage-font-size) / 2.0;
         left:        (@inset-size - @percentage-text-width) / 2.0;
-
-        line-height: 1;
-        text-align:  center;
-
-        color:       @brand-primary;
-        font-weight: 500;
-        font-size:   @percentage-font-size;
       }
     }
   }
 
   &.radial-gray {
     background: #EEE;
+  }
+
+  &.radial-transparent {
+    @inset-color: #F9F9F9;
+    background: #F9F9F9;
+    .inset {
+      background-color: @inset-color;
+    }
   }
 
   @i: 0;

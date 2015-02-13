@@ -3,6 +3,7 @@ var React = require('react/addons');
 var Router = require('react-router');
 
 var ContainerListNewItem = React.createClass({
+  mixins: [Router.State, Router.Navigation],
   handleItemMouseEnter: function () {
     var $action = $(this.getDOMNode()).find('.action');
     $action.show();
@@ -13,6 +14,7 @@ var ContainerListNewItem = React.createClass({
   },
   handleDelete: function () {
     $(this.getDOMNode()).fadeOut();
+    this.transitionTo('containers');
   },
   render: function () {
     var self = this;

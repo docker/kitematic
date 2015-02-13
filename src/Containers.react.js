@@ -20,7 +20,7 @@ var Containers = React.createClass({
     ContainerStore.on(ContainerStore.CLIENT_CONTAINER_EVENT, this.updateFromClient);
 
     if (this.state.sorted.length) {
-      this.transitionTo('container', {name: this.state.sorted[0].Name});
+      this.transitionTo('containerHome', {name: this.state.sorted[0].Name});
     }
   },
   componentDidUnmount: function () {
@@ -34,7 +34,7 @@ var Containers = React.createClass({
     });
     if (status === 'destroy') {
       if (this.state.sorted.length) {
-        this.transitionTo('container', {name: this.state.sorted[0].Name});
+        this.transitionTo('containerHome', {name: this.state.sorted[0].Name});
       } else {
         this.transitionTo('containers');
       }
@@ -46,7 +46,7 @@ var Containers = React.createClass({
       sorted: ContainerStore.sorted()
     });
     if (status === 'create') {
-      this.transitionTo('container', {name: name});
+      this.transitionTo('containerHome', {name: name});
     }
   },
   handleScroll: function (e) {
