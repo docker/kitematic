@@ -31,8 +31,8 @@ var VirtualBox = {
       return util.exec(['pkill', 'VirtualBox']);
     }).then(() => {
       return util.exec(['pkill', 'VBox']);
-    }).catch(err => {
-      
+    }).catch(() => {
+
     });
   },
   vmstate: function (name) {
@@ -48,9 +48,6 @@ var VirtualBox = {
   },
   vmdestroy: function (name) {
     return Promise.coroutine(function* () {
-      if (!this.installed()) {
-        return Promise.reject('VirtualBox not installed.');
-      }
       try {
         var state = yield this.vmstate(name);
         if (state === 'running') {
