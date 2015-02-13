@@ -1,5 +1,4 @@
 var EventEmitter = require('events').EventEmitter;
-var assign = require('object-assign');
 var _ = require('underscore');
 var path = require('path');
 var Promise = require('bluebird');
@@ -7,70 +6,60 @@ var boot2docker = require('./Boot2Docker');
 var virtualBox = require('./VirtualBox');
 var setupUtil = require('./SetupUtil');
 var util = require('./Util');
+var assign = require('object-assign');
 
-var SUDO_PROMPT = 'Kitematic requires administrative privileges to install VirtualBox.';
 var _currentStep = null;
 var _error = null;
 var _cancelled = false;
 var _retryPromise = null;
+var _requiredSteps = [];
 
 var _steps = [{
-  name: 'downloadVirtualBox',
+  name: 'download',
   title: 'Downloading VirtualBox',
   message: 'VirtualBox is being downloaded. Kitematic requires VirtualBox to run containers.',
   totalPercent: 35,
   percent: 0,
   run: Promise.coroutine(function* (progressCallback) {
     var packagejson = util.packagejson();
-    if (virtualBox.installed()) {
-      var version = yield virtualBox.version();
-      if (setupUtil.compareVersions(version, packagejson['virtualbox-required-version']) >= 0) {
-        return;
-      }
-    }
     var virtualBoxFile = `https://github.com/kitematic/virtualbox/releases/download/${packagejson['virtualbox-version']}/${packagejson['virtualbox-filename']}`;
-    yield setupUtil.download(virtualBoxFile, path.join(setupUtil.supportDir(), packagejson['virtualbox-filename']), packagejson['virtualbox-checksum'], percent => {
+    yield setupUtil.download(virtualBoxFile, path.join(util.supportDir(), packagejson['virtualbox-filename']), packagejson['virtualbox-checksum'], percent => {
       progressCallback(percent);
     });
   })
 }, {
-  name: 'installVirtualBox',
-  title: 'Installing VirtualBox',
-  message: "VirtualBox is being installed in the background. We may need you to type in your password to continue.",
+  name: 'install',
+  title: 'Installing Docker & VirtualBox',
+  message: 'VirtualBox is being installed in the background. We may need you to type in your password to continue.',
   totalPercent: 5,
   percent: 0,
   seconds: 5,
   run: Promise.coroutine(function* () {
     var packagejson = util.packagejson();
-    if (virtualBox.installed()) {
-      var version = yield virtualBox.version();
-      if (setupUtil.compareVersions(version, packagejson['virtualbox-required-version']) >= 0) {
-        return;
-      }
+    var base = util.copyBinariesCmd() + ' && ' + util.fixBinariesCmd();
+    if (!virtualBox.installed() || setupUtil.compareVersions(yield virtualBox.version(), packagejson['virtualbox-required-version']) < 0) {
       yield virtualBox.killall();
+      base += ` && installer -pkg ${path.join(util.supportDir(), packagejson['virtualbox-filename'])} -target /`;
     }
-    var isSudo = yield setupUtil.isSudo();
-    var iconPath = path.join(setupUtil.resourceDir(), 'kitematic.icns');
-    var sudoCmd = isSudo ? ['sudo'] : [path.join(setupUtil.resourceDir(), 'cocoasudo'), '--icon=' + iconPath, `--prompt=${SUDO_PROMPT}`];
-    sudoCmd.push.apply(sudoCmd, ['installer', '-pkg', path.join(setupUtil.supportDir(), packagejson['virtualbox-filename']), '-target', '/']);
+    var cmd = `${util.escapePath(path.join(util.resourceDir(), 'cocoasudo'))} --prompt="Kitematic requires administrative privileges to install VirtualBox." bash -c \"${base}\"`;
     try {
-      yield util.exec(sudoCmd);
+      yield util.exec(cmd);
     } catch (err) {
       throw null;
     }
   })
 }, {
-  name: 'initBoot2Docker',
+  name: 'init',
   title: 'Setting up Docker VM',
-  message: "To run Docker containers on your computer, we are setting up a Linux virtual machine provided by boot2docker.",
+  message: 'To run Docker containers on your computer, we are setting up a Linux virtual machine provided by boot2docker.',
   totalPercent: 15,
   percent: 0,
   seconds: 11,
   run: Promise.coroutine(function* (progressCallback) {
+    setupUtil.simulateProgress(this.seconds, progressCallback);
     yield virtualBox.vmdestroy('kitematic-vm');
     var exists = yield boot2docker.exists();
     if (!exists) {
-      setupUtil.simulateProgress(this.seconds, progressCallback);
       yield boot2docker.init();
       return;
     }
@@ -81,21 +70,20 @@ var _steps = [{
 
     var isoversion = boot2docker.isoversion();
     if (!isoversion || setupUtil.compareVersions(isoversion, boot2docker.version()) < 0) {
-      setupUtil.simulateProgress(this.seconds, progressCallback);
       yield boot2docker.stop();
       yield boot2docker.upgrade();
     }
   })
 }, {
-  name: 'startBoot2Docker',
+  name: 'start',
   title: 'Starting Docker VM',
   message: "Kitematic is starting the boot2docker VM. This may take about a minute.",
   totalPercent: 45,
   percent: 0,
   seconds: 35,
   run: function (progressCallback) {
+    setupUtil.simulateProgress(this.seconds, progressCallback);
     return boot2docker.waitstatus('saving').then(boot2docker.status).then(status => {
-      setupUtil.simulateProgress(this.seconds, progressCallback);
       if (status !== 'running') {
         return boot2docker.start();
       }
@@ -103,28 +91,29 @@ var _steps = [{
   }
 }];
 
-var SetupStore = assign(EventEmitter.prototype, {
+var SetupStore = assign(Object.create(EventEmitter.prototype), {
   PROGRESS_EVENT: 'setup_progress',
   STEP_EVENT: 'setup_step',
   ERROR_EVENT: 'setup_error',
   step: function () {
-    return _currentStep || _steps[0];
+    return _currentStep;
   },
   steps: function () {
     return _.indexBy(_steps, 'name');
   },
   stepCount: function () {
-    return _steps.length;
+    return _requiredSteps.length;
   },
   number: function () {
-    return _.indexOf(_steps, _currentStep) + 1;
+    return _.indexOf(_requiredSteps, _currentStep) + 1;
   },
   percent: function () {
-    var total = 0;
-    _.each(_steps, step => {
-      total += step.totalPercent * step.percent / 100;
+    var sofar = 0;
+    var totalPercent = _requiredSteps.reduce((prev, step) => prev + step.totalPercent, 0);
+    _.each(_requiredSteps, step => {
+      sofar += step.totalPercent * step.percent / 100;
     });
-    return Math.min(Math.round(total), 99);
+    return Math.min(Math.round(100 * sofar / totalPercent), 99);
   },
   error: function () {
     return _error;
@@ -141,13 +130,37 @@ var SetupStore = assign(EventEmitter.prototype, {
     _retryPromise = Promise.defer();
     return _retryPromise.promise;
   },
-  run: Promise.coroutine(function* () {
+  init: Promise.coroutine(function* () {
+    var packagejson = util.packagejson();
+    var isoversion = boot2docker.isoversion();
+    var required = {};
+    required.download = !virtualBox.installed() || setupUtil.compareVersions(yield virtualBox.version(), packagejson['virtualbox-required-version']) < 0;
+    required.install = required.download || setupUtil.needsBinaryFix();
+    required.init = !(yield boot2docker.exists()) || !isoversion || setupUtil.compareVersions(isoversion, boot2docker.version()) < 0;
+    required.start = required.init || (yield boot2docker.status()) !== 'running';
+
     var exists = yield boot2docker.exists();
     if (exists) {
-      this.steps().startBoot2Docker.seconds = 13;
+      this.steps().start.seconds = 13;
     }
 
-    for (let step of _steps) {
+    _requiredSteps = _steps.filter(function (step) {
+      return required[step.name];
+    });
+  }),
+  updateBinaries: function () {
+    if (setupUtil.needsBinaryFix()) {
+      return Promise.resolve();
+    }
+    if (setupUtil.shouldUpdateBinaries()) {
+      return util.exec(util.copyBinariesCmd());
+    }
+    return Promise.resolve();
+  },
+  run: Promise.coroutine(function* () {
+    yield this.init();
+    yield this.updateBinaries();
+    for (let step of _requiredSteps) {
       _currentStep = step;
       step.percent = 0;
       while (true) {
@@ -163,6 +176,7 @@ var SetupStore = assign(EventEmitter.prototype, {
           break;
         } catch (err) {
           if (err) {
+            console.log(err.stack);
             _error = err;
             this.emit(this.ERROR_EVENT);
           } else {

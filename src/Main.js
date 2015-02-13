@@ -8,8 +8,10 @@ var docker = require('./Docker');
 var router = require('./router');
 var boot2docker = require('./boot2docker');
 var ContainerStore = require('./ContainerStore');
-var SetupStore = require('./ContainerStore');
+var SetupStore = require('./SetupStore');
 var settingsjson;
+var Menu = require('./Menu');
+
 try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
 } catch (err) {
@@ -34,6 +36,7 @@ bugsnag.appVersion = app.getVersion();
 router.run(Handler => React.render(<Handler/>, document.body));
 if (!window.location.hash.length || window.location.hash === '#/') {
   SetupStore.run().then(boot2docker.ip).then(ip => {
+    console.log(ip);
     docker.setHost(ip);
     ContainerStore.init(function (err) {
       if (err) { console.log(err); }

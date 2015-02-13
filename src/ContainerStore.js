@@ -17,7 +17,7 @@ var _logs = {};
 var _streams = {};
 var _muted = {};
 
-var ContainerStore = assign(EventEmitter.prototype, {
+var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   CLIENT_CONTAINER_EVENT: 'client_container_event',
   CLIENT_RECOMMENDED_EVENT: 'client_recommended_event',
   SERVER_CONTAINER_EVENT: 'server_container_event',

@@ -1,36 +1,33 @@
 var _ = require('underscore');
 var crypto = require('crypto');
-var exec = require('exec');
 var fs = require('fs');
+var path = require('path');
 var request = require('request');
 var progress = require('request-progress');
-var path = require('path');
 var Promise = require('bluebird');
+var util = require('./Util');
 
 var SetupUtil = {
-  supportDir: function () {
-    var dirs = ['Library', 'Application\ Support', 'Kitematic'];
-    var acc = process.env.HOME;
-    dirs.forEach(function (d) {
-      acc = path.join(acc, d);
-      if (!fs.existsSync(acc)) {
-        fs.mkdirSync(acc);
-      }
-    });
-    return acc;
+  needsBinaryFix: function () {
+    if (!fs.existsSync('/usr/local/bin/docker') && !fs.existsSync('/usr/local/bin/boot2docker')) {
+      return fs.statSync('/usr/local/bin').gid !== 80 || fs.statSync('/usr/local/bin').uid !== process.getuid();
+    }
+
+    if (fs.existsSync('/usr/local/bin/docker') && (fs.statSync('/usr/local/bin/docker').gid !== 80 || fs.statSync('/usr/local/bin/docker').uid !== process.getuid())) {
+      return true;
+    }
+
+    if (fs.existsSync('/usr/local/bin/boot2docker') && (fs.statSync('/usr/local/bin/boot2docker').gid !== 80 || fs.statSync('/usr/local/bin/boot2docker').uid !== process.getuid())) {
+      return true;
+    }
+    return false;
   },
-  resourceDir: function () {
-    return process.env.RESOURCES_PATH;
-  },
-  isSudo: function () {
-    return new Promise((resolve, reject) => {
-      exec(['sudo', '-n', '-u', 'root', 'true'], (stderr, stdout, code) => {
-        if (code) {
-          reject(stderr);
-        }
-        resolve(stderr.indexOf('a password is required') === -1);
-      });
-    });
+  shouldUpdateBinaries: function () {
+    var packagejson = util.packagejson();
+    return !fs.existsSync('/usr/local/bin/docker') ||
+      !fs.existsSync('/usr/local/bin/boot2docker') ||
+      this.checksum('/usr/local/bin/boot2docker') !== this.checksum(path.join(util.resourceDir(), 'boot2docker-' + packagejson['boot2docker-version'])) ||
+      this.checksum('/usr/local/bin/docker') !== this.checksum(path.join(util.resourceDir(), 'docker-' + packagejson['docker-version']));
   },
   simulateProgress: function (estimateSeconds, progress) {
     var times = _.range(0, estimateSeconds * 1000, 200);
@@ -42,10 +39,13 @@ var SetupUtil = {
       timers.push(timer);
     });
   },
+  checksum: function (filename) {
+    return crypto.createHash('sha256').update(fs.readFileSync(filename), 'utf8').digest('hex');
+  },
   download: function (url, filename, checksum, percentCallback) {
     return new Promise((resolve, reject) => {
       if (fs.existsSync(filename)) {
-        var existingChecksum = crypto.createHash('sha256').update(fs.readFileSync(filename), 'utf8').digest('hex');
+        var existingChecksum = this.checksum(filename);
         if (existingChecksum === checksum) {
           resolve();
           return;

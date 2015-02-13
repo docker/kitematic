@@ -83,7 +83,7 @@ var Setup = React.createClass({
           <div className="content">
             <h4>Installation Cancelled</h4>
             <h1>Couldn&#39;t Install VirtualBox</h1>
-            <p>Kitematic did not receive the administrative privileges required to install VirtualBox.</p>
+            <p>Kitematic did not receive the administrative privileges required to install VirtualBox &amp; Docker.</p>
             <p>Please retry or download &amp; install VirutalBox manually from the <a onClick={this.handleOpenWebsite}>official Oracle website</a>.</p>
             <button className="btn btn-action" onClick={this.handleRetry}>Retry</button>
           </div>

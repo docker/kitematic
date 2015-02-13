@@ -27,13 +27,12 @@ var VirtualBox = {
     return util.exec(this.command() + ' list runningvms | sed -E \'s/.*\\{(.*)\\}/\\1/\' | xargs -L1 -I {} ' + this.command() + ' controlvm {} poweroff');
   },
   killall: function () {
-    if (!this.installed()) {
-      return Promise.reject('VirtualBox not installed.');
-    }
     return this.poweroffall().then(() => {
       return util.exec(['pkill', 'VirtualBox']);
     }).then(() => {
       return util.exec(['pkill', 'VBox']);
+    }).catch(err => {
+      
     });
   },
   vmstate: function (name) {
