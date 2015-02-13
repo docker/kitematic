@@ -23,6 +23,10 @@ var ContainerListItem = React.createClass({
       if (index === 0) {
         ContainerStore.remove(this.props.container.Name, function (err) {
           console.error(err);
+          var containers = ContainerStore.sorted();
+          if (containers.length === 1) {
+            $(document.body).find('.new-container-item').parent().fadeIn();
+          }
         });
       }
     }.bind(this));

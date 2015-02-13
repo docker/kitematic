@@ -457,10 +457,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
           return;
         } else {
           container.remove(function (err) {
-            if (err) {
-              callback(err);
-              return;
-            }
+            callback(err);
           });
         }
       });
