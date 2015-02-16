@@ -78,6 +78,7 @@ var Containers = React.createClass({
     this.transitionTo('new');
   },
   handleAutoUpdateClick: function () {
+    console.log('CLICKED UPDATE');
     ipc.send('command', 'application:quit-install');
   },
   render: function () {
@@ -85,7 +86,16 @@ var Containers = React.createClass({
     if (this.state.sidebarOffset) {
       sidebarHeaderClass += ' sep';
     }
-
+    var updateNotification;
+    var updatePadding;
+    if (this.state.updateAvailable) {
+      updateNotification = (
+        <div className="update-notification"><span className="text">Update Available</span><a className="btn btn-action small" onClick={this.handleAutoUpdateClick}>Update Now</a></div>
+      );
+      updatePadding = (
+        <div className="update-padding"></div>
+      );
+    }
     var container = this.getParams().name ? this.state.containers[this.getParams().name] : {};
     return (
       <div className="containers">
@@ -100,6 +110,8 @@ var Containers = React.createClass({
             </section>
             <section className="sidebar-containers" onScroll={this.handleScroll}>
               <ContainerList containers={this.state.sorted} newContainer={this.state.newContainer} />
+              {updatePadding}
+              {updateNotification}
             </section>
           </div>
           <Router.RouteHandler container={container}/>
