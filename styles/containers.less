@@ -34,6 +34,48 @@
     background-color: white;
     margin-right: 20px;
     margin-bottom: 20px;
+    .tag-overlay {
+      z-index: 999;
+      background-color: rgba(0,0,0,0.8);
+      border-radius: 4px;
+      width: 320px;
+      height: 166px;
+      position: absolute;
+      color: white;
+      font-size: 13px;
+      display: none;
+      padding: 10px;
+      .tag-list {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        align-content: flex-start;
+        flex-flow: row wrap;
+        height: 140px;
+        overflow: scroll;
+        .tag {
+          display: inline-block;
+          flex: 0 auto;
+          margin-right: 2px;
+          padding: 3px 5px;
+          &:hover {
+            background-color: rgba(255,255,255,0.2);
+            border-radius: 20px;
+          }
+        }
+      }
+      .tags-loading {
+        position: relative;
+        left: 42%;
+        top: 20%;
+        text-align: center;
+        margin: 14px auto;
+        -webkit-animation-name: spin;
+        -webkit-animation-duration: 1.8s;
+        -webkit-animation-iteration-count: infinite;
+        -webkit-animation-timing-function: linear;
+      }
+    }
     .logo {
       flex: 1 auto;
       min-width: 90px;
@@ -100,13 +142,19 @@
           .icon {
             position: relative;
             font-size: 11px;
-            margin-right: 5px;
+            margin-right: 2px;
             top: 2px;
             color: @gray-darkest;
           }
           .text {
             position: relative;
             top: 0px;
+            padding: 3px 5px;
+            &:hover {
+              background-color: @brand-action;
+              color: white;
+              border-radius: 20px;
+            }
           }
         }
         .action {
