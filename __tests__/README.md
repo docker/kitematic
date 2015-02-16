@@ -10,11 +10,11 @@ Simply run `npm test`
 
 ## Manual Setup Tests
 
-Use the reset script under `__tests__/util/reset` to reset your environment for each manual test. WARNING: This will erase your existing VirtualBox, Docker & Kitematic installation.
-
 The expected result for all test cases is that the setup finishes and an HTML container can be created, and that there are no error logs in the output of Kitematic.
 
 ### Test Cases
+
+Clean state: run `__tests__/util/reset`. WARNING: This will erase your existing VirtualBox, Docker & Kitematic installation.
 
 - Clean state
 - Clean state with an old version of VirtualBox installed and running `4.3.16<`
