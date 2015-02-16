@@ -10,7 +10,9 @@ Simply run `npm test`
 
 ## Manual Setup Tests
 
-The expected result for all test cases is that the setup finishes and an HTML container can be created, and that there are no error logs in the output of Kitematic.
+These tests only need to be run if code in `src/SetupStore.js` or `src/Setup.react.js` are changed.
+
+The expected result for all test cases is that the setup finishes and an HTML container can be created, Also check that there are no errors in the output of Kitematic.
 
 ### Test Cases
 
