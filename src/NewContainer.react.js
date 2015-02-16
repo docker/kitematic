@@ -5,6 +5,9 @@ var RetinaImage = require('react-retina-image');
 var ContainerStore = require('./ContainerStore');
 var Radial = require('./Radial.react');
 var assign = require('object-assign');
+var Promise = require('bluebird');
+
+var _recommended = [];
 
 var NewContainer = React.createClass({
   _searchRequest: null,
@@ -23,15 +26,7 @@ var NewContainer = React.createClass({
       creating: []
     });
     this.refs.searchInput.getDOMNode().focus();
-    ContainerStore.on(ContainerStore.CLIENT_RECOMMENDED_EVENT, this.update);
-    this.update();
-  },
-  update: function () {
-    if (!this.state.query.length) {
-      this.setState({
-        results: ContainerStore.recommended()
-      });
-    }
+    this.recommended();
   },
   search: function (query) {
     if (this._searchRequest) {
@@ -59,6 +54,42 @@ var NewContainer = React.createClass({
       }
     });
   },
+  recommended: function () {
+    if (this._searchRequest) {
+      this._searchRequest.abort();
+      this._searchRequest = null;
+    }
+
+    if (_recommended.length) {
+      return;
+    }
+    Promise.resolve($.ajax({
+      url: 'https://kitematic.com/recommended.json',
+      cache: false,
+      dataType: 'json',
+    })).then(res => {
+      console.log(res);
+      return res.repos;
+    }).map(repo => {
+      console.log(repo);
+      return $.get('https://registry.hub.docker.com/v1/search?q=' + repo.repo).then(data => {
+        var results = data.results;
+        var result = _.find(results, function (r) {
+          return r.name === repo.repo;
+        });
+        return _.extend(result, repo);
+      });
+    }).then(results => {
+      _recommended = results.filter(r => !!r);
+      if (!this.state.query.length) {
+        this.setState({
+          results: _recommended
+        });
+      }
+    }).catch(err => {
+      console.log(err);
+    });
+  },
   handleChange: function (e) {
     var query = e.target.value;
 
@@ -70,7 +101,7 @@ var NewContainer = React.createClass({
     if (!query.length) {
       this.setState({
         query: query,
-        results: ContainerStore.recommended()
+        results: _recommended
       });
     } else {
       var self = this;

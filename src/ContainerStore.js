@@ -10,7 +10,6 @@ var registry = require('./Registry');
 var ContainerUtil = require('./ContainerUtil');
 
 var convert = new Convert();
-var _recommended = [];
 var _containers = {};
 var _progress = {};
 var _logs = {};
@@ -19,7 +18,6 @@ var _muted = {};
 
 var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   CLIENT_CONTAINER_EVENT: 'client_container_event',
-  CLIENT_RECOMMENDED_EVENT: 'client_recommended_event',
   SERVER_CONTAINER_EVENT: 'server_container_event',
   SERVER_PROGRESS_EVENT: 'server_progress_event',
   SERVER_LOGS_EVENT: 'server_logs_event',
@@ -266,9 +264,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
       this._resumePulling();
       this._startListeningToEvents();
     }.bind(this));
-    this.fetchRecommended(function () {
-      this.emit(this.CLIENT_RECOMMENDED_EVENT);
-    }.bind(this));
   },
   fetchContainer: function (id, callback) {
     docker.client().getContainer(id).inspect(function (err, container) {
@@ -309,34 +304,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
       }, function (err) {
         callback(err);
       });
-    });
-  },
-  fetchRecommended: function (callback) {
-    if (_recommended.length) {
-     return;
-   }
-    $.ajax({
-      url: 'https://kitematic.com/recommended.json',
-      cache: false,
-      dataType: 'json',
-      success: function (res) {
-        var recommended = res.repos;
-        async.map(recommended, function (rec, callback) {
-          $.get('https://registry.hub.docker.com/v1/search?q=' + rec.repo, function (data) {
-            var results = data.results;
-            var result = _.find(results, function (r) {
-              return r.name === rec.repo;
-            });
-            callback(null, _.extend(result, rec));
-          });
-        }, function (err, results) {
-          _recommended = results.filter(function(r) { return !!r; });
-          callback();
-        });
-      },
-      error: function (err) {
-        console.log(err);
-      }
     });
   },
   fetchLogs: function (name, callback) {
