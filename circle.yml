@@ -1,0 +1,7 @@
+machine:
+  node:
+    version: 0.10.36
+dependencies:
+  cache_directories:
+    - "resources"
+    - "node_modules"
