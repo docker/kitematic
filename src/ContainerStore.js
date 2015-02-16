@@ -5,7 +5,6 @@ var path = require('path');
 var assign = require('object-assign');
 var docker = require('./Docker');
 var registry = require('./Registry');
-var ContainerUtil = require('./ContainerUtil');
 
 var _placeholders = {};
 var _containers = {};
@@ -45,6 +44,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
 
           stream.on('data', function (str) {
             var data = JSON.parse(str);
+            console.log(data);
 
             if (data.status === 'Already exists') {
               layerProgress[data.id] = 1;
@@ -136,18 +136,22 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     }
   },
   _resumePulling: function () {
-    var downloading = _.filter(_.values(_containers), function (container) {
+    var downloading = _.filter(_.values(this.containers()), function (container) {
       return container.State.Downloading;
     });
 
     // Recover any pulls that were happening
     var self = this;
     downloading.forEach(function (container) {
-      docker.client().pull(container.KitematicDownloadingImage, function (err, stream) {
+      docker.client().pull(container.Config.Image, function (err, stream) {
+        delete _placeholders[container.Name];
+        localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
         stream.setEncoding('utf8');
         stream.on('data', function () {});
         stream.on('end', function () {
-          self._createContainer(container.Name, {Image: container.KitematicDownloadingImage}, function () {});
+          self._createContainer(container.Name, {Image: container.Config.Image}, function () {
+            self.emit(self.CLIENT_CONTAINER_EVENT, container.Name);
+          });
         });
       });
     });
@@ -197,6 +201,14 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
       } else {
         callback();
       }
+      var placeholderData = JSON.parse(localStorage.getItem('store.placeholders'));
+      console.log(placeholderData);
+      console.log(_.keys(_containers));
+      if (placeholderData) {
+        _placeholders = _.omit(placeholderData, _.keys(_containers));
+        localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
+      }
+      console.log(_placeholders);
       this.emit(this.CLIENT_CONTAINER_EVENT);
       this._resumePulling();
       this._startListeningToEvents();
@@ -213,12 +225,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         }
         // Fix leading slash in container names
         container.Name = container.Name.replace('/', '');
-
-        // Add Downloading State (stored in environment variables) to containers for Kitematic
-        var env = ContainerUtil.env(container);
-        container.State.Downloading = !!env.KITEMATIC_DOWNLOADING;
-        container.KitematicDownloadingImage = env.KITEMATIC_DOWNLOADING_IMAGE;
-
         _containers[container.Name] = container;
         callback(null, container);
       }
@@ -256,12 +262,16 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         Downloading: true
       }
     };
-
+    console.log(_placeholders);
+    console.log(JSON.stringify(_placeholders));
+    localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
     self.emit(self.CLIENT_CONTAINER_EVENT, containerName, 'create');
+
     _muted[containerName] = true;
     _progress[containerName] = 0;
     self._pullImage(repository, tag, function () {
       delete _placeholders[containerName];
+      localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
       self._createContainer(containerName, {Image: imageName}, function () {
         delete _progress[containerName];
         _muted[containerName] = false;
@@ -292,6 +302,10 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     });
   },
   remove: function (name, callback) {
+    if (_placeholders[name]) {
+      delete _placeholders[name];
+      return;
+    }
     var container = docker.client().getContainer(name);
     if (_containers[name].State.Paused) {
       container.unpause(function (err) {
@@ -331,7 +345,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     }
   },
   containers: function() {
-    return _.extend(_placeholders, _containers);
+    return _.extend(_containers, _placeholders);
   },
   container: function (name) {
     return this.containers()[name];

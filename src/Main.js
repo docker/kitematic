@@ -33,14 +33,15 @@ bugsnag.releaseStage = process.env.NODE_ENV === 'development' ? 'development' : 
 bugsnag.notifyReleaseStages = ['production'];
 bugsnag.appVersion = app.getVersion();
 
+router.run(Handler => React.render(<Handler/>, document.body));
 SetupStore.run().then(boot2docker.ip).then(ip => {
   console.log(ip);
   docker.setHost(ip);
   ContainerStore.init(function (err) {
     if (err) { console.log(err); }
-    router.run(Handler => React.render(<Handler/>, document.body));
     router.transitionTo('containers');
   });
 }).catch(err => {
+  console.log(err);
   bugsnag.notify(err);
 });

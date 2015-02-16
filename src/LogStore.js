@@ -15,7 +15,10 @@ var LogStore = assign(Object.create(EventEmitter.prototype), {
     div.appendChild(text);
     return div.innerHTML;
   },
-  fetchLogs: function (name, callback) {
+  fetchLogs: function (name) {
+    if (!name || !docker.client()) {
+      return;
+    }
     var index = 0;
     var self = this;
     docker.client().getContainer(name).logs({
@@ -24,7 +27,6 @@ var LogStore = assign(Object.create(EventEmitter.prototype), {
       stderr: true,
       timestamps: true
     }, function (err, stream) {
-      callback(err);
       if (_streams[name]) {
         return;
       }
@@ -59,7 +61,7 @@ var LogStore = assign(Object.create(EventEmitter.prototype), {
   },
   logs: function (name) {
     if (!_streams[name]) {
-      this.fetchLogs(name, () => {});
+      this.fetchLogs(name);
     }
     return _logs[name] || [];
   }
