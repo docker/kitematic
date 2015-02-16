@@ -202,13 +202,10 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         callback();
       }
       var placeholderData = JSON.parse(localStorage.getItem('store.placeholders'));
-      console.log(placeholderData);
-      console.log(_.keys(_containers));
       if (placeholderData) {
         _placeholders = _.omit(placeholderData, _.keys(_containers));
         localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
       }
-      console.log(_placeholders);
       this.emit(this.CLIENT_CONTAINER_EVENT);
       this._resumePulling();
       this._startListeningToEvents();
@@ -262,8 +259,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         Downloading: true
       }
     };
-    console.log(_placeholders);
-    console.log(JSON.stringify(_placeholders));
     localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
     self.emit(self.CLIENT_CONTAINER_EVENT, containerName, 'create');
 

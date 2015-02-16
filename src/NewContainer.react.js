@@ -17,14 +17,10 @@ var NewContainer = React.createClass({
       results: _recommended,
       loading: false,
       tags: {},
-      active: null,
-      creating: []
+      active: null
     };
   },
   componentDidMount: function () {
-    this.setState({
-      creating: []
-    });
     this.refs.searchInput.getDOMNode().focus();
     if (!_recommended.length) {
       this.recommended();
@@ -137,10 +133,7 @@ var NewContainer = React.createClass({
   render: function () {
     var self = this;
     var title = this.state.query ? 'Results' : 'Recommended';
-    var data = [];
-    if (this.state.results) {
-      data = this.state.results.slice(0, 6);
-    }
+    var data = this.state.results;
     var results;
     if (data.length) {
       var items = data.map(function (r) {
@@ -165,12 +158,7 @@ var NewContainer = React.createClass({
         } else {
           imgsrc = 'http://kitematic.com/recommended/kitematic_html.png';
         }
-        var action;
-        if (_.find(self.state.creating, r.name)) {
-          action = <RetinaImage src="loading.png"/>;
-        } else {
-          action = <a className="btn btn-action" onClick={self.handleClick.bind(self, r.name)}>Create</a>;
-        }
+        var action = <a className="btn btn-action" onClick={self.handleClick.bind(self, r.name)}>Create</a>;
         return (
           <div key={r.name} className="image-item">
             <div className="logo" style={logoStyle}>
