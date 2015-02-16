@@ -11,6 +11,7 @@ var ContainerUtil = require('./ContainerUtil');
 
 var convert = new Convert();
 var _recommended = [];
+var _placeholders = {};
 var _containers = {};
 var _progress = {};
 var _logs = {};
@@ -23,32 +24,8 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   SERVER_CONTAINER_EVENT: 'server_container_event',
   SERVER_PROGRESS_EVENT: 'server_progress_event',
   SERVER_LOGS_EVENT: 'server_logs_event',
-  _pullScratchImage: function (callback) {
-    var image = docker.client().getImage('scratch:latest');
-    image.inspect(function (err, data) {
-      if (!data) {
-        docker.client().pull('scratch:latest', function (err, stream) {
-          if (err) {
-            callback(err);
-            return;
-          }
-          stream.setEncoding('utf8');
-          stream.on('data', function () {});
-          stream.on('end', function () {
-            callback();
-          });
-        });
-      } else {
-        callback();
-      }
-    });
-  },
   _pullImage: function (repository, tag, callback, progressCallback) {
     registry.layers(repository, tag, function (err, layerSizes) {
-
-      // TODO: Support v2 registry API
-      // TODO: clean this up- It's messy to work with pulls from both the v1 and v2 registry APIs
-      // Use the per-layer pull progress % to update the total progress.
       docker.client().listImages({all: 1}, function(err, images) {
         var existingIds = new Set(images.map(function (image) {
           return image.Id.slice(0, 12);
@@ -162,29 +139,14 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     });
   },
   _createPlaceholderContainer: function (imageName, name, callback) {
-    var self = this;
-    this._pullScratchImage(function (err) {
-      if (err) {
-        callback(err);
-        return;
+    if (_placeholders[name]) {
+      delete _placeholders[name];
+    }
+    _placeholders[name] = {
+      State: {
       }
-      docker.client().createContainer({
-        Image: 'scratch:latest',
-        Tty: false,
-        Env: [
-          'KITEMATIC_DOWNLOADING=true',
-          'KITEMATIC_DOWNLOADING_IMAGE=' + imageName
-        ],
-        Cmd: 'placeholder',
-        name: name
-      }, function (err) {
-        if (err) {
-          callback(err);
-          return;
-        }
-        self.fetchContainer(name, callback);
-      });
-    });
+    };
+    return _placeholders[name];
   },
   _generateName: function (repository) {
     var base = _.last(repository.split('/'));
@@ -386,28 +348,24 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     var self = this;
     var imageName = repository + ':' + tag;
     var containerName = this._generateName(repository);
-    // Pull image
-    self._createPlaceholderContainer(imageName, containerName, function (err, container) {
-      if (err) {
-        callback(err);
-        return;
-      }
-      _containers[containerName] = container;
-      self.emit(self.CLIENT_CONTAINER_EVENT, containerName, 'create');
-      _muted[containerName] = true;
-      _progress[containerName] = 0;
-      self._pullImage(repository, tag, function () {
-        self._createContainer(containerName, {Image: imageName}, function () {
-          delete _progress[containerName];
-          _muted[containerName] = false;
-          self.emit(self.CLIENT_CONTAINER_EVENT, containerName);
-        });
-      }, function (progress) {
-        _progress[containerName] = progress;
-        self.emit(self.SERVER_PROGRESS_EVENT, containerName);
+
+    // Create placeholder container
+    var container = this._createPlaceholderContainer(imageName, containerName);
+    _containers[containerName] = container;
+    self.emit(self.CLIENT_CONTAINER_EVENT, containerName, 'create');
+    _muted[containerName] = true;
+    _progress[containerName] = 0;
+    self._pullImage(repository, tag, function () {
+      self._createContainer(containerName, {Image: imageName}, function () {
+        delete _progress[containerName];
+        _muted[containerName] = false;
+        self.emit(self.CLIENT_CONTAINER_EVENT, containerName);
       });
-      callback(null, containerName);
+    }, function (progress) {
+      _progress[containerName] = progress;
+      self.emit(self.SERVER_PROGRESS_EVENT, containerName);
     });
+    callback(null, containerName);
   },
   updateContainer: function (name, data, callback) {
     _muted[name] = true;

@@ -29,6 +29,17 @@ var SetupUtil = {
       this.checksum('/usr/local/bin/boot2docker') !== this.checksum(path.join(util.resourceDir(), 'boot2docker-' + packagejson['boot2docker-version'])) ||
       this.checksum('/usr/local/bin/docker') !== this.checksum(path.join(util.resourceDir(), 'docker-' + packagejson['docker-version']));
   },
+  installVirtualBoxCmd: function () {
+    var packagejson = util.packagejson();
+    return `installer -pkg ${util.escapePath(path.join(util.supportDir(), packagejson['virtualbox-filename']))} -target /`;
+  },
+  virtualBoxUrl: function () {
+    var packagejson = util.packagejson();
+    return `https://github.com/kitematic/virtualbox/releases/download/${packagejson['virtualbox-version']}/${packagejson['virtualbox-filename']}`;
+  },
+  macSudoCmd: function (cmd) {
+    return `${util.escapePath(path.join(util.resourceDir(), 'macsudo'))} -p "Kitematic requires administrative privileges to install VirtualBox." sh -c \"${cmd}\"`;
+  },
   simulateProgress: function (estimateSeconds, progress) {
     var times = _.range(0, estimateSeconds * 1000, 200);
     var timers = [];
