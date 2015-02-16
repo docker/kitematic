@@ -7,6 +7,7 @@ var docker = require('./Docker');
 var registry = require('./Registry');
 var ContainerUtil = require('./ContainerUtil');
 
+var _placeholders = {};
 var _containers = {};
 var _progress = {};
 var _muted = {};
@@ -15,26 +16,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   CLIENT_CONTAINER_EVENT: 'client_container_event',
   SERVER_CONTAINER_EVENT: 'server_container_event',
   SERVER_PROGRESS_EVENT: 'server_progress_event',
-  _pullScratchImage: function (callback) {
-    var image = docker.client().getImage('scratch:latest');
-    image.inspect(function (err, data) {
-      if (!data) {
-        docker.client().pull('scratch:latest', function (err, stream) {
-          if (err) {
-            callback(err);
-            return;
-          }
-          stream.setEncoding('utf8');
-          stream.on('data', function () {});
-          stream.on('end', function () {
-            callback();
-          });
-        });
-      } else {
-        callback();
-      }
-    });
-  },
   _pullImage: function (repository, tag, callback, progressCallback) {
     registry.layers(repository, tag, function (err, layerSizes) {
 
@@ -64,7 +45,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
 
           stream.on('data', function (str) {
             var data = JSON.parse(str);
-            console.log(data);
 
             if (data.status === 'Already exists') {
               layerProgress[data.id] = 1;
@@ -81,7 +61,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
 
             var totalReceived = chunks.reduce(function (pv, sv) {
               return pv + sv;
-            });
+            }, 0);
 
             var totalProgress = totalReceived / totalBytes;
             progressCallback(totalProgress);
@@ -104,14 +84,8 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     if (containerData.Config && containerData.Config.Image) {
       containerData.Image = containerData.Config.Image;
     }
-    existing.kill(function (err) {
-      if (err) {
-        console.log(err);
-      }
-      existing.remove(function (err) {
-        if (err) {
-          console.log(err);
-        }
+    existing.kill(function () {
+      existing.remove(function () {
         docker.client().getImage(containerData.Image).inspect(function (err, data) {
           if (err) {
             callback(err);
@@ -144,31 +118,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
             }
           });
         });
-      });
-    });
-  },
-  _createPlaceholderContainer: function (imageName, name, callback) {
-    var self = this;
-    this._pullScratchImage(function (err) {
-      if (err) {
-        callback(err);
-        return;
-      }
-      docker.client().createContainer({
-        Image: 'scratch:latest',
-        Tty: false,
-        Env: [
-          'KITEMATIC_DOWNLOADING=true',
-          'KITEMATIC_DOWNLOADING_IMAGE=' + imageName
-        ],
-        Cmd: 'placeholder',
-        name: name
-      }, function (err) {
-        if (err) {
-          callback(err);
-          return;
-        }
-        self.fetchContainer(name, callback);
       });
     });
   },
@@ -296,28 +245,33 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     var self = this;
     var imageName = repository + ':' + tag;
     var containerName = this._generateName(repository);
-    // Pull image
-    self._createPlaceholderContainer(imageName, containerName, function (err, container) {
-      if (err) {
-        callback(err);
-        return;
+
+    _placeholders[containerName] = {
+      Name: containerName,
+      Image: imageName,
+      Config: {
+        Image: imageName,
+      },
+      State: {
+        Downloading: true
       }
-      _containers[containerName] = container;
-      self.emit(self.CLIENT_CONTAINER_EVENT, containerName, 'create');
-      _muted[containerName] = true;
-      _progress[containerName] = 0;
-      self._pullImage(repository, tag, function () {
-        self._createContainer(containerName, {Image: imageName}, function () {
-          delete _progress[containerName];
-          _muted[containerName] = false;
-          self.emit(self.CLIENT_CONTAINER_EVENT, containerName);
-        });
-      }, function (progress) {
-        _progress[containerName] = progress;
-        self.emit(self.SERVER_PROGRESS_EVENT, containerName);
+    };
+
+    self.emit(self.CLIENT_CONTAINER_EVENT, containerName, 'create');
+    _muted[containerName] = true;
+    _progress[containerName] = 0;
+    self._pullImage(repository, tag, function () {
+      delete _placeholders[containerName];
+      self._createContainer(containerName, {Image: imageName}, function () {
+        delete _progress[containerName];
+        _muted[containerName] = false;
+        self.emit(self.CLIENT_CONTAINER_EVENT, containerName);
       });
-      callback(null, containerName);
+    }, function (progress) {
+      _progress[containerName] = progress;
+      self.emit(self.SERVER_PROGRESS_EVENT, containerName);
     });
+    callback(null, containerName);
   },
   updateContainer: function (name, data, callback) {
     _muted[name] = true;
@@ -377,13 +331,13 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     }
   },
   containers: function() {
-    return _containers;
+    return _.extend(_placeholders, _containers);
   },
   container: function (name) {
-    return _containers[name];
+    return this.containers()[name];
   },
   sorted: function () {
-    return _.values(_containers).sort(function (a, b) {
+    return _.values(this.containers()).sort(function (a, b) {
       return a.Name.localeCompare(b.Name);
     });
   },
