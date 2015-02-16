@@ -14,7 +14,7 @@ The expected result for all test cases is that the setup finishes and an HTML co
 
 ### Test Cases
 
-Clean state: run `__tests__/util/reset`. WARNING: This will erase your existing VirtualBox, Docker & Kitematic installation.
+**Clean state**: run `__tests__/util/reset`. WARNING: This will erase your existing VirtualBox, Docker & Kitematic installation.
 
 - Clean state
 - Clean state with an old version of VirtualBox installed and running `4.3.16<`
