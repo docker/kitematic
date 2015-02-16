@@ -68,7 +68,6 @@
     "underscore": "^1.7.0"
   },
   "devDependencies": {
-    "babel": "^3.4.1",
     "6to5-jest": "^3.0.0",
     "browserify": "^6.2.0",
     "ecstatic": "^0.5.8",
