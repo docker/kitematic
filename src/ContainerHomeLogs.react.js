@@ -1,6 +1,6 @@
 var $ = require('jquery');
 var React = require('react/addons');
-var ContainerStore = require('./ContainerStore');
+var LogStore = require('./LogStore');
 var Router = require('react-router');
 
 var ContainerHomeLogs = React.createClass({
@@ -15,10 +15,10 @@ var ContainerHomeLogs = React.createClass({
   },
   componentDidMount: function() {
     this.init();
-    ContainerStore.on(ContainerStore.SERVER_LOGS_EVENT, this.updateLogs);
+    LogStore.on(LogStore.SERVER_LOGS_EVENT, this.updateLogs);
   },
   componentWillUnmount: function() {
-    ContainerStore.removeListener(ContainerStore.SERVER_LOGS_EVENT, this.updateLogs);
+    LogStore.removeListener(LogStore.SERVER_LOGS_EVENT, this.updateLogs);
   },
   componentDidUpdate: function () {
     // Scroll logs to bottom
@@ -39,7 +39,7 @@ var ContainerHomeLogs = React.createClass({
       return;
     }
     this.setState({
-      logs: ContainerStore.logs(this.getParams().name)
+      logs: LogStore.logs(this.getParams().name)
     });
   },
   handleClickLogs: function () {

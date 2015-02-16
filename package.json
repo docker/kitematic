@@ -38,8 +38,8 @@
       "node_modules/6to5"
     ]
   },
-  "docker-version": "1.4.1",
-  "boot2docker-version": "1.4.1",
+  "docker-version": "1.5.0",
+  "boot2docker-version": "1.5.0",
   "atom-shell-version": "0.21.1",
   "virtualbox-version": "4.3.20",
   "virtualbox-filename": "VirtualBox-4.3.20.pkg",

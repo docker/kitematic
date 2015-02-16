@@ -1,4 +1,3 @@
-var _ = require('underscore');
 var $ = require('jquery');
 var React = require('react/addons');
 var Router = require('react-router');
@@ -34,19 +33,7 @@ var ContainerListItem = React.createClass({
   render: function () {
     var self = this;
     var container = this.props.container;
-    var downloadingImage = null, downloading = false;
-    var env = container.Config.Env;
-    if (env.length) {
-      var obj = _.object(env.map(function (e) {
-        return e.split('=');
-      }));
-      if (obj.KITEMATIC_DOWNLOADING) {
-        downloading = true;
-      }
-      downloadingImage = obj.KITEMATIC_DOWNLOADING_IMAGE || null;
-    }
-
-    var imageName = downloadingImage || container.Config.Image;
+    var imageName = container.Config.Image;
 
     // Synchronize all animations
     var style = {
@@ -54,7 +41,7 @@ var ContainerListItem = React.createClass({
     };
 
     var state;
-    if (downloading) {
+    if (container.State.Downloading) {
       state = <div className="state state-downloading"><div style={style} className="downloading-arrow"></div></div>;
     } else if (container.State.Running && !container.State.Paused) {
       state = <div className="state state-running"><div style={style} className="runningwave"></div></div>;
@@ -70,7 +57,7 @@ var ContainerListItem = React.createClass({
     }
 
     return (
-      <Router.Link data-container={name} to="containerDetail" params={{name: container.Name}}>
+      <Router.Link data-container={name} to="containerDetails" params={{name: container.Name}}>
         <li onMouseEnter={self.handleItemMouseEnter} onMouseLeave={self.handleItemMouseLeave}>
           {state}
           <div className="info">

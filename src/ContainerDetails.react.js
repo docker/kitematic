@@ -19,7 +19,7 @@ var ContainerDetail = React.createClass({
   },
   init: function () {
     var currentRoute = _.last(this.getRoutes()).name;
-    if (currentRoute === 'containerDetail') {
+    if (currentRoute === 'containerDetails') {
       this.transitionTo('containerHome', {name: this.getParams().name});
     }
   },

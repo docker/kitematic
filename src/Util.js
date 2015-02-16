@@ -7,7 +7,6 @@ module.exports = {
   exec: function (args, options) {
     options = options || {};
     return new Promise((resolve, reject) => {
-      console.log(options);
       exec(args, options, (stderr, stdout, code) => {
         if (code) {
           reject(stderr);

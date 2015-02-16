@@ -1,6 +1,7 @@
 var EventEmitter = require('events').EventEmitter;
 var _ = require('underscore');
 var path = require('path');
+var fs = require('fs');
 var Promise = require('bluebird');
 var boot2docker = require('./Boot2Docker');
 var virtualBox = require('./VirtualBox');
@@ -20,13 +21,12 @@ var _steps = [{
   message: 'VirtualBox is being downloaded. Kitematic requires VirtualBox to run containers.',
   totalPercent: 35,
   percent: 0,
-  run: Promise.coroutine(function* (progressCallback) {
+  run: function (progressCallback) {
     var packagejson = util.packagejson();
-    var virtualBoxFile = `https://github.com/kitematic/virtualbox/releases/download/${packagejson['virtualbox-version']}/${packagejson['virtualbox-filename']}`;
-    yield setupUtil.download(virtualBoxFile, path.join(util.supportDir(), packagejson['virtualbox-filename']), packagejson['virtualbox-checksum'], percent => {
+    return setupUtil.download(setupUtil.virtualBoxUrl(), path.join(util.supportDir(), packagejson['virtualbox-filename']), packagejson['virtualbox-checksum'], percent => {
       progressCallback(percent);
     });
-  })
+  }
 }, {
   name: 'install',
   title: 'Installing Docker & VirtualBox',
@@ -34,18 +34,16 @@ var _steps = [{
   totalPercent: 5,
   percent: 0,
   seconds: 5,
-  run: Promise.coroutine(function* () {
+  run: Promise.coroutine(function* (progressCallback) {
     var packagejson = util.packagejson();
-    var base = util.copyBinariesCmd() + ' && ' + util.fixBinariesCmd();
+    var cmd = util.copyBinariesCmd() + ' && ' + util.fixBinariesCmd();
     if (!virtualBox.installed() || setupUtil.compareVersions(yield virtualBox.version(), packagejson['virtualbox-required-version']) < 0) {
       yield virtualBox.killall();
-      base += ` && installer -pkg ${util.escapePath(path.join(util.supportDir(), packagejson['virtualbox-filename']))} -target /`;
+      cmd += ' && ' + setupUtil.installVirtualBoxCmd();
     }
-    console.log(base);
-    var cmd = `${util.escapePath(path.join(util.resourceDir(), 'cocoasudo'))} --prompt="Kitematic requires administrative privileges to install VirtualBox." sudo -u root bash -c \"${base}\"`;
     try {
-      var stdout = yield util.exec(cmd);
-      console.log(stdout);
+      progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
+      yield util.exec(setupUtil.macSudoCmd(cmd));
     } catch (err) {
       throw null;
     }
@@ -132,12 +130,16 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     _retryPromise = Promise.defer();
     return _retryPromise.promise;
   },
-  init: Promise.coroutine(function* () {
+  requiredSteps: Promise.coroutine(function* () {
+    if (_requiredSteps.length) {
+      return Promise.resolve(_requiredSteps);
+    }
     var packagejson = util.packagejson();
     var isoversion = boot2docker.isoversion();
     var required = {};
-    required.download = !virtualBox.installed() || setupUtil.compareVersions(yield virtualBox.version(), packagejson['virtualbox-required-version']) < 0;
-    required.install = required.download || setupUtil.needsBinaryFix();
+    var vboxfile = path.join(util.supportDir(), packagejson['virtualbox-filename']);
+    required.download = !virtualBox.installed() && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== packagejson['virtualbox-checksum']);
+    required.install = !virtualBox.installed() || setupUtil.needsBinaryFix();
     required.init = !(yield boot2docker.exists()) || !isoversion || setupUtil.compareVersions(isoversion, boot2docker.version()) < 0;
     required.start = required.init || (yield boot2docker.status()) !== 'running';
 
@@ -149,6 +151,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     _requiredSteps = _steps.filter(function (step) {
       return required[step.name];
     });
+    return Promise.resolve(_requiredSteps);
   }),
   updateBinaries: function () {
     if (setupUtil.needsBinaryFix()) {
@@ -160,9 +163,11 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     return Promise.resolve();
   },
   run: Promise.coroutine(function* () {
-    yield this.init();
     yield this.updateBinaries();
-    for (let step of _requiredSteps) {
+    var steps = yield this.requiredSteps();
+    console.log(steps);
+    for (let step of steps) {
+      console.log(step.name);
       _currentStep = step;
       step.percent = 0;
       while (true) {
