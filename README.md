@@ -1,4 +1,4 @@
-[![Circle CI](https://circleci.com/gh/kitematic/kitematic/tree/master.svg?style=shield)](https://circleci.com/gh/kitematic/kitematic/tree/master)
+[![CircleCI](https://img.shields.io/circleci/project/kitematic/kitematic.svg)](https://circleci.com/gh/kitematic/kitematic/tree/master)
 [![bitHound Score](https://app.bithound.io/kitematic/kitematic/badges/score.svg)](http://app.bithound.io/kitematic/kitematic)
 
 ![Kitematic Logo](https://cloud.githubusercontent.com/assets/251292/5269258/1b229c3c-7a2f-11e4-96f1-e7baf3c86d73.png)
