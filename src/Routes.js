@@ -27,7 +27,7 @@ var App = React.createClass({
 var routes = (
   <Route name="app" path="/" handler={App}>
     <Route name="containers" handler={Containers}>
-      <Route name="containerDetail" path="/containers/:name" handler={ContainerDetails}>
+      <Route name="containerDetails" path="/containers/:name" handler={ContainerDetails}>
         <Route name="containerHome" path="/containers/:name/home" handler={ContainerHome} />
         <Route name="containerLogs" path="/containers/:name/logs" handler={ContainerLogs}/>
         <Route name="containerSettings" path="/containers/:name/settings" handler={ContainerSettings}>

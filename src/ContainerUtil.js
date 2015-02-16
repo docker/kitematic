@@ -13,6 +13,9 @@ var ContainerUtil = {
     }));
   },
   ports: function (container) {
+    if (!container.NetworkSettings) {
+      return {};
+    }
     var res = {};
     var ip = docker.host;
     _.each(container.NetworkSettings.Ports, function (value, key) {
