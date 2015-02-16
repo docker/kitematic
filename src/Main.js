@@ -33,27 +33,14 @@ bugsnag.releaseStage = process.env.NODE_ENV === 'development' ? 'development' : 
 bugsnag.notifyReleaseStages = ['production'];
 bugsnag.appVersion = app.getVersion();
 
-router.run(Handler => React.render(<Handler/>, document.body));
-if (!window.location.hash.length || window.location.hash === '#/') {
-  SetupStore.run().then(boot2docker.ip).then(ip => {
-    console.log(ip);
-    docker.setHost(ip);
-    ContainerStore.init(function (err) {
-      if (err) { console.log(err); }
-      router.transitionTo('containers');
-    });
-  }).catch(err => {
-    bugsnag.notify(err);
+SetupStore.run().then(boot2docker.ip).then(ip => {
+  console.log(ip);
+  docker.setHost(ip);
+  ContainerStore.init(function (err) {
+    if (err) { console.log(err); }
+    router.run(Handler => React.render(<Handler/>, document.body));
+    router.transitionTo('containers');
   });
-} else {
-  console.log('Skipping installer.');
-  router.transitionTo('containers');
-  boot2docker.ip().then(ip => {
-    docker.setHost(ip);
-    ContainerStore.init(function (err) {
-      if (err) { console.log(err); }
-    });
-  }).catch(err => {
-    bugsnag.notify(err);
-  });
-}
+}).catch(err => {
+  bugsnag.notify(err);
+});

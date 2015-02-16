@@ -14,7 +14,7 @@ var NewContainer = React.createClass({
   getInitialState: function () {
     return {
       query: '',
-      results: [],
+      results: _recommended,
       loading: false,
       tags: {},
       active: null,
@@ -26,7 +26,9 @@ var NewContainer = React.createClass({
       creating: []
     });
     this.refs.searchInput.getDOMNode().focus();
-    this.recommended();
+    if (!_recommended.length) {
+      this.recommended();
+    }
   },
   search: function (query) {
     if (this._searchRequest) {
@@ -67,11 +69,7 @@ var NewContainer = React.createClass({
       url: 'https://kitematic.com/recommended.json',
       cache: false,
       dataType: 'json',
-    })).then(res => {
-      console.log(res);
-      return res.repos;
-    }).map(repo => {
-      console.log(repo);
+    })).then(res => res.repos).map(repo => {
       return $.get('https://registry.hub.docker.com/v1/search?q=' + repo.repo).then(data => {
         var results = data.results;
         var result = _.find(results, function (r) {
@@ -82,9 +80,11 @@ var NewContainer = React.createClass({
     }).then(results => {
       _recommended = results.filter(r => !!r);
       if (!this.state.query.length) {
-        this.setState({
-          results: _recommended
-        });
+        if (this.isMounted()) {
+          this.setState({
+            results: _recommended
+          });
+        }
       }
     }).catch(err => {
       console.log(err);

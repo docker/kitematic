@@ -1,26 +1,20 @@
-var $ = require('jquery');
 var _ = require('underscore');
 var EventEmitter = require('events').EventEmitter;
 var async = require('async');
 var path = require('path');
 var assign = require('object-assign');
-var Convert = require('ansi-to-html');
 var docker = require('./Docker');
 var registry = require('./Registry');
 var ContainerUtil = require('./ContainerUtil');
 
-var convert = new Convert();
 var _containers = {};
 var _progress = {};
-var _logs = {};
-var _streams = {};
 var _muted = {};
 
 var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   CLIENT_CONTAINER_EVENT: 'client_container_event',
   SERVER_CONTAINER_EVENT: 'server_container_event',
   SERVER_PROGRESS_EVENT: 'server_progress_event',
-  SERVER_LOGS_EVENT: 'server_logs_event',
   _pullScratchImage: function (callback) {
     var image = docker.client().getImage('scratch:latest');
     image.inspect(function (err, data) {
@@ -98,12 +92,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         });
       });
     });
-  },
-  _escapeHTML: function (html) {
-    var text = document.createTextNode(html);
-    var div = document.createElement('div');
-    div.appendChild(text);
-    return div.innerHTML;
   },
   _createContainer: function (name, containerData, callback) {
     var existing = docker.client().getContainer(name);
@@ -282,9 +270,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         container.State.Downloading = !!env.KITEMATIC_DOWNLOADING;
         container.KitematicDownloadingImage = env.KITEMATIC_DOWNLOADING_IMAGE;
 
-        this.fetchLogs(container.Name, function () {
-        }.bind(this));
-
         _containers[container.Name] = container;
         callback(null, container);
       }
@@ -303,48 +288,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         });
       }, function (err) {
         callback(err);
-      });
-    });
-  },
-  fetchLogs: function (name, callback) {
-    var index = 0;
-    var self = this;
-    docker.client().getContainer(name).logs({
-      follow: true,
-      stdout: true,
-      stderr: true,
-      timestamps: true
-    }, function (err, stream) {
-      callback(err);
-      if (_streams[name]) {
-        return;
-      }
-      _streams[name] = stream;
-      if (err) {
-        return;
-      }
-      _logs[name] = [];
-      stream.setEncoding('utf8');
-      var timeout;
-      stream.on('data', function (buf) {
-        // Every other message is a header
-        if (index % 2 === 1) {
-          //var time = buf.substr(0,buf.indexOf(' '));
-          var msg = buf.substr(buf.indexOf(' ')+1);
-          if (timeout) {
-            clearTimeout(timeout);
-            timeout = null;
-          }
-          timeout = setTimeout(function () {
-            timeout = null;
-            self.emit(self.SERVER_LOGS_EVENT, name);
-          }, 100);
-          _logs[name].push(convert.toHtml(self._escapeHTML(msg)));
-        }
-        index += 1;
-      });
-      stream.on('end', function () {
-        delete _streams[name];
       });
     });
   },
@@ -444,15 +387,9 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
       return a.Name.localeCompare(b.Name);
     });
   },
-  recommended: function () {
-    return _recommended;
-  },
   progress: function (name) {
     return _progress[name];
   },
-  logs: function (name) {
-    return _logs[name] || [];
-  }
 });
 
 module.exports = ContainerStore;
