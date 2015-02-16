@@ -43,7 +43,7 @@ var Setup = React.createClass({
   },
   renderContents: function () {
     var img = 'virtualbox.png';
-    if (SetupStore.step().name.indexOf('Boot2Docker') !== -1) {
+    if (SetupStore.step().name.indexOf('start') !== -1 || SetupStore.step().name.indexOf('init') !== -1) {
       img = 'boot2docker.png';
     }
     return (

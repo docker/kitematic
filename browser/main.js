@@ -16,6 +16,7 @@ try {
 process.env.NODE_PATH = __dirname + '/../node_modules';
 process.env.RESOURCES_PATH = __dirname + '/../resources';
 process.chdir(path.join(__dirname, '..'));
+process.env.PATH = '/usr/local/bin:' + process.env.PATH;
 
 if (argv.integration) {
   process.env.TEST_TYPE = 'integration';

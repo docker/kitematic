@@ -13,7 +13,6 @@ describe('SetupStore', function () {
       virtualBox.installed.mockReturnValue(false);
       setupUtil.download.mockReturnValue(Promise.resolve());
       return setupStore.steps().download.run().then(() => {
-        // TODO: make sure download was called with the right args
         expect(setupUtil.download).toBeCalled();
       });
     });
@@ -30,26 +29,38 @@ describe('SetupStore', function () {
   });
 
   describe('install step', function () {
+    util.exec.mockReturnValue(Promise.resolve());
+    util.copyBinariesCmd.mockReturnValue('copycmd');
+    util.fixBinariesCmd.mockReturnValue('fixcmd');
+    virtualBox.killall.mockReturnValue(Promise.resolve());
+    setupUtil.installVirtualBoxCmd.mockReturnValue('installvb');
+    setupUtil.macSudoCmd.mockImplementation(cmd => 'macsudo ' + cmd);
+
     pit('installs virtualbox if it is not installed', function () {
       virtualBox.installed.mockReturnValue(false);
-      virtualBox.killall.mockReturnValue(Promise.resolve());
       util.exec.mockReturnValue(Promise.resolve());
       return setupStore.steps().install.run().then(() => {
-        // TODO: make sure that the right install command was executed
-        expect(util.exec).toBeCalled();
+        expect(virtualBox.killall).toBeCalled();
+        expect(util.exec).toBeCalledWith('macsudo copycmd && fixcmd && installvbcmd');
       });
     });
 
     pit('installs virtualbox if it is installed but has an outdated version', function () {
       virtualBox.installed.mockReturnValue(true);
       virtualBox.version.mockReturnValue(Promise.resolve('4.3.16'));
-      virtualBox.killall.mockReturnValue(Promise.resolve());
       setupUtil.compareVersions.mockReturnValue(-1);
       util.exec.mockReturnValue(Promise.resolve());
       return setupStore.steps().install.run().then(() => {
-        // TODO: make sure the right install command was executed
         expect(virtualBox.killall).toBeCalled();
-        expect(util.exec).toBeCalled();
+        expect(util.exec).toBeCalledWith('macsudo copycmd && fixcmd && installvbcmd');
+      });
+    });
+
+    pit('only installs binaries if virtualbox is installed', function () {
+      virtualBox.installed.mockReturnValue(true);
+      setupUtil.compareVersions.mockReturnValue(0);
+      return setupStore.steps().install.run().then(() => {
+        expect(util.exec).toBeCalledWith('macsudo copycmd && fixcmd');
       });
     });
   });
