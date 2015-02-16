@@ -4,6 +4,9 @@ var Router = require('react-router');
 var ContainerStore = require('./ContainerStore');
 var ContainerList = require('./ContainerList.react');
 var Header = require('./Header.react');
+var ipc = require('ipc');
+var remote = require('remote');
+var autoUpdater = remote.require('auto-updater');
 
 var Containers = React.createClass({
   mixins: [Router.Navigation, Router.State],
@@ -11,7 +14,8 @@ var Containers = React.createClass({
     return {
       sidebarOffset: 0,
       containers: ContainerStore.containers(),
-      sorted: ContainerStore.sorted()
+      sorted: ContainerStore.sorted(),
+      updateAvailable: false
     };
   },
   componentDidMount: function () {
@@ -22,6 +26,15 @@ var Containers = React.createClass({
     if (this.state.sorted.length) {
       this.transitionTo('containerHome', {name: this.state.sorted[0].Name});
     }
+
+    autoUpdater.checkForUpdates();
+    ipc.on('notify', function (message) {
+      if (message === 'window:update-available') {
+        this.setState({
+          updateAvailable: true
+        });
+      }
+    });
   },
   componentDidUnmount: function () {
     ContainerStore.removeListener(ContainerStore.SERVER_CONTAINER_EVENT, this.update);
@@ -63,6 +76,9 @@ var Containers = React.createClass({
   handleNewContainer: function () {
     $(this.getDOMNode()).find('.new-container-item').parent().fadeIn();
     this.transitionTo('new');
+  },
+  handleAutoUpdateClick: function () {
+    ipc.send('command', 'application:quit-install');
   },
   render: function () {
     var sidebarHeaderClass = 'sidebar-header';

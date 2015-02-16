@@ -104,8 +104,6 @@ app.on('ready', function() {
           autoUpdater.quitAndInstall();
         }
       });
-
-      autoUpdater.checkForUpdates();
     }
 
     ipc.on('vm', function (event, arg) {
