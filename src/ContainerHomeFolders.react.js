@@ -17,7 +17,6 @@ var ContainerHomeFolder = React.createClass({
   },
   render: function () {
     var folders;
-    console.log(_.keys(this.props.container.Volumes));
     if (this.props.container) {
       var self = this;
       folders = _.map(self.props.container.Volumes, function (val, key) {
@@ -34,7 +33,7 @@ var ContainerHomeFolder = React.createClass({
         }
       });
     }
-    if (this.props.container && _.keys(this.props.container.Volumes).length > 0 && this.props.container.State.Running) {
+    if (this.props.container && this.props.container.Volumes && _.keys(this.props.container.Volumes).length > 0 && this.props.container.State.Running) {
       return (
         <div className="folders wrapper">
           <h4>Edit Files</h4>
