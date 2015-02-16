@@ -9,7 +9,7 @@ var less = require('gulp-less');
 var livereload = require('gulp-livereload');
 var plumber = require('gulp-plumber');
 var react = require('gulp-react');
-var to5 = require('gulp-6to5');
+var babel = require('gulp-babel');
 var runSequence = require('run-sequence');
 var shell = require('gulp-shell');
 var sourcemaps = require('gulp-sourcemaps');
@@ -35,7 +35,7 @@ gulp.task('js', function () {
     }))
     .pipe(gulpif(options.dev || options.test, sourcemaps.init()))
     .pipe(react())
-    .pipe(to5({blacklist: ['regenerator']}))
+    .pipe(babel({blacklist: ['regenerator']}))
     .pipe(gulpif(options.dev || options.test, sourcemaps.write('.')))
     .pipe(gulp.dest((options.dev || options.test) ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
     .pipe(gulpif(options.dev, livereload()));

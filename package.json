@@ -68,13 +68,13 @@
     "underscore": "^1.7.0"
   },
   "devDependencies": {
-    "6to5-jest": "^3.0.0",
     "browserify": "^6.2.0",
     "ecstatic": "^0.5.8",
     "glob": "^4.0.6",
     "gulp": "^3.8.10",
-    "gulp-6to5": "^3.0.0",
+    "gulp-babel": "^3.0.0",
     "gulp-atom": "0.0.5",
+    "gulp-babel": "^4.0.0",
     "gulp-concat": "^2.3.4",
     "gulp-cssmin": "^0.1.6",
     "gulp-download-atom-shell": "0.0.4",
