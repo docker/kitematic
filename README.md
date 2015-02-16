@@ -52,10 +52,6 @@ Keep track of development and community news.
 - Follow [@kitematic on Twitter](https://twitter.com/kitematic).
 - Read and subscribe to [The Kitematic Blog](http://blog.kitematic.com).
 
-## Versioning
-
-For transparency into our release cycle and in striving to maintain backward compatibility, Kitematic is maintained under the [Semantic Versioning Guidelines](http://semver.org/). We'll try very hard to adhere to those rules whenever possible.
-
 ## Copyright and License
 
 Code released under the [AGPL license](LICENSE).
