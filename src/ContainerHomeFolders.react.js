@@ -33,15 +33,21 @@ var ContainerHomeFolder = React.createClass({
         }
       });
     }
-    return (
-      <div className="folders wrapper">
-        <h4>Edit Files</h4>
-        <div className="widget">
-          {folders}
+    if (this.props.container && this.props.container.Volumes && _.keys(this.props.container.Volumes).length > 0 && this.props.container.State.Running) {
+      return (
+        <div className="folders wrapper">
+          <h4>Edit Files</h4>
+          <div className="widget">
+            {folders}
+          </div>
+          <div className="subtext" onClick={this.handleClickChangeFolders}>Change Folders</div>
         </div>
-        <div className="subtext" onClick={this.handleClickChangeFolders}>Change Folders</div>
-      </div>
-    );
+      );
+    } else {
+      return (
+        <div></div>
+      );
+    }
   }
 });
 

@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/kitematic/kitematic.svg?branch=master)](https://travis-ci.org/kitematic/kitematic)
+[![CircleCI](https://img.shields.io/circleci/project/kitematic/kitematic.svg)](https://circleci.com/gh/kitematic/kitematic/tree/master)
 [![bitHound Score](https://app.bithound.io/kitematic/kitematic/badges/score.svg)](http://app.bithound.io/kitematic/kitematic)
 
 ![Kitematic Logo](https://cloud.githubusercontent.com/assets/251292/5269258/1b229c3c-7a2f-11e4-96f1-e7baf3c86d73.png)
@@ -51,10 +51,6 @@ Keep track of development and community news.
 
 - Follow [@kitematic on Twitter](https://twitter.com/kitematic).
 - Read and subscribe to [The Kitematic Blog](http://blog.kitematic.com).
-
-## Versioning
-
-For transparency into our release cycle and in striving to maintain backward compatibility, Kitematic is maintained under the [Semantic Versioning Guidelines](http://semver.org/). We'll try very hard to adhere to those rules whenever possible.
 
 ## Copyright and License
 

@@ -43,7 +43,7 @@ var Setup = React.createClass({
   },
   renderContents: function () {
     var img = 'virtualbox.png';
-    if (SetupStore.step().name.indexOf('start') !== -1 || SetupStore.step().name.indexOf('init') !== -1) {
+    if (SetupStore.step().name === 'init' || SetupStore.step().name === 'start') {
       img = 'boot2docker.png';
     }
     return (
@@ -107,7 +107,7 @@ var Setup = React.createClass({
             <h4>Installation Error</h4>
             <h1>We&#39;re Sorry!</h1>
             <p>There seems to have been an unexpected error with Kitematic:</p>
-            <p className="error">{this.state.error.message}</p>
+            <p className="error">{this.state.error}<br />{this.state.error.message}</p>
           </div>
         </div>
       </div>

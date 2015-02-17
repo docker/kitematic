@@ -183,6 +183,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
         } catch (err) {
           if (err) {
             console.log(err);
+            console.log(err.stack);
             _error = err;
             this.emit(this.ERROR_EVENT);
           } else {

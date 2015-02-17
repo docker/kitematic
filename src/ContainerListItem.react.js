@@ -1,4 +1,3 @@
-var _ = require('underscore');
 var $ = require('jquery');
 var React = require('react/addons');
 var Router = require('react-router');
@@ -23,6 +22,10 @@ var ContainerListItem = React.createClass({
       if (index === 0) {
         ContainerStore.remove(this.props.container.Name, function (err) {
           console.error(err);
+          var containers = ContainerStore.sorted();
+          if (containers.length === 1) {
+            $(document.body).find('.new-container-item').parent().fadeIn();
+          }
         });
       }
     }.bind(this));

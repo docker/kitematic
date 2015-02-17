@@ -1,6 +1,7 @@
 var $ = require('jquery');
 var React = require('react/addons');
 var Router = require('react-router');
+var ContainerStore = require('./ContainerStore');
 
 var ContainerListNewItem = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -13,8 +14,14 @@ var ContainerListNewItem = React.createClass({
     $action.hide();
   },
   handleDelete: function () {
-    $(this.getDOMNode()).fadeOut();
-    this.transitionTo('containers');
+    var self = this;
+    var containers = ContainerStore.sorted();
+    $(self.getDOMNode()).fadeOut(300, function () {
+      if (containers.length > 0) {
+        var name = containers[0].Name;
+        self.transitionTo('containerHome', {name: name});
+      }
+    });
   },
   render: function () {
     var self = this;
