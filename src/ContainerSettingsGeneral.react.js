@@ -89,22 +89,27 @@ var ContainerSettingsGeneral = React.createClass({
       });
       return;
     }
-    var oldPath = path.join(process.env.HOME, 'Kitematic', oldName);
-    var newPath = path.join(process.env.HOME, 'Kitematic', newName);
-    rimraf(newPath, () => {
-      if (fs.existsSync(oldPath)) {
-        fs.renameSync(oldPath, newPath);
-      }
-      var binds = _.pairs(this.props.container.Volumes).map(function (pair) {
-        return pair[1] + ':' + pair[0];
-      });
-      var newBinds = binds.map(b => {
-        return b.replace(path.join(process.env.HOME, 'Kitematic', oldName), path.join(process.env.HOME, 'Kitematic', newName));
-      });
-      ContainerStore.updateContainer(oldName, {Binds: newBinds, name: newName}, err => {
-        this.transitionTo('containerSettingsGeneral', {name: newName});
-        rimraf(oldPath, () => {});
+    ContainerStore.rename(oldName, newName, err => {
+      if (err) {
         console.log(err);
+      }
+      this.transitionTo('containerSettingsGeneral', {name: newName});
+      var oldPath = path.join(process.env.HOME, 'Kitematic', oldName);
+      var newPath = path.join(process.env.HOME, 'Kitematic', newName);
+      rimraf(newPath, () => {
+        if (fs.existsSync(oldPath)) {
+          fs.renameSync(oldPath, newPath);
+        }
+        var binds = _.pairs(this.props.container.Volumes).map(function (pair) {
+          return pair[1] + ':' + pair[0];
+        });
+        var newBinds = binds.map(b => {
+          return b.replace(path.join(process.env.HOME, 'Kitematic', oldName), path.join(process.env.HOME, 'Kitematic', newName));
+        });
+        ContainerStore.updateContainer(newName, {Binds: newBinds}, err => {
+          rimraf(oldPath, () => {});
+          console.log(err);
+        });
       });
     });
   },

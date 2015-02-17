@@ -291,21 +291,32 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     callback(null, containerName);
   },
   updateContainer: function (name, data, callback) {
+    _muted[name] = true;
     if (!data.name) {
       data.name = data.Name;
     }
-    _muted[name] = true;
-    _muted[data.name] = true;
     if (name !== data.name) {
       LogStore.rename(name, data.name);
     }
     var fullData = assign(_containers[name], data);
     this._createContainer(name, fullData, function (err) {
       _muted[name] = false;
-      _muted[data.name] = false;
       this.emit(this.CLIENT_CONTAINER_EVENT, name);
       callback(err);
     }.bind(this));
+  },
+  rename: function (name, newName, callback) {
+    LogStore.rename(name, newName);
+    docker.client().getContainer(name).rename({name: newName}, err => {
+      if (err && err.statusCode !== 204) {
+        callback(err);
+        return;
+      }
+      this.fetchAllContainers(err => {
+        this.emit(this.CLIENT_CONTAINER_EVENT);
+        callback(err);
+      });
+    });
   },
   restart: function (name, callback) {
     var container = docker.client().getContainer(name);
