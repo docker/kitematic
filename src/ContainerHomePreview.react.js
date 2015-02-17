@@ -4,6 +4,8 @@ var exec = require('exec');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
 var Router = require('react-router');
+var Promise = require('bluebird');
+var $ = require('jquery');
 
 var ContainerHomePreview = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -19,21 +21,27 @@ var ContainerHomePreview = React.createClass({
   componentDidMount: function() {
     this.init();
   },
-  componentDidUpdate: function () {
+  reload: function () {
     var webview = document.getElementById('webview');
     if (webview) {
-      webview.addEventListener('did-finish-load', () => {
-        //HACK: if the title is the host:port the page probably hasn't loaded yet
-        if (this.state.ports[this.state.defaultPort].url.replace('http://', '') === webview.getTitle()) {
-          setTimeout(function () {
-            try {
-              webview.reload();
-            } catch (err) {
-            }
-          }, 1000);
-        }
-      });
+      try {
+        var url = webview.src;
+        Promise.resolve($.get(url)).then(() => {
+          webview.reload();
+        }).catch(err => {
+          if (err.status === 0) {
+            setTimeout(this.reload, 2000);
+          } else {
+            webview.reload();
+          }
+        });
+      } catch (err) {
+
+      }
     }
+  },
+  componentDidUpdate: function () {
+    this.reload();
   },
   componentWillUnmount: function() {
     clearInterval(this.timer);
