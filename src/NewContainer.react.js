@@ -14,7 +14,7 @@ var NewContainer = React.createClass({
   getInitialState: function () {
     return {
       query: '',
-      results: [],
+      results: _recommended,
       loading: false,
       tags: {}
     };
@@ -76,12 +76,10 @@ var NewContainer = React.createClass({
       });
     }).then(results => {
       _recommended = results.filter(r => !!r);
-      if (!this.state.query.length) {
-        if (this.isMounted()) {
-          this.setState({
-            results: _recommended
-          });
-        }
+      if (!this.state.query.length && this.isMounted()) {
+        this.setState({
+          results: _recommended
+        });
       }
     }).catch(err => {
       console.log(err);
