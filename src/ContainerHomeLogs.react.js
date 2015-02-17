@@ -24,7 +24,7 @@ var ContainerHomeLogs = React.createClass({
   },
   componentDidUpdate: function () {
     // Scroll logs to bottom
-    var parent = $('.mini-logs > .widget');
+    var parent = $('.logs');
     if (parent.scrollTop() >= _oldScrollTop) {
       parent.scrollTop(parent[0].scrollHeight - parent.height());
     }
@@ -52,7 +52,9 @@ var ContainerHomeLogs = React.createClass({
       <div className="mini-logs wrapper">
         <h4>Logs</h4>
         <div className="widget">
-          {logs}
+          <div className="logs">
+            {logs}
+          </div>
           <div className="mini-logs-overlay" onClick={this.handleClickLogs}><span className="icon icon-scale-spread-1"></span><div className="text">View Logs</div></div>
         </div>
       </div>
