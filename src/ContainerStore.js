@@ -91,10 +91,15 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
             callback(err);
             return;
           }
-          var binds = [];
+          var binds = containerData.Binds || [];
           if (data.Config.Volumes) {
             _.each(data.Config.Volumes, function (value, key) {
-              binds.push(path.join(process.env.HOME, 'Kitematic', containerData.name, key)+ ':' + key);
+              var existingBind = _.find(binds, b => {
+                return b.indexOf(':' + key) !== -1;
+              });
+              if (!existingBind) {
+                binds.push(path.join(process.env.HOME, 'Kitematic', containerData.name, key)+ ':' + key);
+              }
             });
           }
           docker.client().createContainer(containerData, function (err, container) {
