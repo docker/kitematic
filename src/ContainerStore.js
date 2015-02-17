@@ -5,6 +5,7 @@ var path = require('path');
 var assign = require('object-assign');
 var docker = require('./Docker');
 var registry = require('./Registry');
+var LogStore = require('./LogStore');
 
 var _placeholders = {};
 var _containers = {};
@@ -207,13 +208,10 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         callback();
       }
       var placeholderData = JSON.parse(localStorage.getItem('store.placeholders'));
-      console.log(placeholderData);
-      console.log(_.keys(_containers));
       if (placeholderData) {
         _placeholders = _.omit(placeholderData, _.keys(_containers));
         localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
       }
-      console.log(_placeholders);
       this.emit(this.CLIENT_CONTAINER_EVENT);
       this._resumePulling();
       this._startListeningToEvents();
@@ -242,7 +240,13 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         callback(err);
         return;
       }
-      async.map(containers, function (container, callback) {
+      var names = new Set(_.map(containers, container => container.Names[0].replace('/', '')));
+      _.each(_.keys(_containers), name => {
+        if (!names.has(name)) {
+          delete _containers[name];
+        }
+      });
+      async.each(containers, function (container, callback) {
         self.fetchContainer(container.Id, function (err) {
           callback(err);
         });
@@ -267,8 +271,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         Downloading: true
       }
     };
-    console.log(_placeholders);
-    console.log(JSON.stringify(_placeholders));
     localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
     self.emit(self.CLIENT_CONTAINER_EVENT, containerName, 'create');
 
@@ -289,13 +291,18 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     callback(null, containerName);
   },
   updateContainer: function (name, data, callback) {
-    _muted[name] = true;
     if (!data.name) {
       data.name = data.Name;
+    }
+    _muted[name] = true;
+    _muted[data.name] = true;
+    if (name !== data.name) {
+      LogStore.rename(name, data.name);
     }
     var fullData = assign(_containers[name], data);
     this._createContainer(name, fullData, function (err) {
       _muted[name] = false;
+      _muted[data.name] = false;
       this.emit(this.CLIENT_CONTAINER_EVENT, name);
       callback(err);
     }.bind(this));

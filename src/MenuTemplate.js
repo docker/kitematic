@@ -65,11 +65,6 @@ var MenuTemplate = [
   label: 'File',
   submenu: [
   {
-    label: 'New Container',
-    accelerator: 'Command+N',
-    selector: 'undo:'
-  },
-  {
     type: 'separator'
   },
   {

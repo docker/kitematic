@@ -165,7 +165,6 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
   run: Promise.coroutine(function* () {
     yield this.updateBinaries();
     var steps = yield this.requiredSteps();
-    console.log(steps);
     for (let step of steps) {
       console.log(step.name);
       _currentStep = step;
