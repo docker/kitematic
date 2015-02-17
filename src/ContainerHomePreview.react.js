@@ -4,8 +4,7 @@ var exec = require('exec');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
 var Router = require('react-router');
-var Promise = require('bluebird');
-var $ = require('jquery');
+var request = require('request');
 
 var ContainerHomePreview = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -24,20 +23,16 @@ var ContainerHomePreview = React.createClass({
   reload: function () {
     var webview = document.getElementById('webview');
     if (webview) {
-      try {
-        var url = webview.src;
-        Promise.resolve($.get(url)).then(() => {
-          webview.reload();
-        }).catch(err => {
-          if (err.status === 0) {
-            setTimeout(this.reload, 2000);
-          } else {
+      var url = webview.src;
+      request(url, err => {
+        if (err && err.code === 'ECONNREFUSED') {
+          setTimeout(this.reload, 2000);
+        } else {
+          try {
             webview.reload();
-          }
-        });
-      } catch (err) {
-
-      }
+          } catch (err) {}
+        }
+      });
     }
   },
   componentDidUpdate: function () {
