@@ -25,17 +25,17 @@
     }
   ],
   "jest": {
-    "scriptPreprocessor": "preprocessor.js",
+    "scriptPreprocessor": "<rootDir>/preprocessor.js",
     "unmockedModulePathPatterns": [
       "tty",
       "net",
       "crypto",
       "stream",
-      "object-assign",
-      "underscore",
-      "node_modules/react",
-      "node_modules/bluebird",
-      "node_modules/6to5"
+      "<rootDir>/node_modules/object-assign",
+      "<rootDir>/node_modules/underscore",
+      "<rootDir>/node_modules/react",
+      "<rootDir>/node_modules/bluebird",
+      "<rootDir>/node_modules/babel"
     ]
   },
   "docker-version": "1.5.0",
