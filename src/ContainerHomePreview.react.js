@@ -1,5 +1,4 @@
 var _ = require('underscore');
-var $ = require('jquery');
 var React = require('react/addons');
 var exec = require('exec');
 var ContainerStore = require('./ContainerStore');
@@ -19,15 +18,18 @@ var ContainerHomePreview = React.createClass({
   },
   componentDidMount: function() {
     this.init();
-    this.timer = setInterval(this.tick, 2000);
   },
-  tick: function () {
-    if (document.getElementById('web-preview-frame')) {
-      var frameContent = document.getElementById('web-preview-frame').contentDocument;
-      var $body = $(frameContent.body);
-      if ($body.is(':empty')) {
-        document.getElementById('web-preview-frame').contentDocument.location.reload(true);
-      }
+  componentDidUpdate: function () {
+    var webview = document.getElementById('webview');
+    if (webview) {
+      webview.addEventListener('did-finish-load', () => {
+        //HACK: if the title is the host:port the page probably hasn't loaded yet
+        if (this.state.ports[this.state.defaultPort].url.replace('http://', '') === webview.getTitle()) {
+          setTimeout(function () {
+            webview.reload();
+          }, 1000);
+        }
+      });
     }
   },
   componentWillUnmount: function() {
@@ -60,12 +62,13 @@ var ContainerHomePreview = React.createClass({
   render: function () {
     var preview;
     if (this.state.defaultPort) {
+      var frame = React.createElement('webview', {className: 'frame', id: 'webview', src: this.state.ports[this.state.defaultPort].url, autosize: 'on'});
       preview = (
         <div className="web-preview wrapper">
           <h4>Web Preview</h4>
           <div className="widget">
-            <iframe id="web-preview-frame" name="disable-x-frame-options" sandbox="allow-same-origin allow-scripts" src={this.state.ports[this.state.defaultPort].url} scrolling="no"></iframe>
-            <div className="iframe-overlay" onClick={this.handleClickPreview}><span className="icon icon-upload-2"></span><div className="text">Open in Browser</div></div>
+            {frame}
+            <div className="frame-overlay" onClick={this.handleClickPreview}><span className="icon icon-upload-2"></span><div className="text">Open in Browser</div></div>
           </div>
           <div className="subtext" onClick={this.handleClickNotShowingCorrectly}>Not showing correctly?</div>
         </div>
