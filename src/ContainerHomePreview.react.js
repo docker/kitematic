@@ -26,7 +26,10 @@ var ContainerHomePreview = React.createClass({
         //HACK: if the title is the host:port the page probably hasn't loaded yet
         if (this.state.ports[this.state.defaultPort].url.replace('http://', '') === webview.getTitle()) {
           setTimeout(function () {
-            webview.reload();
+            try {
+              webview.reload();
+            } catch (err) {
+            }
           }, 1000);
         }
       });
