@@ -50,7 +50,7 @@
     "async": "^0.9.0",
     "babel": "^4.0.1",
     "bluebird": "^2.9.6",
-    "bugsnag-js": "git+https://git@github.com/bugsnag/bugsnag-js",
+    "bugsnag-js": "^2.4.7",
     "dockerode": "2.0.4",
     "download": "^4.0.0",
     "exec": "0.1.2",
