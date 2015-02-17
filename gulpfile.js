@@ -29,16 +29,16 @@ var options = {
 
 gulp.task('js', function () {
   return gulp.src('src/**/*.js')
-    .pipe(plumber(function(error) {
-      gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.message));
-      this.emit('end');
-    }))
     .pipe(gulpif(options.dev || options.test, sourcemaps.init()))
     .pipe(react())
     .pipe(babel({blacklist: ['regenerator']}))
     .pipe(gulpif(options.dev || options.test, sourcemaps.write('.')))
     .pipe(gulp.dest((options.dev || options.test) ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
-    .pipe(gulpif(options.dev, livereload()));
+    .pipe(gulpif(options.dev, livereload()))
+    .pipe(plumber(function(error) {
+      gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.message));
+      this.emit('end');
+    }));
 });
 
 gulp.task('images', function() {
