@@ -2,9 +2,8 @@ var _ = require('underscore');
 var $ = require('jquery');
 var React = require('react/addons');
 var RetinaImage = require('react-retina-image');
-var ContainerStore = require('./ContainerStore');
 var Radial = require('./Radial.react');
-var assign = require('object-assign');
+var ImageCard = require('./ImageCard.react');
 var Promise = require('bluebird');
 
 var _recommended = [];
@@ -14,11 +13,8 @@ var NewContainer = React.createClass({
   getInitialState: function () {
     return {
       query: '',
-      results: _recommended,
       loading: false,
-      tags: {},
-      active: null,
-      creating: []
+      results: _recommended
     };
   },
   componentDidMount: function () {
@@ -110,32 +106,7 @@ var NewContainer = React.createClass({
       }, 200);
     }
   },
-  handleClick: function (name) {
-    ContainerStore.create(name, 'latest', function (err) {
-      if (err) {
-        throw err;
-      }
-      $(document.body).find('.new-container-item').parent().fadeOut();
-    }.bind(this));
-  },
-  handleDropdownClick: function (name) {
-    this.setState({
-      active: name
-    });
-    if (this.state.tags[name]) {
-      return;
-    }
-    $.get('https://registry.hub.docker.com/v1/repositories/' + name + '/tags', function (result) {
-      var res = {};
-      res[name] = result;
-      console.log(assign(this.state.tags, res));
-      this.setState({
-        tags: assign(this.state.tags, res)
-      });
-    }.bind(this));
-  },
   render: function () {
-    var self = this;
     var title = this.state.query ? 'Results' : 'Recommended';
     var data = [];
     if (this.state.results) {
@@ -143,61 +114,9 @@ var NewContainer = React.createClass({
     }
     var results;
     if (data.length) {
-      var items = data.map(function (r) {
-        var name;
-        if (r.is_official) {
-          name = <span><RetinaImage src="official.png"/>{r.name}</span>;
-        } else {
-          name = <span>{r.name}</span>;
-        }
-        var description;
-        if (r.description) {
-          description = r.description;
-        } else {
-          description = "No description.";
-        }
-        var logoStyle = {
-          backgroundImage: `linear-gradient(-180deg, ${r.gradient_start} 4%, ${r.gradient_end}  100%)`
-        };
-        var imgsrc;
-        if (r.img) {
-          imgsrc = `http://kitematic.com/recommended/${r.img}`;
-        } else {
-          imgsrc = 'http://kitematic.com/recommended/kitematic_html.png';
-        }
-        var action;
-        if (_.find(self.state.creating, r.name)) {
-          action = <RetinaImage src="loading.png"/>;
-        } else {
-          action = <a className="btn btn-action" onClick={self.handleClick.bind(self, r.name)}>Create</a>;
-        }
+      var items = data.map(function (image) {
         return (
-          <div key={r.name} className="image-item">
-            <div className="logo" style={logoStyle}>
-              <RetinaImage src={imgsrc}/>
-            </div>
-            <div className="card">
-              <div className="name">
-                {name}
-              </div>
-              <div className="description">
-                {description}
-              </div>
-              <div className="actions">
-                <div className="stars">
-                  <span className="icon icon-star-9"></span>
-                  <span className="text">{r.star_count}</span>
-                </div>
-                <div className="tags">
-                  <span className="icon icon-tag-1"></span>
-                  <span className="text">latest</span>
-                </div>
-                <div className="action">
-                  {action}
-                </div>
-              </div>
-            </div>
-          </div>
+          <ImageCard key={image.name} image={image} />
         );
       });
 

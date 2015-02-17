@@ -9,8 +9,9 @@ var router = require('./router');
 var boot2docker = require('./boot2docker');
 var ContainerStore = require('./ContainerStore');
 var SetupStore = require('./SetupStore');
+var MenuTemplate = require('./MenuTemplate');
+var Menu = remote.require('menu');
 var settingsjson;
-var Menu = require('./Menu');
 
 try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
@@ -32,6 +33,9 @@ bugsnag.autoNotify = true;
 bugsnag.releaseStage = process.env.NODE_ENV === 'development' ? 'development' : 'production';
 bugsnag.notifyReleaseStages = ['production'];
 bugsnag.appVersion = app.getVersion();
+
+var menu = Menu.buildFromTemplate(MenuTemplate);
+Menu.setApplicationMenu(menu);
 
 router.run(Handler => React.render(<Handler/>, document.body));
 SetupStore.run().then(boot2docker.ip).then(ip => {

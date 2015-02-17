@@ -61,6 +61,30 @@ html, body {
   border: 1px solid #ddd;
 }
 
+.update-notification {
+  background-color: white;
+  opacity: 0.9;
+  position: fixed;
+  bottom: 0;
+  width: 259px;
+  padding: 10px;
+  //border-top: 1px solid darken(#FCF8E3, 5%);
+  color: @gray-normal;
+  font-size: 12px;
+  .text {
+    position: relative;
+    top: 3px;
+  }
+  .btn {
+    position: relative;
+    float: right;
+  }
+}
+
+.update-padding {
+  position: relative;
+  height: 40px;
+}
 
 @-webkit-keyframes spin {
   from {

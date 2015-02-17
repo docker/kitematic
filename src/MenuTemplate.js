@@ -2,13 +2,12 @@ var remote = require('remote');
 var app = remote.require('app');
 var path = require('path');
 var docker = require('./Docker');
-var Menu = remote.require('menu');
 var BrowserWindow = remote.require('browser-window');
 var router = require('./Router');
 var util = require('./Util');
 
 // main.js
-var template = [
+var MenuTemplate = [
 {
   label: 'Kitematic',
   submenu: [
@@ -160,7 +159,5 @@ var template = [
 },
 ];
 
-var menu = Menu.buildFromTemplate(template);
-Menu.setApplicationMenu(menu);
 
-module.exports = menu;
+module.exports = MenuTemplate;
