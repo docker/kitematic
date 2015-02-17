@@ -5,8 +5,6 @@ var RetinaImage = require('react-retina-image');
 var Radial = require('./Radial.react');
 var ImageCard = require('./ImageCard.react');
 var Promise = require('bluebird');
-var assign = require('object-assign');
-var ContainerStore = require('./ContainerStore');
 
 var _recommended = [];
 var _searchPromise = null;
@@ -16,7 +14,6 @@ var NewContainer = React.createClass({
     return {
       query: '',
       loading: false,
-      tags: {},
       results: _recommended
     };
   },
@@ -92,26 +89,6 @@ var NewContainer = React.createClass({
       return;
     }
     this.search(query);
-  },
-  handleClick: function (name) {
-    ContainerStore.create(name, 'latest', function (err) {
-      if (err) {
-        throw err;
-      }
-      $(document.body).find('.new-container-item').parent().fadeOut();
-    }.bind(this));
-  },
-  handleDropdownClick: function (name) {
-    if (this.state.tags[name]) {
-      return;
-    }
-    $.get('https://registry.hub.docker.com/v1/repositories/' + name + '/tags', function (result) {
-      var res = {};
-      res[name] = result;
-      this.setState({
-        tags: assign(this.state.tags, res)
-      });
-    }.bind(this));
   },
   render: function () {
     var title = this.state.query ? 'Results' : 'Recommended';
