@@ -108,7 +108,9 @@ var ContainerSettingsGeneral = React.createClass({
         });
         ContainerStore.updateContainer(newName, {Binds: newBinds}, err => {
           rimraf(oldPath, () => {});
-          console.log(err);
+          if (err) {
+            console.log(err);
+          }
         });
       });
     });
