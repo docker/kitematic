@@ -1,6 +1,7 @@
 var React = require('react/addons');
 var assign = require('object-assign');
 var ipc = require('ipc');
+var Router = require('react-router');
 
 // TODO: move this somewhere else
 if (localStorage.getItem('options')) {
@@ -8,6 +9,7 @@ if (localStorage.getItem('options')) {
 }
 
 var Preferences = React.createClass({
+  mixins: [Router.Navigation],
   getInitialState: function () {
     var data = JSON.parse(localStorage.getItem('options'));
     return assign({
@@ -31,11 +33,14 @@ var Preferences = React.createClass({
   componentDidUpdate: function () {
     this.saveState();
   },
+  handleGoBackClick: function () {
+    this.goBack();
+  },
   render: function () {
-    console.log('render');
     return (
       <div className="preferences">
         <div className="preferences-content">
+          <a href="#" onClick={this.handleGoBackClick}>Go Back</a>
           <div className="title">VM Settings</div>
           <div className="option">
             <div className="option-name">
