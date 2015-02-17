@@ -29,9 +29,6 @@ var options = {
 
 gulp.task('js', function () {
   return gulp.src('src/**/*.js')
-    .pipe(plumber(function(error) {
-      gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.message));
-    }))
     .pipe(gulpif(options.dev || options.test, sourcemaps.init()))
     .pipe(react())
     .pipe(babel({blacklist: ['regenerator']}))
