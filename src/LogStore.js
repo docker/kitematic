@@ -34,7 +34,7 @@ var LogStore = assign(Object.create(EventEmitter.prototype), {
       if (err) {
         return;
       }
-      _logs[name] = [];
+      _logs[name] = _logs[name] || [];
       stream.setEncoding('utf8');
       var timeout;
       stream.on('data', function (buf) {
@@ -64,6 +64,11 @@ var LogStore = assign(Object.create(EventEmitter.prototype), {
       this.fetchLogs(name);
     }
     return _logs[name] || [];
+  },
+  rename: function (name, newName) {
+    if (_logs[name]) {
+      _logs[newName] = _logs[name];
+    }
   }
 });
 
