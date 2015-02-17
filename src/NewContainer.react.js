@@ -8,56 +8,57 @@ var assign = require('object-assign');
 var Promise = require('bluebird');
 
 var _recommended = [];
+var _searchPromise = null;
 
 var NewContainer = React.createClass({
-  _searchRequest: null,
   getInitialState: function () {
     return {
       query: '',
-      results: _recommended,
+      results: [],
       loading: false,
-      tags: {},
-      active: null
+      tags: {}
     };
   },
   componentDidMount: function () {
     this.refs.searchInput.getDOMNode().focus();
-    if (!_recommended.length) {
-      this.recommended();
+    this.recommended();
+  },
+  componentWillUnmount: function () {
+    if (_searchPromise) {
+      _searchPromise.cancel();
     }
   },
   search: function (query) {
-    if (this._searchRequest) {
-      this._searchRequest.abort();
-      this._searchRequest = null;
+    if (_searchPromise) {
+      _searchPromise.cancel();
+      _searchPromise = null;
     }
 
     if (!query.length) {
+      this.setState({
+        query: query,
+        results: _recommended,
+        loading: false
+      });
       return;
     }
 
     this.setState({
+      query: query,
       loading: true
     });
 
-    var self = this;
-    this._searchRequest = $.get('https://registry.hub.docker.com/v1/search?q=' + query, function (result) {
-      self.setState({
+    _searchPromise = Promise.delay(200).then(() => Promise.resolve($.get('https://registry.hub.docker.com/v1/search?q=' + query))).cancellable().then(data => {
+      this.setState({
+        results: data.results,
         query: query,
         loading: false
       });
-      self._searchRequest = null;
-      if (self.isMounted()) {
-        self.setState(result);
-      }
+      _searchPromise = null;
+    }).catch(Promise.CancellationError, () => {
     });
   },
   recommended: function () {
-    if (this._searchRequest) {
-      this._searchRequest.abort();
-      this._searchRequest = null;
-    }
-
     if (_recommended.length) {
       return;
     }
@@ -88,23 +89,10 @@ var NewContainer = React.createClass({
   },
   handleChange: function (e) {
     var query = e.target.value;
-
     if (query === this.state.query) {
       return;
     }
-
-    clearTimeout(this.timeout);
-    if (!query.length) {
-      this.setState({
-        query: query,
-        results: _recommended
-      });
-    } else {
-      var self = this;
-      this.timeout = setTimeout(function () {
-        self.search(query);
-      }, 200);
-    }
+    this.search(query);
   },
   handleClick: function (name) {
     ContainerStore.create(name, 'latest', function (err) {
@@ -115,9 +103,6 @@ var NewContainer = React.createClass({
     }.bind(this));
   },
   handleDropdownClick: function (name) {
-    this.setState({
-      active: name
-    });
     if (this.state.tags[name]) {
       return;
     }
