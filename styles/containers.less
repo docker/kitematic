@@ -52,7 +52,7 @@
         align-content: flex-start;
         flex-flow: row wrap;
         height: 140px;
-        overflow: scroll;
+        overflow: auto;
         .tag {
           display: inline-block;
           flex: 0 auto;
@@ -763,6 +763,7 @@
                 border-radius: 4px;
                 border: 1px solid @gray-lightest;
                 position: relative;
+                overflow: hidden;
                 p {
                   font-size: 13px;
                   color: @gray-normal;
@@ -776,17 +777,16 @@
                   font-family: Menlo;
                   -webkit-user-select: text;
                 }
-                iframe {
+                .frame {
                   border: 0;
-                  border-radius: 4px;
                   position: absolute;
-                  top: -50%;
-                  left: -50%;
-                  width: 200%;
-                  height: 200%;
+                  left: -100%;
+                  top: -100%;
+                  height: 400%;
+                  width: 401%;
                   transform: scale(0.5);
                 }
-                .iframe-overlay {
+                .frame-overlay {
                   position: absolute;
                   top: 0;
                   left: 0;
@@ -911,7 +911,8 @@
           flex: 1 auto;
           flex-direction: row;
           .settings-menu {
-            min-width: 160px;
+            min-width: 180px;
+            flex: 0 auto;
             ul {
               position: fixed;
               margin: 0;
@@ -958,8 +959,8 @@
             }
           }
           .settings-panel {
-            padding-left: 40px;
-            width: 100%;
+            padding-left: 20px;
+            flex: 1 auto;
             overflow-x: hidden;
             .settings-section {
               margin-bottom: 40px;
@@ -1084,13 +1085,11 @@
             .label-left {
               flex: 0 auto;
               margin-right: 30px;
-              width: 30%;
             }
             .label-right {
               flex: 1 auto;
               display: inline-block;
               margin-left: 10px;
-              width: 60%;
             }
           }
           .table-values {
@@ -1099,14 +1098,12 @@
             flex-direction: row;
             margin: 8px 0;
             .value-left {
-              width: 30%;
               flex: 0 auto;
               padding: 0px;
             }
             .value-right {
               flex: 1 auto;
               -webkit-user-select: text;
-              width: 60%;
               padding: 0px;
             }
             .btn {

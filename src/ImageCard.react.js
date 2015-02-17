@@ -29,7 +29,6 @@ var ImageCard = React.createClass({
     var $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
     $tagOverlay.fadeIn(300);
     $.get('https://registry.hub.docker.com/v1/repositories/' + name + '/tags', function (result) {
-      console.log(result);
       this.setState({
         tags: result
       });

@@ -39,13 +39,14 @@ var ContainerSettingsPorts = React.createClass({
     });
   },
   handleChangeDefaultPort: function (port, e) {
+    console.log(e.target.checked);
     if (e.target.checked) {
       this.setState({
-        defaultPort: null
+        defaultPort: port
       });
     } else {
       this.setState({
-        defaultPort: port
+        defaultPort: null
       });
     }
   },
@@ -53,15 +54,13 @@ var ContainerSettingsPorts = React.createClass({
     if (!this.props.container) {
       return (<div></div>);
     }
-    var self = this;
-    var ports = _.map(_.pairs(self.state.ports), function (pair) {
+    var ports = _.map(_.pairs(this.state.ports), pair => {
       var key = pair[0];
       var val = pair[1];
       return (
         <div key={key} className="table-values">
           <span className="value-left">{key}</span><span className="icon icon-arrow-right"></span>
-          <a className="value-right" onClick={self.handleViewLink.bind(self, val.url)}>{val.display}</a>
-          <input onChange={self.handleChangeDefaultPort.bind(self, key)} type="checkbox" checked={self.state.defaultPort === key}/> <label>Web Preview</label>
+          <a className="value-right" onClick={this.handleViewLink.bind(this, val.url)}>{val.display}</a>
         </div>
       );
     });

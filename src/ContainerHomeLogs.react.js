@@ -3,6 +3,8 @@ var React = require('react/addons');
 var LogStore = require('./LogStore');
 var Router = require('react-router');
 
+var _oldScrollTop = 0;
+
 var ContainerHomeLogs = React.createClass({
   mixins: [Router.State, Router.Navigation],
   getInitialState: function () {
@@ -22,14 +24,11 @@ var ContainerHomeLogs = React.createClass({
   },
   componentDidUpdate: function () {
     // Scroll logs to bottom
-    var parent = $('.mini-logs');
-    if (parent.length) {
-      if (parent.scrollTop() >= this._oldHeight) {
-        parent.stop();
-        parent.scrollTop(parent[0].scrollHeight - parent.height());
-      }
-      this._oldHeight = parent[0].scrollHeight - parent.height();
+    var parent = $('.mini-logs > .widget');
+    if (parent.scrollTop() >= _oldScrollTop) {
+      parent.scrollTop(parent[0].scrollHeight - parent.height());
     }
+    _oldScrollTop = parent.scrollTop();
   },
   init: function () {
     this.updateLogs();

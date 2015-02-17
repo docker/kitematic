@@ -29,6 +29,7 @@ var ContainerListItem = React.createClass({
         });
       }
     }.bind(this));
+    return false;
   },
   render: function () {
     var self = this;

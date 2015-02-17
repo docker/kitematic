@@ -31,6 +31,7 @@ var ContainerSettingsGeneral = React.createClass({
   getInitialState: function () {
     return {
       slugName: null,
+      nameError: null,
       env: {},
       pendingEnv: {}
     };
@@ -48,6 +49,7 @@ var ContainerSettingsGeneral = React.createClass({
     }
     this.setState({
       env: ContainerUtil.env(container),
+      nameError: null
     });
   },
   handleNameChange: function (e) {
@@ -61,7 +63,8 @@ var ContainerSettingsGeneral = React.createClass({
       });
     } else {
       this.setState({
-        slugName: containerNameSlugify(newName)
+        slugName: containerNameSlugify(newName),
+        nameError: null
       });
     }
   },
@@ -75,20 +78,42 @@ var ContainerSettingsGeneral = React.createClass({
     if (newName === this.props.container.Name) {
       return;
     }
-    if (fs.existsSync(path.join(process.env.HOME, 'Kitematic', this.props.container.Name))) {
-      fs.renameSync(path.join(process.env.HOME, 'Kitematic', this.props.container.Name), path.join(process.env.HOME, 'Kitematic', newName));
-    }
+
     this.setState({
       slugName: null
     });
-    ContainerStore.updateContainer(this.props.container.Name, {
-      name: newName
-    }, function (err) {
-      this.transitionTo('containerSettingsGeneral', {name: newName});
+    var oldName = this.props.container.Name;
+    if (ContainerStore.container(newName)) {
+      this.setState({
+        nameError: 'A container already exists with this name.'
+      });
+      return;
+    }
+    ContainerStore.rename(oldName, newName, err => {
       if (err) {
-        console.error(err);
+        console.log(err);
       }
-    }.bind(this));
+      this.transitionTo('containerSettingsGeneral', {name: newName});
+      var oldPath = path.join(process.env.HOME, 'Kitematic', oldName);
+      var newPath = path.join(process.env.HOME, 'Kitematic', newName);
+      rimraf(newPath, () => {
+        if (fs.existsSync(oldPath)) {
+          fs.renameSync(oldPath, newPath);
+        }
+        var binds = _.pairs(this.props.container.Volumes).map(function (pair) {
+          return pair[1] + ':' + pair[0];
+        });
+        var newBinds = binds.map(b => {
+          return b.replace(path.join(process.env.HOME, 'Kitematic', oldName), path.join(process.env.HOME, 'Kitematic', newName));
+        });
+        ContainerStore.updateContainer(newName, {Binds: newBinds}, err => {
+          rimraf(oldPath, () => {});
+          if (err) {
+            console.log(err);
+          }
+        });
+      });
+    });
   },
   handleSaveEnvVar: function () {
     var $rows = $('.env-vars .keyval-row');
@@ -171,6 +196,10 @@ var ContainerSettingsGeneral = React.createClass({
       );
       btnSaveName = (
         <a className="btn btn-action" onClick={this.handleSaveContainerName}>Save</a>
+      );
+    } else if (this.state.nameError) {
+      willBeRenamedAs = (
+        <p><strong>{this.state.nameError}</strong></p>
       );
     }
     var rename = (
