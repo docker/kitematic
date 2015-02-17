@@ -7,9 +7,9 @@ var ImageCard = require('./ImageCard.react');
 var Promise = require('bluebird');
 
 var _recommended = [];
+var _searchPromise = null;
 
 var NewContainer = React.createClass({
-  _searchRequest: null,
   getInitialState: function () {
     return {
       query: '',
@@ -18,46 +18,45 @@ var NewContainer = React.createClass({
     };
   },
   componentDidMount: function () {
-    this.setState({
-      creating: []
-    });
     this.refs.searchInput.getDOMNode().focus();
-    if (!_recommended.length) {
-      this.recommended();
+    this.recommended();
+  },
+  componentWillUnmount: function () {
+    if (_searchPromise) {
+      _searchPromise.cancel();
     }
   },
   search: function (query) {
-    if (this._searchRequest) {
-      this._searchRequest.abort();
-      this._searchRequest = null;
+    if (_searchPromise) {
+      _searchPromise.cancel();
+      _searchPromise = null;
     }
 
     if (!query.length) {
+      this.setState({
+        query: query,
+        results: _recommended,
+        loading: false
+      });
       return;
     }
 
     this.setState({
+      query: query,
       loading: true
     });
 
-    var self = this;
-    this._searchRequest = $.get('https://registry.hub.docker.com/v1/search?q=' + query, function (result) {
-      self.setState({
+    _searchPromise = Promise.delay(200).then(() => Promise.resolve($.get('https://registry.hub.docker.com/v1/search?q=' + query))).cancellable().then(data => {
+      this.setState({
+        results: data.results,
         query: query,
         loading: false
       });
-      self._searchRequest = null;
-      if (self.isMounted()) {
-        self.setState(result);
-      }
+      _searchPromise = null;
+    }).catch(Promise.CancellationError, () => {
     });
   },
   recommended: function () {
-    if (this._searchRequest) {
-      this._searchRequest.abort();
-      this._searchRequest = null;
-    }
-
     if (_recommended.length) {
       return;
     }
@@ -75,12 +74,10 @@ var NewContainer = React.createClass({
       });
     }).then(results => {
       _recommended = results.filter(r => !!r);
-      if (!this.state.query.length) {
-        if (this.isMounted()) {
-          this.setState({
-            results: _recommended
-          });
-        }
+      if (!this.state.query.length && this.isMounted()) {
+        this.setState({
+          results: _recommended
+        });
       }
     }).catch(err => {
       console.log(err);
@@ -88,30 +85,14 @@ var NewContainer = React.createClass({
   },
   handleChange: function (e) {
     var query = e.target.value;
-
     if (query === this.state.query) {
       return;
     }
-
-    clearTimeout(this.timeout);
-    if (!query.length) {
-      this.setState({
-        query: query,
-        results: _recommended
-      });
-    } else {
-      var self = this;
-      this.timeout = setTimeout(function () {
-        self.search(query);
-      }, 200);
-    }
+    this.search(query);
   },
   render: function () {
     var title = this.state.query ? 'Results' : 'Recommended';
-    var data = [];
-    if (this.state.results) {
-      data = this.state.results.slice(0, 6);
-    }
+    var data = this.state.results;
     var results;
     if (data.length) {
       var items = data.map(function (image) {

@@ -3,6 +3,8 @@ var React = require('react/addons');
 var LogStore = require('./LogStore');
 var Router = require('react-router');
 
+var _oldScrollTop = 0;
+
 var ContainerLogs = React.createClass({
   mixins: [Router.State],
   getInitialState: function () {
@@ -23,13 +25,10 @@ var ContainerLogs = React.createClass({
   componentDidUpdate: function () {
     // Scroll logs to bottom
     var parent = $('.details-logs');
-    if (parent.length) {
-      if (parent.scrollTop() >= this._oldHeight) {
-        parent.stop();
-        parent.scrollTop(parent[0].scrollHeight - parent.height());
-      }
-      this._oldHeight = parent[0].scrollHeight - parent.height();
+    if (parent.scrollTop() >= _oldScrollTop) {
+      parent.scrollTop(parent[0].scrollHeight - parent.height());
     }
+    _oldScrollTop = parent.scrollTop();
   },
   init: function () {
     this.updateLogs();
