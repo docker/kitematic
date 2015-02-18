@@ -59,6 +59,7 @@ describe('SetupStore', function () {
     pit('only installs binaries if virtualbox is installed', function () {
       virtualBox.installed.mockReturnValue(true);
       setupUtil.compareVersions.mockReturnValue(0);
+      setupUtil.needsBinaryFix.mockReturnValue(true);
       return setupStore.steps().install.run().then(() => {
         expect(util.exec).toBeCalledWith('macsudo copycmd && fixcmd');
       });
