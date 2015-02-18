@@ -40,6 +40,10 @@ var _steps = [{
     if (!virtualBox.installed() || setupUtil.compareVersions(yield virtualBox.version(), packagejson['virtualbox-required-version']) < 0) {
       yield virtualBox.killall();
       cmd += ' && ' + setupUtil.installVirtualBoxCmd();
+    } else {
+      if (!setupUtil.needsBinaryFix()) {
+        return;
+      }
     }
     try {
       progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
@@ -139,7 +143,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var required = {};
     var vboxfile = path.join(util.supportDir(), packagejson['virtualbox-filename']);
     required.download = !virtualBox.installed() && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== packagejson['virtualbox-checksum']);
-    required.install = !virtualBox.installed() || setupUtil.needsBinaryFix();
+    required.install = !virtualBox.installed() || setupUtil.needsBinaryFix() || setupUtil.compareVersions(yield virtualBox.version(), packagejson['virtualbox-required-version']) < 0;
     required.init = !(yield boot2docker.exists()) || !isoversion || setupUtil.compareVersions(isoversion, boot2docker.version()) < 0;
     required.start = required.init || (yield boot2docker.status()) !== 'running';
 
@@ -181,9 +185,9 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
           step.percent = 100;
           break;
         } catch (err) {
+          console.log('Setup encountered an error.');
+          console.log(err);
           if (err) {
-            console.log(err);
-            console.log(err.stack);
             _error = err;
             this.emit(this.ERROR_EVENT);
           } else {

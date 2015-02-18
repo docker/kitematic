@@ -48,7 +48,7 @@ var Setup = React.createClass({
     }
     return (
       <div className="contents">
-        <RetinaImage src={img}/>
+        <RetinaImage src={img} checkIfRetinaImgExists={false}/>
         <div className="detail">
           <Radial progress={SetupStore.percent()} thick={true} gray={true}/>
         </div>
@@ -97,7 +97,7 @@ var Setup = React.createClass({
         <Header />
         <div className="image">
           <div className="contents">
-            <RetinaImage img src="install-error.png"/>
+            <RetinaImage src="install-error.png" checkIfRetinaImgExists={false}/>
             <div className="detail">
             </div>
           </div>
