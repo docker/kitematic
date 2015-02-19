@@ -1,0 +1,23 @@
+.traffic-light() {
+  box-sizing: border-box;
+  display: inline-block;
+  background: white;
+  margin-right: 9px;
+  height: 12px;
+  width: 12px;
+  border: 1px solid @traffic-light-gray-border;
+  border-radius: 6px;
+  box-shadow: 0px 1px 1px 0px rgba(234,234,234,0.50);
+  -webkit-app-region: no-drag;
+  &.enabled:hover {
+    box-shadow: 0px 1px 1px 0px rgba(195,198,201,0.50);
+  }
+  &.enabled:hover:active {
+    cursor: default;
+    -webkit-filter: brightness(92%);
+  }
+}
+
+.brand-gradient() {
+  background-image: linear-gradient(-180deg, #24B8EB 4%, #24A3EB 100%);
+}

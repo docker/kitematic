@@ -1,0 +1,125 @@
+.details {
+  background-color: #F9F9F9;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  .details-subheader {
+    flex: 0 auto;
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    border-bottom: 1px solid #DCE2E2;
+    background-color: white;
+    height: 57px;
+    padding: 6px 10px 10px 24px;
+    font-size: 13px;
+    color: @gray-normal;
+    .details-header-actions {
+      flex: 1 auto;
+      text-align: left;
+      margin-top: -12px;
+      .action {
+        display: inline-block;
+        &.disabled {
+          opacity: 0.3;
+        }
+        .action-icon {
+          color: @gray-normal;
+          font-size: 30px;
+          margin-right: 20px;
+        }
+        .btn-label {
+          position: relative;
+          top: 0px;
+          display: block;
+          color: @brand-action;
+          font-size: 10px;
+          &.run {
+            left: 8px;
+          }
+          &.restart {
+            left: 1px;
+          }
+          &.terminal {
+            left: -2px;
+          }
+          visibility: hidden;
+        }
+      }
+    }
+    .details-subheader-tabs {
+      flex: 1 auto;
+      text-align: right;
+      margin-right: 3px;
+      margin-top: 3px;
+      .tab {
+        margin-left: 16px;
+        padding: 6px 10px;
+        font-weight: 400;
+        &:hover {
+          border-radius: 40px;
+          background-color: #F9F9F9;
+        }
+        &.active {
+          border-radius: 40px;
+          color: white;
+          background-image: linear-gradient(-180deg, #24B8EB 4%, #24A3EB 100%);
+        }
+        &.disabled {
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+  .details-header {
+    flex: 0 auto;
+    display: flex;
+    flex-direction: row;
+    padding: 31px 24px 18px 24px;
+    position: relative;
+    background-color: white;
+    height: 75px;
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 400;
+      margin: 0;
+      color: @gray-darkest;
+    }
+    .status {
+      font-size: 10px;
+      font-weight: 500;
+      position: relative;
+      top: 8px;
+      left: 14px;
+      &.running {
+        color: @brand-positive;
+      }
+      &.paused {
+        color: @gray-lighter;
+      }
+      &.stopped {
+        color: @gray-lighter;
+      }
+      &.downloading {
+        color: @brand-action;
+      }
+    }
+  }
+  .details-progress {
+    margin: 20% auto 0;
+    text-align: center;
+    width: 300px;
+    h2 {
+      margin-bottom: 20px;
+    }
+  }
+  .details-panel {
+    flex: 1;
+    overflow: auto;
+    background-color: #FFF;
+  }
+}

@@ -1,0 +1,249 @@
+/* Sidebar */
+
+.sidebar {
+  padding-top: 28px;
+  background-color: white;
+  margin: 0;
+  border-right: 1px solid @divider-color;
+  display: flex;
+  flex-direction: column;
+  min-width: 260px;
+  box-sizing: border-box;
+  .sidebar-header {
+    flex: 0 auto;
+    min-width: 240px;
+    min-height: 47px;
+    display: flex;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom 0.25s;
+    &.sep {
+      border-bottom: 1px solid #EEE;
+      box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.03);
+    }
+    h4 {
+      align-self: flex-start;
+      padding-left: 26px;
+      margin: 14px 0 0;
+      display: inline-block;
+      position: relative;
+    }
+    .create {
+      flex: 1 auto;
+      text-align: right;
+      margin-right: 20px;
+      margin-top: 3px;
+      .btn-new {
+        font-size: 24px;
+        color: @brand-action;
+        transition: all 0.25s;
+        &:hover {
+          color: darken(@brand-action, 15%);
+        }
+      }
+    }
+  }
+  .sidebar-containers {
+    position: relative;
+    flex: 1 auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    max-width: 260px;
+    ul {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      .new-container-item {
+        .info {
+          position: relative;
+          top: 9px;
+        }
+      }
+      a {
+        color: inherit;
+        flex-shrink: 0;
+        cursor: default;
+        outline: none;
+        &:hover {
+          text-decoration: none;
+          cursor: default;
+        }
+        &:focus {
+          text-decoration: none;
+        }
+        &.active {
+          background: @brand-action;
+          li {
+            height: 57px;
+            border-bottom: none;
+            .brand-gradient();
+            .name {
+              color: white;
+            }
+            .image {
+              color: white;
+              opacity: 0.8;
+            }
+            .btn-delete {
+              font-size: 24px;
+              color: white;
+              position: relative;
+              z-index: 9999;
+            }
+            .state-new {
+              .at2x('container-white.png', 20px, 20px);
+            }
+            .state-running {
+              .at2x('running-white.png', 20px, 20px);
+              .runningwave {
+                .at2x('runningwave-white.png', 20px, 20px);
+              }
+            }
+            .state-paused {
+              .at2x('wavy-white.png', 20px, 20px);
+            }
+            .state-stopped {
+              .at2x('stopped-white.png', 20px, 20px);
+            }
+            .state-downloading {
+              .at2x('downloading-white.png', 20px, 20px);
+              .downloading-arrow {
+                .at2x('downloading-arrow-white.png', 20px, 20px);
+              }
+            }
+          }
+        }
+      }
+      li {
+        vertical-align: middle;
+        padding: 10px 16px 10px 26px;
+        display: flex;
+        flex-direction: row;
+        height: 57px;
+        .info {
+          font-size: 13px;
+          margin-left: 16px;
+          .name {
+            text-overflow: ellipsis;
+            max-width: 140px;
+            white-space: nowrap;
+            overflow: hidden;
+            font-size: 14px;
+            font-weight: 400;
+            color: @gray-darkest;
+          }
+          .image {
+            color: @gray-lighter;
+            font-size: 12px;
+            font-weight: 400;
+            text-overflow: ellipsis;
+            max-width: 140px;
+            white-space: nowrap;
+            overflow: hidden;
+          }
+        }
+        .action {
+          display: none;
+          flex: 1;
+          position: relative;
+          top: 5px;
+          text-align: right;
+          margin-right: 4px;
+          .btn-delete {
+            font-size: 24px;
+            color: @gray-lighter;
+            position: relative;
+            z-index: 9999;
+          }
+        }
+        .state {
+          margin-top: 9px;
+          display: inline-block;
+          position: relative;
+          min-width: 20px;
+          height: 20px;
+        }
+        .state-error {
+          .at2x('error.png', 20px, 20px);
+        }
+        .state-stopped {
+          .at2x('stopped.png', 20px, 20px);
+        }
+        .state-paused {
+          .at2x('paused.png', 20px, 20px);
+        }
+        .state-new {
+          .at2x('container.png', 20px, 20px);
+        }
+        .state-downloading {
+          .at2x('downloading.png', 20px, 20px);
+          overflow: hidden;
+          .downloading-arrow {
+            width: 20px;
+            height: 20px;
+            .at2x('downloading-arrow.png', 20px, 20px);
+            position: absolute;
+            -webkit-animation-name: translatedownload;
+            -webkit-animation-duration: 1.8s;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-timing-function: linear;
+          }
+        }
+        .state-running {
+          .at2x('running.png', 20px, 20px);
+          overflow: hidden;
+          .runningwave {
+            position: absolute;
+            width: 40px;
+            height: 20px;
+            left: -20px;
+            .at2x('runningwave.png', 20px, 20px);
+            -webkit-animation-name: translatewave;
+            -webkit-animation-duration: 8.0s;
+            -webkit-animation-iteration-count: infinite;
+            -webkit-animation-timing-function: linear;
+          }
+        }
+        .state-restarting {
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          .at2x('restarting.png', 20px, 20px);
+          background-repeat: repeat-x;
+          -webkit-animation-delay: -1s;
+          -webkit-animation-name: rotate;
+          -webkit-animation-duration: 3.0s;
+          -webkit-animation-iteration-count: infinite;
+          -webkit-animation-timing-function: linear;
+        }
+      }
+    }
+  }
+}
+
+/* Auto-Update */
+
+.update-notification {
+  background-color: white;
+  opacity: 0.9;
+  position: fixed;
+  bottom: 0;
+  width: 259px;
+  padding: 10px;
+  color: @gray-normal;
+  font-size: 12px;
+  .text {
+    position: relative;
+    top: 3px;
+  }
+  .btn {
+    position: relative;
+    float: right;
+  }
+}
+
+.update-padding {
+  position: relative;
+  height: 40px;
+}
