@@ -2,12 +2,9 @@ var $ = require('jquery');
 var React = require('react/addons');
 var RetinaImage = require('react-retina-image');
 var ContainerStore = require('./ContainerStore');
-<<<<<<< HEAD
 var metrics = require('./Metrics');
-=======
 var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
 var Tooltip = require('react-bootstrap').Tooltip;
->>>>>>> master
 
 var ImageCard = React.createClass({
   getInitialState: function () {
