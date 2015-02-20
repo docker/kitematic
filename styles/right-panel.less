@@ -1,5 +1,5 @@
 .details {
-  background-color: #F9F9F9;
+  background-color: @color-background;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -11,7 +11,7 @@
     display: flex;
     flex-direction: row;
     position: relative;
-    border-bottom: 1px solid #DCE2E2;
+    border-bottom: 1px solid @color-divider;
     background-color: white;
     height: 57px;
     padding: 6px 10px 10px 24px;
@@ -61,12 +61,12 @@
         font-weight: 400;
         &:hover {
           border-radius: 40px;
-          background-color: #F9F9F9;
+          background-color: @color-divider;
         }
         &.active {
           border-radius: 40px;
           color: white;
-          background-image: linear-gradient(-180deg, #24B8EB 4%, #24A3EB 100%);
+          .brand-gradient();
         }
         &.disabled {
           opacity: 0.5;
@@ -120,6 +120,6 @@
   .details-panel {
     flex: 1;
     overflow: auto;
-    background-color: #FFF;
+    background-color: white;
   }
 }

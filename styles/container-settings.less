@@ -10,10 +10,8 @@
       margin: 0;
       padding: 0;
       padding-top: 14px;
-
       display: flex;
       flex-direction: column;
-
       a {
         min-width: 160px;
         margin-left: 12px;
@@ -26,7 +24,7 @@
           li {
             color: white;
             border-radius: 40px;
-            background-image: linear-gradient(-180deg, #24B8EB 4%, #24A3EB 100%);
+            .brand-gradient();
           }
         }
         &:hover {
@@ -34,14 +32,13 @@
           li {
             cursor: default;
             border-radius: 40px;
-            background-color: #F9F9F9;
+            background-color: @color-background;
           }
         }
         &:focus {
           text-decoration: none;
         }
       }
-
       li {
         vertical-align: middle;
         padding: 5px 12px;
