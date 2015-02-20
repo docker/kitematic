@@ -3,16 +3,23 @@ var React = require('react/addons');
 var RetinaImage = require('react-retina-image');
 var path = require('path');
 var exec = require('exec');
+var metrics = require('./Metrics');
 var Router = require('react-router');
 
 var ContainerHomeFolder = React.createClass({
   mixins: [Router.State, Router.Navigation],
   handleClickFolder: function (path) {
+    metrics.track('Opened Volume Directory', {
+      from: 'home'
+    });
     exec(['open', path], function (err) {
       if (err) { throw err; }
     });
   },
   handleClickChangeFolders: function () {
+    metrics.track('Viewed Volume Settings', {
+      from: 'preview'
+    });
     this.transitionTo('containerSettingsVolumes', {name: this.getParams().name});
   },
   render: function () {

@@ -8,6 +8,7 @@ var virtualBox = require('./VirtualBox');
 var setupUtil = require('./SetupUtil');
 var util = require('./Util');
 var assign = require('object-assign');
+var metrics = require('./Metrics');
 
 var _currentStep = null;
 var _error = null;
@@ -167,6 +168,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     return Promise.resolve();
   },
   run: Promise.coroutine(function* () {
+    metrics.track('Started Setup');
     yield this.updateBinaries();
     var steps = yield this.requiredSteps();
     for (let step of steps) {
@@ -182,9 +184,15 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
               this.emit(this.PROGRESS_EVENT);
             }
           });
+          metrics.track('Completed Step', {
+            name: step.name
+          });
           step.percent = 100;
           break;
         } catch (err) {
+          metrics.track('Setup Failed', {
+            step: step.name
+          });
           console.log('Setup encountered an error.');
           console.log(err);
           if (err) {
@@ -198,6 +206,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
         }
       }
     }
+    metrics.track('Finished Setup');
     _currentStep = null;
   })
 });

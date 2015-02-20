@@ -17,10 +17,18 @@ var packagejson = require('./package.json');
 
 var dependencies = Object.keys(packagejson.dependencies);
 var isBeta = process.argv.indexOf('--beta') !== -1;
+
+var settings;
+try {
+  settings = JSON.parse(fs.readFileSync('settings.json'), 'utf8');
+} catch (err) {
+  settings = {};
+}
+settings.beta = isBeta;
+
 var options = {
   dev: process.argv.indexOf('release') === -1 && process.argv.indexOf('test') === -1,
   test: process.argv.indexOf('test') !== -1,
-  integration: process.argv.indexOf('--integration') !== -1,
   beta: isBeta,
   filename: isBeta ? 'Kitematic (Beta).app' : 'Kitematic.app',
   name: isBeta ? 'Kitematic (Beta)' : 'Kitematic',
@@ -29,6 +37,11 @@ var options = {
 
 gulp.task('js', function () {
   return gulp.src('src/**/*.js')
+    .pipe(plumber(function(error) {
+      gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.message));
+      // emit the end event, to properly end the task
+      this.emit('end');
+    }))
     .pipe(gulpif(options.dev || options.test, sourcemaps.init()))
     .pipe(react())
     .pipe(babel({blacklist: ['regenerator']}))
@@ -86,7 +99,6 @@ gulp.task('dist', function () {
     'mkdir -p ./dist/osx/<%= filename %>/Contents/Resources/app/node_modules',
     'cp -R browser dist/osx/<%= filename %>/Contents/Resources/app',
     'cp package.json dist/osx/<%= filename %>/Contents/Resources/app/',
-    'cp settings.json dist/osx/<%= filename %>/Contents/Resources/app/',
     'mkdir -p dist/osx/<%= filename %>/Contents/Resources/app/resources',
     'cp -v resources/* dist/osx/<%= filename %>/Contents/Resources/app/resources/ || :',
     'cp <%= icon %> dist/osx/<%= filename %>/Contents/Resources/atom.icns',
@@ -139,8 +151,20 @@ gulp.task('zip', function () {
   }));
 });
 
+gulp.task('settings', function () {
+  var string_src = function (filename, string) {
+    var src = require('stream').Readable({ objectMode: true });
+    src._read = function () {
+      this.push(new gutil.File({ cwd: "", base: "", path: filename, contents: new Buffer(string) }));
+      this.push(null);
+    };
+    return src;
+  };
+  string_src('settings.json', JSON.stringify(settings)).pipe(gulp.dest('dist/osx/' + options.filename.replace(' ', '\ ').replace('(','\(').replace(')','\)') + '/Contents/Resources/app'));
+});
+
 gulp.task('release', function () {
-  runSequence('download', 'dist', ['copy', 'images', 'js', 'styles'], 'sign', 'zip');
+  runSequence('download', 'dist', ['copy', 'images', 'js', 'styles', 'settings'], 'sign', 'zip');
 });
 
 gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function () {

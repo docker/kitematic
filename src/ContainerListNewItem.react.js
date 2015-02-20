@@ -2,6 +2,7 @@ var $ = require('jquery');
 var React = require('react/addons');
 var Router = require('react-router');
 var ContainerStore = require('./ContainerStore');
+var metrics = require('./Metrics');
 
 var ContainerListNewItem = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -15,6 +16,10 @@ var ContainerListNewItem = React.createClass({
   },
   handleDelete: function () {
     var self = this;
+    metrics.track('Deleted Container', {
+      from: 'list',
+      type: 'new'
+    });
     var containers = ContainerStore.sorted();
     $(self.getDOMNode()).fadeOut(300, function () {
       if (containers.length > 0) {

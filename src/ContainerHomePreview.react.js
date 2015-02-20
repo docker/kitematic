@@ -5,6 +5,7 @@ var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
 var Router = require('react-router');
 var request = require('request');
+var metrics = require('./Metrics');
 
 var ContainerHomePreview = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -57,12 +58,18 @@ var ContainerHomePreview = React.createClass({
   },
   handleClickPreview: function () {
     if (this.state.defaultPort) {
+      metrics.track('Opened In Browser', {
+        from: 'preview'
+      });
       exec(['open', this.state.ports[this.state.defaultPort].url], function (err) {
         if (err) { throw err; }
       });
     }
   },
   handleClickNotShowingCorrectly: function () {
+    metrics.track('Viewed Port Settings', {
+      from: 'preview'
+    });
     this.transitionTo('containerSettingsPorts', {name: this.getParams().name});
   },
   render: function () {

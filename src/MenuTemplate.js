@@ -5,6 +5,7 @@ var docker = require('./Docker');
 var BrowserWindow = remote.require('browser-window');
 var router = require('./Router');
 var util = require('./Util');
+var metrics = require('./Metrics');
 
 // main.js
 var MenuTemplate = [
@@ -71,6 +72,7 @@ var MenuTemplate = [
     label: 'Open Docker Terminal',
     accelerator: 'Command+Shift+T',
     click: function() {
+      metrics.track('Opened Docker Terminal');
       var terminal = path.join(process.cwd(), 'resources', 'terminal');
       var cmd = [terminal, `DOCKER_HOST=${'tcp://' + docker.host + ':2376'} DOCKER_CERT_PATH=${path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], '.boot2docker/certs/boot2docker-vm')} DOCKER_TLS_VERIFY=1 $SHELL`];
       util.exec(cmd).then(() => {});

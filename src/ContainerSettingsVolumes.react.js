@@ -4,6 +4,7 @@ var Router = require('react-router');
 var remote = require('remote');
 var exec = require('exec');
 var dialog = remote.require('dialog');
+var metrics = require('./Metrics');
 var ContainerStore = require('./ContainerStore');
 
 var ContainerSettingsVolumes = React.createClass({
@@ -16,6 +17,7 @@ var ContainerSettingsVolumes = React.createClass({
       }
       var directory = filenames[0];
       if (directory) {
+        metrics.track('Chose Directory for Volume');
         var volumes = _.clone(self.props.container.Volumes);
         volumes[dockerVol] = directory;
         var binds = _.pairs(volumes).map(function (pair) {
@@ -30,6 +32,9 @@ var ContainerSettingsVolumes = React.createClass({
     });
   },
   handleOpenVolumeClick: function (path) {
+    metrics.track('Opened Volume Directory', {
+      from: 'settings'
+    });
     exec(['open', path], function (err) {
       if (err) { throw err; }
     });
@@ -43,7 +48,7 @@ var ContainerSettingsVolumes = React.createClass({
       if (!val || val.indexOf(process.env.HOME) === -1) {
         val = (
           <span>
-            <a className="value-right">No Folder</a> 
+            <a className="value-right">No Folder</a>
             <a className="btn btn-action small" onClick={self.handleChooseVolumeClick.bind(self, key)}>Change</a>
           </span>
         );
