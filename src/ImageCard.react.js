@@ -132,12 +132,12 @@ var ImageCard = React.createClass({
                 <span className="text">{this.props.image.star_count}</span>
               </div>
             </OverlayTrigger>
-            <OverlayTrigger placement="bottom" overlay={<Tooltip>Change Tag</Tooltip>}>
-              <div className="tags">
-                <span className="icon icon-tag-1"></span>
+            <div className="tags">
+              <span className="icon icon-bookmark-2"></span>
+              <OverlayTrigger placement="bottom" overlay={<Tooltip>Change Tag</Tooltip>}>
                 <span className="text" onClick={self.handleTagOverlayClick.bind(self, this.props.image.name)} data-name={this.props.image.name}>{this.state.chosenTag}</span>
-              </div>
-            </OverlayTrigger>
+              </OverlayTrigger>
+            </div>
             <div className="action">
               <a className="btn btn-action" onClick={self.handleClick.bind(self, this.props.image.name)}>Create</a>
             </div>
