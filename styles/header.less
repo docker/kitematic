@@ -1,18 +1,12 @@
-@import "bootstrap/bootstrap.less";
-
 .header {
   position: absolute;
   min-width: 100%;
-  flex: 0;
   min-height: 40px;
   -webkit-app-region: drag;
   -webkit-user-select: none;
-  // border-bottom: 1px solid #efefef;
-
   &.no-drag {
     -webkit-app-region: no-drag;
   }
-
   .logo {
     position: relative;
     float: right;
@@ -20,13 +14,11 @@
     right: 10px;
     z-index: 1000;
   }
-
   .buttons {
     display: inline-block;
     position: relative;
     top: 10px;
     left: 15px;
-
     &:hover {
       .button-minimize.enabled {
         .at2x('minimize.png', 10px, 10px);
@@ -41,42 +33,23 @@
         .at2x('fullscreenclose.png', 10px, 10px);
       }
     }
-
     .button {
-      box-sizing: border-box;
-      display: inline-block;
-      background: white;
-      margin-right: 9px;
-      height: 12px;
-      width: 12px;
-      border: 1px solid #CCD3D5;
-      border-radius: 6px;
-      box-shadow: 0px 1px 1px 0px rgba(234,234,234,0.50);
-      -webkit-app-region: no-drag;
-      &.red {
-        background-color: #FF5F52;
-        border-color: #E33E32;
+      .traffic-light();
+      &.button-close {
+        background-color: @traffic-light-red;
+        border-color: @traffic-light-red-border;
       }
-      &.yellow {
-        background-color: #FFBE05;
-        border-color: #E2A100;
+      &.button-minimize {
+        background-color: @traffic-light-yellow;
+        border-color: @traffic-light-yellow-border;
       }
-      &.green {
-        background-color: #15CC35;
-        border-color: #17B230;
+      &.button-fullscreen {
+        background-color: @traffic-light-green;
+        border-color: @traffic-light-green-border;
       }
       &.disabled {
-        background-color: #DDDDDD;
-        border: 1px solid #D3D3D3;
-      }
-
-      &.enabled:hover {
-        box-shadow: 0px 1px 1px 0px rgba(195,198,201,0.50);
-      }
-
-      &.enabled:hover:active {
-        cursor: default;
-        -webkit-filter: brightness(92%);
+        background-color: @traffic-light-gray;
+        border-color: @traffic-light-gray-border;
       }
     }
   }
