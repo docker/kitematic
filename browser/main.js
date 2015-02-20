@@ -63,8 +63,10 @@ app.on('ready', function() {
   });
 
   mainWindow.webContents.on('will-navigate', function (e, url) {
-    console.log(url);
-    e.preventDefault();
+    if (url.indexOf('build/index.html#/containers') < 0) {
+      console.log(url);
+      e.preventDefault();
+    }
   });
 
   mainWindow.webContents.on('did-finish-load', function() {
