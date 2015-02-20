@@ -2,6 +2,8 @@ var $ = require('jquery');
 var React = require('react/addons');
 var RetinaImage = require('react-retina-image');
 var ContainerStore = require('./ContainerStore');
+var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
+var Tooltip = require('react-bootstrap').Tooltip;
 
 var ImageCard = React.createClass({
   getInitialState: function () {
@@ -42,10 +44,34 @@ var ImageCard = React.createClass({
   render: function () {
     var self = this;
     var name;
-    if (this.props.image.is_official) {
-      name = <span><RetinaImage src="official.png"/>{this.props.image.name}</span>;
+    var imageNameTokens = this.props.image.name.split('/');
+    var namespace;
+    var repo;
+    if (imageNameTokens.length > 1) {
+      namespace = imageNameTokens[0];
+      repo = imageNameTokens[1];
     } else {
-      name = <span>{this.props.image.name}</span>;
+      namespace = "official";
+      repo = imageNameTokens[0];
+    }
+    if (this.props.image.is_official) {
+      name = (
+        <div>
+          <div className="namespace official">{namespace}</div>
+          <OverlayTrigger placement="bottom" overlay={<Tooltip>{this.props.image.name}</Tooltip>}>
+            <span className="repo">{repo}</span>
+          </OverlayTrigger>
+        </div>
+      );
+    } else {
+      name = (
+        <div>
+          <div className="namespace">{namespace}</div>
+          <OverlayTrigger placement="bottom" overlay={<Tooltip>{this.props.image.name}</Tooltip>}>
+            <span className="repo">{repo}</span>
+          </OverlayTrigger>
+        </div>
+      );
     }
     var description;
     if (this.props.image.description) {
@@ -75,6 +101,12 @@ var ImageCard = React.createClass({
     } else {
       tags = <RetinaImage className="tags-loading" src="loading-white.png"/>;
     }
+    var officialBadge;
+    if (this.props.image.is_official) {
+      officialBadge = (
+        <RetinaImage src="official.png" />
+      );
+    }
     return (
       <div className="image-item">
         <div className="tag-overlay" onClick={self.handleCloseTagOverlay}>
@@ -84,6 +116,9 @@ var ImageCard = React.createClass({
           <RetinaImage src={imgsrc}/>
         </div>
         <div className="card">
+          <div className="badges">
+            {officialBadge}
+          </div>
           <div className="name">
             {name}
           </div>
@@ -91,14 +126,18 @@ var ImageCard = React.createClass({
             {description}
           </div>
           <div className="actions">
-            <div className="stars">
-              <span className="icon icon-star-9"></span>
-              <span className="text">{this.props.image.star_count}</span>
-            </div>
-            <div className="tags">
-              <span className="icon icon-tag-1"></span>
-              <span className="text" onClick={self.handleTagOverlayClick.bind(self, this.props.image.name)} data-name={this.props.image.name}>{this.state.chosenTag}</span>
-            </div>
+            <OverlayTrigger placement="bottom" overlay={<Tooltip>Favorites</Tooltip>}>
+              <div className="stars">
+                <span className="icon icon-star-9"></span>
+                <span className="text">{this.props.image.star_count}</span>
+              </div>
+            </OverlayTrigger>
+            <OverlayTrigger placement="bottom" overlay={<Tooltip>Change Tag</Tooltip>}>
+              <div className="tags">
+                <span className="icon icon-tag-1"></span>
+                <span className="text" onClick={self.handleTagOverlayClick.bind(self, this.props.image.name)} data-name={this.props.image.name}>{this.state.chosenTag}</span>
+              </div>
+            </OverlayTrigger>
             <div className="action">
               <a className="btn btn-action" onClick={self.handleClick.bind(self, this.props.image.name)}>Create</a>
             </div>

@@ -4,6 +4,8 @@ var Router = require('react-router');
 var remote = require('remote');
 var dialog = remote.require('dialog');
 var ContainerStore = require('./ContainerStore');
+var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
+var Tooltip = require('react-bootstrap').Tooltip;
 
 var ContainerListItem = React.createClass({
   handleItemMouseEnter: function () {
@@ -43,18 +45,43 @@ var ContainerListItem = React.createClass({
 
     var state;
     if (container.State.Downloading) {
-      state = <div className="state state-downloading"><div style={style} className="downloading-arrow"></div></div>;
+      state = (
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>Downloading</Tooltip>}>
+          <div className="state state-downloading">
+            <div style={style} className="downloading-arrow"></div>
+          </div>
+        </OverlayTrigger>
+      );
     } else if (container.State.Running && !container.State.Paused) {
-      state = <div className="state state-running"><div style={style} className="runningwave"></div></div>;
+      state = (
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>Running</Tooltip>}>
+          <div className="state state-running"><div style={style} className="runningwave"></div></div>
+        </OverlayTrigger>
+      );
     } else if (container.State.Restarting) {
-      state = <div className="state state-restarting" style={style}></div>;
+      state = (
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>Restarting</Tooltip>}>
+          <div className="state state-restarting" style={style}></div>
+        </OverlayTrigger>
+      );
     } else if (container.State.Paused) {
-      state = <div className="state state-paused"></div>;
+      state = (
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>Paused</Tooltip>}>
+          <div className="state state-paused"></div>
+        </OverlayTrigger>
+      );
     } else if (container.State.ExitCode) {
-      // state = <div className="state state-error"></div>;
-      state = <div className="state state-stopped"></div>;
+      state = (
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>Stopped</Tooltip>}>
+          <div className="state state-stopped"></div>
+        </OverlayTrigger>
+      );
     } else {
-      state = <div className="state state-stopped"></div>;
+      state = (
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>Stopped</Tooltip>}>
+          <div className="state state-stopped"></div>
+        </OverlayTrigger>
+      );
     }
 
     return (
