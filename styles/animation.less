@@ -1,0 +1,36 @@
+@-webkit-keyframes spin {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@-webkit-keyframes translatewave {
+  from {
+    -webkit-transform: translateX(0px);
+  }
+  to {
+    -webkit-transform: translateX(20px);
+  }
+}
+
+@-webkit-keyframes translatedownload {
+  0% {
+    -webkit-transform: translateY(6px);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+    -webkit-transform: translateY(6px);
+  }
+  50% {
+    opacity: 1;
+    -webkit-transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    -webkit-transform: translateY(20px);
+  }
+}
