@@ -156,6 +156,12 @@
     }
     .card {
       padding: 10px 20px 10px 20px;
+      position: relative;
+      .badges {
+        position: absolute;
+        right: 15px;
+        top: 8px;
+      }
       .name {
         font-size: 18px;
         color: @gray-darkest;
@@ -164,26 +170,31 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        img {
-          margin-right: 7px;
-          position: relative;
-          top: -1px;
+        margin-bottom: 10px;
+        .namespace {
+          font-size: 11px;
+          color: @gray-lighter;
+          margin-bottom: -3px;
+          &.official {
+            color: @brand-action;
+          }
         }
       }
       .description {
         font-size: 12px;
         color: @gray-normal;
-        height: 65px;
+        height: 50px;
         text-overflow: ellipsis;
         overflow: hidden;
         -webkit-box-orient: vertical;
-        -webkit-line-clamp: 4;
+        -webkit-line-clamp: 3;
         display: -webkit-box;
         word-wrap: break-word;
       }
       .actions {
         width: 190px;
-        padding-top: 25px;
+        position: absolute;
+        bottom: 8px;
         .stars {
           height: 15px;
           font-size: 10px;
@@ -237,8 +248,6 @@
         }
         display: flex;
         flex-direaction: row;
-        position: relative;
-        bottom: 0px;
       }
     }
   }
