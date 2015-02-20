@@ -11,6 +11,7 @@ var ContainerStore = require('./ContainerStore');
 var SetupStore = require('./SetupStore');
 var MenuTemplate = require('./MenuTemplate');
 var Menu = remote.require('menu');
+var metrics = require('./Metrics');
 var settingsjson;
 
 try {
@@ -36,6 +37,10 @@ bugsnag.appVersion = app.getVersion();
 
 var menu = Menu.buildFromTemplate(MenuTemplate);
 Menu.setApplicationMenu(menu);
+
+setInterval(function () {
+  metrics.track('app heartbeat');
+}, 14400000);
 
 router.run(Handler => React.render(<Handler/>, document.body));
 SetupStore.run().then(boot2docker.ip).then(ip => {

@@ -6,6 +6,7 @@ var path =  require('path');
 var remote = require('remote');
 var rimraf = require('rimraf');
 var fs = require('fs');
+var metrics = require('./Metrics');
 var dialog = remote.require('dialog');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
@@ -91,8 +92,12 @@ var ContainerSettingsGeneral = React.createClass({
     }
     ContainerStore.rename(oldName, newName, err => {
       if (err) {
-        console.log(err);
+        this.setState({
+          nameError: err.message
+        });
+        return;
       }
+      metrics.track('Changed Container Name');
       this.transitionTo('containerSettingsGeneral', {name: newName});
       var oldPath = path.join(process.env.HOME, 'Kitematic', oldName);
       var newPath = path.join(process.env.HOME, 'Kitematic', newName);
@@ -127,6 +132,7 @@ var ContainerSettingsGeneral = React.createClass({
       envVarList.push(key + '=' + val);
     });
     var self = this;
+    metrics.track('Saved Environment Variables');
     ContainerStore.updateContainer(self.props.container.Name, {
       Env: envVarList
     }, function (err) {
@@ -151,18 +157,21 @@ var ContainerSettingsGeneral = React.createClass({
     });
     $('#new-env-key').val('');
     $('#new-env-val').val('');
+    metrics.track('Added Pending Environment Variable');
   },
   handleRemoveEnvVar: function (key) {
     var newEnv = _.omit(this.state.env, key);
     this.setState({
       env: newEnv
     });
+    metrics.track('Removed Environment Variable');
   },
   handleRemovePendingEnvVar: function (key) {
     var newEnv = _.omit(this.state.pendingEnv, key);
     this.setState({
       pendingEnv: newEnv
     });
+    metrics.track('Removed Pending Environment Variable');
   },
   handleDeleteContainer: function () {
     dialog.showMessageBox({
@@ -176,6 +185,10 @@ var ContainerSettingsGeneral = React.createClass({
         });
       }
       if (index === 0) {
+        metrics.track('Deleted Container', {
+          from: 'settings',
+          type: 'existing'
+        });
         ContainerStore.remove(this.props.container.Name, function (err) {
           console.error(err);
         });

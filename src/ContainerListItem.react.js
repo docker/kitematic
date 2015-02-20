@@ -3,6 +3,7 @@ var React = require('react/addons');
 var Router = require('react-router');
 var remote = require('remote');
 var dialog = remote.require('dialog');
+var metrics = require('./Metrics');
 var ContainerStore = require('./ContainerStore');
 
 var ContainerListItem = React.createClass({
@@ -20,6 +21,10 @@ var ContainerListItem = React.createClass({
       buttons: ['Delete', 'Cancel']
     }, function (index) {
       if (index === 0) {
+        metrics.track('Deleted Container', {
+          from: 'list',
+          type: 'existing'
+        });
         ContainerStore.remove(this.props.container.Name, function (err) {
           console.error(err);
           var containers = ContainerStore.sorted();

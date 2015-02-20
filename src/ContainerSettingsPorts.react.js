@@ -4,6 +4,7 @@ var Router = require('react-router');
 var exec = require('exec');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
+var metrics = require('./Metrics');
 
 var ContainerSettingsPorts = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -34,6 +35,9 @@ var ContainerSettingsPorts = React.createClass({
     });
   },
   handleViewLink: function (url) {
+    metrics.track('Opened In Browser', {
+      from: 'settings'
+    });
     exec(['open', url], function (err) {
       if (err) { throw err; }
     });

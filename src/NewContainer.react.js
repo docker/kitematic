@@ -5,6 +5,7 @@ var RetinaImage = require('react-retina-image');
 var Radial = require('./Radial.react');
 var ImageCard = require('./ImageCard.react');
 var Promise = require('bluebird');
+var metrics = require('./Metrics');
 
 var _recommended = [];
 var _searchPromise = null;
@@ -47,6 +48,7 @@ var NewContainer = React.createClass({
     });
 
     _searchPromise = Promise.delay(200).then(() => Promise.resolve($.get('https://registry.hub.docker.com/v1/search?q=' + query))).cancellable().then(data => {
+      metrics.track('Searched for Images');
       this.setState({
         results: data.results,
         query: query,

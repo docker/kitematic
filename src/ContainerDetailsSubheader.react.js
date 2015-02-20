@@ -3,6 +3,7 @@ var $ = require('jquery');
 var React = require('react/addons');
 var exec = require('exec');
 var path =  require('path');
+var metrics = require('./Metrics');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
 var boot2docker = require('./Boot2Docker');
@@ -65,21 +66,27 @@ var ContainerDetailsSubheader = React.createClass({
   },
   showHome: function () {
     if (!this.disableTab()) {
+      metrics.track('Viewed Home');
       this.transitionTo('containerHome', {name: this.getParams().name});
     }
   },
   showLogs: function () {
     if (!this.disableTab()) {
+      metrics.track('Viewed Logs');
       this.transitionTo('containerLogs', {name: this.getParams().name});
     }
   },
   showSettings: function () {
     if (!this.disableTab()) {
+      metrics.track('Viewed Settings');
       this.transitionTo('containerSettings', {name: this.getParams().name});
     }
   },
   handleRun: function () {
     if (this.state.defaultPort && !this.disableRun()) {
+      metrics.track('Opened In Browser', {
+        from: 'header'
+      });
       exec(['open', this.state.ports[this.state.defaultPort].url], function (err) {
         if (err) { throw err; }
       });
@@ -87,6 +94,7 @@ var ContainerDetailsSubheader = React.createClass({
   },
   handleRestart: function () {
     if (!this.disableRestart()) {
+      metrics.track('Restarted Container');
       ContainerStore.restart(this.props.container.Name, function (err) {
         console.log(err);
       });
@@ -94,12 +102,11 @@ var ContainerDetailsSubheader = React.createClass({
   },
   handleTerminal: function () {
     if (!this.disableTerminal()) {
+      metrics.track('Terminaled Into Container');
       var container = this.props.container;
       var terminal = path.join(process.cwd(), 'resources', 'terminal');
       var cmd = [terminal, boot2docker.command().replace(/ /g, '\\\\\\\\ ').replace(/\(/g, '\\\\\\\\(').replace(/\)/g, '\\\\\\\\)'), 'ssh', '-t', 'sudo', 'docker', 'exec', '-i', '-t', container.Name, 'sh'];
       exec(cmd, function (stderr, stdout, code) {
-        console.log(stderr);
-        console.log(stdout);
         if (code) {
           console.log(stderr);
         }

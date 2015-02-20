@@ -5,6 +5,7 @@ var SetupStore = require('./SetupStore');
 var RetinaImage = require('react-retina-image');
 var Header = require('./Header.react');
 var Util = require('./Util');
+var metrics = require('./Metrics');
 
 var Setup = React.createClass({
   mixins: [ Router.Navigation ],
@@ -28,6 +29,7 @@ var Setup = React.createClass({
     SetupStore.removeListener(SetupStore.ERROR_EVENT, this.update);
   },
   handleRetry: function () {
+    metrics.track('Retried Setup');
     SetupStore.retry();
   },
   handleOpenWebsite: function () {

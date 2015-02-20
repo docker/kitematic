@@ -2,6 +2,7 @@ var $ = require('jquery');
 var React = require('react/addons');
 var LogStore = require('./LogStore');
 var Router = require('react-router');
+var metrics = require('./Metrics');
 
 var _oldScrollTop = 0;
 
@@ -42,6 +43,9 @@ var ContainerHomeLogs = React.createClass({
     });
   },
   handleClickLogs: function () {
+    metrics.track('Viewed Logs', {
+      from: 'preview'
+    });
     this.transitionTo('containerLogs', {name: this.getParams().name});
   },
   render: function () {

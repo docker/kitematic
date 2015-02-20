@@ -1,53 +1,58 @@
 var React = require('react/addons');
-var assign = require('object-assign');
 var ipc = require('ipc');
+var metrics = require('./Metrics');
 var Router = require('react-router');
 
-// TODO: move this somewhere else
-if (localStorage.getItem('options')) {
-  ipc.send('vm', JSON.parse(localStorage.getItem('options')).save_vm_on_quit);
+if (localStorage.getItem('settings.saveVMOnQuit') === 'true') {
+  ipc.send('vm', true);
+} else {
+  ipc.send('vm', false);
 }
 
 var Preferences = React.createClass({
   mixins: [Router.Navigation],
   getInitialState: function () {
-    var data = JSON.parse(localStorage.getItem('options'));
-    return assign({
-      save_vm_on_quit: true,
-      report_analytics: true
-    }, data || {});
-  },
-  handleChange: function (key) {
-    var change = {};
-    change[key] = !this.state[key];
-    console.log(change);
-    this.setState(change);
-  },
-  saveState: function () {
-    ipc.send('vm', this.state.save_vm_on_quit);
-    localStorage.setItem('options', JSON.stringify(this.state));
-  },
-  componentDidMount: function () {
-    this.saveState();
-  },
-  componentDidUpdate: function () {
-    this.saveState();
+    return {
+      saveVMOnQuit: localStorage.getItem('settings.saveVMOnQuit') === 'true',
+      metricsEnabled: metrics.enabled()
+    };
   },
   handleGoBackClick: function () {
     this.goBack();
+    metrics.track('Went Back From Preferences');
+  },
+  handleChangeSaveVMOnQuit: function (e) {
+    var checked = e.target.checked;
+    this.setState({
+      saveVMOnQuit: checked
+    });
+    ipc.send('vm', checked);
+    metrics.track('Toggled Save VM On Quit', {
+      save: checked
+    });
+  },
+  handleChangeMetricsEnabled: function (e) {
+    var checked = e.target.checked;
+    this.setState({
+      metricsEnabled: checked
+    });
+    metrics.setEnabled(checked);
+    metrics.track('Toggled Metrics', {
+      enabled: checked
+    });
   },
   render: function () {
     return (
       <div className="preferences">
         <div className="preferences-content">
-          <a href="#" onClick={this.handleGoBackClick}>Go Back</a>
+          <a onClick={this.handleGoBackClick}>Go Back</a>
           <div className="title">VM Settings</div>
           <div className="option">
             <div className="option-name">
               Save Linux VM state on closing Kitematic
             </div>
             <div className="option-value">
-              <input type="checkbox" checked={this.state.save_vm_on_quit} onChange={this.handleChange.bind(this, 'save_vm_on_quit')}/>
+              <input type="checkbox" checked={this.state.saveVMOnQuit} onChange={this.handleChangeSaveVMOnQuit}/>
             </div>
           </div>
           <div className="title">App Settings</div>
@@ -56,10 +61,9 @@ var Preferences = React.createClass({
               Report anonymous usage analytics
             </div>
             <div className="option-value">
-              <input type="checkbox" checked={this.state.report_analytics} onChange={this.handleChange.bind(this, 'report_analytics')}/>
+              <input type="checkbox" checked={this.state.metricsEnabled} onChange={this.handleChangeMetricsEnabled}/>
             </div>
           </div>
-
         </div>
       </div>
     );

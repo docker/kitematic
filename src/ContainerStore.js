@@ -4,6 +4,7 @@ var async = require('async');
 var path = require('path');
 var assign = require('object-assign');
 var docker = require('./Docker');
+var metrics = require('./Metrics');
 var registry = require('./Registry');
 var LogStore = require('./LogStore');
 
@@ -277,6 +278,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     _muted[containerName] = true;
     _progress[containerName] = 0;
     self._pullImage(repository, tag, function () {
+      metrics.track('Container Finished Creating');
       delete _placeholders[containerName];
       localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
       self._createContainer(containerName, {Image: imageName}, function () {
@@ -372,7 +374,19 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   },
   sorted: function () {
     return _.values(this.containers()).sort(function (a, b) {
-      return a.Name.localeCompare(b.Name);
+      if (a.State.Downloading && !b.State.Downloading) {
+        return -1;
+      } else if (!a.State.Downloading && b.State.Downloading) {
+        return 1;
+      } else {
+        if (a.State.Running && !b.State.Running) {
+          return -1;
+        } else if (!a.State.Running && b.State.Running) {
+          return 1;
+        } else {
+          return a.Name.localeCompare(b.Name);
+        }
+      }
     });
   },
   progress: function (name) {

@@ -6,6 +6,7 @@ var ContainerList = require('./ContainerList.react');
 var Header = require('./Header.react');
 var ipc = require('ipc');
 var remote = require('remote');
+var metrics = require('./Metrics');
 var autoUpdater = remote.require('auto-updater');
 
 var Containers = React.createClass({
@@ -76,9 +77,10 @@ var Containers = React.createClass({
   handleNewContainer: function () {
     $(this.getDOMNode()).find('.new-container-item').parent().fadeIn();
     this.transitionTo('new');
+    metrics.track('Pressed New Container');
   },
   handleAutoUpdateClick: function () {
-    console.log('CLICKED UPDATE');
+    metrics.track('Restarted to Update');
     ipc.send('command', 'application:quit-install');
   },
   render: function () {
