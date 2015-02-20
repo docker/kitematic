@@ -36,7 +36,18 @@ var ContainerListItem = React.createClass({
   render: function () {
     var self = this;
     var container = this.props.container;
-    var imageName = container.Config.Image;
+    var imageNameTokens = container.Config.Image.split('/');
+    var repo;
+    if (imageNameTokens.length > 1) {
+      repo = imageNameTokens[1];
+    } else {
+      repo = imageNameTokens[0];
+    }
+    var imageName = (
+      <OverlayTrigger placement="bottom" overlay={<Tooltip>{container.Config.Image}</Tooltip>}>
+        <div>{repo}</div>
+      </OverlayTrigger>
+    );
 
     // Synchronize all animations
     var style = {
