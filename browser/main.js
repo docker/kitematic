@@ -62,6 +62,11 @@ app.on('ready', function() {
     e.preventDefault();
   });
 
+  mainWindow.webContents.on('will-navigate', function (e, url) {
+    console.log(url);
+    e.preventDefault();
+  });
+
   mainWindow.webContents.on('did-finish-load', function() {
     if (!argv.test) {
       mainWindow.show();
