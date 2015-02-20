@@ -165,12 +165,9 @@
       .name {
         font-size: 18px;
         color: @gray-darkest;
-        margin-bottom: 5px;
-        width: 190px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
         margin-bottom: 10px;
+        position: relative;
+        width: 190px;
         .namespace {
           font-size: 11px;
           color: @gray-lighter;
@@ -178,6 +175,13 @@
           &.official {
             color: @brand-action;
           }
+        }
+        .repo {
+          display: inline-block;
+          width: 190px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
       }
       .description {
