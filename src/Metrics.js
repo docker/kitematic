@@ -1,9 +1,9 @@
-var app = require('remote').require('app');
 var assign = require('object-assign');
 var Mixpanel = require('mixpanel');
 var uuid = require('node-uuid');
 var fs = require('fs');
 var path = require('path');
+var util = require('./Util');
 var settings;
 
 try {
@@ -48,7 +48,7 @@ var Metrics = {
     var os = navigator.userAgent.match(/Mac OS X (\d+_\d+_\d+)/)[1].replace(/_/g, '.');
     mixpanel.track(name, assign({
       distinct_id: id,
-      version: app.getVersion(),
+      version: util.packagejson().version,
       'Operating System Version': os,
       beta: !!settings.beta
     }, data));

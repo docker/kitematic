@@ -12,7 +12,7 @@
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
     "start": "gulp",
-    "test": "jest",
+    "test": "NODE_PATH=./cache/Atom.app/Contents/Resources/atom/renderer/api/lib:$NODE_PATH jest",
     "release": "gulp release",
     "release:beta": "gulp release --beta",
     "preinstall": "./deps",
@@ -26,6 +26,7 @@
   ],
   "jest": {
     "scriptPreprocessor": "<rootDir>/preprocessor.js",
+    "setupEnvScriptFile": "<rootDir>/testenv.js",
     "unmockedModulePathPatterns": [
       "tty",
       "net",
