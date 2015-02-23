@@ -49,6 +49,13 @@ bugsnag.beforeNotify = function(payload) {
 var menu = Menu.buildFromTemplate(MenuTemplate);
 Menu.setApplicationMenu(menu);
 
+document.onkeydown = function (e) {
+  e = e || window.event;
+  if (e.keyCode === 8) {
+    e.preventDefault();
+  }
+};
+
 setInterval(function () {
   metrics.track('app heartbeat');
 }, 14400000);
