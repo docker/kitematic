@@ -41,17 +41,20 @@ var Containers = React.createClass({
     ContainerStore.removeListener(ContainerStore.SERVER_CONTAINER_EVENT, this.update);
     ContainerStore.removeListener(ContainerStore.CLIENT_CONTAINER_EVENT, this.updateFromClient);
   },
+  onDestroy: function () {
+    if (this.state.sorted.length) {
+      this.transitionTo('containerHome', {name: this.state.sorted[0].Name});
+    } else {
+      this.transitionTo('containers');
+    }
+  },
   update: function (name, status) {
     this.setState({
       containers: ContainerStore.containers(),
       sorted: ContainerStore.sorted()
     });
     if (status === 'destroy') {
-      if (this.state.sorted.length) {
-        this.transitionTo('containerHome', {name: this.state.sorted[0].Name});
-      } else {
-        this.transitionTo('containers');
-      }
+      this.onDestroy();
     }
   },
   updateFromClient: function (name, status) {
@@ -61,6 +64,8 @@ var Containers = React.createClass({
     });
     if (status === 'create') {
       this.transitionTo('containerHome', {name: name});
+    } else if (status === 'destroy') {
+      this.onDestroy();
     }
   },
   handleScroll: function (e) {
