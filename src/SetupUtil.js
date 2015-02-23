@@ -38,7 +38,7 @@ var SetupUtil = {
     return `https://github.com/kitematic/virtualbox/releases/download/${packagejson['virtualbox-version']}/${packagejson['virtualbox-filename']}`;
   },
   macSudoCmd: function (cmd) {
-    return `${util.escapePath(path.join(util.resourceDir(), 'macsudo'))} -p "Kitematic requires administrative privileges to install VirtualBox." sh -c \"${cmd}\"`;
+    return `${util.escapePath(path.join(util.resourceDir(), 'macsudo'))} -p "Kitematic requires administrative privileges to install." sh -c \"${cmd}\"`;
   },
   simulateProgress: function (estimateSeconds, progress) {
     var times = _.range(0, estimateSeconds * 1000, 200);

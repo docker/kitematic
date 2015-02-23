@@ -30,8 +30,8 @@ var _steps = [{
   }
 }, {
   name: 'install',
-  title: 'Installing Docker & VirtualBox',
-  message: 'VirtualBox is being installed in the background. We may need you to type in your password to continue.',
+  title: 'Installing VirtualBox & Docker',
+  message: 'VirtualBox & Docker are being unpacked or upgraded in the background. We may need you to type in your password to continue.',
   totalPercent: 5,
   percent: 0,
   seconds: 5,
@@ -146,7 +146,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     required.download = !virtualBox.installed() && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== packagejson['virtualbox-checksum']);
     required.install = !virtualBox.installed() || setupUtil.needsBinaryFix() || setupUtil.compareVersions(yield virtualBox.version(), packagejson['virtualbox-required-version']) < 0;
     required.init = !(yield boot2docker.exists()) || !isoversion || setupUtil.compareVersions(isoversion, boot2docker.version()) < 0;
-    required.start = required.init || (yield boot2docker.status()) !== 'running';
+    required.start = required.install || required.init || (yield boot2docker.status()) !== 'running';
 
     var exists = yield boot2docker.exists();
     if (exists) {
