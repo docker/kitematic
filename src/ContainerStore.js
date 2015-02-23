@@ -218,7 +218,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         callback();
       }
       var placeholderData = JSON.parse(localStorage.getItem('store.placeholders'));
-      console.log(placeholderData);
       if (placeholderData) {
         _placeholders = _.omit(placeholderData, _.keys(_containers));
         localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
@@ -287,16 +286,20 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     _muted[containerName] = true;
     _progress[containerName] = 0;
     this._pullImage(repository, tag, () => {
-      metrics.track('Container Finished Creating');
+      _blocked[containerName] = false;
+      if (!_placeholders[containerName]) {
+        return;
+      }
       delete _placeholders[containerName];
       localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
-      _blocked[containerName] = false;
       this._createContainer(containerName, {Image: imageName}, () => {
+        metrics.track('Container Finished Creating');
         delete _progress[containerName];
         _muted[containerName] = false;
         this.emit(this.CLIENT_CONTAINER_EVENT, containerName);
       });
     }, progress => {
+      _blocked[containerName] = false;
       _progress[containerName] = progress;
       this.emit(this.SERVER_PROGRESS_EVENT, containerName);
     }, () => {
@@ -342,6 +345,9 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   remove: function (name, callback) {
     if (_placeholders[name]) {
       delete _placeholders[name];
+      localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
+      this.emit(this.CLIENT_CONTAINER_EVENT, name, 'destroy');
+      callback();
       return;
     }
     var container = docker.client().getContainer(name);
@@ -380,7 +386,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     }
   },
   containers: function() {
-    return _.extend(_containers, _placeholders);
+    return _.extend(_.clone(_containers), _placeholders);
   },
   container: function (name) {
     return this.containers()[name];
