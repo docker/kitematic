@@ -19,7 +19,8 @@ var ContainerHome = React.createClass({
   getInitialState: function () {
     return {
       ports: {},
-      defaultPort: null
+      defaultPort: null,
+      progress: 0
     };
   },
   handleResize: function () {
@@ -53,12 +54,14 @@ var ContainerHome = React.createClass({
       defaultPort: _.find(_.keys(ports), function (port) {
         return webPorts.indexOf(port) !== -1;
       }),
-      progress: ContainerStore.progress(this.getParams().name)
+      progress: ContainerStore.progress(this.getParams().name),
+      blocked: ContainerStore.blocked(this.getParams().name)
     });
   },
   updateProgress: function (name) {
     if (name === this.getParams().name) {
       this.setState({
+        blocked: ContainerStore.blocked(name),
         progress: ContainerStore.progress(name)
       });
     }
@@ -71,6 +74,13 @@ var ContainerHome = React.createClass({
           <div className="details-progress">
             <h2>Downloading Image</h2>
             <Radial progress={Math.min(Math.round(this.state.progress * 100), 99)} thick={true} gray={true}/>
+          </div>
+        );
+      } else if (this.state.blocked) {
+        body = (
+          <div className="details-progress">
+            <h2>Waiting For Another Image to Download</h2>
+            <Radial spin="true" progress="90" thick={true} transparent={true}/>
           </div>
         );
       } else {

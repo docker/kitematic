@@ -12,18 +12,19 @@ var _placeholders = {};
 var _containers = {};
 var _progress = {};
 var _muted = {};
+var _blocked = {};
 
 var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   CLIENT_CONTAINER_EVENT: 'client_container_event',
   SERVER_CONTAINER_EVENT: 'server_container_event',
   SERVER_PROGRESS_EVENT: 'server_progress_event',
-  _pullImage: function (repository, tag, callback, progressCallback) {
-    registry.layers(repository, tag, function (err, layerSizes) {
+  _pullImage: function (repository, tag, callback, progressCallback, blockedCallback) {
+    registry.layers(repository, tag, (err, layerSizes) => {
 
       // TODO: Support v2 registry API
       // TODO: clean this up- It's messy to work with pulls from both the v1 and v2 registry APIs
       // Use the per-layer pull progress % to update the total progress.
-      docker.client().listImages({all: 1}, function(err, images) {
+      docker.client().listImages({all: 1}, (err, images) => {
         images = images || [];
         var existingIds = new Set(images.map(function (image) {
           return image.Id.slice(0, 12);
@@ -33,7 +34,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         });
 
         var totalBytes = layersToDownload.map(function (s) { return s.size; }).reduce(function (pv, sv) { return pv + sv; }, 0);
-        docker.client().pull(repository + ':' + tag, function (err, stream) {
+        docker.client().pull(repository + ':' + tag, (err, stream) => {
           stream.setEncoding('utf8');
 
           var layerProgress = layersToDownload.reduce(function (r, layer) {
@@ -45,9 +46,14 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
             return r;
           }, {});
 
-          stream.on('data', function (str) {
+          stream.on('data', str => {
             var data = JSON.parse(str);
             console.log(data);
+
+            if (data.status === 'Pulling dependent layers') {
+              blockedCallback();
+              return;
+            }
 
             if (data.status === 'Already exists') {
               layerProgress[data.id] = 1;
@@ -151,13 +157,15 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     // Recover any pulls that were happening
     var self = this;
     downloading.forEach(function (container) {
+      _progress[container.Name] = 99;
       docker.client().pull(container.Config.Image, function (err, stream) {
-        delete _placeholders[container.Name];
-        localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
         stream.setEncoding('utf8');
         stream.on('data', function () {});
         stream.on('end', function () {
+          delete _placeholders[container.Name];
+          localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
           self._createContainer(container.Name, {Image: container.Config.Image}, function () {
+            self.emit(self.SERVER_PROGRESS_EVENT, container.Name);
             self.emit(self.CLIENT_CONTAINER_EVENT, container.Name);
           });
         });
@@ -210,6 +218,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         callback();
       }
       var placeholderData = JSON.parse(localStorage.getItem('store.placeholders'));
+      console.log(placeholderData);
       if (placeholderData) {
         _placeholders = _.omit(placeholderData, _.keys(_containers));
         localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
@@ -259,7 +268,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   },
   create: function (repository, tag, callback) {
     tag = tag || 'latest';
-    var self = this;
     var imageName = repository + ':' + tag;
     var containerName = this._generateName(repository);
 
@@ -274,22 +282,26 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
       }
     };
     localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
-    self.emit(self.CLIENT_CONTAINER_EVENT, containerName, 'create');
+    this.emit(this.CLIENT_CONTAINER_EVENT, containerName, 'create');
 
     _muted[containerName] = true;
     _progress[containerName] = 0;
-    self._pullImage(repository, tag, function () {
+    this._pullImage(repository, tag, () => {
       metrics.track('Container Finished Creating');
       delete _placeholders[containerName];
       localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
-      self._createContainer(containerName, {Image: imageName}, function () {
+      _blocked[containerName] = false;
+      this._createContainer(containerName, {Image: imageName}, () => {
         delete _progress[containerName];
         _muted[containerName] = false;
-        self.emit(self.CLIENT_CONTAINER_EVENT, containerName);
+        this.emit(this.CLIENT_CONTAINER_EVENT, containerName);
       });
-    }, function (progress) {
+    }, progress => {
       _progress[containerName] = progress;
-      self.emit(self.SERVER_PROGRESS_EVENT, containerName);
+      this.emit(this.SERVER_PROGRESS_EVENT, containerName);
+    }, () => {
+      _blocked[containerName] = true;
+      this.emit(this.SERVER_PROGRESS_EVENT, containerName);
     });
     callback(null, containerName);
   },
@@ -393,6 +405,9 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   progress: function (name) {
     return _progress[name];
   },
+  blocked: function (name) {
+    return !!_blocked[name];
+  }
 });
 
 module.exports = ContainerStore;

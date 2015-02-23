@@ -17,7 +17,9 @@ var ContainerListItem = React.createClass({
     var $action = $(this.getDOMNode()).find('.action');
     $action.hide();
   },
-  handleDeleteContainer: function () {
+  handleDeleteContainer: function (e) {
+    e.preventDefault();
+    e.stopPropagation();
     dialog.showMessageBox({
       message: 'Are you sure you want to delete this container?',
       buttons: ['Delete', 'Cancel']
@@ -27,8 +29,7 @@ var ContainerListItem = React.createClass({
           from: 'list',
           type: 'existing'
         });
-        ContainerStore.remove(this.props.container.Name, function (err) {
-          console.error(err);
+        ContainerStore.remove(this.props.container.Name, () => {
           var containers = ContainerStore.sorted();
           if (containers.length === 1) {
             $(document.body).find('.new-container-item').parent().fadeIn();
@@ -36,7 +37,6 @@ var ContainerListItem = React.createClass({
         });
       }
     }.bind(this));
-    return false;
   },
   render: function () {
     var self = this;
