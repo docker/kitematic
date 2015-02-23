@@ -50,7 +50,7 @@ var ContainerListItem = React.createClass({
     }
     var imageName = (
       <OverlayTrigger placement="bottom" overlay={<Tooltip>{container.Config.Image}</Tooltip>}>
-        <div>{repo}</div>
+        <span>{repo}</span>
       </OverlayTrigger>
     );
 

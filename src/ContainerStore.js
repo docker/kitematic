@@ -24,6 +24,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
       // TODO: clean this up- It's messy to work with pulls from both the v1 and v2 registry APIs
       // Use the per-layer pull progress % to update the total progress.
       docker.client().listImages({all: 1}, function(err, images) {
+        images = images || [];
         var existingIds = new Set(images.map(function (image) {
           return image.Id.slice(0, 12);
         }));

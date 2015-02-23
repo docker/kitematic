@@ -34,23 +34,15 @@ var LogStore = assign(Object.create(EventEmitter.prototype), {
       if (err) {
         return;
       }
-      _logs[name] = _logs[name] || [];
+      _logs[name] = [];
       stream.setEncoding('utf8');
-      var timeout;
       stream.on('data', function (buf) {
         // Every other message is a header
         if (index % 2 === 1) {
           //var time = buf.substr(0,buf.indexOf(' '));
           var msg = buf.substr(buf.indexOf(' ')+1);
-          if (timeout) {
-            clearTimeout(timeout);
-            timeout = null;
-          }
-          timeout = setTimeout(function () {
-            timeout = null;
-            self.emit(self.SERVER_LOGS_EVENT, name);
-          }, 100);
           _logs[name].push(_convert.toHtml(self._escapeHTML(msg)));
+          self.emit(self.SERVER_LOGS_EVENT);
         }
         index += 1;
       });

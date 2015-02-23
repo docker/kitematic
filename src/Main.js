@@ -34,6 +34,17 @@ bugsnag.autoNotify = true;
 bugsnag.releaseStage = process.env.NODE_ENV === 'development' ? 'development' : 'production';
 bugsnag.notifyReleaseStages = ['production'];
 bugsnag.appVersion = app.getVersion();
+bugsnag.metaData = {
+  beta: !!settingsjson.beta
+};
+
+bugsnag.beforeNotify = function(payload) {
+  var re = new RegExp(process.cwd().replace(' ', '\\s').replace('(','\\(').replace(')','\\)'), 'g');
+  payload.stacktrace = payload.stacktrace.replace(re, '<redacted codedir>');
+  payload.context = payload.context.replace(re, '<redacted codedir>');
+  payload.file = payload.file.replace(re, '<redacted codedir>');
+  payload.url = '<redacted url>';
+};
 
 var menu = Menu.buildFromTemplate(MenuTemplate);
 Menu.setApplicationMenu(menu);
