@@ -79,7 +79,7 @@ var ContainerHome = React.createClass({
       } else if (this.state.blocked) {
         body = (
           <div className="details-progress">
-            <h2>Waiting For Another Image to Download</h2>
+            <h2>Waiting For Another Download</h2>
             <Radial spin="true" progress="90" thick={true} transparent={true}/>
           </div>
         );
