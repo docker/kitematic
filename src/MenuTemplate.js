@@ -152,7 +152,14 @@ var MenuTemplate = [
 },
 {
   label: 'Help',
-  submenu: []
+  submenu: [
+    {
+      label: 'Report an Issue...',
+      click: function () {
+        util.exec(['open', 'https://github.com/kitematic/kitematic/issues/new']);
+      }
+    },
+  ]
 },
 ];
 
