@@ -8,6 +8,10 @@ var ipc = require('ipc');
 var remote = require('remote');
 var metrics = require('./Metrics');
 var autoUpdater = remote.require('auto-updater');
+var RetinaImage = require('react-retina-image');
+var path = require('path');
+var docker = require('./Docker');
+var util = require('./Util');
 
 var Containers = React.createClass({
   mixins: [Router.Navigation, Router.State],
@@ -16,7 +20,8 @@ var Containers = React.createClass({
       sidebarOffset: 0,
       containers: ContainerStore.containers(),
       sorted: ContainerStore.sorted(),
-      updateAvailable: false
+      updateAvailable: false,
+      currentButtonLabel: ''
     };
   },
   componentDidMount: function () {
@@ -88,19 +93,56 @@ var Containers = React.createClass({
     metrics.track('Restarted to Update');
     ipc.send('command', 'application:quit-install');
   },
+  handleClickPreferences: function () {
+    this.transitionTo('preferences');
+  },
+  handleClickDockerTerminal: function () {
+    var terminal = path.join(process.cwd(), 'resources', 'terminal');
+    var cmd = [terminal, `DOCKER_HOST=${'tcp://' + docker.host + ':2376'} DOCKER_CERT_PATH=${path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], '.boot2docker/certs/boot2docker-vm')} DOCKER_TLS_VERIFY=1 $SHELL`];
+    util.exec(cmd).then(() => {});
+  },
+  handleClickReportIssue: function () {
+    util.exec(['open', 'https://github.com/kitematic/kitematic/issues/new']);
+  },
+  handleMouseEnterDockerTerminal: function () {
+    this.setState({
+      currentButtonLabel: 'Open terminal to use Docker CLI.'
+    });
+  },
+  handleMouseLeaveDockerTerminal: function () {
+    this.setState({
+      currentButtonLabel: ''
+    });
+  },
+  handleMouseEnterReportIssue: function () {
+    this.setState({
+      currentButtonLabel: 'Report issues or suggest feedbacks.'
+    });
+  },
+  handleMouseLeaveReportIssue: function () {
+    this.setState({
+      currentButtonLabel: ''
+    });
+  },
+  handleMouseEnterPreferences: function () {
+    this.setState({
+      currentButtonLabel: 'Change app preferences.'
+    });
+  },
+  handleMouseLeavePreferences: function () {
+    this.setState({
+      currentButtonLabel: ''
+    });
+  },
   render: function () {
     var sidebarHeaderClass = 'sidebar-header';
     if (this.state.sidebarOffset) {
       sidebarHeaderClass += ' sep';
     }
-    var updateNotification;
-    var updatePadding;
+    var updateWidget;
     if (this.state.updateAvailable) {
-      updateNotification = (
-        <div className="update-notification"><span className="text">Update Available</span><a className="btn btn-action small" onClick={this.handleAutoUpdateClick}>Update Now</a></div>
-      );
-      updatePadding = (
-        <div className="update-padding"></div>
+      updateWidget = (
+        <a className="btn btn-action small" onClick={this.handleAutoUpdateClick}>New Update</a>
       );
     }
     var container = this.getParams().name ? this.state.containers[this.getParams().name] : {};
@@ -117,8 +159,14 @@ var Containers = React.createClass({
             </section>
             <section className="sidebar-containers" onScroll={this.handleScroll}>
               <ContainerList containers={this.state.sorted} newContainer={this.state.newContainer} />
-              {updatePadding}
-              {updateNotification}
+              <div className="sidebar-buttons">
+                <div className="btn-label">{this.state.currentButtonLabel}</div>
+                <span className="btn-sidebar" onClick={this.handleClickDockerTerminal} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><RetinaImage src="docker-terminal.png"/></span>
+                <span className="btn-sidebar" onClick={this.handleClickReportIssue} onMouseEnter={this.handleMouseEnterReportIssue} onMouseLeave={this.handleMouseLeaveReportIssue}><RetinaImage src="report-issue.png"/></span>
+                <span className="btn-sidebar" onClick={this.handleClickPreferences} onMouseEnter={this.handleMouseEnterPreferences} onMouseLeave={this.handleMouseLeavePreferences}><RetinaImage src="preferences.png"/></span>
+                {updateWidget}
+              </div>
+              <div className="sidebar-buttons-padding"></div>
             </section>
           </div>
           <Router.RouteHandler container={container}/>

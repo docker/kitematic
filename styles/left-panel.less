@@ -223,28 +223,34 @@
   }
 }
 
-/* Auto-Update */
+/* Sidebar Buttons */
 
-.update-notification {
+.sidebar-buttons {
   background-color: white;
+  width: 259px;
   opacity: 0.9;
   position: fixed;
   bottom: 0;
-  width: 259px;
-  padding: 10px;
-  color: @gray-normal;
-  font-size: 12px;
-  .text {
-    position: relative;
-    top: 3px;
+  padding: 15px;
+  padding-top: 5px;
+  z-index: 10000;
+  .btn-label {
+    color: @gray-lighter;
+    font-size: 10px;
+    height: 18px;
+  }
+  .btn-sidebar {
+    display: inline-block;
+    margin-right: 7px;
   }
   .btn {
     position: relative;
+    top: 1px;
     float: right;
   }
 }
 
-.update-padding {
+.sidebar-buttons-padding {
   position: relative;
-  height: 40px;
+  height: 62px;
 }
