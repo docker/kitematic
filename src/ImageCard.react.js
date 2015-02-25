@@ -91,9 +91,13 @@ var ImageCard = React.createClass({
       imgsrc = 'http://kitematic.com/recommended/kitematic_html.png';
     }
     var tags;
-    if (this.state.tags.length > 0) {
-      var tagDisplay = this.state.tags.map(function (t) {
-        return <div className="tag" key={t.name} onClick={self.handleTagClick.bind(self, t.name)}>{t.name}</div>;
+    if (self.state.tags.length > 0) {
+      var tagDisplay = self.state.tags.map(function (t) {
+        if (t.name === self.state.chosenTag) {
+          return <div className="tag active" key={t.name} onClick={self.handleTagClick.bind(self, t.name)}>{t.name}</div>;
+        } else {
+          return <div className="tag" key={t.name} onClick={self.handleTagClick.bind(self, t.name)}>{t.name}</div>;
+        }
       });
       tags = (
         <div className="tag-list">
