@@ -88,7 +88,6 @@ var Setup = React.createClass({
             <p>Kitematic didn&#39;t receive the administrative privileges required to install or upgrade VirtualBox &amp; Docker.</p>
             <p>Please click retry. If VirtualBox is not installed, you can download &amp; install it manually from the <a onClick={this.handleOpenWebsite}>official Oracle website</a>.</p>
             <p><button className="btn btn-action" onClick={this.handleRetry}>Retry</button></p>
-            <p>Please retry or download &amp; install VirutalBox manually from the <a onClick={this.handleOpenWebsite}>official Oracle website</a>.</p>
           </div>
         </div>
       </div>
