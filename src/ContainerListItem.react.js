@@ -31,7 +31,7 @@ var ContainerListItem = React.createClass({
         });
         ContainerStore.remove(this.props.container.Name, () => {
           var containers = ContainerStore.sorted();
-          if (containers.length === 0) {
+          if (containers.length === 1) {
             $(document.body).find('.new-container-item').parent().fadeIn();
           }
         });

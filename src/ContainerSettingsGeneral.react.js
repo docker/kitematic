@@ -20,7 +20,7 @@ var containerNameSlugify = function (text) {
   for (var i=0, l=from.length ; i<l ; i++) {
     text = text.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
   }
-  text = text.replace(/[^a-z0-9 -_]/g, '') // Remove invalid chars
+  text = text.replace(/[^a-z0-9-_.\s]/g, '') // Remove invalid chars
     .replace(/\s+/g, '-') // Collapse whitespace and replace by -
     .replace(/-+/g, '-')  // Collapse dashes
     .replace(/_+/g, '_'); // Collapse underscores
