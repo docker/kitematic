@@ -143,8 +143,9 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var isoversion = boot2docker.isoversion();
     var required = {};
     var vboxfile = path.join(util.supportDir(), packagejson['virtualbox-filename']);
-    required.download = !virtualBox.installed() && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== packagejson['virtualbox-checksum']);
-    required.install = !virtualBox.installed() || setupUtil.needsBinaryFix() || setupUtil.compareVersions(yield virtualBox.version(), packagejson['virtualbox-required-version']) < 0;
+    var vboxInstallRequired = virtualBox.installed() ? setupUtil.compareVersions(yield virtualBox.version(), packagejson['virtualbox-required-version']) < 0 : true;
+    required.download = vboxInstallRequired && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== packagejson['virtualbox-checksum']);
+    required.install = vboxInstallRequired || setupUtil.needsBinaryFix();
     required.init = !(yield boot2docker.exists()) || !isoversion || setupUtil.compareVersions(isoversion, boot2docker.version()) < 0;
     required.start = required.install || required.init || (yield boot2docker.status()) !== 'running';
 

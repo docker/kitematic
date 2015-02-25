@@ -40,7 +40,8 @@ module.exports = {
   },
   copyBinariesCmd: function () {
     var packagejson = this.packagejson();
-    var cmd = [];
+    var cmd = ['mkdir', '-p', '/usr/local/bin'];
+    cmd.push('&&');
     cmd.push.apply(cmd, this.copycmd(this.escapePath(path.join(this.resourceDir(), 'boot2docker-' + packagejson['boot2docker-version'])), '/usr/local/bin/boot2docker'));
     cmd.push('&&');
     cmd.push.apply(cmd, this.copycmd(this.escapePath(path.join(this.resourceDir(), 'docker-' + packagejson['docker-version'])), '/usr/local/bin/docker'));

@@ -83,11 +83,16 @@ var Setup = React.createClass({
         </div>
         <div className="desc">
           <div className="content">
-            <h4>Installation Cancelled</h4>
-            <h1>Couldn&#39;t Install</h1>
+            <h4>Setup Cancelled</h4>
+            <h1>Couldn&#39;t Install Requirements</h1>
             <p>Kitematic didn&#39;t receive the administrative privileges required to install or upgrade VirtualBox &amp; Docker.</p>
+<<<<<<< HEAD
+            <p>Please click retry. If VirtualBox is not installed, you can download &amp; install it manually from the <a onClick={this.handleOpenWebsite}>official Oracle website</a>.</p>
+            <button className="btn btn-action" onClick={this.handleRetry}>Retry</button>
+=======
             <p>Please retry or download &amp; install VirutalBox manually from the <a onClick={this.handleOpenWebsite}>official Oracle website</a>.</p>
             <p><button className="btn btn-action" onClick={this.handleRetry}>Retry</button></p>
+>>>>>>> master
           </div>
         </div>
       </div>
@@ -106,7 +111,7 @@ var Setup = React.createClass({
         </div>
         <div className="desc">
           <div className="content">
-            <h4>Installation Error</h4>
+            <h4>Setup Error</h4>
             <h1>We&#39;re Sorry!</h1>
             <p>There seems to have been an unexpected error with Kitematic:</p>
             <p className="error">{this.state.error}<br />{this.state.error.message}</p>
