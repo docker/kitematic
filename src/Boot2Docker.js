@@ -16,18 +16,6 @@ var Boot2Docker = {
       return null;
     }
   },
-  cliversion: function () {
-    return util.exec([Boot2Docker.command(), 'version']).then(stdout => {
-      var match = stdout.match(/version: v(\d+\.\d+\.\d+)/);
-      if (!match || match.length < 2) {
-        return Promise.reject('Could not parse the boot2docker cli version.');
-      } else {
-        return Promise.resolve(match[1]);
-      }
-    }).catch(err => {
-      return Promise.reject(err);
-    });
-  },
   isoversion: function () {
     try {
       var data = fs.readFileSync(path.join(util.home(), '.boot2docker', 'boot2docker.iso'), 'utf8');

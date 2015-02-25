@@ -9,6 +9,9 @@ var util = require('./Util');
 
 var SetupUtil = {
   needsBinaryFix: function () {
+    if (!fs.existsSync('/usr/local') || !fs.existsSync('/usr/local/bin')) {
+      return true;
+    }
     if (!fs.existsSync('/usr/local/bin/docker') && !fs.existsSync('/usr/local/bin/boot2docker')) {
       return fs.statSync('/usr/local/bin').gid !== 80 || fs.statSync('/usr/local/bin').uid !== process.getuid();
     }
