@@ -9,10 +9,13 @@ var router = require('./router');
 var boot2docker = require('./boot2docker');
 var ContainerStore = require('./ContainerStore');
 var SetupStore = require('./SetupStore');
-var MenuTemplate = require('./MenuTemplate');
-var Menu = remote.require('menu');
 var metrics = require('./Metrics');
 var settingsjson;
+
+var MenuTemplate = require('./MenuTemplate');
+var Menu = remote.require('menu');
+var menu = Menu.buildFromTemplate(MenuTemplate);
+Menu.setApplicationMenu(menu);
 
 try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
@@ -45,9 +48,6 @@ bugsnag.beforeNotify = function(payload) {
   payload.file = payload.file.replace(re, '<redacted codedir>');
   payload.url = '<redacted url>';
 };
-
-var menu = Menu.buildFromTemplate(MenuTemplate);
-Menu.setApplicationMenu(menu);
 
 document.onkeydown = function (e) {
   e = e || window.event;
