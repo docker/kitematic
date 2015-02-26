@@ -172,7 +172,7 @@ gulp.task('release', function () {
 
 gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function () {
   livereload.listen();
-  gulp.watch('src/**/*.js', ['js', function () {livereload();}]);
+  gulp.watch('src/**/*.js', ['js']);
   gulp.watch('index.html', ['copy']);
   gulp.watch('styles/**/*.less', ['styles']);
   gulp.watch('images/**', ['images']);

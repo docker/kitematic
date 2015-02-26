@@ -12,7 +12,7 @@ var SetupUtil = {
     if (!fs.existsSync('/usr/local') || !fs.existsSync('/usr/local/bin')) {
       return true;
     }
-    if (!fs.existsSync('/usr/local/bin/docker') && !fs.existsSync('/usr/local/bin/boot2docker')) {
+    if (!fs.existsSync('/usr/local/bin/docker') && !fs.existsSync('/usr/local/bin/docker-machine')) {
       return fs.statSync('/usr/local/bin').gid !== 80 || fs.statSync('/usr/local/bin').uid !== process.getuid();
     }
 
@@ -20,7 +20,7 @@ var SetupUtil = {
       return true;
     }
 
-    if (fs.existsSync('/usr/local/bin/boot2docker') && (fs.statSync('/usr/local/bin/boot2docker').gid !== 80 || fs.statSync('/usr/local/bin/boot2docker').uid !== process.getuid())) {
+    if (fs.existsSync('/usr/local/bin/docker-machine') && (fs.statSync('/usr/local/bin/docker-machine').gid !== 80 || fs.statSync('/usr/local/bin/docker-machine').uid !== process.getuid())) {
       return true;
     }
     return false;
@@ -28,9 +28,25 @@ var SetupUtil = {
   shouldUpdateBinaries: function () {
     var packagejson = util.packagejson();
     return !fs.existsSync('/usr/local/bin/docker') ||
-      !fs.existsSync('/usr/local/bin/boot2docker') ||
-      this.checksum('/usr/local/bin/boot2docker') !== this.checksum(path.join(util.resourceDir(), 'boot2docker-' + packagejson['boot2docker-version'])) ||
+      !fs.existsSync('/usr/local/bin/docker-machine') ||
+      this.checksum('/usr/local/bin/docker-machine') !== this.checksum(path.join(util.resourceDir(), 'docker-machine-' + packagejson['docker-machine-version'])) ||
       this.checksum('/usr/local/bin/docker') !== this.checksum(path.join(util.resourceDir(), 'docker-' + packagejson['docker-version']));
+  },
+  copyBinariesCmd: function () {
+    var packagejson = this.packagejson();
+    var cmd = ['mkdir', '-p', '/usr/local/bin'];
+    cmd.push('&&');
+    cmd.push.apply(cmd, this.copycmd(this.escapePath(path.join(this.resourceDir(), 'docker-machine-' + packagejson['docker-machine-version'])), '/usr/local/bin/docker-machine'));
+    cmd.push('&&');
+    cmd.push.apply(cmd, this.copycmd(this.escapePath(path.join(this.resourceDir(), 'docker-' + packagejson['docker-version'])), '/usr/local/bin/docker'));
+    return cmd.join(' ');
+  },
+  fixBinariesCmd: function () {
+    var cmd = [];
+    cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, this.escapePath(path.join('/usr/local/bin', 'docker-machine'))]);
+    cmd.push('&&');
+    cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, this.escapePath(path.join('/usr/local/bin', 'docker'))]);
+    return cmd.join(' ');
   },
   installVirtualBoxCmd: function () {
     var packagejson = util.packagejson();

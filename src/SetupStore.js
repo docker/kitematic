@@ -3,7 +3,7 @@ var _ = require('underscore');
 var path = require('path');
 var fs = require('fs');
 var Promise = require('bluebird');
-var boot2docker = require('./Boot2Docker');
+var machine = require('./DockerMachine');
 var virtualBox = require('./VirtualBox');
 var setupUtil = require('./SetupUtil');
 var util = require('./Util');
@@ -37,7 +37,7 @@ var _steps = [{
   seconds: 5,
   run: Promise.coroutine(function* (progressCallback) {
     var packagejson = util.packagejson();
-    var cmd = util.copyBinariesCmd() + ' && ' + util.fixBinariesCmd();
+    var cmd = setupUtil.copyBinariesCmd() + ' && ' + setupUtil.fixBinariesCmd();
     if (!virtualBox.installed() || setupUtil.compareVersions(yield virtualBox.version(), packagejson['virtualbox-required-version']) < 0) {
       yield virtualBox.killall();
       cmd += ' && ' + setupUtil.installVirtualBoxCmd();
@@ -55,45 +55,33 @@ var _steps = [{
   })
 }, {
   name: 'init',
-  title: 'Setting up Docker VM',
-  message: 'To run Docker containers on your computer, we are setting up a Linux virtual machine provided by boot2docker.',
-  totalPercent: 15,
+  title: 'Starting Docker VM',
+  message: 'To run Docker containers on your computer, starting a Linux virutal machine. This may take a minute..',
+  totalPercent: 60,
   percent: 0,
-  seconds: 11,
+  seconds: 46,
   run: Promise.coroutine(function* (progressCallback) {
     setupUtil.simulateProgress(this.seconds, progressCallback);
     yield virtualBox.vmdestroy('kitematic-vm');
-    var exists = yield boot2docker.exists();
+    var exists = yield machine.exists();
     if (!exists) {
-      yield boot2docker.init();
+      yield machine.create();
       return;
     }
 
-    if (!boot2docker.haskeys()) {
-      throw new Error('Boot2Docker SSH keys do not exist. Fix this by removing the existing Boot2Docker VM setup and re-run the installer. This usually occurs because an old version of Boot2Docker is installed.');
+    var isoversion = machine.isoversion();
+    if (!isoversion || setupUtil.compareVersions(isoversion, machine.version()) < 0) {
+      yield machine.stop();
+      yield machine.upgrade();
     }
 
-    var isoversion = boot2docker.isoversion();
-    if (!isoversion || setupUtil.compareVersions(isoversion, boot2docker.version()) < 0) {
-      yield boot2docker.stop();
-      yield boot2docker.upgrade();
+    setupUtil.simulateProgress(this.seconds, progressCallback);
+    yield machine.waitstatus('saving');
+    var status = machine.status;
+    if (status !== 'running') {
+      return yield machine.start();
     }
   })
-}, {
-  name: 'start',
-  title: 'Starting Docker VM',
-  message: "Kitematic is starting the boot2docker VM. This may take about a minute.",
-  totalPercent: 45,
-  percent: 0,
-  seconds: 35,
-  run: function (progressCallback) {
-    setupUtil.simulateProgress(this.seconds, progressCallback);
-    return boot2docker.waitstatus('saving').then(boot2docker.status).then(status => {
-      if (status !== 'running') {
-        return boot2docker.start();
-      }
-    });
-  }
 }];
 
 var SetupStore = assign(Object.create(EventEmitter.prototype), {
@@ -140,14 +128,13 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
       return Promise.resolve(_requiredSteps);
     }
     var packagejson = util.packagejson();
-    var isoversion = boot2docker.isoversion();
+    var isoversion = machine.isoversion();
     var required = {};
     var vboxfile = path.join(util.supportDir(), packagejson['virtualbox-filename']);
     var vboxInstallRequired = virtualBox.installed() ? setupUtil.compareVersions(yield virtualBox.version(), packagejson['virtualbox-required-version']) < 0 : true;
     required.download = vboxInstallRequired && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== packagejson['virtualbox-checksum']);
     required.install = vboxInstallRequired || setupUtil.needsBinaryFix();
-    required.init = !(yield boot2docker.exists()) || !isoversion || setupUtil.compareVersions(isoversion, boot2docker.version()) < 0;
-    required.start = required.install || required.init || (yield boot2docker.status()) !== 'running';
+    required.init = !(yield machine.exists()) || !isoversion || setupUtil.compareVersions(isoversion, boot2docker.version()) < 0;
 
     var exists = yield boot2docker.exists();
     if (exists) {
