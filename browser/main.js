@@ -26,7 +26,7 @@ var windowOptions = {
   'min-height': 700,
   resizable: true,
   frame: false,
-  show: false
+  show: true
 };
 
 app.on('activate-with-no-open-windows', function () {
