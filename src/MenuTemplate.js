@@ -123,7 +123,7 @@ var MenuTemplate = [
     {
       label: 'Toggle DevTools',
       accelerator: 'Alt+Command+I',
-      click: function() { remote.getCurrentWindow().getFocusedWindow().toggleDevTools(); }
+      click: function() { remote.getCurrentWindow().toggleDevTools(); }
     },
   ]
 },
