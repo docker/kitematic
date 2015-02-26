@@ -8,6 +8,7 @@ var ContainerHomePreview = require('./ContainerHomePreview.react');
 var ContainerHomeLogs = require('./ContainerHomeLogs.react');
 var ContainerHomeFolders = require('./ContainerHomeFolders.react');
 var ContainerUtil = require('./ContainerUtil');
+var webPorts = require('./Util').webPorts;
 
 var resizeWindow = function () {
   $('.left .wrapper').height(window.innerHeight - 240);
@@ -48,7 +49,6 @@ var ContainerHome = React.createClass({
       return;
     }
     var ports = ContainerUtil.ports(container);
-    var webPorts = ['80', '8000', '8080', '3000', '5000', '2368'];
     this.setState({
       ports: ports,
       defaultPort: _.find(_.keys(ports), function (port) {

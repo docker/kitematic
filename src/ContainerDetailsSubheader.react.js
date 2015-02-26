@@ -9,6 +9,7 @@ var ContainerUtil = require('./ContainerUtil');
 var boot2docker = require('./Boot2Docker');
 var RetinaImage = require('react-retina-image');
 var Router = require('react-router');
+var webPorts = require('./Util').webPorts;
 
 var ContainerDetailsSubheader = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -32,7 +33,6 @@ var ContainerDetailsSubheader = React.createClass({
       return;
     }
     var ports = ContainerUtil.ports(container);
-    var webPorts = ['80', '8000', '8080', '3000', '5000', '2368'];
     this.setState({
       ports: ports,
       defaultPort: _.find(_.keys(ports), function (port) {

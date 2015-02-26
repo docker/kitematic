@@ -5,6 +5,7 @@ var exec = require('exec');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
 var metrics = require('./Metrics');
+var webPorts = require('./Util').webPorts;
 
 var ContainerSettingsPorts = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -26,7 +27,6 @@ var ContainerSettingsPorts = React.createClass({
       return;
     }
     var ports = ContainerUtil.ports(container);
-    var webPorts = ['80', '8000', '8080', '3000', '5000', '2368'];
     this.setState({
       ports: ports,
       defaultPort: _.find(_.keys(ports), function (port) {
