@@ -1,5 +1,15 @@
-require.main.paths.splice(0, 0, process.env.NODE_PATH);
 var remote = require('remote');
+if (localStorage.getItem('settings.width') && localStorage.getItem('settings.height')) {
+  remote.getCurrentWindow().setSize(parseInt(localStorage.getItem('settings.width')), parseInt(localStorage.getItem('settings.height')));
+  remote.getCurrentWindow().center();
+}
+
+window.addEventListener('resize', function () {
+  localStorage.setItem('settings.width', window.innerWidth);
+  localStorage.setItem('settings.height', window.innerHeight);
+});
+
+require.main.paths.splice(0, 0, process.env.NODE_PATH);
 var app = remote.require('app');
 var React = require('react');
 var fs = require('fs');
@@ -10,13 +20,13 @@ var boot2docker = require('./boot2docker');
 var ContainerStore = require('./ContainerStore');
 var SetupStore = require('./SetupStore');
 var metrics = require('./Metrics');
-var settingsjson;
 
 var MenuTemplate = require('./MenuTemplate');
 var Menu = remote.require('menu');
 var menu = Menu.buildFromTemplate(MenuTemplate);
 Menu.setApplicationMenu(menu);
 
+var settingsjson;
 try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
 } catch (err) {
@@ -73,7 +83,6 @@ setInterval(function () {
 
 router.run(Handler => React.render(<Handler/>, document.body));
 SetupStore.run().then(boot2docker.ip).then(ip => {
-  console.log(ip);
   docker.setHost(ip);
   ContainerStore.init(function (err) {
     if (err) { console.log(err); }

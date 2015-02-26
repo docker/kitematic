@@ -15,7 +15,7 @@
     "test": "jest",
     "release": "gulp release",
     "release:beta": "gulp release --beta",
-    "preinstall": "./deps",
+    "preinstall": "./util/deps",
     "lint": "jsxhint src && jsxhint browser"
   },
   "licenses": [
@@ -25,8 +25,8 @@
     }
   ],
   "jest": {
-    "scriptPreprocessor": "<rootDir>/preprocessor.js",
-    "setupEnvScriptFile": "<rootDir>/testenv.js",
+    "scriptPreprocessor": "<rootDir>/util/preprocessor.js",
+    "setupEnvScriptFile": "<rootDir>/util/testenv.js",
     "unmockedModulePathPatterns": [
       "tty",
       "net",
