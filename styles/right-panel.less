@@ -24,28 +24,32 @@
       margin-top: -12px;
       .action {
         display: inline-block;
+        position: relative;
+        top: 10px;
         &.disabled {
           opacity: 0.3;
         }
         .action-icon {
           color: @gray-normal;
-          font-size: 30px;
-          margin-right: 20px;
+          margin-right: 15px;
         }
         .btn-label {
-          position: relative;
-          top: 0px;
-          display: block;
+          position: absolute;
           color: @brand-action;
           font-size: 10px;
-          &.run {
-            left: 8px;
+          width: 200px;
+          top: 30px;
+          &.view {
+            left: 6px;
+            //left: 0px;
           }
           &.restart {
-            left: 1px;
+            left: 2px;
+            //left: -18px;
           }
           &.terminal {
-            left: -2px;
+            left: -1px;
+            //left: -30px;
           }
           visibility: hidden;
         }

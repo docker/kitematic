@@ -113,12 +113,12 @@ var ContainerDetailsSubheader = React.createClass({
       });
     }
   },
-  handleItemMouseEnterRun: function () {
-    var $action = $(this.getDOMNode()).find('.action .run');
+  handleItemMouseEnterView: function () {
+    var $action = $(this.getDOMNode()).find('.action .view');
     $action.css("visibility", "visible");
   },
-  handleItemMouseLeaveRun: function () {
-    var $action = $(this.getDOMNode()).find('.action .run');
+  handleItemMouseLeaveView: function () {
+    var $action = $(this.getDOMNode()).find('.action .view');
     $action.css("visibility", "hidden");
   },
   handleItemMouseEnterRestart: function () {
@@ -168,9 +168,9 @@ var ContainerDetailsSubheader = React.createClass({
     return (
       <div className="details-subheader">
         <div className="details-header-actions">
-          <div className={runActionClass} onMouseEnter={this.handleItemMouseEnterRun} onMouseLeave={this.handleItemMouseLeaveRun}>
-            <span className="action-icon" onClick={this.handleRun}><RetinaImage src="button-run.png"/></span>
-            <span className="btn-label run">Run</span>
+          <div className={runActionClass} onMouseEnter={this.handleItemMouseEnterView} onMouseLeave={this.handleItemMouseLeaveView}>
+            <span className="action-icon" onClick={this.handleRun}><RetinaImage src="button-view.png"/></span>
+            <span className="btn-label view">View</span>
           </div>
           <div className={restartActionClass} onMouseEnter={this.handleItemMouseEnterRestart} onMouseLeave={this.handleItemMouseLeaveRestart}>
             <span className="action-icon" onClick={this.handleRestart}><RetinaImage src="button-restart.png"/></span>
