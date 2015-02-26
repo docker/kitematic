@@ -30,9 +30,6 @@ the preferred channel for [Bug Reports](#bug-reports), [Features Requests](#feat
 and [Submitting Pull Requests](#submitting-pull-requests), but please respect the following
 restrictions:
 
-* Please don't use the issue tracker for personal support requests. Our
-[HipChat room](https://www.hipchat.com/giAT9Fqb5) is a better place to get help.
-
 ## Bug Reports
 
 A bug is a _demonstrable problem_ that is caused by the code in the repository.

@@ -1,3 +1,5 @@
+var babel = require('gulp-babel');
+var changed = require('gulp-changed');
 var concat = require('gulp-concat');
 var cssmin = require('gulp-cssmin');
 var downloadatomshell = require('gulp-download-atom-shell');
@@ -7,21 +9,19 @@ var gulpif = require('gulp-if');
 var gutil = require('gulp-util');
 var less = require('gulp-less');
 var livereload = require('gulp-livereload');
+var packagejson = require('./package.json');
 var plumber = require('gulp-plumber');
 var react = require('gulp-react');
-var babel = require('gulp-babel');
 var runSequence = require('run-sequence');
 var shell = require('gulp-shell');
 var sourcemaps = require('gulp-sourcemaps');
-var packagejson = require('./package.json');
-var changed = require('gulp-changed');
 
 var dependencies = Object.keys(packagejson.dependencies);
 var isBeta = process.argv.indexOf('--beta') !== -1;
 
 var settings;
 try {
-  settings = JSON.parse(fs.readFileSync('settings.json'), 'utf8');
+  settings = require('./settings.json');
 } catch (err) {
   settings = {};
 }
@@ -32,7 +32,7 @@ var options = {
   beta: isBeta,
   filename: isBeta ? 'Kitematic (Beta).app' : 'Kitematic.app',
   name: isBeta ? 'Kitematic (Beta)' : 'Kitematic',
-  icon: isBeta ? 'kitematic-beta.icns' : 'kitematic.icns'
+  icon: isBeta ? './util/kitematic-beta.icns' : './util/kitematic.icns'
 };
 
 gulp.task('js', function () {

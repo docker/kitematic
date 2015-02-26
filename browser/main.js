@@ -18,14 +18,6 @@ process.env.RESOURCES_PATH = __dirname + '/../resources';
 process.chdir(path.join(__dirname, '..'));
 process.env.PATH = '/usr/local/bin:' + process.env.PATH;
 
-if (argv.integration) {
-  process.env.TEST_TYPE = 'integration';
-} else {
-  process.env.TEST_TYPE = 'test';
-}
-
-app.commandLine.appendSwitch('js-flags', '--harmony');
-
 var mainWindow = null;
 var windowOptions = {
   width: 1000,
@@ -53,7 +45,7 @@ app.on('ready', function() {
     mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/index.html')));
     app.on('will-quit', function () {
       if (saveVMOnQuit) {
-        exec('VBoxManage controlvm boot2docker-vm savestate', function () {});
+        exec('/usr/bin/VBoxManage controlvm boot2docker-vm savestate', function () {});
       }
     });
   }
@@ -64,17 +56,14 @@ app.on('ready', function() {
 
   mainWindow.webContents.on('will-navigate', function (e, url) {
     if (url.indexOf('build/index.html#/containers') < 0) {
-      console.log(url);
       e.preventDefault();
     }
   });
 
   mainWindow.webContents.on('did-finish-load', function() {
-    if (!argv.test) {
-      mainWindow.show();
-    }
-    mainWindow.focus();
     mainWindow.setTitle('');
+    mainWindow.show();
+    mainWindow.focus();
 
     // Auto Updates
     if (process.env.NODE_ENV !== 'development' && !argv.test) {
