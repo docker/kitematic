@@ -2,7 +2,6 @@ var remote = require('remote');
 var app = remote.require('app');
 var path = require('path');
 var docker = require('./Docker');
-var BrowserWindow = remote.require('browser-window');
 var router = require('./Router');
 var util = require('./Util');
 var metrics = require('./Metrics');
@@ -124,7 +123,7 @@ var MenuTemplate = [
     {
       label: 'Toggle DevTools',
       accelerator: 'Alt+Command+I',
-      click: function() { BrowserWindow.getFocusedWindow().toggleDevTools(); }
+      click: function() { remote.getCurrentWindow().getFocusedWindow().toggleDevTools(); }
     },
   ]
 },
@@ -139,7 +138,9 @@ var MenuTemplate = [
   {
     label: 'Close',
     accelerator: 'Command+W',
-    selector: 'performClose:'
+    click: function () {
+      remote.getCurrentWindow().hide();
+    }
   },
   {
     type: 'separator'
