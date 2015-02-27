@@ -30,11 +30,17 @@ settings.beta = isBeta;
 var options = {
   dev: process.argv.indexOf('release') === -1,
   beta: isBeta,
+<<<<<<< HEAD
   appFilename: isBeta ? 'Kitematic (Beta).app' : 'Kitematic.app',
   appName: isBeta ? 'Kitematic (Beta)' : 'Kitematic',
   name: 'Kitematic',
   icon: isBeta ? './util/kitematic-beta.icns' : './util/kitematic.icns',
   bundle: 'com.kitemaic.app'
+=======
+  filename: isBeta ? 'Kitematic (Beta).app' : 'Kitematic.app',
+  name: isBeta ? 'Kitematic (Beta)' : 'Kitematic',
+  icon: isBeta ? './util/kitematic-beta.icns' : './util/kitematic.icns'
+>>>>>>> master
 };
 
 gulp.task('js', function () {

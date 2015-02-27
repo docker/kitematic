@@ -1,5 +1,10 @@
 var remote = require('remote');
 var app = remote.require('app');
+<<<<<<< HEAD
+=======
+var path = require('path');
+var docker = require('./Docker');
+>>>>>>> master
 var router = require('./Router');
 var util = require('./Util');
 var metrics = require('./Metrics');

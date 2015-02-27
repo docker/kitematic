@@ -5,8 +5,13 @@ if (localStorage.getItem('settings.width') && localStorage.getItem('settings.hei
 }
 
 window.addEventListener('resize', function () {
+<<<<<<< HEAD
   localStorage.setItem('settings.width', window.outerWidth);
   localStorage.setItem('settings.height', window.outerHeight);
+=======
+  localStorage.setItem('settings.width', window.innerWidth);
+  localStorage.setItem('settings.height', window.innerHeight);
+>>>>>>> master
 });
 
 require.main.paths.splice(0, 0, process.env.NODE_PATH);
@@ -82,8 +87,13 @@ setInterval(function () {
 }, 14400000);
 
 router.run(Handler => React.render(<Handler/>, document.body));
+<<<<<<< HEAD
 SetupStore.run().then(machine.info).then(machine => {
   docker.setup(machine.url, machine.name);
+=======
+SetupStore.run().then(boot2docker.ip).then(ip => {
+  docker.setHost(ip);
+>>>>>>> master
   ContainerStore.init(function (err) {
     if (err) { console.log(err); }
     router.transitionTo('containers');
