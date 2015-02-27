@@ -73,7 +73,7 @@ var MenuTemplate = function () {
         type: 'separator'
       },
       {
-        label: 'Open Docker Terminal',
+        label: 'Open Terminal to use Docker Command Line',
         accelerator: 'Command+Shift+T',
         enabled: !!docker.host(),
         click: function() {
@@ -161,7 +161,7 @@ var MenuTemplate = function () {
       label: 'Help',
       submenu: [
         {
-          label: 'Report an Issue...',
+          label: 'Report an Issue or Suggest Feedback',
           click: function () {
             metrics.track('Opened Issue Reporter', {
               from: 'menu'
