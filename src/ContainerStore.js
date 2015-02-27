@@ -119,10 +119,15 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
             if (containerData.State && !containerData.State.Running) {
               self.fetchContainer(containerData.name, callback);
             } else {
-              container.start({
-                PublishAllPorts: true,
+              var startopts = {
                 Binds: binds
-              }, function (err) {
+              };
+              if (containerData.NetworkSettings && containerData.NetworkSettings.Ports) {
+                startopts.PortBindings = containerData.NetworkSettings.Ports;
+              } else{
+                startopts.PublishAllPorts = true;
+              }
+              container.start(startopts, function (err) {
                 if (err) {
                   callback(err);
                   return;
