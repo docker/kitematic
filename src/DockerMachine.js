@@ -23,7 +23,7 @@ var DockerMachine = {
   },
   isoversion: function () {
     try {
-      var data = fs.readFileSync(path.join(util.home(), '.docker', 'machine', 'cache', 'boot2docker.iso'), 'utf8');
+      var data = fs.readFileSync(path.join(util.home(), '.docker', 'machine', 'machines', NAME, 'boot2docker.iso'), 'utf8');
       var match = data.match(/Boot2Docker-v(\d+\.\d+\.\d+)/);
       if (match) {
         return match[1];

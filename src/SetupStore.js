@@ -36,9 +36,8 @@ var _steps = [{
   percent: 0,
   seconds: 5,
   run: Promise.coroutine(function* (progressCallback) {
-    var packagejson = util.packagejson();
     var cmd = setupUtil.copyBinariesCmd() + ' && ' + setupUtil.fixBinariesCmd();
-    if (!virtualBox.installed() || setupUtil.compareVersions(yield virtualBox.version(), packagejson['virtualbox-required-version']) < 0) {
+    if (!virtualBox.installed()) {
       yield virtualBox.killall();
       cmd += ' && ' + setupUtil.installVirtualBoxCmd();
     } else {
@@ -76,7 +75,9 @@ var _steps = [{
     }
 
     var isoversion = machine.isoversion();
-    if (!isoversion || setupUtil.compareVersions(isoversion, machine.version()) < 0) {
+    var packagejson = util.packagejson();
+    if (!isoversion || setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0) {
+      console.log('upgrading');
       yield machine.stop();
       yield machine.upgrade();
     }
@@ -131,13 +132,14 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var isoversion = machine.isoversion();
     var required = {};
     var vboxfile = path.join(util.supportDir(), packagejson['virtualbox-filename']);
-    var vboxInstallRequired = virtualBox.installed() ? setupUtil.compareVersions(yield virtualBox.version(), packagejson['virtualbox-required-version']) < 0 : true;
-    required.download = vboxInstallRequired && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== packagejson['virtualbox-checksum']);
-    required.install = vboxInstallRequired || setupUtil.needsBinaryFix();
+    required.download = !virtualBox.installed() && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== packagejson['virtualbox-checksum']);
+    required.install = !virtualBox.installed() || setupUtil.needsBinaryFix();
     required.init = !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0;
 
     var exists = yield machine.exists();
-    if (exists && (yield machine.state()) !== 'Error') {
+    if (isoversion && setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0) {
+      this.steps().init.seconds = 33;
+    } else if (exists && (yield machine.state()) !== 'Error') {
       this.steps().init.seconds = 13;
     }
 

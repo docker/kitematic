@@ -145,8 +145,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     var count = 1;
     var name = base;
     while (true) {
-      var exists = _.findWhere(_.values(_containers), {Name: name}) || _.findWhere(_.values(_containers), {Name: name});
-      if (!exists) {
+      if (!this.containers()[name]) {
         return name;
       } else {
         count++;
