@@ -25,6 +25,12 @@ var SetupUtil = {
     }
     return false;
   },
+  copycmd: function (src, dest) {
+    return ['rm', '-f', dest, '&&', 'cp', src, dest];
+  },
+  escapePath: function (str) {
+    return str.replace(/ /g, '\\ ').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+  },
   shouldUpdateBinaries: function () {
     var packagejson = util.packagejson();
     return !fs.existsSync('/usr/local/bin/docker') ||
@@ -33,12 +39,12 @@ var SetupUtil = {
       this.checksum('/usr/local/bin/docker') !== this.checksum(path.join(util.resourceDir(), 'docker-' + packagejson['docker-version']));
   },
   copyBinariesCmd: function () {
-    var packagejson = this.packagejson();
+    var packagejson = util.packagejson();
     var cmd = ['mkdir', '-p', '/usr/local/bin'];
     cmd.push('&&');
-    cmd.push.apply(cmd, this.copycmd(this.escapePath(path.join(this.resourceDir(), 'docker-machine-' + packagejson['docker-machine-version'])), '/usr/local/bin/docker-machine'));
+    cmd.push.apply(cmd, this.copycmd(this.escapePath(path.join(util.resourceDir(), 'docker-machine-' + packagejson['docker-machine-version'])), '/usr/local/bin/docker-machine'));
     cmd.push('&&');
-    cmd.push.apply(cmd, this.copycmd(this.escapePath(path.join(this.resourceDir(), 'docker-' + packagejson['docker-version'])), '/usr/local/bin/docker'));
+    cmd.push.apply(cmd, this.copycmd(this.escapePath(path.join(util.resourceDir(), 'docker-' + packagejson['docker-version'])), '/usr/local/bin/docker'));
     return cmd.join(' ');
   },
   fixBinariesCmd: function () {
@@ -50,14 +56,14 @@ var SetupUtil = {
   },
   installVirtualBoxCmd: function () {
     var packagejson = util.packagejson();
-    return `installer -pkg ${util.escapePath(path.join(util.supportDir(), packagejson['virtualbox-filename']))} -target /`;
+    return `installer -pkg ${this.escapePath(path.join(util.supportDir(), packagejson['virtualbox-filename']))} -target /`;
   },
   virtualBoxUrl: function () {
     var packagejson = util.packagejson();
     return `https://github.com/kitematic/virtualbox/releases/download/${packagejson['virtualbox-version']}/${packagejson['virtualbox-filename']}`;
   },
   macSudoCmd: function (cmd) {
-    return `${util.escapePath(path.join(util.resourceDir(), 'macsudo'))} -p "Kitematic requires administrative privileges to install." sh -c \"${cmd}\"`;
+    return `${this.escapePath(path.join(util.resourceDir(), 'macsudo'))} -p "Kitematic requires administrative privileges to install." sh -c \"${cmd}\"`;
   },
   simulateProgress: function (estimateSeconds, progress) {
     var times = _.range(0, estimateSeconds * 1000, 200);

@@ -6,7 +6,7 @@ var path =  require('path');
 var metrics = require('./Metrics');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
-var boot2docker = require('./Boot2Docker');
+var machine = require('./DockerMachine');
 var RetinaImage = require('react-retina-image');
 var Router = require('react-router');
 var webPorts = require('./Util').webPorts;
@@ -105,11 +105,13 @@ var ContainerDetailsSubheader = React.createClass({
       metrics.track('Terminaled Into Container');
       var container = this.props.container;
       var terminal = path.join(process.cwd(), 'resources', 'terminal');
-      var cmd = [terminal, boot2docker.command().replace(/ /g, '\\\\\\\\ ').replace(/\(/g, '\\\\\\\\(').replace(/\)/g, '\\\\\\\\)'), 'ssh', '-t', 'sudo', 'docker', 'exec', '-i', '-t', container.Name, 'sh'];
-      exec(cmd, function (stderr, stdout, code) {
-        if (code) {
-          console.log(stderr);
-        }
+      machine.ip().then(ip => {
+        var cmd = [terminal, 'ssh', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=quiet', '-o', 'StrictHostKeyChecking=no', '-i', '~/.docker/machine/machines/' + machine.name() + '/id_rsa', 'docker@' + ip, '-t', 'docker', 'exec', '-i', '-t', container.Name, 'sh'];
+        exec(cmd, function (stderr, stdout, code) {
+          if (code) {
+            console.log(stderr);
+          }
+        });
       });
     }
   },

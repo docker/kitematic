@@ -35,11 +35,5 @@ module.exports = {
   packagejson: function () {
     return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
   },
-  copycmd: function (src, dest) {
-    return ['rm', '-f', dest, '&&', 'cp', src, dest];
-  },
-  escapePath: function (str) {
-    return str.replace(/ /g, '\\ ').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
-  },
   webPorts: ['80', '8000', '8080', '3000', '5000', '2368', '9200', '8983']
 };

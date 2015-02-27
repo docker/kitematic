@@ -2,12 +2,10 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-sudo rm -f /usr/local/bin/docker
-sudo rm -f /usr/local/bin/boot2docker
+sudo rm -f /usr/local/bin/docker*
 pkill VirtualBox
 pkill VBox
 rm -rf ~/Library/Application\ Support/Kitematic/
-rm -rf ~/.boot2docker
-rm -rf ~/VirtualBox\ VMs/boot2docker-vm
+rm -rf ~/.docker
 rm -rf ~/Library/VirtualBox/
 $DIR/VirtualBox_Uninstall.tool

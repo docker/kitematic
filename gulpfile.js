@@ -30,9 +30,11 @@ settings.beta = isBeta;
 var options = {
   dev: process.argv.indexOf('release') === -1,
   beta: isBeta,
-  filename: isBeta ? 'Kitematic (Beta).app' : 'Kitematic.app',
-  name: isBeta ? 'Kitematic (Beta)' : 'Kitematic',
-  icon: isBeta ? './util/kitematic-beta.icns' : './util/kitematic.icns'
+  appFilename: isBeta ? 'Kitematic (Beta).app' : 'Kitematic.app',
+  appName: isBeta ? 'Kitematic (Beta)' : 'Kitematic',
+  name: 'Kitematic',
+  icon: isBeta ? './util/kitematic-beta.icns' : './util/kitematic.icns',
+  bundle: 'com.kitemaic.app'
 };
 
 gulp.task('js', function () {
@@ -46,14 +48,14 @@ gulp.task('js', function () {
     .pipe(react())
     .pipe(babel({blacklist: ['regenerator']}))
     .pipe(gulpif(options.dev, sourcemaps.write('.')))
-    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
+    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.appFilename + '/Contents/Resources/app/build'))
     .pipe(gulpif(options.dev, livereload()));
 });
 
 gulp.task('images', function() {
   return gulp.src('images/*')
     .pipe(gulpif(options.dev, changed('./build')))
-    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
+    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.appFilename + '/Contents/Resources/app/build'))
     .pipe(gulpif(options.dev, livereload()));
 });
 
@@ -68,7 +70,7 @@ gulp.task('styles', function () {
     .pipe(gulpif(options.dev, sourcemaps.init()))
     .pipe(less())
     .pipe(gulpif(options.dev, sourcemaps.write()))
-    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
+    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.appFilename + '/Contents/Resources/app/build'))
     .pipe(gulpif(!options.dev, cssmin()))
     .pipe(concat('main.css'))
     .pipe(gulpif(options.dev, livereload()));
@@ -83,12 +85,12 @@ gulp.task('download', function (cb) {
 
 gulp.task('copy', function () {
   gulp.src('index.html')
-    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
+    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.appFilename + '/Contents/Resources/app/build'))
     .pipe(gulpif(options.dev, livereload()));
 
   gulp.src('fonts/**')
     .pipe(gulpif(options.dev, changed('./build')))
-    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.filename + '/Contents/Resources/app/build'))
+    .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.appFilename + '/Contents/Resources/app/build'))
     .pipe(gulpif(options.dev, livereload()));
 });
 
@@ -112,10 +114,10 @@ gulp.task('dist', function () {
     '/usr/libexec/PlistBuddy -c "Set :CFBundleExecutable <%= name %>" dist/osx/<%= filename %>/Contents/Info.plist'
     ], {
       templateData: {
-        filename: options.filename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)'),
-        name: options.name.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)'),
+        filename: options.appFilename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)'),
+        name: options.appName.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)'),
         version: packagejson.version,
-        bundle: 'com.kitematic.app',
+        bundle: options.bundle,
         icon: options.icon
       }
   }));
@@ -125,7 +127,7 @@ gulp.task('dist', function () {
       'cp -R node_modules/' + d + ' dist/osx/<%= filename %>/Contents/Resources/app/node_modules/'
     ], {
       templateData: {
-        filename: options.filename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)')
+        filename: options.appFilename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)')
       }
     }));
   });
@@ -137,7 +139,7 @@ gulp.task('sign', function () {
   try {
     var signing_identity = fs.readFileSync('./identity', 'utf8').trim();
     return gulp.src('').pipe(shell([
-      'codesign --deep --force --verbose --sign "' + signing_identity + '" ' + options.filename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)')
+      'codesign --deep --force --verbose --sign "' + signing_identity + '" ' + options.appFilename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)')
     ], {
       cwd: './dist/osx/'
     }));
@@ -148,7 +150,7 @@ gulp.task('sign', function () {
 
 gulp.task('zip', function () {
   return gulp.src('').pipe(shell([
-    'ditto -c -k --sequesterRsrc --keepParent ' +  options.filename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)') + ' ' +  options.name.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)') + '-' + packagejson.version + '.zip'
+    'ditto -c -k --sequesterRsrc --keepParent ' +  options.appFilename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)') + ' ' +  options.name.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)') + '-' + packagejson.version + '.zip'
   ], {
     cwd: './dist/osx/'
   }));
@@ -163,7 +165,7 @@ gulp.task('settings', function () {
     };
     return src;
   };
-  string_src('settings.json', JSON.stringify(settings)).pipe(gulp.dest('dist/osx/' + options.filename.replace(' ', '\ ').replace('(','\(').replace(')','\)') + '/Contents/Resources/app'));
+  string_src('settings.json', JSON.stringify(settings)).pipe(gulp.dest('dist/osx/' + options.appFilename.replace(' ', '\ ').replace('(','\(').replace(')','\)') + '/Contents/Resources/app'));
 });
 
 gulp.task('release', function () {

@@ -17,7 +17,7 @@ var ContainerUtil = {
       return {};
     }
     var res = {};
-    var ip = docker.host;
+    var ip = docker.host();
     _.each(container.NetworkSettings.Ports, function (value, key) {
       var dockerPort = key.split('/')[0];
       var localUrl = null;

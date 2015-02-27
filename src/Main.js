@@ -5,8 +5,8 @@ if (localStorage.getItem('settings.width') && localStorage.getItem('settings.hei
 }
 
 window.addEventListener('resize', function () {
-  localStorage.setItem('settings.width', window.innerWidth);
-  localStorage.setItem('settings.height', window.innerHeight);
+  localStorage.setItem('settings.width', window.outerWidth);
+  localStorage.setItem('settings.height', window.outerHeight);
 });
 
 require.main.paths.splice(0, 0, process.env.NODE_PATH);
@@ -16,7 +16,7 @@ var fs = require('fs');
 var path = require('path');
 var docker = require('./Docker');
 var router = require('./router');
-var boot2docker = require('./boot2docker');
+var machine = require('./DockerMachine');
 var ContainerStore = require('./ContainerStore');
 var SetupStore = require('./SetupStore');
 var metrics = require('./Metrics');
@@ -82,13 +82,14 @@ setInterval(function () {
 }, 14400000);
 
 router.run(Handler => React.render(<Handler/>, document.body));
-SetupStore.run().then(boot2docker.ip).then(ip => {
-  docker.setHost(ip);
+SetupStore.run().then(machine.info).then(machine => {
+  docker.setup(machine.url, machine.name);
   ContainerStore.init(function (err) {
     if (err) { console.log(err); }
     router.transitionTo('containers');
   });
 }).catch(err => {
   console.log(err);
+  console.log(err.stack);
   bugsnag.notify(err);
 });

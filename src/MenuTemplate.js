@@ -1,10 +1,9 @@
 var remote = require('remote');
 var app = remote.require('app');
-var path = require('path');
-var docker = require('./Docker');
 var router = require('./Router');
 var util = require('./Util');
 var metrics = require('./Metrics');
+var machine = require('./DockerMachine');
 
 // main.js
 var MenuTemplate = [
@@ -22,6 +21,9 @@ var MenuTemplate = [
     label: 'Preferences',
     accelerator: 'Command+,',
     click: function () {
+      metrics.track('Opened Preferences', {
+        from: 'menu'
+      });
       router.transitionTo('preferences');
     }
   },
@@ -71,10 +73,10 @@ var MenuTemplate = [
     label: 'Open Docker Terminal',
     accelerator: 'Command+Shift+T',
     click: function() {
-      metrics.track('Opened Docker Terminal');
-      var terminal = path.join(process.cwd(), 'resources', 'terminal');
-      var cmd = [terminal, `DOCKER_HOST=${'tcp://' + docker.host + ':2376'} DOCKER_CERT_PATH=${path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], '.boot2docker/certs/boot2docker-vm')} DOCKER_TLS_VERIFY=1 $SHELL`];
-      util.exec(cmd).then(() => {});
+      metrics.track('Opened Docker Terminal', {
+        from: 'menu'
+      });
+      machine.dockerTerminal();
     }
   },
   ]
@@ -157,6 +159,9 @@ var MenuTemplate = [
     {
       label: 'Report an Issue...',
       click: function () {
+        metrics.track('Opened Issue Reporter', {
+          from: 'menu'
+        });
         util.exec(['open', 'https://github.com/kitematic/kitematic/issues/new']);
       }
     },

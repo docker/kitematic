@@ -26,7 +26,7 @@ var windowOptions = {
   'min-height': 700,
   resizable: true,
   frame: false,
-  show: true
+  show: false
 };
 
 app.on('activate-with-no-open-windows', function () {
@@ -45,7 +45,7 @@ app.on('ready', function() {
     mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/index.html')));
     app.on('will-quit', function () {
       if (saveVMOnQuit) {
-        exec('/usr/bin/VBoxManage controlvm boot2docker-vm savestate', function () {});
+        exec('/usr/bin/VBoxManage controlvm dev savestate', function () {});
       }
     });
   }

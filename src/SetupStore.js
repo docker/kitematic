@@ -67,6 +67,12 @@ var _steps = [{
     if (!exists) {
       yield machine.create();
       return;
+    } else if ((yield machine.state()) === 'Error') {
+      try {
+        yield machine.rm();
+      } catch (err) {}
+      yield machine.create();
+      return;
     }
 
     var isoversion = machine.isoversion();
@@ -74,13 +80,7 @@ var _steps = [{
       yield machine.stop();
       yield machine.upgrade();
     }
-
-    setupUtil.simulateProgress(this.seconds, progressCallback);
-    yield machine.waitstatus('saving');
-    var status = machine.status;
-    if (status !== 'running') {
-      return yield machine.start();
-    }
+    yield machine.start();
   })
 }];
 
@@ -134,11 +134,11 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var vboxInstallRequired = virtualBox.installed() ? setupUtil.compareVersions(yield virtualBox.version(), packagejson['virtualbox-required-version']) < 0 : true;
     required.download = vboxInstallRequired && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== packagejson['virtualbox-checksum']);
     required.install = vboxInstallRequired || setupUtil.needsBinaryFix();
-    required.init = !(yield machine.exists()) || !isoversion || setupUtil.compareVersions(isoversion, boot2docker.version()) < 0;
+    required.init = !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0;
 
-    var exists = yield boot2docker.exists();
-    if (exists) {
-      this.steps().start.seconds = 13;
+    var exists = yield machine.exists();
+    if (exists && (yield machine.state()) !== 'Error') {
+      this.steps().init.seconds = 13;
     }
 
     _requiredSteps = _steps.filter(function (step) {
@@ -151,7 +151,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
       return Promise.resolve();
     }
     if (setupUtil.shouldUpdateBinaries()) {
-      return util.exec(util.copyBinariesCmd());
+      return util.exec(setupUtil.copyBinariesCmd());
     }
     return Promise.resolve();
   },
@@ -181,9 +181,10 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
           metrics.track('Setup Failed', {
             step: step.name
           });
-          console.log('Setup encountered an error.');
-          console.log(err);
           if (err) {
+            console.log('Setup encountered an error.');
+            console.log(err);
+            console.log(err.stack);
             _error = err;
             this.emit(this.ERROR_EVENT);
           } else {

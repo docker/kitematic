@@ -9,8 +9,7 @@ var remote = require('remote');
 var metrics = require('./Metrics');
 var autoUpdater = remote.require('auto-updater');
 var RetinaImage = require('react-retina-image');
-var path = require('path');
-var docker = require('./Docker');
+var machine = require('./DockerMachine');
 var util = require('./Util');
 
 var Containers = React.createClass({
@@ -94,14 +93,21 @@ var Containers = React.createClass({
     ipc.send('command', 'application:quit-install');
   },
   handleClickPreferences: function () {
+    metrics.track('Opened Preferences', {
+      from: 'app'
+    });
     this.transitionTo('preferences');
   },
   handleClickDockerTerminal: function () {
-    var terminal = path.join(process.cwd(), 'resources', 'terminal');
-    var cmd = [terminal, `DOCKER_HOST=${'tcp://' + docker.host + ':2376'} DOCKER_CERT_PATH=${path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], '.boot2docker/certs/boot2docker-vm')} DOCKER_TLS_VERIFY=1 $SHELL`];
-    util.exec(cmd).then(() => {});
+    metrics.track('Opened Docker Terminal', {
+      from: 'app'
+    });
+    machine.dockerTerminal();
   },
   handleClickReportIssue: function () {
+    metrics.track('Opened Issue Reporter', {
+      from: 'app'
+    });
     util.exec(['open', 'https://github.com/kitematic/kitematic/issues/new']);
   },
   handleMouseEnterDockerTerminal: function () {

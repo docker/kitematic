@@ -11,6 +11,9 @@ var DockerMachine = {
   command: function () {
     return path.join(process.cwd(), 'resources', 'docker-machine-' + this.version());
   },
+  name: function () {
+    return NAME;
+  },
   version: function () {
     try {
       return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'))['docker-machine-version'];
@@ -33,18 +36,15 @@ var DockerMachine = {
   },
   info: function () {
     return util.exec([DockerMachine.command(), 'ls']).then(stdout => {
-      var lines = stdout.split('\n').filter(line => line.indexOf('time=') === -1);
+      var lines = stdout.trim().split('\n').filter(line => line.indexOf('time=') === -1);
       var machines = {};
-      lines.slice(1, lines.length - 1).forEach(line => {
-        var tokens = line.trim().split(/[\s]+/);
-        if (tokens.length === 5) {
-          tokens.splice(1, 1);
-        }
+      lines.slice(1, lines.length).forEach(line => {
+        var tokens = line.trim().split(/[\s]+/).filter(token => token !== '*');
         var machine = {
           name: tokens[0],
           driver: tokens[1],
-          state: tokens[2].toLower(),
-          url: tokens[3]
+          state: tokens[2],
+          url: tokens[3] || ''
         };
         machines[machine.name] = machine;
       });
@@ -56,21 +56,15 @@ var DockerMachine = {
     });
   },
   exists: function () {
-    return DockerMachine.info().then(info => {
-      if (info) {
-        return Promise.resolve(true);
-      } else {
-        return Promise.resolve(false);
-      }
+    return DockerMachine.info().then(() => {
+      return true;
+    }).catch(() => {
+      return false;
     });
   },
-  status: function () {
-    DockerMachine.info().then(info => {
-      return info ? info.status : null;
-    });
-  },
+
   create: function () {
-    return util.exec([DockerMachine.command(), 'create', '-d', 'virtualbox', NAME]);
+    return util.exec([DockerMachine.command(), 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', NAME]);
   },
   start: function () {
     return util.exec([DockerMachine.command(), 'start', NAME]);
@@ -81,29 +75,21 @@ var DockerMachine = {
   upgrade: function () {
     return util.exec([DockerMachine.command(), 'upgrade', NAME]);
   },
-  destroy: function () {
-    return util.exec([DockerMachine.command(), 'rm -f', NAME]);
+  rm: function () {
+    return util.exec([DockerMachine.command(), 'rm', '-f', NAME]);
   },
   ip: function () {
     return util.exec([DockerMachine.command(), 'ip']).then(stdout => {
       return Promise.resolve(stdout.trim().replace('\n', ''));
     });
   },
-  erase: function () {
-    return util.exec(['rm', '-rf', path.join(util.home(), 'VirtualBox\\ VMs/boot2docker-vm')]);
-  },
   state: function () {
-    util.exec([DockerMachine.command(), 'info']).then(stdout => {
-      try {
-        var info = JSON.parse(stdout);
-        return Promise.resolve(info.State);
-      } catch (err) {
-        return Promise.reject(err);
-      }
+    return DockerMachine.info().then(info => {
+      return info ? info.state : null;
     });
   },
   disk: function () {
-    return util.exec([Boot2Docker.command(), 'ssh', 'df']).then(stdout => {
+    return util.exec([DockerMachine.command(), 'ssh', NAME, 'df']).then(stdout => {
       try {
         var lines = stdout.split('\n');
         var dataline = _.find(lines, function (line) {
@@ -127,7 +113,7 @@ var DockerMachine = {
     });
   },
   memory: function () {
-    return util.exec([this.command(), 'ssh', 'free -m']).then(stdout => {
+    return util.exec([this.command(), 'ssh', NAME, 'free -m']).then(stdout => {
       try {
         var lines = stdout.split('\n');
         var dataline = _.find(lines, function (line) {
@@ -154,28 +140,34 @@ var DockerMachine = {
   },
   stats: function () {
     DockerMachine.state().then(state => {
-      if (state === 'poweroff') {
+      if (state === 'Stopped') {
         return Promise.resolve({state: state});
       }
       var memory = DockerMachine.memory();
       var disk = DockerMachine.disk();
       return Promise.all([memory, disk]).spread((memory, disk) => {
         return Promise.resolve({
-          state: state,
           memory: memory,
           disk: disk
         });
       });
     });
   },
-  waitstatus: Promise.coroutine(function* () {
+  waitWhileState: Promise.coroutine(function* (status) {
     while (true) {
-      var current = yield DockerMachine.status();
+      var current = yield DockerMachine.state();
       if (status !== current.trim()) {
         return;
       }
     }
-  })
+  }),
+  dockerTerminal: function () {
+    var terminal = path.join(process.cwd(), 'resources', 'terminal');
+    this.info().then(machine => {
+      var cmd = [terminal, `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 $SHELL`];
+      util.exec(cmd).then(() => {});
+    });
+  },
 };
 
 module.exports = DockerMachine;
