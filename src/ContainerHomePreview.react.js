@@ -91,8 +91,9 @@ var ContainerHomePreview = React.createClass({
         var key = pair[0];
         var val = pair[1];
         return (
-          <div key={key} className="ip-port">
-            {val.display}
+          <div key={key} className="table-values">
+            <span className="value-left">{key}</span><span className="icon icon-arrow-right"></span>
+            <span className="value-right">{val.display}</span>
           </div>
         );
       });
@@ -100,8 +101,14 @@ var ContainerHomePreview = React.createClass({
         <div className="web-preview wrapper">
           <h4>IP &amp; Ports</h4>
           <div className="widget">
-            <p>You can access this container from the outside using the following IP &amp; Port(s):</p>
-            {ports}
+            <p>You can access this container using the following IP address and port:</p>
+            <div className="table ports">
+              <div className="table-labels">
+                <div className="label-left">DOCKER PORT</div>
+                <div className="label-right">MAC PORT</div>
+              </div>
+              {ports}
+            </div>
           </div>
         </div>
       );
