@@ -51,12 +51,13 @@ bugsnag.metaData = {
 };
 
 bugsnag.beforeNotify = function(payload) {
-  var re = new RegExp(process.cwd().replace(' ', '\\s').replace('(','\\(').replace(')','\\)'), 'g');
-  payload.stacktrace = payload.stacktrace.replace(re, '<redacted codedir>');
-  payload.context = payload.context.replace(re, '<redacted codedir>');
-  payload.file = payload.file.replace(re, '<redacted codedir>');
+  var re = new RegExp(process.cwd().replace(/\s+/g, '\\s+').replace(/\(/g,'\\(').replace(/\)/g,'\\)').replace(/\//g, '\\/'), 'g');
+  payload.stacktrace = payload.stacktrace.replace(/%20/g, ' ').replace(re, '<redacted codedir>');
+  payload.context = payload.context.replace(/%20/g, ' ').replace(re, '<redacted codedir>');
+  payload.file = payload.file.replace(/%20/g, ' ').replace(re, '<redacted codedir>');
   payload.url = '<redacted url>';
 };
+bugsnag.notify(new Error('test'));
 
 document.onkeydown = function (e) {
   e = e || window.event;

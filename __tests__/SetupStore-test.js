@@ -49,17 +49,6 @@ describe('SetupStore', function () {
       });
     });
 
-    pit('installs virtualbox if it is installed but has an outdated version', function () {
-      virtualBox.installed.mockReturnValue(true);
-      virtualBox.version.mockReturnValue(Promise.resolve('4.3.16'));
-      setupUtil.compareVersions.mockReturnValue(-1);
-      util.exec.mockReturnValue(Promise.resolve());
-      return setupStore.steps().install.run().then(() => {
-        expect(virtualBox.killall).toBeCalled();
-        expect(util.exec).toBeCalledWith('macsudo copycmd && fixcmd && installvbcmd');
-      });
-    });
-
     pit('only installs binaries if virtualbox is installed', function () {
       virtualBox.installed.mockReturnValue(true);
       setupUtil.compareVersions.mockReturnValue(0);
