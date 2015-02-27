@@ -112,7 +112,7 @@ var Containers = React.createClass({
   },
   handleMouseEnterDockerTerminal: function () {
     this.setState({
-      currentButtonLabel: 'Open terminal to use Docker CLI.'
+      currentButtonLabel: 'Open Docker-Ready Mac Terminal.'
     });
   },
   handleMouseLeaveDockerTerminal: function () {
@@ -122,7 +122,7 @@ var Containers = React.createClass({
   },
   handleMouseEnterReportIssue: function () {
     this.setState({
-      currentButtonLabel: 'Report issues or suggest feedbacks.'
+      currentButtonLabel: 'Report an Issue'
     });
   },
   handleMouseLeaveReportIssue: function () {
@@ -132,7 +132,7 @@ var Containers = React.createClass({
   },
   handleMouseEnterPreferences: function () {
     this.setState({
-      currentButtonLabel: 'Change app preferences.'
+      currentButtonLabel: 'Change app Preferences.'
     });
   },
   handleMouseLeavePreferences: function () {

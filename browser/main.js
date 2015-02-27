@@ -45,7 +45,7 @@ app.on('ready', function() {
     mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/index.html')));
     app.on('will-quit', function () {
       if (saveVMOnQuit) {
-        exec('/usr/bin/VBoxManage controlvm dev savestate', function () {});
+        exec('/usr/bin/VBoxManage controlvm dev poweroff', function () {});
       }
     });
   }

@@ -1,14 +1,4 @@
 var remote = require('remote');
-if (localStorage.getItem('settings.width') && localStorage.getItem('settings.height')) {
-  remote.getCurrentWindow().setSize(parseInt(localStorage.getItem('settings.width')), parseInt(localStorage.getItem('settings.height')));
-  remote.getCurrentWindow().center();
-}
-
-window.addEventListener('resize', function () {
-  localStorage.setItem('settings.width', window.outerWidth);
-  localStorage.setItem('settings.height', window.outerHeight);
-});
-
 require.main.paths.splice(0, 0, process.env.NODE_PATH);
 var app = remote.require('app');
 var React = require('react');
@@ -20,11 +10,20 @@ var machine = require('./DockerMachine');
 var ContainerStore = require('./ContainerStore');
 var SetupStore = require('./SetupStore');
 var metrics = require('./Metrics');
-
-var MenuTemplate = require('./MenuTemplate');
+var template = require('./MenuTemplate');
 var Menu = remote.require('menu');
-var menu = Menu.buildFromTemplate(MenuTemplate);
-Menu.setApplicationMenu(menu);
+
+if (localStorage.getItem('settings.width') && localStorage.getItem('settings.height')) {
+  remote.getCurrentWindow().setSize(parseInt(localStorage.getItem('settings.width')), parseInt(localStorage.getItem('settings.height')));
+  remote.getCurrentWindow().center();
+}
+
+window.addEventListener('resize', function () {
+  localStorage.setItem('settings.width', window.outerWidth);
+  localStorage.setItem('settings.height', window.outerHeight);
+});
+
+Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
 
 var settingsjson;
 try {
@@ -84,6 +83,7 @@ setInterval(function () {
 router.run(Handler => React.render(<Handler/>, document.body));
 SetupStore.run().then(machine.info).then(machine => {
   docker.setup(machine.url, machine.name);
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   ContainerStore.init(function (err) {
     if (err) { console.log(err); }
     router.transitionTo('containers');
