@@ -42,8 +42,10 @@
           padding-right: 20px;
           .icon-arrow-right {
             color: #BBB;
-            font-size: 20px;
-            margin: 0px 10px;
+            font-size: 13px;
+            margin: 0px 8px;
+            position: relative;
+            top: 2px;
             flex: 0 auto;
             min-width: 13px;
           }
@@ -52,19 +54,18 @@
               margin-top: 20px;
               flex: 1 auto;
               display: flex;
-              font-size: 12px;
+              font-size: 10px;
               color: @gray-lightest;
               .label-left {
                 flex: 0 auto;
-                min-width: 85px;
+                min-width: 60px;
                 margin-right: 30px;
                 text-align: right;
               }
               .label-right {
                 flex: 1 auto;
                 display: inline-block;
-                margin-left: 10px;
-                width: 40%;
+                //margin-left: 10px;
               }
             }
             .table-values {
@@ -72,9 +73,10 @@
               display: flex;
               flex-direction: row;
               margin: 8px 0;
+              font-size: 12px;
               .value-left {
                 text-align: right;
-                min-width: 85px;
+                min-width: 70px;
                 flex: 0 auto;
                 padding: 0px;
               }
@@ -83,12 +85,6 @@
                 -webkit-user-select: text;
                 max-width: 170px;
                 padding: 0px;
-              }
-              label {
-                margin-left: 8px;
-                margin-top: 1px;
-                font-weight: 400;
-                font-size: 13px;
               }
             }
           }
