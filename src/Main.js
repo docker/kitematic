@@ -57,7 +57,6 @@ bugsnag.beforeNotify = function(payload) {
   payload.file = payload.file.replace(/%20/g, ' ').replace(re, '<redacted codedir>');
   payload.url = '<redacted url>';
 };
-bugsnag.notify(new Error('test'));
 
 document.onkeydown = function (e) {
   e = e || window.event;
