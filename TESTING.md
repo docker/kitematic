@@ -19,7 +19,7 @@ The expected result for all test cases is that the setup finishes and an HTML co
 **Clean state**: run `__tests__/util/reset`. WARNING: This will erase your existing VirtualBox, Docker & Kitematic installation.
 
 - Clean state
-- Clean state with an old version of VirtualBox installed and running `4.3.16<`
+- Clean state with an old version of VirtualBox installed and running `4.3.0<`
 - Clean state with VirtualBox installed `4.3.18+`
 - Clean state with an old Boot2Docker VM & installation `0.12+`
 - Clean state with the latest Boot2Docker VM & installation
