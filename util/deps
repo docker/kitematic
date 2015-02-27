@@ -1,13 +1,8 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE=$DIR/..
-<<<<<<< HEAD:util/deps
 DOCKER_MACHINE_CLI_VERSION=$(node -pe "JSON.parse(process.argv[1])['docker-machine-version']" "$(cat $BASE/package.json)")
 DOCKER_MACHINE_CLI_FILE=docker-machine-$DOCKER_MACHINE_CLI_VERSION
-=======
-BOOT2DOCKER_CLI_VERSION=$(node -pe "JSON.parse(process.argv[1])['boot2docker-version']" "$(cat $BASE/package.json)")
-BOOT2DOCKER_CLI_FILE=boot2docker-$BOOT2DOCKER_CLI_VERSION
->>>>>>> master:util/deps
 DOCKER_CLI_VERSION=$(node -pe "JSON.parse(process.argv[1])['docker-version']" "$(cat $BASE/package.json)")
 DOCKER_CLI_FILE=docker-$DOCKER_CLI_VERSION
 

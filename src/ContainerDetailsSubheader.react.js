@@ -171,11 +171,7 @@ var ContainerDetailsSubheader = React.createClass({
       <div className="details-subheader">
         <div className="details-header-actions">
           <div className={runActionClass} onMouseEnter={this.handleItemMouseEnterView} onMouseLeave={this.handleItemMouseLeaveView}>
-<<<<<<< HEAD
-            <span className="action-icon" onClick={this.handleRun}><RetinaImage src="button-view.png"/></span>
-=======
             <div className="action-icon" onClick={this.handleRun}><RetinaImage src="button-view.png"/></div>
->>>>>>> master
             <span className="btn-label view">View</span>
           </div>
           <div className={restartActionClass} onMouseEnter={this.handleItemMouseEnterRestart} onMouseLeave={this.handleItemMouseLeaveRestart}>

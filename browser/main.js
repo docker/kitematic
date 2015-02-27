@@ -45,11 +45,7 @@ app.on('ready', function() {
     mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/index.html')));
     app.on('will-quit', function () {
       if (saveVMOnQuit) {
-<<<<<<< HEAD
         exec('/usr/bin/VBoxManage controlvm dev savestate', function () {});
-=======
-        exec('/usr/bin/VBoxManage controlvm boot2docker-vm savestate', function () {});
->>>>>>> master
       }
     });
   }
