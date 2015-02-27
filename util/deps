@@ -1,18 +1,18 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 BASE=$DIR/..
-BOOT2DOCKER_CLI_VERSION=$(node -pe "JSON.parse(process.argv[1])['boot2docker-version']" "$(cat $BASE/package.json)")
-BOOT2DOCKER_CLI_FILE=boot2docker-$BOOT2DOCKER_CLI_VERSION
+DOCKER_MACHINE_CLI_VERSION=$(node -pe "JSON.parse(process.argv[1])['docker-machine-version']" "$(cat $BASE/package.json)")
+DOCKER_MACHINE_CLI_FILE=docker-machine-$DOCKER_MACHINE_CLI_VERSION
 DOCKER_CLI_VERSION=$(node -pe "JSON.parse(process.argv[1])['docker-version']" "$(cat $BASE/package.json)")
 DOCKER_CLI_FILE=docker-$DOCKER_CLI_VERSION
 
 pushd $BASE/resources > /dev/null
 
-if [ ! -f $BOOT2DOCKER_CLI_FILE ]; then
-  echo "-----> Downloading Boot2docker CLI..."
-  rm -rf boot2docker-*
-  curl -L -o $BOOT2DOCKER_CLI_FILE https://github.com/boot2docker/boot2docker-cli/releases/download/v$BOOT2DOCKER_CLI_VERSION/boot2docker-v$BOOT2DOCKER_CLI_VERSION-darwin-amd64
-  chmod +x $BOOT2DOCKER_CLI_FILE
+if [ ! -f $DOCKER_MACHINE_CLI_FILE ]; then
+  echo "-----> Downloading Docker Machine CLI..."
+  rm -rf docker-machine*
+  curl -L -o $DOCKER_MACHINE_CLI_FILE https://github.com/docker/machine/releases/download/v$DOCKER_MACHINE_CLI_VERSION/docker-machine_darwin-amd64
+  chmod +x $DOCKER_MACHINE_CLI_FILE
 fi
 
 if [ ! -f $DOCKER_CLI_FILE ]; then

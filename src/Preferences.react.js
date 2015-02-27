@@ -3,7 +3,7 @@ var ipc = require('ipc');
 var metrics = require('./Metrics');
 var Router = require('react-router');
 
-if (localStorage.getItem('settings.saveVMOnQuit') === 'true') {
+if (localStorage.getItem('settings.closeVMOnQuit') === 'true') {
   ipc.send('vm', true);
 } else {
   ipc.send('vm', false);
@@ -13,7 +13,7 @@ var Preferences = React.createClass({
   mixins: [Router.Navigation],
   getInitialState: function () {
     return {
-      saveVMOnQuit: localStorage.getItem('settings.saveVMOnQuit') === 'true',
+      closeVMOnQuit: localStorage.getItem('settings.closeVMOnQuit') === 'true',
       metricsEnabled: metrics.enabled()
     };
   },
@@ -21,14 +21,15 @@ var Preferences = React.createClass({
     this.goBack();
     metrics.track('Went Back From Preferences');
   },
-  handleChangeSaveVMOnQuit: function (e) {
+  handleChangeCloseVMOnQuit: function (e) {
     var checked = e.target.checked;
     this.setState({
-      saveVMOnQuit: checked
+      closeVMOnQuit: checked
     });
+    localStorage.setItem('settings.closeVMOnQuit', checked);
     ipc.send('vm', checked);
-    metrics.track('Toggled Save VM On Quit', {
-      save: checked
+    metrics.track('Toggled Close VM On Quit', {
+      close: checked
     });
   },
   handleChangeMetricsEnabled: function (e) {
@@ -49,10 +50,10 @@ var Preferences = React.createClass({
           <div className="title">VM Settings</div>
           <div className="option">
             <div className="option-name">
-              Save Linux VM state on closing Kitematic
+              Shut Down Linux VM on closing Kitematic
             </div>
             <div className="option-value">
-              <input type="checkbox" checked={this.state.saveVMOnQuit} onChange={this.handleChangeSaveVMOnQuit}/>
+              <input type="checkbox" checked={this.state.closeVMOnQuit} onChange={this.handleChangeCloseVMOnQuit}/>
             </div>
           </div>
           <div className="title">App Settings</div>

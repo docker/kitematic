@@ -35,27 +35,5 @@ module.exports = {
   packagejson: function () {
     return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
   },
-  copycmd: function (src, dest) {
-    return ['rm', '-f', dest, '&&', 'cp', src, dest];
-  },
-  copyBinariesCmd: function () {
-    var packagejson = this.packagejson();
-    var cmd = ['mkdir', '-p', '/usr/local/bin'];
-    cmd.push('&&');
-    cmd.push.apply(cmd, this.copycmd(this.escapePath(path.join(this.resourceDir(), 'boot2docker-' + packagejson['boot2docker-version'])), '/usr/local/bin/boot2docker'));
-    cmd.push('&&');
-    cmd.push.apply(cmd, this.copycmd(this.escapePath(path.join(this.resourceDir(), 'docker-' + packagejson['docker-version'])), '/usr/local/bin/docker'));
-    return cmd.join(' ');
-  },
-  fixBinariesCmd: function () {
-    var cmd = [];
-    cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, this.escapePath(path.join('/usr/local/bin', 'boot2docker'))]);
-    cmd.push('&&');
-    cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, this.escapePath(path.join('/usr/local/bin', 'docker'))]);
-    return cmd.join(' ');
-  },
-  escapePath: function (str) {
-    return str.replace(/ /g, '\\ ').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
-  },
   webPorts: ['80', '8000', '8080', '3000', '5000', '2368', '9200', '8983']
 };

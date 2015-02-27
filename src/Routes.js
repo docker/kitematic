@@ -27,13 +27,13 @@ var App = React.createClass({
 var routes = (
   <Route name="app" path="/" handler={App}>
     <Route name="containers" handler={Containers}>
-      <Route name="containerDetails" path="/containers/:name" handler={ContainerDetails}>
-        <Route name="containerHome" path="/containers/:name/home" handler={ContainerHome} />
-        <Route name="containerLogs" path="/containers/:name/logs" handler={ContainerLogs}/>
-        <Route name="containerSettings" path="/containers/:name/settings" handler={ContainerSettings}>
-          <Route name="containerSettingsGeneral" path="/containers/:name/settings/general" handler={ContainerSettingsGeneral}/>
-          <Route name="containerSettingsPorts" path="/containers/:name/settings/ports" handler={ContainerSettingsPorts}/>
-          <Route name="containerSettingsVolumes" path="/containers/:name/settings/volumes" handler={ContainerSettingsVolumes}/>
+      <Route name="containerDetails" path="containers/:name" handler={ContainerDetails}>
+        <Route name="containerHome" path="containers/:name/home" handler={ContainerHome} />
+        <Route name="containerLogs" path="containers/:name/logs" handler={ContainerLogs}/>
+        <Route name="containerSettings" path="containers/:name/settings" handler={ContainerSettings}>
+          <Route name="containerSettingsGeneral" path="containers/:name/settings/general" handler={ContainerSettingsGeneral}/>
+          <Route name="containerSettingsPorts" path="containers/:name/settings/ports" handler={ContainerSettingsPorts}/>
+          <Route name="containerSettingsVolumes" path="containers/:name/settings/volumes" handler={ContainerSettingsVolumes}/>
         </Route>
       </Route>
       <Route name="preferences" path="/preferences" handler={Preferences}/>

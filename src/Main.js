@@ -1,14 +1,4 @@
 var remote = require('remote');
-if (localStorage.getItem('settings.width') && localStorage.getItem('settings.height')) {
-  remote.getCurrentWindow().setSize(parseInt(localStorage.getItem('settings.width')), parseInt(localStorage.getItem('settings.height')));
-  remote.getCurrentWindow().center();
-}
-
-window.addEventListener('resize', function () {
-  localStorage.setItem('settings.width', window.innerWidth);
-  localStorage.setItem('settings.height', window.innerHeight);
-});
-
 require.main.paths.splice(0, 0, process.env.NODE_PATH);
 var app = remote.require('app');
 var React = require('react');
@@ -16,15 +6,24 @@ var fs = require('fs');
 var path = require('path');
 var docker = require('./Docker');
 var router = require('./router');
-var boot2docker = require('./boot2docker');
+var machine = require('./DockerMachine');
 var ContainerStore = require('./ContainerStore');
 var SetupStore = require('./SetupStore');
 var metrics = require('./Metrics');
-
-var MenuTemplate = require('./MenuTemplate');
+var template = require('./MenuTemplate');
 var Menu = remote.require('menu');
-var menu = Menu.buildFromTemplate(MenuTemplate);
-Menu.setApplicationMenu(menu);
+
+if (localStorage.getItem('settings.width') && localStorage.getItem('settings.height')) {
+  remote.getCurrentWindow().setSize(parseInt(localStorage.getItem('settings.width')), parseInt(localStorage.getItem('settings.height')));
+  remote.getCurrentWindow().center();
+}
+
+window.addEventListener('resize', function () {
+  localStorage.setItem('settings.width', window.outerWidth);
+  localStorage.setItem('settings.height', window.outerHeight);
+});
+
+Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
 
 var settingsjson;
 try {
@@ -52,12 +51,13 @@ bugsnag.metaData = {
 };
 
 bugsnag.beforeNotify = function(payload) {
-  var re = new RegExp(process.cwd().replace(' ', '\\s').replace('(','\\(').replace(')','\\)'), 'g');
-  payload.stacktrace = payload.stacktrace.replace(re, '<redacted codedir>');
-  payload.context = payload.context.replace(re, '<redacted codedir>');
-  payload.file = payload.file.replace(re, '<redacted codedir>');
+  var re = new RegExp(process.cwd().replace(/\s+/g, '\\s+').replace(/\(/g,'\\(').replace(/\)/g,'\\)').replace(/\//g, '\\/'), 'g');
+  payload.stacktrace = payload.stacktrace.replace(/%20/g, ' ').replace(re, '<redacted codedir>');
+  payload.context = payload.context.replace(/%20/g, ' ').replace(re, '<redacted codedir>');
+  payload.file = payload.file.replace(/%20/g, ' ').replace(re, '<redacted codedir>');
   payload.url = '<redacted url>';
 };
+bugsnag.notify(new Error('test'));
 
 document.onkeydown = function (e) {
   e = e || window.event;
@@ -82,13 +82,15 @@ setInterval(function () {
 }, 14400000);
 
 router.run(Handler => React.render(<Handler/>, document.body));
-SetupStore.run().then(boot2docker.ip).then(ip => {
-  docker.setHost(ip);
+SetupStore.run().then(machine.info).then(machine => {
+  docker.setup(machine.url, machine.name);
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   ContainerStore.init(function (err) {
     if (err) { console.log(err); }
     router.transitionTo('containers');
   });
 }).catch(err => {
   console.log(err);
+  console.log(err.stack);
   bugsnag.notify(err);
 });

@@ -12,7 +12,7 @@ var SetupUtil = {
     if (!fs.existsSync('/usr/local') || !fs.existsSync('/usr/local/bin')) {
       return true;
     }
-    if (!fs.existsSync('/usr/local/bin/docker') && !fs.existsSync('/usr/local/bin/boot2docker')) {
+    if (!fs.existsSync('/usr/local/bin/docker') && !fs.existsSync('/usr/local/bin/docker-machine')) {
       return fs.statSync('/usr/local/bin').gid !== 80 || fs.statSync('/usr/local/bin').uid !== process.getuid();
     }
 
@@ -20,28 +20,50 @@ var SetupUtil = {
       return true;
     }
 
-    if (fs.existsSync('/usr/local/bin/boot2docker') && (fs.statSync('/usr/local/bin/boot2docker').gid !== 80 || fs.statSync('/usr/local/bin/boot2docker').uid !== process.getuid())) {
+    if (fs.existsSync('/usr/local/bin/docker-machine') && (fs.statSync('/usr/local/bin/docker-machine').gid !== 80 || fs.statSync('/usr/local/bin/docker-machine').uid !== process.getuid())) {
       return true;
     }
     return false;
   },
+  copycmd: function (src, dest) {
+    return ['rm', '-f', dest, '&&', 'cp', src, dest];
+  },
+  escapePath: function (str) {
+    return str.replace(/ /g, '\\ ').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+  },
   shouldUpdateBinaries: function () {
     var packagejson = util.packagejson();
     return !fs.existsSync('/usr/local/bin/docker') ||
-      !fs.existsSync('/usr/local/bin/boot2docker') ||
-      this.checksum('/usr/local/bin/boot2docker') !== this.checksum(path.join(util.resourceDir(), 'boot2docker-' + packagejson['boot2docker-version'])) ||
+      !fs.existsSync('/usr/local/bin/docker-machine') ||
+      this.checksum('/usr/local/bin/docker-machine') !== this.checksum(path.join(util.resourceDir(), 'docker-machine-' + packagejson['docker-machine-version'])) ||
       this.checksum('/usr/local/bin/docker') !== this.checksum(path.join(util.resourceDir(), 'docker-' + packagejson['docker-version']));
+  },
+  copyBinariesCmd: function () {
+    var packagejson = util.packagejson();
+    var cmd = ['mkdir', '-p', '/usr/local/bin'];
+    cmd.push('&&');
+    cmd.push.apply(cmd, this.copycmd(this.escapePath(path.join(util.resourceDir(), 'docker-machine-' + packagejson['docker-machine-version'])), '/usr/local/bin/docker-machine'));
+    cmd.push('&&');
+    cmd.push.apply(cmd, this.copycmd(this.escapePath(path.join(util.resourceDir(), 'docker-' + packagejson['docker-version'])), '/usr/local/bin/docker'));
+    return cmd.join(' ');
+  },
+  fixBinariesCmd: function () {
+    var cmd = [];
+    cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, this.escapePath(path.join('/usr/local/bin', 'docker-machine'))]);
+    cmd.push('&&');
+    cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, this.escapePath(path.join('/usr/local/bin', 'docker'))]);
+    return cmd.join(' ');
   },
   installVirtualBoxCmd: function () {
     var packagejson = util.packagejson();
-    return `installer -pkg ${util.escapePath(path.join(util.supportDir(), packagejson['virtualbox-filename']))} -target /`;
+    return `installer -pkg ${this.escapePath(path.join(util.supportDir(), packagejson['virtualbox-filename']))} -target /`;
   },
   virtualBoxUrl: function () {
     var packagejson = util.packagejson();
     return `https://github.com/kitematic/virtualbox/releases/download/${packagejson['virtualbox-version']}/${packagejson['virtualbox-filename']}`;
   },
   macSudoCmd: function (cmd) {
-    return `${util.escapePath(path.join(util.resourceDir(), 'macsudo'))} -p "Kitematic requires administrative privileges to install." sh -c \"${cmd}\"`;
+    return `${this.escapePath(path.join(util.resourceDir(), 'macsudo'))} -p "Kitematic requires administrative privileges to install." sh -c \"${cmd}\"`;
   },
   simulateProgress: function (estimateSeconds, progress) {
     var times = _.range(0, estimateSeconds * 1000, 200);

@@ -9,7 +9,6 @@ npm-debug.log
 identity
 
 # Resources
-resources/boot2docker-*
 resources/docker-*
 
 # Cache

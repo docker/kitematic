@@ -119,10 +119,15 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
             if (containerData.State && !containerData.State.Running) {
               self.fetchContainer(containerData.name, callback);
             } else {
-              container.start({
-                PublishAllPorts: true,
+              var startopts = {
                 Binds: binds
-              }, function (err) {
+              };
+              if (containerData.NetworkSettings && containerData.NetworkSettings.Ports) {
+                startopts.PortBindings = containerData.NetworkSettings.Ports;
+              } else{
+                startopts.PublishAllPorts = true;
+              }
+              container.start(startopts, function (err) {
                 if (err) {
                   callback(err);
                   return;
@@ -140,8 +145,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     var count = 1;
     var name = base;
     while (true) {
-      var exists = _.findWhere(_.values(_containers), {Name: name}) || _.findWhere(_.values(_containers), {Name: name});
-      if (!exists) {
+      if (!this.containers()[name]) {
         return name;
       } else {
         count++;

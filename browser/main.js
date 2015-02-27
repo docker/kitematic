@@ -26,7 +26,7 @@ var windowOptions = {
   'min-height': 700,
   resizable: true,
   frame: false,
-  show: true
+  show: false
 };
 
 app.on('activate-with-no-open-windows', function () {
@@ -38,14 +38,14 @@ app.on('activate-with-no-open-windows', function () {
 
 app.on('ready', function() {
   mainWindow = new BrowserWindow(windowOptions);
-  var saveVMOnQuit = false;
+  var closeVMOnQuit = false;
   if (argv.test) {
     mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/tests.html')));
   } else {
     mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/index.html')));
     app.on('will-quit', function () {
-      if (saveVMOnQuit) {
-        exec('/usr/bin/VBoxManage controlvm boot2docker-vm savestate', function () {});
+      if (closeVMOnQuit) {
+        exec('/usr/bin/VBoxManage controlvm dev poweroff', function () {});
       }
     });
   }
@@ -97,14 +97,14 @@ app.on('ready', function() {
       ipc.on('command', function (event, arg) {
         console.log('Command: ' + arg);
         if (arg === 'application:quit-install') {
-          saveVMOnQuit = false;
+          closeVMOnQuit = false;
           autoUpdater.quitAndInstall();
         }
       });
     }
 
     ipc.on('vm', function (event, arg) {
-      saveVMOnQuit = arg;
+      closeVMOnQuit = arg;
     });
   });
 });
