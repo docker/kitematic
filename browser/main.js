@@ -26,7 +26,7 @@ var windowOptions = {
   'min-height': 700,
   resizable: true,
   frame: false,
-  show: true
+  show: false
 };
 
 app.on('activate-with-no-open-windows', function () {
@@ -86,12 +86,12 @@ app.on('ready', function() {
         console.log(e, releaseNotes, releaseName, releaseDate, updateURL);
         console.log('Update downloaded.');
         console.log(releaseNotes, releaseName, releaseDate, updateURL);
-        mainWindow.webContents.send('notify', 'window:update-available');
+        mainWindow.webContents.send('notify', 'application:update-available');
       });
 
-      autoUpdater.on('error', function (e) {
+      autoUpdater.on('error', function (e, error) {
         console.log('An error occured while checking for updates.');
-        console.log(e);
+        console.log(error);
       });
 
       ipc.on('command', function (event, arg) {

@@ -32,14 +32,14 @@ var Containers = React.createClass({
       this.transitionTo('containerHome', {name: this.state.sorted[0].Name});
     }
 
-    autoUpdater.checkForUpdates();
-    ipc.on('notify', function (message) {
-      if (message === 'window:update-available') {
+    ipc.on('notify', message => {
+      if (message === 'application:update-available') {
         this.setState({
           updateAvailable: true
         });
       }
     });
+    autoUpdater.checkForUpdates();
   },
   componentDidUnmount: function () {
     ContainerStore.removeListener(ContainerStore.SERVER_CONTAINER_EVENT, this.update);

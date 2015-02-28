@@ -34,7 +34,7 @@ var options = {
   appName: isBeta ? 'Kitematic (Beta)' : 'Kitematic',
   name: 'Kitematic',
   icon: isBeta ? './util/kitematic-beta.icns' : './util/kitematic.icns',
-  bundle: 'com.kitemaic.app'
+  bundle: 'com.kitematic.kitematic'
 };
 
 gulp.task('js', function () {
