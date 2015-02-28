@@ -5,22 +5,20 @@ var React = require('react');
 var fs = require('fs');
 var path = require('path');
 var docker = require('./Docker');
-var router = require('./router');
+var router = require('./Router');
 var machine = require('./DockerMachine');
 var ContainerStore = require('./ContainerStore');
 var SetupStore = require('./SetupStore');
 var metrics = require('./Metrics');
 var template = require('./MenuTemplate');
+var util = require('./Util');
 var Menu = remote.require('menu');
 
-if (localStorage.getItem('settings.width') && localStorage.getItem('settings.height')) {
-  remote.getCurrentWindow().setSize(parseInt(localStorage.getItem('settings.width')), parseInt(localStorage.getItem('settings.height')));
-  remote.getCurrentWindow().center();
-}
-
 window.addEventListener('resize', function () {
-  localStorage.setItem('settings.width', window.outerWidth);
-  localStorage.setItem('settings.height', window.outerHeight);
+  fs.writeFileSync(path.join(util.supportDir(), 'size'), JSON.stringify({
+    width: window.outerWidth,
+    height: window.outerHeight
+  }));
 });
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(template()));

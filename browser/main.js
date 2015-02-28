@@ -6,6 +6,17 @@ var autoUpdater = require('auto-updater');
 var BrowserWindow = require('browser-window');
 var ipc = require('ipc');
 var argv = require('minimist')(process.argv);
+
+var size = {
+  width: 1000,
+  height: 700
+};
+
+try {
+  var sizeFile = JSON.parse(fs.readFileSync(path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], 'Library', 'Application\ Support', 'Kitematic', 'size')));
+  size = sizeFile;
+} catch (err) {}
+
 var settingsjson;
 try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
@@ -20,13 +31,13 @@ process.env.PATH = '/usr/local/bin:' + process.env.PATH;
 
 var mainWindow = null;
 var windowOptions = {
-  width: 1000,
-  height: 700,
+  width: size.width,
+  height: size.height,
   'min-width': 1000,
   'min-height': 700,
   resizable: true,
   frame: false,
-  show: false
+  show: true
 };
 
 app.on('activate-with-no-open-windows', function () {
