@@ -8,4 +8,5 @@ pkill VBox
 rm -rf ~/Library/Application\ Support/Kitematic/
 rm -rf ~/.docker
 rm -rf ~/Library/VirtualBox/
+rm -rf ~/Kitematic
 $DIR/VirtualBox_Uninstall.tool

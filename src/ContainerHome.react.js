@@ -8,7 +8,7 @@ var ContainerHomePreview = require('./ContainerHomePreview.react');
 var ContainerHomeLogs = require('./ContainerHomeLogs.react');
 var ContainerHomeFolders = require('./ContainerHomeFolders.react');
 var ContainerUtil = require('./ContainerUtil');
-var webPorts = require('./Util').webPorts;
+var util = require('./Util');
 
 var resizeWindow = function () {
   $('.left .wrapper').height(window.innerHeight - 240);
@@ -26,6 +26,9 @@ var ContainerHome = React.createClass({
   },
   handleResize: function () {
     resizeWindow();
+  },
+  handleErrorClick: function () {
+    util.exec(['open', 'https://github.com/kitematic/kitematic/issues/new']);
   },
   componentWillReceiveProps: function () {
     this.init();
@@ -52,7 +55,7 @@ var ContainerHome = React.createClass({
     this.setState({
       ports: ports,
       defaultPort: _.find(_.keys(ports), function (port) {
-        return webPorts.indexOf(port) !== -1;
+        return util.webPorts.indexOf(port) !== -1;
       }),
       progress: ContainerStore.progress(this.getParams().name),
       blocked: ContainerStore.blocked(this.getParams().name)
@@ -68,7 +71,14 @@ var ContainerHome = React.createClass({
   },
   render: function () {
     var body;
-    if (this.props.container && this.props.container.State.Downloading) {
+    if (this.props.error) {
+      body = (
+        <div className="details-progress">
+          <h3>There was a problem connecting to the Docker Engine.<br/>Either the VirtualBox VM was removed, is not responding or Docker is not running inside of it. Try restarting Kitematic. If the issue persists, please <a onClick={this.handleErrorClick}>file a ticket on our GitHub repo.</a></h3>
+          <Radial progress={100} error={true} thick={true} transparent={true}/>
+        </div>
+      );
+    } else if (this.props.container && this.props.container.State.Downloading) {
       if (this.state.progress) {
         body = (
           <div className="details-progress">

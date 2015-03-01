@@ -3,7 +3,7 @@ var React = require('react/addons');
 var Radial = React.createClass({
   render: function () {
     var percentage;
-    if ((this.props.progress !== null && this.props.progress !== undefined) && !this.props.spin) {
+    if ((this.props.progress !== null && this.props.progress !== undefined) && !this.props.spin && !this.props.error) {
       percentage = (
         <div className="percentage"></div>
       );

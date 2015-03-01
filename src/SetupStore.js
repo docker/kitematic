@@ -10,6 +10,7 @@ var util = require('./Util');
 var assign = require('object-assign');
 var metrics = require('./Metrics');
 var bugsnag = require('bugsnag-js');
+var rimraf = require('rimraf');
 
 var _currentStep = null;
 var _error = null;
@@ -59,26 +60,25 @@ var _steps = [{
   message: 'To run Docker containers on your computer, Kitematic is starting a Linux virutal machine. This may take a minute...',
   totalPercent: 60,
   percent: 0,
-  seconds: 52,
+  seconds: 53,
   run: Promise.coroutine(function* (progressCallback) {
     setupUtil.simulateProgress(this.seconds, progressCallback);
     yield virtualBox.vmdestroy('kitematic-vm');
     var exists = yield machine.exists();
-    if (!exists) {
-      yield machine.create();
-      return;
-    } else if ((yield machine.state()) === 'Error') {
+    if (!exists || (yield machine.state()) === 'Error') {
       try {
         yield machine.rm();
-      } catch (err) {}
-      yield machine.create();
+        yield machine.create();
+      } catch (err) {
+        rimraf.sync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
+        yield machine.create();
+      }
       return;
     }
 
     var isoversion = machine.isoversion();
     var packagejson = util.packagejson();
     if (!isoversion || setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0) {
-      console.log('upgrading');
       yield machine.stop();
       yield machine.upgrade();
     }
@@ -113,15 +113,21 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
   error: function () {
     return _error;
   },
+  setError: function (error) {
+    _error = error;
+    this.emit(this.ERROR_EVENT);
+  },
   cancelled: function () {
     return _cancelled;
   },
   retry: function () {
     _error = null;
     _cancelled = false;
-    _retryPromise.resolve();
+    if (_retryPromise) {
+      _retryPromise.resolve();
+    }
   },
-  wait: function () {
+  pause: function () {
     _retryPromise = Promise.defer();
     return _retryPromise.promise;
   },
@@ -141,7 +147,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     if (isoversion && setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0) {
       this.steps().init.seconds = 33;
     } else if (exists && (yield machine.state()) !== 'Error') {
-      this.steps().init.seconds = 13;
+      this.steps().init.seconds = 23;
     }
 
     _requiredSteps = _steps.filter(function (step) {
@@ -196,12 +202,29 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
             _cancelled = true;
             this.emit(this.STEP_EVENT);
           }
-          yield this.wait();
+          yield this.pause();
         }
       }
     }
-    metrics.track('Finished Setup');
     _currentStep = null;
+    return yield machine.info();
+  }),
+  setup: Promise.coroutine(function * () {
+    while (true) {
+      var info = yield this.run();
+      if (!info.url) {
+        metrics.track('Setup Failed', {
+          step: 'done',
+          message: 'Machine URL not set'
+        });
+        bugsnag.notify('SetupError', 'Machine url was not set', machine);
+        SetupStore.setError('Could not reach the Docker Engine inside the VirtualBox VM');
+        yield this.pause();
+      } else {
+        metrics.track('Finished Setup');
+        return info;
+      }
+    }
   })
 });
 

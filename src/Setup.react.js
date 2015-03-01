@@ -6,13 +6,15 @@ var RetinaImage = require('react-retina-image');
 var Header = require('./Header.react');
 var Util = require('./Util');
 var metrics = require('./Metrics');
+var machine = require('./DockerMachine');
 
 var Setup = React.createClass({
   mixins: [ Router.Navigation ],
   getInitialState: function () {
     return {
       progress: 0,
-      name: ''
+      name: '',
+      retrying: false
     };
   },
   componentWillMount: function () {
@@ -28,9 +30,25 @@ var Setup = React.createClass({
     SetupStore.removeListener(SetupStore.STEP_EVENT, this.update);
     SetupStore.removeListener(SetupStore.ERROR_EVENT, this.update);
   },
-  handleRetry: function () {
-    metrics.track('Setup Retried');
+  handleCancelRetry: function () {
+    metrics.track('Setup Retried', {
+      from: 'cancel'
+    });
     SetupStore.retry();
+  },
+  handleErrorRetry: function () {
+    this.setState({
+      retrying: true
+    });
+    metrics.track('Setup Retried', {
+      from: 'error'
+    });
+    machine.stop().finally(() => {
+      this.setState({
+        retrying: false
+      });
+      SetupStore.retry();
+    });
   },
   handleOpenWebsite: function () {
     Util.exec(['open', 'https://www.virtualbox.org/wiki/Downloads']);
@@ -110,21 +128,21 @@ var Setup = React.createClass({
             <h1>We&#39;re Sorry!</h1>
             <p>There seems to have been an unexpected error with Kitematic:</p>
             <p className="error">{this.state.error}<br />{this.state.error.message}</p>
+            <p><button className="btn btn-action" disabled={this.state.retrying} onClick={this.handleErrorRetry}>Retry Setup</button></p>
           </div>
         </div>
       </div>
     );
   },
   render: function () {
-    if (!SetupStore.step()) {
-      return false;
-    }
     if (this.state.cancelled) {
       return this.renderCancelled();
     } else if (this.state.error) {
       return this.renderError();
-    } else {
+    } else if (SetupStore.step()) {
       return this.renderStep();
+    } else {
+      return false;
     }
   }
 });
