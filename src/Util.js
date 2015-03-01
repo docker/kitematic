@@ -9,7 +9,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       exec(args, options, (stderr, stdout, code) => {
         if (code) {
-          reject(stderr);
+          reject(stderr || args.join(' ').replace(this.home(), '') + 'returned non zero exit code');
         }
         resolve(stdout);
       });

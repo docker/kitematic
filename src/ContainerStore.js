@@ -7,17 +7,20 @@ var docker = require('./Docker');
 var metrics = require('./Metrics');
 var registry = require('./Registry');
 var LogStore = require('./LogStore');
+var bugsnag = require('bugsnag-js');
 
 var _placeholders = {};
 var _containers = {};
 var _progress = {};
 var _muted = {};
 var _blocked = {};
+var _error = null;
 
 var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   CLIENT_CONTAINER_EVENT: 'client_container_event',
   SERVER_CONTAINER_EVENT: 'server_container_event',
   SERVER_PROGRESS_EVENT: 'server_progress_event',
+  SERVER_ERROR_EVENT: 'server_error_event',
   _pullImage: function (repository, tag, callback, progressCallback, blockedCallback) {
     registry.layers(repository, tag, (err, layerSizes) => {
 
@@ -35,6 +38,10 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
 
         var totalBytes = layersToDownload.map(function (s) { return s.size; }).reduce(function (pv, sv) { return pv + sv; }, 0);
         docker.client().pull(repository + ':' + tag, (err, stream) => {
+          if (err) {
+            callback(err);
+            return;
+          }
           stream.setEncoding('utf8');
 
           var layerProgress = layersToDownload.reduce(function (r, layer) {
@@ -50,7 +57,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
             var data = JSON.parse(str);
             console.log(data);
 
-            if (data.status === 'Pulling dependent layers') {
+            if (data.status === 'Pulling dependent layers' || data.status.indexOf('already being pulled by another client') !== -1) {
               blockedCallback();
               return;
             }
@@ -153,7 +160,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
       }
     }
   },
-  _resumePulling: function () {
+  _resumePulling: function (callback) {
     var downloading = _.filter(_.values(this.containers()), function (container) {
       return container.State.Downloading;
     });
@@ -163,12 +170,20 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     downloading.forEach(function (container) {
       _progress[container.Name] = 99;
       docker.client().pull(container.Config.Image, function (err, stream) {
+        if (err) {
+          callback(err);
+          return;
+        }
         stream.setEncoding('utf8');
         stream.on('data', function () {});
         stream.on('end', function () {
           delete _placeholders[container.Name];
           localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
-          self._createContainer(container.Name, {Image: container.Config.Image}, function () {
+          self._createContainer(container.Name, {Image: container.Config.Image}, err => {
+            if (err) {
+              callback(err);
+              return;
+            }
             self.emit(self.SERVER_PROGRESS_EVENT, container.Name);
             self.emit(self.CLIENT_CONTAINER_EVENT, container.Name);
           });
@@ -176,13 +191,17 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
       });
     });
   },
-  _startListeningToEvents: function () {
-    docker.client().getEvents(function (err, stream) {
+  _startListeningToEvents: function (callback) {
+    docker.client().getEvents((err, stream) => {
+      if (err) {
+        callback(err);
+        return;
+      }
       if (stream) {
         stream.setEncoding('utf8');
         stream.on('data', this._dockerEvent.bind(this));
       }
-    }.bind(this));
+    });
   },
   _dockerEvent: function (json) {
     var data = JSON.parse(json);
@@ -200,7 +219,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         this.emit(this.SERVER_CONTAINER_EVENT, data.status);
       }
     } else {
-      this.fetchContainer(data.id, function (err) {
+      this.fetchContainer(data.id, err => {
         if (err) {
           return;
         }
@@ -209,13 +228,16 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
           return;
         }
         this.emit(this.SERVER_CONTAINER_EVENT, container ? container.Name : null, data.status);
-      }.bind(this));
+      });
     }
   },
   init: function (callback) {
     // TODO: Load cached data from db on loading
-    this.fetchAllContainers(function (err) {
+    this.fetchAllContainers(err => {
       if (err) {
+        _error = err;
+        this.emit(this.SERVER_ERROR_EVENT, err);
+        bugsnag.notify(err, 'Container Store failed to init', err);
         callback(err);
         return;
       } else {
@@ -227,12 +249,20 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
       }
       this.emit(this.CLIENT_CONTAINER_EVENT);
-      this._resumePulling();
-      this._startListeningToEvents();
-    }.bind(this));
+      this._resumePulling(err => {
+        _error = err;
+        this.emit(this.SERVER_ERROR_EVENT, err);
+        bugsnag.notify(err, 'Container Store failed to resume pulling', err);
+      });
+      this._startListeningToEvents(err => {
+        _error = err;
+        this.emit(this.SERVER_ERROR_EVENT, err);
+        bugsnag.notify(err, 'Container Store failed to listen to events', err);
+      });
+    });
   },
   fetchContainer: function (id, callback) {
-    docker.client().getContainer(id).inspect(function (err, container) {
+    docker.client().getContainer(id).inspect((err, container) => {
       if (err) {
         callback(err);
       } else {
@@ -245,11 +275,10 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         _containers[container.Name] = container;
         callback(null, container);
       }
-    }.bind(this));
+    });
   },
   fetchAllContainers: function (callback) {
-    var self = this;
-    docker.client().listContainers({all: true}, function (err, containers) {
+    docker.client().listContainers({all: true}, (err, containers) => {
       if (err) {
         callback(err);
         return;
@@ -260,8 +289,8 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
           delete _containers[name];
         }
       });
-      async.each(containers, function (container, callback) {
-        self.fetchContainer(container.Id, function (err) {
+      async.each(containers, (container, callback) => {
+        this.fetchContainer(container.Id, function (err) {
           callback(err);
         });
       }, function (err) {
@@ -289,14 +318,28 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
 
     _muted[containerName] = true;
     _progress[containerName] = 0;
-    this._pullImage(repository, tag, () => {
+    this._pullImage(repository, tag, err => {
+      if (err) {
+        _error = err;
+        this.emit(this.SERVER_ERROR_EVENT, err);
+        bugsnag.notify(err, 'Container Store failed to create container', err);
+        return;
+      }
+      _error = null;
       _blocked[containerName] = false;
       if (!_placeholders[containerName]) {
         return;
       }
       delete _placeholders[containerName];
       localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
-      this._createContainer(containerName, {Image: imageName}, () => {
+      this._createContainer(containerName, {Image: imageName}, err => {
+        if (err) {
+          console.log(err);
+          _error = err;
+          this.emit(this.SERVER_ERROR_EVENT, err);
+          return;
+        }
+        _error = null;
         metrics.track('Container Finished Creating');
         delete _progress[containerName];
         _muted[containerName] = false;
@@ -321,10 +364,10 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
       LogStore.rename(name, data.name);
     }
     var fullData = assign(_containers[name], data);
-    this._createContainer(name, fullData, function (err) {
+    this._createContainer(name, fullData, function () {
       _muted[name] = false;
       this.emit(this.CLIENT_CONTAINER_EVENT, name);
-      callback(err);
+      callback();
     }.bind(this));
   },
   rename: function (name, newName, callback) {
@@ -417,6 +460,9 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   },
   blocked: function (name) {
     return !!_blocked[name];
+  },
+  error: function () {
+    return _error;
   }
 });
 

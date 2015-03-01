@@ -6,13 +6,13 @@ var fs = require('fs');
 var path = require('path');
 var docker = require('./Docker');
 var router = require('./Router');
-var machine = require('./DockerMachine');
 var ContainerStore = require('./ContainerStore');
 var SetupStore = require('./SetupStore');
 var metrics = require('./Metrics');
 var template = require('./MenuTemplate');
 var util = require('./Util');
 var Menu = remote.require('menu');
+var bugsnag = require('bugsnag-js');
 
 window.addEventListener('resize', function () {
   fs.writeFileSync(path.join(util.supportDir(), 'size'), JSON.stringify({
@@ -38,7 +38,6 @@ if (process.env.NODE_ENV === 'development') {
   head.appendChild(script);
 }
 
-var bugsnag = require('bugsnag-js');
 bugsnag.apiKey = settingsjson.bugsnag;
 bugsnag.autoNotify = true;
 bugsnag.releaseStage = process.env.NODE_ENV === 'development' ? 'development' : 'production';
@@ -81,18 +80,25 @@ setInterval(function () {
 }, 14400000);
 
 router.run(Handler => React.render(<Handler/>, document.body));
-SetupStore.run().then(machine.info).then(machine => {
+SetupStore.setup().then(machine => {
+  console.log('setup complete');
+  console.log(machine);
   docker.setup(machine.url, machine.name);
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
+  ContainerStore.on(ContainerStore.SERVER_ERROR_EVENT, (err) => {
+    bugsnag.notify(err);
+  });
   ContainerStore.init(function (err) {
     if (err) {
+      console.log(err);
       bugsnag.notify(err);
     }
     router.transitionTo('containers');
   });
 }).catch(err => {
   metrics.track('Setup Failed', {
-    step: SetupStore.step(),
+    step: 'catch',
+    message: err.message
   });
   bugsnag.notify(err);
   console.log(err);

@@ -20,11 +20,13 @@ var Containers = React.createClass({
       containers: ContainerStore.containers(),
       sorted: ContainerStore.sorted(),
       updateAvailable: false,
-      currentButtonLabel: ''
+      currentButtonLabel: '',
+      error: ContainerStore.error()
     };
   },
   componentDidMount: function () {
     this.update();
+    ContainerStore.on(ContainerStore.SERVER_ERROR_EVENT, this.updateError);
     ContainerStore.on(ContainerStore.SERVER_CONTAINER_EVENT, this.update);
     ContainerStore.on(ContainerStore.CLIENT_CONTAINER_EVENT, this.updateFromClient);
 
@@ -51,6 +53,11 @@ var Containers = React.createClass({
     } else {
       this.transitionTo('containers');
     }
+  },
+  updateError: function (err) {
+    this.setState({
+      error: err
+    });
   },
   update: function (name, status) {
     this.setState({
@@ -175,7 +182,7 @@ var Containers = React.createClass({
               <div className="sidebar-buttons-padding"></div>
             </section>
           </div>
-          <Router.RouteHandler container={container}/>
+          <Router.RouteHandler container={container} error={this.state.error}/>
         </div>
       </div>
     );

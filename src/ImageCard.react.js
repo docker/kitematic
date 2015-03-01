@@ -23,10 +23,7 @@ var ImageCard = React.createClass({
   },
   handleClick: function (name) {
     metrics.track('Created Container');
-    ContainerStore.create(name, this.state.chosenTag, function (err) {
-      if (err) {
-        throw err;
-      }
+    ContainerStore.create(name, this.state.chosenTag, function () {
       $(document.body).find('.new-container-item').parent().fadeOut();
     }.bind(this));
   },

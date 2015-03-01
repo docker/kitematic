@@ -28,7 +28,7 @@ var ContainerDetail = React.createClass({
       <div className="details">
         <ContainerDetailsHeader container={this.props.container}/>
         <ContainerDetailsSubheader container={this.props.container} />
-        <Router.RouteHandler container={this.props.container}/>
+        <Router.RouteHandler container={this.props.container} error={this.props.error}/>
       </div>
     );
   }
