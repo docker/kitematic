@@ -398,7 +398,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
       return;
     }
     var container = docker.client().getContainer(name);
-    if (_containers[name].State.Paused) {
+    if (_containers[name] && _containers[name].State.Paused) {
       container.unpause(function (err) {
         if (err) {
           callback(err);
