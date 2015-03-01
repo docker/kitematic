@@ -9,6 +9,7 @@ var setupUtil = require('./SetupUtil');
 var util = require('./Util');
 var assign = require('object-assign');
 var metrics = require('./Metrics');
+var bugsnag = require('bugsnag-js');
 
 var _currentStep = null;
 var _error = null;
@@ -180,13 +181,14 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
           step.percent = 100;
           break;
         } catch (err) {
-          metrics.track('Setup Failed', {
-            step: step.name
-          });
           if (err) {
             console.log('Setup encountered an error.');
             console.log(err);
             console.log(err.stack);
+            metrics.track('Setup Failed', {
+              step: step.name
+            });
+            bugsnag.notify(err);
             _error = err;
             this.emit(this.ERROR_EVENT);
           } else {
