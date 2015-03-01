@@ -74,6 +74,8 @@ document.onkeydown = function (e) {
   }
 };
 
+metrics.track('Started App');
+metrics.track('app heartbeat');
 setInterval(function () {
   metrics.track('app heartbeat');
 }, 14400000);
