@@ -29,7 +29,7 @@ var Setup = React.createClass({
     SetupStore.removeListener(SetupStore.ERROR_EVENT, this.update);
   },
   handleRetry: function () {
-    metrics.track('Retried Setup');
+    metrics.track('Setup Retried');
     SetupStore.retry();
   },
   handleOpenWebsite: function () {

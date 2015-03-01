@@ -197,7 +197,6 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
             this.emit(this.STEP_EVENT);
           }
           yield this.wait();
-          metrics.track('Setup Retried');
         }
       }
     }
