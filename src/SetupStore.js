@@ -212,7 +212,6 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
   setup: Promise.coroutine(function * () {
     while (true) {
       var info = yield this.run();
-      console.log(info);
       if (!info.url) {
         metrics.track('Setup Failed', {
           step: 'done',

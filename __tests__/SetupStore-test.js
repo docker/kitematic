@@ -61,7 +61,9 @@ describe('SetupStore', function () {
 
   describe('init step', function () {
     virtualBox.vmdestroy.mockReturnValue(Promise.resolve());
-    pit('inintializes the boot2docker vm if it does not exist', function () {
+    pit('inintializes the machine vm if it does not exist', function () {
+      util.home.mockReturnValue('home');
+      machine.name.mockReturnValue('name');
       machine.exists.mockReturnValue(Promise.resolve(false));
       machine.create.mockReturnValue(Promise.resolve());
       return setupStore.steps().init.run().then(() => {
