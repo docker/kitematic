@@ -165,7 +165,6 @@ var Containers = React.createClass({
     }
 
     var button;
-    console.log(this.state.downloading);
     if (this.state.downloading) {
       button = (
         <OverlayTrigger placement="bottom" overlay={<Tooltip>Only one container can be downloaded at a time.</Tooltip>}>
