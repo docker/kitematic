@@ -463,6 +463,9 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   },
   error: function () {
     return _error;
+  },
+  downloading: function () {
+    return !!_.keys(_placeholders).length;
   }
 });
 

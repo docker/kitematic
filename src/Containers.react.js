@@ -10,6 +10,8 @@ var metrics = require('./Metrics');
 var autoUpdater = remote.require('auto-updater');
 var RetinaImage = require('react-retina-image');
 var machine = require('./DockerMachine');
+var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
+var Tooltip = require('react-bootstrap').Tooltip;
 var util = require('./Util');
 
 var Containers = React.createClass({
@@ -21,7 +23,8 @@ var Containers = React.createClass({
       sorted: ContainerStore.sorted(),
       updateAvailable: false,
       currentButtonLabel: '',
-      error: ContainerStore.error()
+      error: ContainerStore.error(),
+      downloading: ContainerStore.downloading()
     };
   },
   componentDidMount: function () {
@@ -62,7 +65,8 @@ var Containers = React.createClass({
   update: function (name, status) {
     this.setState({
       containers: ContainerStore.containers(),
-      sorted: ContainerStore.sorted()
+      sorted: ContainerStore.sorted(),
+      downloading: ContainerStore.downloading()
     });
     if (status === 'destroy') {
       this.onDestroy();
@@ -71,7 +75,8 @@ var Containers = React.createClass({
   updateFromClient: function (name, status) {
     this.setState({
       containers: ContainerStore.containers(),
-      sorted: ContainerStore.sorted()
+      sorted: ContainerStore.sorted(),
+      downloading: ContainerStore.downloading()
     });
     if (status === 'create') {
       this.transitionTo('containerHome', {name: name});
@@ -158,6 +163,19 @@ var Containers = React.createClass({
         <a className="btn btn-action small" onClick={this.handleAutoUpdateClick}>New Update</a>
       );
     }
+
+    var button;
+    console.log(this.state.downloading);
+    if (this.state.downloading) {
+      button = (
+        <OverlayTrigger placement="bottom" overlay={<Tooltip>Only one container can be downloaded at a time.</Tooltip>}>
+          <a disabled={true} className="btn-new icon icon-add-3"></a>
+        </OverlayTrigger>
+      );
+    } else {
+      button = <a className="btn-new icon icon-add-3" onClick={this.handleNewContainer}></a>;
+    }
+
     var container = this.getParams().name ? this.state.containers[this.getParams().name] : {};
     return (
       <div className="containers">
@@ -167,11 +185,11 @@ var Containers = React.createClass({
             <section className={sidebarHeaderClass}>
               <h4>Containers</h4>
               <div className="create">
-                <span className="btn-new icon icon-add-3" onClick={this.handleNewContainer}></span>
+                {button}
               </div>
             </section>
             <section className="sidebar-containers" onScroll={this.handleScroll}>
-              <ContainerList containers={this.state.sorted} newContainer={this.state.newContainer} />
+              <ContainerList downloading={this.state.downloading} containers={this.state.sorted} newContainer={this.state.newContainer} />
               <div className="sidebar-buttons">
                 <div className="btn-label">{this.state.currentButtonLabel}</div>
                 <span className="btn-sidebar" onClick={this.handleClickDockerTerminal} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><RetinaImage src="docker-terminal.png"/></span>

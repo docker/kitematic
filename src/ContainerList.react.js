@@ -13,9 +13,15 @@ var ContainerList = React.createClass({
         <ContainerListItem key={container.Id} container={container} start={self._start}/>
       );
     });
+    var newItem;
+    if (!this.props.downloading) {
+      newItem = <ContainerListNewItem key={'newcontainer'} containers={this.props.containers} />;
+    } else {
+      newItem = '';
+    }
     return (
       <ul>
-        <ContainerListNewItem key={'newcontainer'} containers={this.props.containers} />
+        {newItem}
         {containers}
       </ul>
     );
