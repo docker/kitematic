@@ -57,7 +57,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
             var data = JSON.parse(str);
             console.log(data);
 
-            if (data.status === 'Pulling dependent layers' || data.status.indexOf('already being pulled by another client') !== -1) {
+            if (data.status && (data.status === 'Pulling dependent layers' || data.status.indexOf('already being pulled by another client') !== -1)) {
               blockedCallback();
               return;
             }
