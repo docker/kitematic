@@ -85,11 +85,16 @@ SetupStore.run().then(machine.info).then(machine => {
   docker.setup(machine.url, machine.name);
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   ContainerStore.init(function (err) {
-    if (err) { console.log(err); }
+    if (err) {
+      bugsnag.notify(err);
+    }
     router.transitionTo('containers');
   });
 }).catch(err => {
+  metrics.track('Setup Failed', {
+    step: SetupStore.step(),
+  });
+  bugsnag.notify(err);
   console.log(err);
   console.log(err.stack);
-  bugsnag.notify(err);
 });

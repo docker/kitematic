@@ -192,10 +192,12 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
             _error = err;
             this.emit(this.ERROR_EVENT);
           } else {
+            metrics.track('Setup Cancelled');
             _cancelled = true;
             this.emit(this.STEP_EVENT);
           }
           yield this.wait();
+          metrics.track('Setup Retried');
         }
       }
     }
