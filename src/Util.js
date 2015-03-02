@@ -9,9 +9,15 @@ module.exports = {
     return new Promise((resolve, reject) => {
       exec(args, options, (stderr, stdout, code) => {
         if (code) {
-          reject(stderr || args.join(' ').replace(this.home(), '') + 'returned non zero exit code');
+          var cmd = Array.isArray(args) ? args.join(' ') : args;
+          reject({
+            message: cmd.replace(this.home(), '') + 'returned non zero exit code',
+            stderr: stderr,
+            stdout: stdout
+          });
+        } else {
+          resolve(stdout);
         }
-        resolve(stdout);
       });
     });
   },

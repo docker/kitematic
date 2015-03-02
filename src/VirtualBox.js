@@ -20,14 +20,14 @@ var VirtualBox = {
       }).catch(reject);
     });
   },
-  saveall: function () {
+  poweroffall: function () {
     if (!this.installed()) {
       return Promise.reject('VirtualBox not installed.');
     }
-    return util.exec(this.command() + ' list runningvms | sed -E \'s/.*\\{(.*)\\}/\\1/\' | xargs -L1 -I {} ' + this.command() + ' controlvm {} savestate');
+    return util.exec(this.command() + ' list runningvms | sed -E \'s/.*\\{(.*)\\}/\\1/\' | xargs -L1 -I {} ' + this.command() + ' controlvm {} poweroff');
   },
   killall: function () {
-    return this.saveall().then(() => {
+    return this.poweroffall().then(() => {
       return util.exec(['pkill', 'VirtualBox']);
     }).then(() => {
       return util.exec(['pkill', 'VBox']);

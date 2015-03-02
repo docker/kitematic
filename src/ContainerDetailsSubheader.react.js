@@ -66,7 +66,9 @@ var ContainerDetailsSubheader = React.createClass({
   },
   showHome: function () {
     if (!this.disableTab()) {
-      metrics.track('Viewed Home');
+      metrics.track('Viewed Home', {
+        from: 'header'
+      });
       this.transitionTo('containerHome', {name: this.getParams().name});
     }
   },

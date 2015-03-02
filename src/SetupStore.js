@@ -49,6 +49,7 @@ var _steps = [{
     }
     try {
       progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
+      console.log(setupUtil.macSudoCmd(cmd));
       yield util.exec(setupUtil.macSudoCmd(cmd));
     } catch (err) {
       throw null;
@@ -139,9 +140,10 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var isoversion = machine.isoversion();
     var required = {};
     var vboxfile = path.join(util.supportDir(), packagejson['virtualbox-filename']);
-    required.download = !virtualBox.installed() && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== packagejson['virtualbox-checksum']);
-    required.install = !virtualBox.installed() || setupUtil.needsBinaryFix();
-    required.init = !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0;
+    var vboxNeedsInstall = !virtualBox.installed();
+    required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== packagejson['virtualbox-checksum']);
+    required.install = vboxNeedsInstall || setupUtil.needsBinaryFix();
+    required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0;
 
     var exists = yield machine.exists();
     if (isoversion && setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0) {
@@ -165,7 +167,9 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     return Promise.resolve();
   },
   run: Promise.coroutine(function* () {
-    metrics.track('Started Setup');
+    metrics.track('Started Setup', {
+      virtualbox: virtualBox.installed() ? yield virtualBox.version() : 'Not Installed'
+    });
     yield this.updateBinaries();
     var steps = yield this.requiredSteps();
     for (let step of steps) {
@@ -181,7 +185,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
               this.emit(this.PROGRESS_EVENT);
             }
           });
-          metrics.track('Completed Step', {
+          metrics.track('Setup Completed Step', {
             name: step.name
           });
           step.percent = 100;
@@ -217,11 +221,11 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
           step: 'done',
           message: 'Machine URL not set'
         });
-        bugsnag.notify('SetupError', 'Machine url was not set', machine);
+        bugsnag.notify('SetupError', 'Machine url was not set', info);
         SetupStore.setError('Could not reach the Docker Engine inside the VirtualBox VM');
         yield this.pause();
       } else {
-        metrics.track('Finished Setup');
+        metrics.track('Setup Finished');
         return info;
       }
     }
