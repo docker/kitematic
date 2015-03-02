@@ -145,7 +145,7 @@ var NewContainer = React.createClass({
             </div>
             <div className="search">
               <div className="search-bar">
-                <input type="search" ref="searchInput" className="form-control" placeholder="Find an image from Docker Hub" onChange={this.handleChange}/>
+                <input type="search" ref="searchInput" className="form-control" placeholder="Search Docker Hub for an image" onChange={this.handleChange}/>
                 <div className={magnifierClasses}></div>
                 <RetinaImage className={loadingClasses} src="loading.png"/>
               </div>
