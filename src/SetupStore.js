@@ -57,7 +57,7 @@ var _steps = [{
 }, {
   name: 'init',
   title: 'Starting Docker VM',
-  message: 'To run Docker containers on your computer, Kitematic is starting a Linux virutal machine. This may take a minute...',
+  message: 'To run Docker containers on your computer, Kitematic is starting a Linux virtual machine. This may take a minute...',
   totalPercent: 60,
   percent: 0,
   seconds: 53,
