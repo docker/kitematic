@@ -49,7 +49,6 @@ var _steps = [{
     }
     try {
       progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
-      console.log(setupUtil.macSudoCmd(cmd));
       yield util.exec(setupUtil.macSudoCmd(cmd));
     } catch (err) {
       throw null;
