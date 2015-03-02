@@ -91,7 +91,9 @@ SetupStore.setup().then(machine => {
   ContainerStore.init(function (err) {
     if (err) {
       console.log(err);
-      bugsnag.notify(err);
+      bugsnag.notify('ContainerStoreError', 'Could not init containerstore', {
+        error: err
+      });
     }
     router.transitionTo('containers');
   });
@@ -100,7 +102,10 @@ SetupStore.setup().then(machine => {
     step: 'catch',
     message: err.message
   });
-  bugsnag.notify(err);
+  bugsnag.notify('SetupError', 'Setup threw an exception', {
+    step: 'catch',
+    error: err
+  });
   console.log(err);
   console.log(err.stack);
 });

@@ -197,7 +197,12 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
             metrics.track('Setup Failed', {
               step: step.name
             });
-            bugsnag.notify(err);
+            var virtualboxVersion = virtualBox.installed() ? yield virtualBox.version() : 'Not installed';
+            bugsnag.notify('SetupError', 'Setup failed', {
+              error: err,
+              step: step.name,
+              virtualbox: virtualboxVersion
+            });
             _error = err;
             this.emit(this.ERROR_EVENT);
           } else {
@@ -220,7 +225,12 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
           step: 'done',
           message: 'Machine URL not set'
         });
-        bugsnag.notify('SetupError', 'Machine url was not set', info);
+        var virtualboxVersion = virtualBox.installed() ? yield virtualBox.version() : 'Not installed';
+        bugsnag.notify('SetupError', 'Machine url was not set', {
+          machine: info,
+          step: 'done',
+          virtualbox: virtualboxVersion
+        });
         SetupStore.setError('Could not reach the Docker Engine inside the VirtualBox VM');
         yield this.pause();
       } else {
