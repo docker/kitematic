@@ -141,7 +141,7 @@ var NewContainer = React.createClass({
         <div className="new-container">
           <div className="new-container-header">
             <div className="text">
-              Select an image to create a new container.
+              Select a Docker image to create a new container.
             </div>
             <div className="search">
               <div className="search-bar">
