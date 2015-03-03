@@ -97,8 +97,7 @@ var ContainerDetailsSubheader = React.createClass({
   handleRestart: function () {
     if (!this.disableRestart()) {
       metrics.track('Restarted Container');
-      ContainerStore.restart(this.props.container.Name, function (err) {
-        console.log(err);
+      ContainerStore.restart(this.props.container.Name, function () {
       });
     }
   },

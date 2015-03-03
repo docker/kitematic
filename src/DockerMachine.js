@@ -79,7 +79,7 @@ var DockerMachine = {
     return util.exec([DockerMachine.command(), 'rm', '-f', NAME]);
   },
   ip: function () {
-    return util.exec([DockerMachine.command(), 'ip']).then(stdout => {
+    return util.exec([DockerMachine.command(), 'ip', NAME]).then(stdout => {
       return Promise.resolve(stdout.trim().replace('\n', ''));
     });
   },
