@@ -41,7 +41,9 @@ rm -rf ~/Library/Application\ Support/Kitematic
 
 Have a bug or a feature request? Please first read the [Issue Guidelines](https://github.com/kitematic/kitematic/blob/master/CONTRIBUTING.md#using-the-issue-tracker) and search for existing and closed issues. If your problem or idea is not addressed yet, [please open a new issue](https://github.com/kitematic/kitematic/issues/new).
 
-## Contributing
+## Roadmap & Contributing
+
+We will be accepting pull requests that help with our [roadmap](ROADMAP.md).
 
 Please read through our [Contributing Guidelines](https://github.com/kitematic/kitematic/blob/master/CONTRIBUTING.md). Included are directions for opening issues, coding standards, and notes on development.
 
@@ -54,4 +56,4 @@ Keep track of development and community news.
 
 ## Copyright and License
 
-Code released under the [AGPL license](LICENSE).
+Code released under the [Apache license](LICENSE).
