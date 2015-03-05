@@ -184,4 +184,4 @@ standards. Add any exceptions to global variables at the bottom of the
 
 ## License
 
-By contributing your code, you agree to license your contribution under the [AGPL license](https://github.com/kitematic/kitematic/blob/master/LICENSE).
+By contributing your code, you agree to license your contribution under the [Apache license](https://github.com/kitematic/kitematic/blob/master/LICENSE).
