@@ -83,20 +83,12 @@ setInterval(function () {
 }, 14400000);
 
 router.run(Handler => React.render(<Handler/>, document.body));
-SetupStore.setup().then(ip => {
-  docker.setup(ip, machine.name());
+SetupStore.setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   ContainerStore.on(ContainerStore.SERVER_ERROR_EVENT, (err) => {
     bugsnag.notify(err);
   });
-  ContainerStore.init(function (err) {
-    if (err) {
-      console.log(err);
-      bugsnag.notify('ContainerStoreError', 'Could not init containerstore', {
-        error: err,
-        machine: machine
-      });
-    }
+  ContainerStore.init(function () {
     router.transitionTo('containers');
   });
 }).catch(err => {

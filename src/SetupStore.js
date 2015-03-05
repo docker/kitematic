@@ -11,6 +11,7 @@ var assign = require('object-assign');
 var metrics = require('./Metrics');
 var bugsnag = require('bugsnag-js');
 var rimraf = require('rimraf');
+var docker = require('./Docker');
 
 var _currentStep = null;
 var _error = null;
@@ -118,12 +119,26 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
   cancelled: function () {
     return _cancelled;
   },
-  retry: function () {
+  retry: function (remove) {
     _error = null;
     _cancelled = false;
-    if (_retryPromise) {
-      _retryPromise.resolve();
+    if (!_retryPromise) {
+      return;
     }
+    this.emit(this.ERROR_EVENT);
+    if (remove) {
+      machine.rm().finally(() => {
+        _retryPromise.resolve();
+      });
+    } else {
+      machine.stop().finally(() => {
+        _retryPromise.resolve();
+      });
+    }
+  },
+  setError: function (error) {
+    _error = error;
+    this.emit(this.ERROR_EVENT);
   },
   pause: function () {
     _retryPromise = Promise.defer();
@@ -207,6 +222,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
   setup: Promise.coroutine(function * () {
     while (true) {
       try {
+        console.log('Starting Steps');
         var ip = yield this.run();
         if (!ip || !ip.length) {
           throw {
@@ -214,10 +230,13 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
             machine: yield machine.info(),
             ip: ip,
           };
-        } else {
-          metrics.track('Setup Finished');
-          return ip;
         }
+        console.log('Finished Steps');
+        console.log(ip);
+        docker.setup(ip, machine.name());
+        yield docker.waitForConnection();
+        metrics.track('Setup Finished');
+        break;
       } catch (err) {
         metrics.track('Setup Failed', {
           step: _currentStep
@@ -227,7 +246,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
           error: err,
           step: _currentStep,
           virtualbox: virtualboxVersion
-        });
+        }, 'info');
         _error = err;
         this.emit(this.ERROR_EVENT);
         yield this.pause();
