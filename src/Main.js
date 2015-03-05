@@ -53,9 +53,7 @@ bugsnag.beforeNotify = function(payload) {
   payload.context = payload.context.replace(/%20/g, ' ').replace(re, '<redacted codedir>');
   payload.file = payload.file.replace(/%20/g, ' ').replace(re, '<redacted codedir>');
   payload.url = '<redacted url>';
-  console.log(payload);
 };
-bugsnag.notify('test');
 
 document.onkeydown = function (e) {
   e = e || window.event;
