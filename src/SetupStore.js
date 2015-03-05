@@ -219,19 +219,21 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
       }
     }
     _currentStep = null;
-    return yield machine.info();
+    return yield machine.ip();
   }),
   setup: Promise.coroutine(function * () {
     while (true) {
-      var info = yield this.run();
-      if (!info.url) {
+      var ip = yield this.run();
+      ip = null;
+      if (!ip || !ip.length) {
         metrics.track('Setup Failed', {
           step: 'done',
-          message: 'Machine URL not set'
+          message: 'Machine IP not set'
         });
         var virtualboxVersion = virtualBox.installed() ? yield virtualBox.version() : 'Not installed';
-        bugsnag.notify('SetupError', 'Machine url was not set', {
-          machine: info,
+        bugsnag.notify('SetupError', 'Machine ip was not set', {
+          machine: yield machine.info(),
+          ip: ip,
           step: 'done',
           virtualbox: virtualboxVersion
         });
@@ -239,7 +241,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
         yield this.pause();
       } else {
         metrics.track('Setup Finished');
-        return info;
+        return ip;
       }
     }
   })
