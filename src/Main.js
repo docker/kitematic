@@ -38,22 +38,24 @@ if (process.env.NODE_ENV === 'development') {
   head.appendChild(script);
 }
 
-bugsnag.apiKey = settingsjson.bugsnag;
-bugsnag.autoNotify = true;
-bugsnag.releaseStage = process.env.NODE_ENV === 'development' ? 'development' : 'production';
-bugsnag.notifyReleaseStages = ['production'];
-bugsnag.appVersion = app.getVersion();
-bugsnag.metaData = {
-  beta: !!settingsjson.beta
-};
+if (settingsjson.bugsnag) {
+  bugsnag.apiKey = settingsjson.bugsnag;
+  bugsnag.autoNotify = true;
+  bugsnag.releaseStage = process.env.NODE_ENV === 'development' ? 'development' : 'production';
+  bugsnag.notifyReleaseStages = ['production'];
+  bugsnag.appVersion = app.getVersion();
+  bugsnag.metaData = {
+    beta: !!settingsjson.beta
+  };
 
-bugsnag.beforeNotify = function(payload) {
-  var re = new RegExp(util.home().replace(/\s+/g, '\\s+'), 'g');
-  payload.stacktrace = payload.stacktrace.replace(/%20/g, ' ').replace(re, '<redacted homedir>');
-  payload.context = payload.context.replace(/%20/g, ' ').replace(re, '<redacted homedir>');
-  payload.file = payload.file.replace(/%20/g, ' ').replace(re, '<redacted homedir>');
-  payload.url = '<redacted url>';
-};
+  bugsnag.beforeNotify = function(payload) {
+    var re = new RegExp(util.home().replace(/\s+/g, '\\s+'), 'g');
+    payload.stacktrace = payload.stacktrace.replace(/%20/g, ' ').replace(re, '<redacted homedir>');
+    payload.context = payload.context.replace(/%20/g, ' ').replace(re, '<redacted homedir>');
+    payload.file = payload.file.replace(/%20/g, ' ').replace(re, '<redacted homedir>');
+    payload.url = '<redacted url>';
+  };
+}
 
 document.onkeydown = function (e) {
   e = e || window.event;
