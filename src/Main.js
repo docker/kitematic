@@ -49,9 +49,9 @@ bugsnag.metaData = {
 
 bugsnag.beforeNotify = function(payload) {
   var re = new RegExp(util.home().replace(/\s+/g, '\\s+'), 'g');
-  payload.stacktrace = payload.stacktrace.replace(/%20/g, ' ').replace(re, '<redacted codedir>');
-  payload.context = payload.context.replace(/%20/g, ' ').replace(re, '<redacted codedir>');
-  payload.file = payload.file.replace(/%20/g, ' ').replace(re, '<redacted codedir>');
+  payload.stacktrace = payload.stacktrace.replace(/%20/g, ' ').replace(re, '<redacted homedir>');
+  payload.context = payload.context.replace(/%20/g, ' ').replace(re, '<redacted homedir>');
+  payload.file = payload.file.replace(/%20/g, ' ').replace(re, '<redacted homedir>');
   payload.url = '<redacted url>';
 };
 
