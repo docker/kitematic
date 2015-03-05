@@ -115,10 +115,6 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
   error: function () {
     return _error;
   },
-  setError: function (error) {
-    _error = error;
-    this.emit(this.ERROR_EVENT);
-  },
   cancelled: function () {
     return _cancelled;
   },
@@ -195,20 +191,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
           break;
         } catch (err) {
           if (err) {
-            console.log('Setup encountered an error.');
-            console.log(err);
-            console.log(err.stack);
-            metrics.track('Setup Failed', {
-              step: step.name
-            });
-            var virtualboxVersion = virtualBox.installed() ? yield virtualBox.version() : 'Not installed';
-            bugsnag.notify('SetupError', 'Setup failed', {
-              error: err,
-              step: step.name,
-              virtualbox: virtualboxVersion
-            });
-            _error = err;
-            this.emit(this.ERROR_EVENT);
+            throw err;
           } else {
             metrics.track('Setup Cancelled');
             _cancelled = true;
@@ -223,24 +206,31 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
   }),
   setup: Promise.coroutine(function * () {
     while (true) {
-      var ip = yield this.run();
-      if (!ip || !ip.length) {
+      try {
+        var ip = yield this.run();
+        if (!ip || !ip.length) {
+          throw {
+            message: 'Machine IP could not be fetched. Please retry the setup. If this fails please file a ticket on our GitHub repo.',
+            machine: yield machine.info(),
+            ip: ip,
+          };
+        } else {
+          metrics.track('Setup Finished');
+          return ip;
+        }
+      } catch (err) {
         metrics.track('Setup Failed', {
-          step: 'done',
-          message: 'Machine IP not set'
+          step: _currentStep
         });
         var virtualboxVersion = virtualBox.installed() ? yield virtualBox.version() : 'Not installed';
-        bugsnag.notify('SetupError', 'Machine ip was not set', {
-          machine: yield machine.info(),
-          ip: ip,
-          step: 'done',
+        bugsnag.notify('SetupError', 'Setup failed', {
+          error: err,
+          step: _currentStep,
           virtualbox: virtualboxVersion
         });
-        SetupStore.setError('Could not reach the Docker Engine inside the VirtualBox VM');
+        _error = err;
+        this.emit(this.ERROR_EVENT);
         yield this.pause();
-      } else {
-        metrics.track('Setup Finished');
-        return ip;
       }
     }
   })

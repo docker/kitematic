@@ -108,6 +108,4 @@ SetupStore.setup().then(ip => {
     step: 'catch',
     error: err
   });
-  console.log(err);
-  console.log(err.stack);
 });

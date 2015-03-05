@@ -12,7 +12,8 @@ var SetupUtil = {
     if (!fs.existsSync('/usr/local') || !fs.existsSync('/usr/local/bin')) {
       return true;
     }
-    if (!fs.existsSync('/usr/local/bin/docker') && !fs.existsSync('/usr/local/bin/docker-machine')) {
+
+    if (!fs.existsSync('/usr/local/bin/docker') || !fs.existsSync('/usr/local/bin/docker-machine')) {
       return fs.statSync('/usr/local/bin').gid !== 80 || fs.statSync('/usr/local/bin').uid !== process.getuid();
     }
 
