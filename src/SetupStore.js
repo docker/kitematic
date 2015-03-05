@@ -224,7 +224,6 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
   setup: Promise.coroutine(function * () {
     while (true) {
       var ip = yield this.run();
-      ip = null;
       if (!ip || !ip.length) {
         metrics.track('Setup Failed', {
           step: 'done',
