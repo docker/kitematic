@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var dockerode = require('dockerode');
+var Promise = require('bluebird');
 
 var Docker = {
   _host: null,
@@ -25,7 +26,34 @@ var Docker = {
   },
   host: function () {
     return this._host;
-  }
+  },
+  waitForConnection: Promise.coroutine(function * (tries, delay) {
+    tries = tries || 5;
+    delay = delay || 1000;
+    var tryCount = 1;
+    while (true) {
+      console.log('Connecting: ' + tryCount + ' tries...');
+      try {
+        yield new Promise((resolve, reject) => {
+          this._client.listContainers((err) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          });
+        });
+        break;
+      } catch (err) {
+        tryCount += 1;
+        yield Promise.delay(delay);
+        if (tryCount > tries) {
+          throw new Error(err);
+        }
+        continue;
+      }
+    }
+  }),
 };
 
 module.exports = Docker;

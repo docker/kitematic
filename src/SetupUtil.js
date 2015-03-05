@@ -17,11 +17,11 @@ var SetupUtil = {
       return fs.statSync('/usr/local/bin').gid !== 80 || fs.statSync('/usr/local/bin').uid !== process.getuid();
     }
 
-    if (fs.existsSync('/usr/local/bin/docker') && (fs.statSync('/usr/local/bin/docker').gid !== 80 || fs.statSync('/usr/local/bin/docker').uid !== process.getuid())) {
+    if (fs.statSync('/usr/local/bin/docker').gid !== 80 || fs.statSync('/usr/local/bin/docker').uid !== process.getuid()) {
       return true;
     }
 
-    if (fs.existsSync('/usr/local/bin/docker-machine') && (fs.statSync('/usr/local/bin/docker-machine').gid !== 80 || fs.statSync('/usr/local/bin/docker-machine').uid !== process.getuid())) {
+    if (fs.statSync('/usr/local/bin/docker-machine').gid !== 80 || fs.statSync('/usr/local/bin/docker-machine').uid !== process.getuid()) {
       return true;
     }
     return false;

@@ -6,7 +6,6 @@ var RetinaImage = require('react-retina-image');
 var Header = require('./Header.react');
 var Util = require('./Util');
 var metrics = require('./Metrics');
-var machine = require('./DockerMachine');
 
 var Setup = React.createClass({
   mixins: [ Router.Navigation ],
@@ -14,7 +13,6 @@ var Setup = React.createClass({
     return {
       progress: 0,
       name: '',
-      retrying: false
     };
   },
   componentWillMount: function () {
@@ -37,18 +35,18 @@ var Setup = React.createClass({
     SetupStore.retry();
   },
   handleErrorRetry: function () {
-    this.setState({
-      retrying: true
-    });
     metrics.track('Setup Retried', {
-      from: 'error'
+      from: 'error',
+      removeVM: false
     });
-    machine.stop().finally(() => {
-      this.setState({
-        retrying: false
-      });
-      SetupStore.retry();
+    SetupStore.retry(false);
+  },
+  handleErrorRemoveRetry: function () {
+    metrics.track('Setup Retried', {
+      from: 'error',
+      removeVM: true
     });
+    SetupStore.retry(true);
   },
   handleOpenWebsite: function () {
     Util.exec(['open', 'https://www.virtualbox.org/wiki/Downloads']);
@@ -128,7 +126,7 @@ var Setup = React.createClass({
             <h1>We&#39;re Sorry!</h1>
             <p>There seems to have been an unexpected error with Kitematic:</p>
             <p className="error">{this.state.error.message || this.state.error}</p>
-            <p><button className="btn btn-action" disabled={this.state.retrying} onClick={this.handleErrorRetry}>Retry Setup</button></p>
+            <p><button className="btn btn-action" onClick={this.handleErrorRetry}>Retry Setup</button> <button className="btn btn-action" onClick={this.handleErrorRemoveRetry}>Delete VM and Retry Setup</button></p>
           </div>
         </div>
       </div>

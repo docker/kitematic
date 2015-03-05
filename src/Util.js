@@ -11,7 +11,7 @@ module.exports = {
         if (code) {
           var cmd = Array.isArray(args) ? args.join(' ') : args;
           reject({
-            message: cmd.replace(this.home(), '') + ' returned non zero exit code',
+            message: cmd + ' returned non zero exit code',
             stderr: stderr,
             stdout: stdout
           });
