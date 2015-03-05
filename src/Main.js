@@ -48,12 +48,14 @@ bugsnag.metaData = {
 };
 
 bugsnag.beforeNotify = function(payload) {
-  var re = new RegExp(process.cwd().replace(/\s+/g, '\\s+').replace(/\(/g,'\\(').replace(/\)/g,'\\)').replace(/\//g, '\\/'), 'g');
+  var re = new RegExp(util.home().replace(/\s+/g, '\\s+'), 'g');
   payload.stacktrace = payload.stacktrace.replace(/%20/g, ' ').replace(re, '<redacted codedir>');
   payload.context = payload.context.replace(/%20/g, ' ').replace(re, '<redacted codedir>');
   payload.file = payload.file.replace(/%20/g, ' ').replace(re, '<redacted codedir>');
   payload.url = '<redacted url>';
+  console.log(payload);
 };
+bugsnag.notify('test');
 
 document.onkeydown = function (e) {
   e = e || window.event;
@@ -81,8 +83,6 @@ setInterval(function () {
 
 router.run(Handler => React.render(<Handler/>, document.body));
 SetupStore.setup().then(machine => {
-  console.log('setup complete');
-  console.log(machine);
   docker.setup(machine.url, machine.name);
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   ContainerStore.on(ContainerStore.SERVER_ERROR_EVENT, (err) => {
@@ -92,7 +92,8 @@ SetupStore.setup().then(machine => {
     if (err) {
       console.log(err);
       bugsnag.notify('ContainerStoreError', 'Could not init containerstore', {
-        error: err
+        error: err,
+        machine: machine
       });
     }
     router.transitionTo('containers');

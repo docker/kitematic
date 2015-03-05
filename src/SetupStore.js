@@ -74,6 +74,8 @@ var _steps = [{
         yield machine.create();
       }
       return;
+    } else if (exists && (yield machine.state()) === 'Saved') {
+      yield virtualBox.wake(machine.name());
     }
 
     var isoversion = machine.isoversion();
@@ -147,6 +149,8 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var exists = yield machine.exists();
     if (isoversion && setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0) {
       this.steps().init.seconds = 33;
+    } else if (exists && (yield machine.state()) === 'Saved') {
+      this.steps().init.seconds = 8;
     } else if (exists && (yield machine.state()) !== 'Error') {
       this.steps().init.seconds = 23;
     }

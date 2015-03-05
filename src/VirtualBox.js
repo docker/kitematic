@@ -35,6 +35,12 @@ var VirtualBox = {
 
     });
   },
+  wake: function (name) {
+    return util.exec([this.command(), 'startvm', name, '--type', 'headless']);
+  },
+  poweroff: function (name) {
+    return util.exec([this.command(), 'controlvm', name, 'poweroff']);
+  },
   vmstate: function (name) {
     return new Promise((resolve, reject) => {
       util.exec([this.command(), 'showvminfo', name, '--machinereadable']).then(stdout => {
