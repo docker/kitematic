@@ -1,50 +1,32 @@
 # Contributing to Kitematic
 
-Thanks for contributing and supporting the Kitematic project.
+Thanks for contributing and supporting the Kitematic project!
 
-Before you file a bug or pull request, please take a comment to read the
-following guidelines for more details on how to file a bug report or submit a
-pull request to help make the contribution process awesome for
-everyone working on this project.
-
-Following these guidelines helps to communicate that you respect the time of
-the developers managing and developing this open source project. In return,
-they should reciprocate that respect in addressing your issue or assessing
-patches and features.
-
+Before you fil an issue or a pull request, quickly read of the following tips on how to keep development of the project awesome for all of the contributors:
 
 ## Table of Contents
 
- - [Using the Issue Tracker](#using-the-issue-tracker)
+ - [Using the Issue Tracker](#using-github-issues)
  - [Bugs Reports](#bug-reports)
  - [Feature Requests](#feature-requests)
  - [Submitting Pull Requests](#submitting-pull-requests)
  - [Code Guidelines](#code-guidelines)
+ - [Testing](#testing)
  - [License](#license)
 
+## Using GitHub Issues
 
-## Using the Issue Tracker
-
-The [Issue Tracker](https://github.com/kitematic/kitematic/issues) is
-the preferred channel for [Bug Reports](#bug-reports), [Features Requests](#feature-requests)
-and [Submitting Pull Requests](#submitting-pull-requests), but please respect the following
-restrictions:
+Please limit GitHub issues to Bugs and Feature suggestions:
 
 ## Bug Reports
 
-A bug is a _demonstrable problem_ that is caused by the code in the repository.
-Good bug reports are extremely helpful, so thanks!
+A bug is a reproducable and caused by the code in the repository. For bug reports:
 
-Guidelines for bug reports:
+1. **Search the existing issues** to see if an issue already exists (and if so, throw in a handy :+1:)!
 
-1. **Use the GitHub issue search** &mdash; check if the issue has already been
-	reported.
+2. **Make sure you're running the latest version of Kitematic**. The bug may already be fixed!
 
-2. **Check if the issue has been fixed** &mdash; try to reproduce it using the
-	latest `master` or development branch in the repository.
-
-3. **More details are encouraged** &mdash; please give more details on the steps
-	to reproduce the bug and attach a screenshot of the bug if possible.
+3. **Explain how to reproduce the bug**. This will save maintainers tons of time!
 
 A good bug report shouldn't leave others needing to chase you up for more
 information. Please try to be as detailed as possible in your report. What is
@@ -71,32 +53,18 @@ Example:
 > causing the bug, and potential solutions (and your opinions on their
 > merits).
 
-
-
 ## Feature Requests
 
-Feature requests are welcome. But take a moment to find out whether your idea
-fits with the scope and aims of the project. A roadmap of the project is kept
-on the [Kitematic Roadmap](https://trello.com/b/G5Aw0Rqc/kitematic-roadmap) Trello board.
-It's up to *you* to make a strong case to convince the project's developers of
-the merits of this feature. Please provide as much detail and context as possible.
-
-
+Feature requests are most certainly welcome (and often exciting / interesting!). Please make sure your idea is within the scope and direction of the project outlined by our [Roadmap](https://github.com/kitematic/kitematic/blob/master/ROADMAP.md).
 
 ## Submitting Pull Requests
 
-Good pull requests—patches, improvements, new features—are a fantastic
-help. They should remain focused in scope and avoid containing unrelated
-commits.
+We're thrilled to receive pull requests of any kind. Anything from bug fix, tests or new features are welcome. That said, Kitematic is a highly-visual product.
 
-**Please ask first** before embarking on any significant pull request (e.g.
-implementing features, refactoring code, porting to a different language),
-otherwise you risk spending a lot of time working on something that the
-project's developers might not want to merge into the project.
+**Please ask first** before starting your journey on any significant pull request (refactoring, new or large features). It never hurts to open a pull request proposing what you'd like to build. This will just help anyone who's currently well-versed in the project by letting them know, and in return you'll get some awesome advice on how to build the new feature.
 
 Please adhere to the [Code Guidelines](#code-guidelines) used throughout the
-project (indentation, accurate comments, etc.) and any other requirements
-(such as test coverage).
+project (indentation, accurate comments, etc.).
 
 Adhering to the following process is the best way to get your work
 included in the project:
@@ -154,33 +122,26 @@ included in the project:
 
 ### Javascript
 
-- Semicolons (in client-side JS)
+Kitematic uses the babel es6 polyfill for features such as fat arrows, and runs in io.js which supports great features such as generators. Please make use of es6 features! They are powerful and make the code more succinct, understandable and fun.
+
+- Semicolons
 - 2 spaces (no tabs)
-- strict mode
-- "Attractive"
 
 #### Checking Javascript code standards with JSHint
 
-Run `sh jshint.sh` before committing to ensure your changes follow our coding
-standards. Add any exceptions to global variables at the bottom of the
-*.jshintrc* file.
+Run `npm run lint` before committing to ensure your javascript is up to standard. Feel free to suggest changes to the lint spec in `.jshint`.
 
-### HTML
+### React
 
-[Adhere to the Code Guide.](http://codeguide.co/#html)
+- Use tags and elements appropriate for React / an HTML5 doctype (e.g., self-closing tags)
+- Try to avoid using JQuery or manually changing the DOM. Use React instead.
+- Try to build self-contained components that listen and emit events. This is definitely nowhere near perfect yet for the existing codebase.
 
-- Use tags and elements appropriate for an HTML5 doctype (e.g., self-closing tags).
-- Use CDNs and HTTPS for third-party JS when possible. We don't use protocol-relative URLs in this case because they break when viewing the page locally via `file://`.
-- Use [WAI-ARIA](https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA) attributes in documentation examples to promote accessibility.
+## Testing
 
-### CSS/LESS
-
-[Adhere to the Code Guide.](http://codeguide.co/#css)
-
-- When feasible, default color palettes should comply with [WCAG color contrast guidelines](http://www.w3.org/TR/WCAG20/#visual-audio-contrast).
-- Except in rare cases, don't remove default `:focus` styles (via e.g. `outline: none;`) without providing alternative styles. See [this A11Y Project post](http://a11yproject.com/posts/never-remove-css-outlines/) for more details.
-
-
+While the project is early, please try to test any new code.
+- Tests can be run using `npm test`
+- Kitematic uses the [Jest framework](https://facebook.github.io/jest/) by Facebook. To keep tests fast, please mock as much as possible.
 
 ## License
 
