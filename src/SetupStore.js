@@ -208,7 +208,6 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     while (true) {
       try {
         var ip = yield this.run();
-        ip = null;
         if (!ip || !ip.length) {
           throw {
             message: 'Machine IP could not be fetched. Please retry the setup. If this fails please file a ticket on our GitHub repo.',
