@@ -47,7 +47,7 @@ var Docker = {
       } catch (err) {
         tryCount += 1;
         yield Promise.delay(delay);
-        if (tryCount === tries) {
+        if (tryCount > tries) {
           throw new Error(err);
         }
         continue;
