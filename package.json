@@ -42,10 +42,9 @@
   "docker-version": "1.5.0",
   "docker-machine-version": "0.1.0",
   "atom-shell-version": "0.21.2",
-  "virtualbox-version": "4.3.22",
+  "virtualbox-version": "4.3.24",
   "virtualbox-filename": "VirtualBox-4.3.22.pkg",
   "virtualbox-checksum": "4a7dff25bdeef0d112e16ac11bee6d52e856d36bb412aa75576036ba560082eb",
-  "virtualbox-required-version": "4.3.0",
   "dependencies": {
     "ansi-to-html": "0.3.0",
     "async": "^0.9.0",

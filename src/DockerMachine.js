@@ -153,14 +153,6 @@ var DockerMachine = {
       });
     });
   },
-  waitWhileState: Promise.coroutine(function* (status) {
-    while (true) {
-      var current = yield DockerMachine.state();
-      if (status !== current.trim()) {
-        return;
-      }
-    }
-  }),
   dockerTerminal: function () {
     var terminal = path.join(process.cwd(), 'resources', 'terminal');
     this.info().then(machine => {
