@@ -41,7 +41,7 @@
     ]
   },
   "docker-version": "1.5.0",
-  "docker-machine-version": "0.1.0-kitematic-0.5.9",
+  "docker-machine-version": "0.1.0-kitematic-0.5.10",
   "atom-shell-version": "0.21.3",
   "virtualbox-version": "4.3.24",
   "virtualbox-filename": "VirtualBox-4.3.24.pkg",

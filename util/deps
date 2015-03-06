@@ -13,7 +13,7 @@ if [ ! -f $DOCKER_MACHINE_CLI_FILE ]; then
   rm -rf docker-machine*
   # Use temporary, new version of docker-machine that has some important fixes
   # curl -L -o $DOCKER_MACHINE_CLI_FILE https://github.com/docker/machine/releases/download/v$DOCKER_MACHINE_CLI_VERSION/docker-machine_darwin-amd64
-  curl -L -o $DOCKER_MACHINE_CLI_FILE https://github.com/kitematic/kitematic/releases/download/v0.5.9/docker-machine_darwin-amd64
+  curl -L -o $DOCKER_MACHINE_CLI_FILE https://github.com/kitematic/kitematic/releases/download/v0.5.10/docker-machine_darwin-amd64
   chmod +x $DOCKER_MACHINE_CLI_FILE
 fi
 
