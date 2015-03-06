@@ -77,6 +77,7 @@ describe('SetupStore', function () {
       machine.isoversion.mockReturnValue('1.0');
       machine.stop.mockReturnValue(Promise.resolve());
       machine.start.mockReturnValue(Promise.resolve());
+      machine.regenerateCerts.mockReturnValue(Promise.resolve());
       machine.upgrade.mockReturnValue(Promise.resolve());
       setupUtil.compareVersions.mockReturnValue(-1);
       machine.create.mockClear();
