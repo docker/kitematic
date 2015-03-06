@@ -28,7 +28,7 @@ var Docker = {
     return this._host;
   },
   waitForConnection: Promise.coroutine(function * (tries, delay) {
-    tries = tries || 5;
+    tries = tries || 10;
     delay = delay || 1000;
     var tryCount = 1;
     while (true) {
