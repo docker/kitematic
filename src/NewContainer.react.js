@@ -77,6 +77,7 @@ var NewContainer = React.createClass({
         res.description = data.short_description;
         res.is_official = data.namespace === 'library';
         res.name = data.repo;
+        res.star_count = data.stars;
         return res;
       });
     }).then(results => {
