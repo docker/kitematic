@@ -26,16 +26,5 @@
 	<string>AtomApplication</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
-	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>kitematic</string>
-			</array>
-			<key>CFBundleURLName</key>
-			<string>Kitematic Shared Session Protocol</string>
-		</dict>
-	</array>
 </dict>
 </plist>
