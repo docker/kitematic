@@ -69,15 +69,13 @@ var NewContainer = React.createClass({
     })).then(res => res.repos).map(repo => {
       var query = repo.repo;
       var vals = query.split('/');
-      var official = false;
       if (vals.length === 1) {
-        official = true;
         query = 'library/' + vals[0];
       }
       return $.get('https://registry.hub.docker.com/v1/repositories_info/' + query).then(data => {
         var res = _.extend(data, repo);
         res.description = data.short_description;
-        res.is_official = data.is_official || official;
+        res.is_official = data.namespace === 'library';
         res.name = data.repo;
         return res;
       });
