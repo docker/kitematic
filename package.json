@@ -1,6 +1,6 @@
 {
   "name": "Kitematic",
-  "version": "0.5.8",
+  "version": "0.5.9",
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X.",
   "homepage": "https://kitematic.com/",
@@ -20,8 +20,8 @@
   },
   "licenses": [
     {
-      "type": "GNU",
-      "url": "https://raw.githubusercontent.com/kitematic/kitematic/master/LICENSE"
+      "type": "Apache-2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   ],
   "jest": {
