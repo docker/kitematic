@@ -77,15 +77,18 @@ describe('SetupStore', function () {
       machine.isoversion.mockReturnValue('1.0');
       machine.stop.mockReturnValue(Promise.resolve());
       machine.start.mockReturnValue(Promise.resolve());
+      machine.regenerateCerts.mockReturnValue(Promise.resolve());
       machine.upgrade.mockReturnValue(Promise.resolve());
       setupUtil.compareVersions.mockReturnValue(-1);
       machine.create.mockClear();
       machine.upgrade.mockClear();
       machine.stop.mockClear();
       machine.start.mockClear();
+      machine.regenerateCerts.mockClear();
       return setupStore.steps().init.run(() => {}).then(() => {
         expect(machine.create).not.toBeCalled();
         expect(machine.stop).toBeCalled();
+        expect(machine.regenerateCerts).toBeCalled();
         expect(machine.start).toBeCalled();
         expect(machine.upgrade).toBeCalled();
       });

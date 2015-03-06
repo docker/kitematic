@@ -83,6 +83,9 @@ var DockerMachine = {
       return Promise.resolve(stdout.trim().replace('\n', ''));
     });
   },
+  regenerateCerts: function () {
+    return util.exec([DockerMachine.command(), 'tls-regenerate-certs', '-f', NAME]);
+  },
   state: function () {
     return DockerMachine.info().then(info => {
       return info ? info.state : null;

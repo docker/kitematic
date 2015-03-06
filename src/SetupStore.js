@@ -61,7 +61,7 @@ var _steps = [{
   message: 'To run Docker containers on your computer, Kitematic is starting a Linux virtual machine. This may take a minute...',
   totalPercent: 60,
   percent: 0,
-  seconds: 53,
+  seconds: 58,
   run: Promise.coroutine(function* (progressCallback) {
     setupUtil.simulateProgress(this.seconds, progressCallback);
     yield virtualBox.vmdestroy('kitematic-vm');
@@ -86,6 +86,7 @@ var _steps = [{
       yield machine.upgrade();
     }
     yield machine.start();
+    yield machine.regenerateCerts();
   })
 }];
 
