@@ -1,6 +1,6 @@
 {
   "name": "Kitematic",
-  "version": "0.5.9",
+  "version": "0.5.10",
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X.",
   "homepage": "https://kitematic.com/",
@@ -16,6 +16,7 @@
     "release": "gulp release",
     "release:beta": "gulp release --beta",
     "preinstall": "./util/deps",
+    "postinstall": "gulp download && cp util/Info.plist cache/Atom.app/Contents/Info.plist && cp util/kitematic.icns cache/Atom.app/Contents/Resources/atom.icns",
     "lint": "jsxhint src && jsxhint browser"
   },
   "licenses": [
@@ -41,7 +42,7 @@
   },
   "docker-version": "1.5.0",
   "docker-machine-version": "0.1.0-kitematic-0.5.9",
-  "atom-shell-version": "0.21.2",
+  "atom-shell-version": "0.21.3",
   "virtualbox-version": "4.3.24",
   "virtualbox-filename": "VirtualBox-4.3.24.pkg",
   "virtualbox-checksum": "4a7dff25bdeef0d112e16ac11bee6d52e856d36bb412aa75576036ba560082eb",
