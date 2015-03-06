@@ -67,12 +67,19 @@ var NewContainer = React.createClass({
       cache: false,
       dataType: 'json',
     })).then(res => res.repos).map(repo => {
-      return $.get('https://registry.hub.docker.com/v1/search?q=' + repo.repo).then(data => {
-        var results = data.results;
-        var result = _.find(results, function (r) {
-          return r.name === repo.repo;
-        });
-        return _.extend(result, repo);
+      var query = repo.repo;
+      var vals = query.split('/');
+      var official = false;
+      if (vals.length === 1) {
+        official = true;
+        query = 'library/' + vals[0];
+      }
+      return $.get('https://registry.hub.docker.com/v1/repositories_info/' + query).then(data => {
+        var res = _.extend(data, repo);
+        res.description = data.short_description;
+        res.is_official = data.is_official || official;
+        res.name = data.repo;
+        return res;
       });
     }).then(results => {
       _recommended = results.filter(r => !!r);
