@@ -83,9 +83,11 @@ describe('SetupStore', function () {
       machine.upgrade.mockClear();
       machine.stop.mockClear();
       machine.start.mockClear();
+      machine.regenerateCerts.mockClear();
       return setupStore.steps().init.run(() => {}).then(() => {
         expect(machine.create).not.toBeCalled();
         expect(machine.stop).toBeCalled();
+        expect(machine.regenerateCerts).toBeCalled();
         expect(machine.start).toBeCalled();
         expect(machine.upgrade).toBeCalled();
       });
