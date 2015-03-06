@@ -240,10 +240,11 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
         break;
       } catch (err) {
         metrics.track('Setup Failed', {
-          step: _currentStep
+          step: _currentStep,
+          message: err.message
         });
         var virtualboxVersion = virtualBox.installed() ? yield virtualBox.version() : 'Not installed';
-        bugsnag.notify('SetupError', 'Setup failed', {
+        bugsnag.notify('SetupError', err.message, {
           error: err,
           step: _currentStep,
           virtualbox: virtualboxVersion
