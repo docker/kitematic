@@ -48,7 +48,7 @@ var Docker = {
         tryCount += 1;
         yield Promise.delay(delay);
         if (tryCount > tries) {
-          throw new Error(err);
+          throw new Error('Cannot connect to the Docker Engine. Either the VM is not responding or it may be blocked by a VPN connection: ' + err.message);
         }
         continue;
       }
