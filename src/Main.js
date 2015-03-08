@@ -1,18 +1,18 @@
 var remote = require('remote');
 require.main.paths.splice(0, 0, process.env.NODE_PATH);
 var app = remote.require('app');
-var React = require('react');
-var fs = require('fs');
-var path = require('path');
-var docker = require('./Docker');
-var router = require('./Router');
+var bugsnag = require('bugsnag-js');
 var ContainerStore = require('./ContainerStore');
-var SetupStore = require('./SetupStore');
+var fs = require('fs');
+var ipc = require('ipc');
+var Menu = remote.require('menu');
 var metrics = require('./Metrics');
+var path = require('path');
+var React = require('react');
+var router = require('./Router');
+var SetupStore = require('./SetupStore');
 var template = require('./MenuTemplate');
 var util = require('./Util');
-var Menu = remote.require('menu');
-var bugsnag = require('bugsnag-js');
 var machine = require('./DockerMachine');
 
 window.addEventListener('resize', function () {
@@ -75,6 +75,12 @@ document.onkeydown = function (e) {
     e.preventDefault();
   }
 };
+
+ipc.on('notify', msg => {
+  if (msg === 'application:quitting' && localStorage.getItem('settings.closeVMOnQuit') === 'true') {
+    machine.stop();
+  }
+});
 
 metrics.track('Started App');
 metrics.track('app heartbeat');
