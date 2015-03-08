@@ -76,8 +76,8 @@ document.onkeydown = function (e) {
   }
 };
 
-ipc.on('notify', msg => {
-  if (msg === 'application:quitting' && localStorage.getItem('settings.closeVMOnQuit') === 'true') {
+ipc.on('application:quitting', () => {
+  if (localStorage.getItem('settings.closeVMOnQuit') === 'true') {
     machine.stop();
   }
 });

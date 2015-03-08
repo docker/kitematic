@@ -5,21 +5,20 @@ var fs = require('fs');
 var ipc = require('ipc');
 var path = require('path');
 
-process.env.NODE_PATH = __dirname + '/../node_modules';
-process.env.RESOURCES_PATH = __dirname + '/../resources';
+process.env.NODE_PATH = path.join(__dirname, '/../node_modules');
+process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
 process.chdir(path.join(__dirname, '..'));
 process.env.PATH = '/usr/local/bin:' + process.env.PATH;
 
 var size = {}, settingsjson = {};
 try {
-  var sizeFile = JSON.parse(fs.readFileSync(path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], 'Library', 'Application\ Support', 'Kitematic', 'size')));
-  size = sizeFile;
+  size = JSON.parse(fs.readFileSync(path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], 'Library', 'Application\ Support', 'Kitematic', 'size')));
 } catch (err) {}
 try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
 } catch (err) {}
 
-app.on('ready', function() {
+app.on('ready', function () {
   var mainWindow = new BrowserWindow({
     width: size.width || 1000,
     height: size.height || 700,
@@ -29,6 +28,7 @@ app.on('ready', function() {
     frame: false,
     show: true
   });
+
   mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/index.html')));
 
   app.on('activate-with-no-open-windows', function () {
@@ -39,13 +39,11 @@ app.on('ready', function() {
   });
 
   app.on('before-quit', function () {
-    mainWindow.webContents.send('notify', 'application:quitting');
+    mainWindow.webContents.send('application:quitting');
   });
 
-  ipc.on('command', function (event, arg) {
-    if (arg === 'application:quit-install') {
-      autoUpdater.quitAndInstall();
-    }
+  ipc.on('application:quit-install', function () {
+    autoUpdater.quitAndInstall();
   });
 
   mainWindow.webContents.on('new-window', function (e) {
@@ -83,7 +81,7 @@ app.on('ready', function() {
   autoUpdater.on('update-downloaded', function (e, releaseNotes, releaseName, releaseDate, updateURL) {
     console.log('Update downloaded.');
     console.log(releaseNotes, releaseName, releaseDate, updateURL);
-    mainWindow.webContents.send('notify', 'application:update-available');
+    mainWindow.webContents.send('application:update-available');
   });
 
   autoUpdater.on('error', function (e, error) {
