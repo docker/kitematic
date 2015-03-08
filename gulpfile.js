@@ -44,10 +44,10 @@ gulp.task('js', function () {
       gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.message));
       this.emit('end');
     }))
-    .pipe(gulpif(options.dev, sourcemaps.init()))
+    .pipe(sourcemaps.init())
     .pipe(react())
     .pipe(babel({blacklist: ['regenerator']}))
-    .pipe(gulpif(options.dev, sourcemaps.write('.')))
+    .pipe(sourcemaps.write())
     .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.appFilename + '/Contents/Resources/app/build'))
     .pipe(gulpif(options.dev, livereload()));
 });
