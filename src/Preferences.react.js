@@ -1,13 +1,6 @@
 var React = require('react/addons');
-var ipc = require('ipc');
 var metrics = require('./Metrics');
 var Router = require('react-router');
-
-if (localStorage.getItem('settings.closeVMOnQuit') === 'true') {
-  ipc.send('vm', true);
-} else {
-  ipc.send('vm', false);
-}
 
 var Preferences = React.createClass({
   mixins: [Router.Navigation],
@@ -27,7 +20,6 @@ var Preferences = React.createClass({
       closeVMOnQuit: checked
     });
     localStorage.setItem('settings.closeVMOnQuit', checked);
-    ipc.send('vm', checked);
     metrics.track('Toggled Close VM On Quit', {
       close: checked
     });
