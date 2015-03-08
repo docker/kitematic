@@ -10,11 +10,7 @@ module.exports = {
       exec(args, options, (stderr, stdout, code) => {
         if (code) {
           var cmd = Array.isArray(args) ? args.join(' ') : args;
-          reject({
-            message: cmd + ' returned non zero exit code',
-            stderr: stderr,
-            stdout: stdout
-          });
+          reject(new Error(cmd + ' returned non zero exit code\nstdout:' + stdout + '\nstderr:' + stderr));
         } else {
           resolve(stdout);
         }
