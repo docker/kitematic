@@ -102,7 +102,6 @@ gulp.task('dist', function () {
     'mv ./dist/osx/<%= filename %>/Contents/MacOS/Atom ./dist/osx/<%= filename %>/Contents/MacOS/<%= name %>',
     'mkdir -p ./dist/osx/<%= filename %>/Contents/Resources/app',
     'mkdir -p ./dist/osx/<%= filename %>/Contents/Resources/app/node_modules',
-    'cp -R browser dist/osx/<%= filename %>/Contents/Resources/app',
     'cp package.json dist/osx/<%= filename %>/Contents/Resources/app/',
     'mkdir -p dist/osx/<%= filename %>/Contents/Resources/app/resources',
     'cp -v resources/* dist/osx/<%= filename %>/Contents/Resources/app/resources/ || :',
