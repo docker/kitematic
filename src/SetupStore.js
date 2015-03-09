@@ -86,7 +86,6 @@ var _steps = [{
     var state = yield machine.state();
     if (state === 'Saved') {
       yield virtualBox.wake(machine.name());
-      yield machine.regenerateCerts();
     } else if (state !== 'Running') {
       yield machine.start();
       yield machine.regenerateCerts();
