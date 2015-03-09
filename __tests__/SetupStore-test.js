@@ -73,7 +73,7 @@ describe('SetupStore', function () {
 
     pit('upgrades the vm if it exists and is out of date', function () {
       machine.exists.mockReturnValue(Promise.resolve(true));
-      machine.state.mockReturnValue(Promise.resolve('Running'));
+      machine.state.mockReturnValue(Promise.resolve('Stopped'));
       machine.isoversion.mockReturnValue('1.0');
       machine.stop.mockReturnValue(Promise.resolve());
       machine.start.mockReturnValue(Promise.resolve());
@@ -88,9 +88,9 @@ describe('SetupStore', function () {
       return setupStore.steps().init.run(() => {}).then(() => {
         expect(machine.create).not.toBeCalled();
         expect(machine.stop).toBeCalled();
+        expect(machine.upgrade).toBeCalled();
         expect(machine.regenerateCerts).toBeCalled();
         expect(machine.start).toBeCalled();
-        expect(machine.upgrade).toBeCalled();
       });
     });
   });

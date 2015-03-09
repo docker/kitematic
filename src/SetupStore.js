@@ -75,8 +75,6 @@ var _steps = [{
         yield machine.create();
       }
       return;
-    } else if (exists && (yield machine.state()) === 'Saved') {
-      yield virtualBox.wake(machine.name());
     }
 
     var isoversion = machine.isoversion();
@@ -86,7 +84,10 @@ var _steps = [{
       yield machine.upgrade();
     }
     var state = yield machine.state();
-    if (state !== 'Running') {
+    if (state === 'Saved') {
+      yield virtualBox.wake(machine.name());
+      yield machine.regenerateCerts();
+    } else if (state !== 'Running') {
       yield machine.start();
       yield machine.regenerateCerts();
     }
