@@ -77,16 +77,17 @@ var _steps = [{
       return;
     }
 
+    if ((yield machine.state()) === 'Saved') {
+      yield virtualBox.wake(machine.name());
+    }
+
     var isoversion = machine.isoversion();
     var packagejson = util.packagejson();
     if (!isoversion || setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0) {
       yield machine.stop();
       yield machine.upgrade();
     }
-    var state = yield machine.state();
-    if (state === 'Saved') {
-      yield virtualBox.wake(machine.name());
-    } else if (state !== 'Running') {
+    if ((yield machine.state()) !== 'Running') {
       yield machine.start();
       yield machine.regenerateCerts();
     }
