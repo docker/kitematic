@@ -85,8 +85,11 @@ var _steps = [{
       yield machine.stop();
       yield machine.upgrade();
     }
-    yield machine.start();
-    yield machine.regenerateCerts();
+    var state = yield machine.state();
+    if (state !== 'Running') {
+      yield machine.start();
+      yield machine.regenerateCerts();
+    }
   })
 }];
 
