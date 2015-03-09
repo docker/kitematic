@@ -38,12 +38,16 @@ app.on('ready', function () {
     return false;
   });
 
-  app.on('before-quit', function () {
-    mainWindow.webContents.send('application:quitting');
+  var updating = false;
+  ipc.on('application:quit-install', function () {
+    updating = true;
+    autoUpdater.quitAndInstall();
   });
 
-  ipc.on('application:quit-install', function () {
-    autoUpdater.quitAndInstall();
+  app.on('before-quit', function () {
+    mainWindow.webContents.send('application:quitting', {
+      updating: updating
+    });
   });
 
   mainWindow.webContents.on('new-window', function (e) {
