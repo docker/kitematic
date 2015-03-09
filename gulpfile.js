@@ -44,10 +44,10 @@ gulp.task('js', function () {
       gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.message));
       this.emit('end');
     }))
-    .pipe(gulpif(options.dev, sourcemaps.init()))
+    .pipe(sourcemaps.init())
     .pipe(react())
     .pipe(babel({blacklist: ['regenerator']}))
-    .pipe(gulpif(options.dev, sourcemaps.write('.')))
+    .pipe(sourcemaps.write())
     .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.appFilename + '/Contents/Resources/app/build'))
     .pipe(gulpif(options.dev, livereload()));
 });
@@ -102,7 +102,6 @@ gulp.task('dist', function () {
     'mv ./dist/osx/<%= filename %>/Contents/MacOS/Atom ./dist/osx/<%= filename %>/Contents/MacOS/<%= name %>',
     'mkdir -p ./dist/osx/<%= filename %>/Contents/Resources/app',
     'mkdir -p ./dist/osx/<%= filename %>/Contents/Resources/app/node_modules',
-    'cp -R browser dist/osx/<%= filename %>/Contents/Resources/app',
     'cp package.json dist/osx/<%= filename %>/Contents/Resources/app/',
     'mkdir -p dist/osx/<%= filename %>/Contents/Resources/app/resources',
     'cp -v resources/* dist/osx/<%= filename %>/Contents/Resources/app/resources/ || :',
