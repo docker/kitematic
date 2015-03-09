@@ -40,10 +40,8 @@ SetupStore.setup().then(() => {
     step: 'catch',
     message: err.message
   });
-  bugsnag.notify('SetupError', 'Setup threw an exception', {
-    step: 'catch',
-    error: err
-  });
+  console.log(err);
+  bugsnag.notify(err);
 });
 
 ipc.on('application:quitting', opts => {

@@ -247,11 +247,9 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
           step: _currentStep,
           message: err.message
         });
-        var virtualboxVersion = virtualBox.installed() ? yield virtualBox.version() : 'Not installed';
         bugsnag.notify('SetupError', err.message, {
           error: err,
-          step: _currentStep,
-          virtualbox: virtualboxVersion
+          step: _currentStep
         }, 'info');
         _error = err;
         this.emit(this.ERROR_EVENT);
