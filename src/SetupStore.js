@@ -75,7 +75,9 @@ var _steps = [{
         yield machine.create();
       }
       return;
-    } else if (exists && (yield machine.state()) === 'Saved') {
+    }
+
+    if ((yield machine.state()) === 'Saved') {
       yield virtualBox.wake(machine.name());
     }
 
@@ -85,8 +87,10 @@ var _steps = [{
       yield machine.stop();
       yield machine.upgrade();
     }
-    yield machine.start();
-    yield machine.regenerateCerts();
+    if ((yield machine.state()) !== 'Running') {
+      yield machine.start();
+      yield machine.regenerateCerts();
+    }
   })
 }];
 
