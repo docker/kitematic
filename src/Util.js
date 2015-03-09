@@ -37,5 +37,12 @@ module.exports = {
   packagejson: function () {
     return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
   },
+  settingsjson: function () {
+    var settingsjson = {};
+    try {
+      settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
+    } catch (err) {}
+    return settingsjson;
+  },
   webPorts: ['80', '8000', '8080', '3000', '5000', '2368', '9200', '8983']
 };

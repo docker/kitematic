@@ -1,86 +1,23 @@
-var remote = require('remote');
 require.main.paths.splice(0, 0, process.env.NODE_PATH);
-var app = remote.require('app');
-var bugsnag = require('bugsnag-js');
+var remote = require('remote');
 var ContainerStore = require('./ContainerStore');
-var fs = require('fs');
-var ipc = require('ipc');
 var Menu = remote.require('menu');
-var metrics = require('./Metrics');
-var path = require('path');
 var React = require('react');
-var router = require('./Router');
 var SetupStore = require('./SetupStore');
-var template = require('./MenuTemplate');
-var util = require('./Util');
+var bugsnag = require('bugsnag-js');
+var ipc = require('ipc');
 var machine = require('./DockerMachine');
+var metrics = require('./Metrics');
+var router = require('./Router');
+var template = require('./MenuTemplate');
+var webUtil = require('./WebUtil');
 
-window.addEventListener('resize', function () {
-  fs.writeFileSync(path.join(util.supportDir(), 'size'), JSON.stringify({
-    width: window.outerWidth,
-    height: window.outerHeight
-  }));
-});
+webUtil.addWindowSizeSaving();
+webUtil.addLiveReload();
+webUtil.addBugReporting();
+webUtil.disableGlobalBackspace();
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
-
-var settingsjson;
-try {
-  settingsjson = require(path.join(__dirname, '..', 'settings.json'), 'utf8');
-} catch (err) {
-  settingsjson = {};
-}
-
-if (process.env.NODE_ENV === 'development') {
-  var head = document.getElementsByTagName('head')[0];
-  var script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = 'http://localhost:35729/livereload.js';
-  head.appendChild(script);
-}
-
-if (settingsjson.bugsnag) {
-  bugsnag.apiKey = settingsjson.bugsnag;
-  bugsnag.autoNotify = true;
-  bugsnag.releaseStage = process.env.NODE_ENV === 'development' ? 'development' : 'production';
-  bugsnag.notifyReleaseStages = ['production'];
-  bugsnag.appVersion = app.getVersion();
-  bugsnag.metaData = {
-    beta: !!settingsjson.beta
-  };
-
-  bugsnag.beforeNotify = function(payload) {
-    var re = new RegExp(util.home().replace(/\s+/g, '\\s+'), 'g');
-    payload.stacktrace = payload.stacktrace.replace(/%20/g, ' ').replace(re, '<redacted homedir>');
-    payload.context = payload.context.replace(/%20/g, ' ').replace(re, '<redacted homedir>');
-    payload.file = payload.file.replace(/%20/g, ' ').replace(re, '<redacted homedir>');
-    payload.url = '<redacted url>';
-  };
-}
-
-document.onkeydown = function (e) {
-  e = e || window.event;
-  var doPrevent;
-  if (e.keyCode === 8) {
-    var d = e.srcElement || e.target;
-    if (d.tagName.toUpperCase() === 'INPUT' || d.tagName.toUpperCase() === 'TEXTAREA') {
-      doPrevent = d.readOnly || d.disabled;
-    } else {
-      doPrevent = true;
-    }
-  } else {
-    doPrevent = false;
-  }
-  if (doPrevent) {
-    e.preventDefault();
-  }
-};
-
-ipc.on('notify', msg => {
-  if (msg === 'application:quitting' && localStorage.getItem('settings.closeVMOnQuit') === 'true') {
-    machine.stop();
-  }
-});
 
 metrics.track('Started App');
 metrics.track('app heartbeat');
@@ -89,6 +26,7 @@ setInterval(function () {
 }, 14400000);
 
 router.run(Handler => React.render(<Handler/>, document.body));
+
 SetupStore.setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   ContainerStore.on(ContainerStore.SERVER_ERROR_EVENT, (err) => {
@@ -106,4 +44,10 @@ SetupStore.setup().then(() => {
     step: 'catch',
     error: err
   });
+});
+
+ipc.on('application:quitting', () => {
+  if (localStorage.getItem('settings.closeVMOnQuit') === 'true') {
+    machine.stop();
+  }
 });

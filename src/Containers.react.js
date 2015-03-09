@@ -37,12 +37,10 @@ var Containers = React.createClass({
       this.transitionTo('containerHome', {name: this.state.sorted[0].Name});
     }
 
-    ipc.on('notify', message => {
-      if (message === 'application:update-available') {
-        this.setState({
-          updateAvailable: true
-        });
-      }
+    ipc.on('application:update-available', () => {
+      this.setState({
+        updateAvailable: true
+      });
     });
     autoUpdater.checkForUpdates();
   },
@@ -102,7 +100,7 @@ var Containers = React.createClass({
   },
   handleAutoUpdateClick: function () {
     metrics.track('Restarted to Update');
-    ipc.send('command', 'application:quit-install');
+    ipc.send('application:quit-install');
   },
   handleClickPreferences: function () {
     metrics.track('Opened Preferences', {
