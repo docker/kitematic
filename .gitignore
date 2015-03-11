@@ -6,7 +6,7 @@ node_modules
 npm-debug.log
 
 # Signing Identity
-identity
+identity*
 
 # Resources
 resources/docker-*
