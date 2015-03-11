@@ -27,6 +27,19 @@ setInterval(function () {
 
 router.run(Handler => React.render(<Handler/>, document.body));
 
+ipc.on('application:quitting', opts => {
+  if (!opts.updating && localStorage.getItem('settings.closeVMOnQuit') === 'true') {
+    machine.stop();
+  }
+});
+
+ipc.on('application:open-url', opts => {
+  console.log('Creating container');
+  var url = opts.url.substr(19);
+  console.log(url);
+  ContainerStore.create(url, 'latest', () => {});
+});
+
 SetupStore.setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   ContainerStore.on(ContainerStore.SERVER_ERROR_EVENT, (err) => {
@@ -42,10 +55,4 @@ SetupStore.setup().then(() => {
   });
   console.log(err);
   bugsnag.notify(err);
-});
-
-ipc.on('application:quitting', opts => {
-  if (!opts.updating && localStorage.getItem('settings.closeVMOnQuit') === 'true') {
-    machine.stop();
-  }
 });

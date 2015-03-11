@@ -10,6 +10,8 @@ process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
 process.chdir(path.join(__dirname, '..'));
 process.env.PATH = '/usr/local/bin:' + process.env.PATH;
 
+console.log(process.argv);
+
 var size = {}, settingsjson = {};
 try {
   size = JSON.parse(fs.readFileSync(path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], 'Library', 'Application\ Support', 'Kitematic', 'size')));
@@ -17,6 +19,13 @@ try {
 try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
 } catch (err) {}
+
+
+var openURL = null;
+app.on('open-url', function (event, url) {
+  event.preventDefault();
+  openURL = url;
+});
 
 app.on('ready', function () {
   var mainWindow = new BrowserWindow({
@@ -64,6 +73,18 @@ app.on('ready', function () {
     mainWindow.setTitle('Kitematic');
     mainWindow.show();
     mainWindow.focus();
+
+    if (openURL) {
+      mainWindow.webContents.send('application:open-url', {
+        url: openURL
+      });
+    }
+    app.on('open-url', function (event, url) {
+      event.preventDefault();
+      mainWindow.webContents.send('application:open-url', {
+        url: url
+      });
+    });
 
     if (process.env.NODE_ENV !== 'development') {
       autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion() + '&beta=' + !!settingsjson.beta);
