@@ -20,7 +20,7 @@ Please limit GitHub issues to Bugs and Feature suggestions:
 
 ## Bug Reports
 
-A bug is a reproducable and caused by the code in the repository. For bug reports:
+A bug is a reproducible and caused by the code in the repository. For bug reports:
 
 1. **Search the existing issues** to see if an issue already exists (and if so, throw in a handy :+1:)!
 
