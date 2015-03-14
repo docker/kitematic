@@ -6,7 +6,7 @@ Before you fil an issue or a pull request, quickly read of the following tips on
 
 ## Table of Contents
 
- - [Bugs Reports](#github-issues)
+ - [Bug Reports](#github-issues)
  - [Pull Requests](#submitting-pull-requests)
  - [Code Guidelines](#code-guidelines)
  - [Testing](#testing)
