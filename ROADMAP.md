@@ -4,7 +4,7 @@ We will be accepting pull requests that help with our roadmap.
 
 **January 2015**
 
-* Automatic update
+* Automatic updates
 * Stability bug fixes
 
 **Februay 2015**
