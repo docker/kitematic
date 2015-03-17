@@ -32,6 +32,7 @@ To run the app in development:
 ## Uninstalling
 
 - Remove Kitematic.app
+- Remove any unwanted Virtual Machines in VirtualBox
 ```bash
 # remove app data
 rm -rf ~/Library/Application\ Support/Kitematic
