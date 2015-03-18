@@ -31,10 +31,10 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>kitematic</string>
+				<string>docker</string>
 			</array>
 			<key>CFBundleURLName</key>
-			<string>Kitematic Session Protocol</string>
+			<string>Docker App Protocol</string>
 		</dict>
 	</array>
 </dict>

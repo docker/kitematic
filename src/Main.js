@@ -34,10 +34,22 @@ ipc.on('application:quitting', opts => {
 });
 
 ipc.on('application:open-url', opts => {
-  console.log('Creating container');
-  var url = opts.url.substr(19);
-  console.log(url);
-  ContainerStore.create(url, 'latest', () => {});
+  console.log('Creating container from protocol');
+  var parser = document.createElement('a');
+  parser.href = opts.url;
+
+  if (parser.protocol !== 'docker:') {
+    return;
+  }
+
+  var pathname = parser.pathname.replace('//', '');
+  var slash = pathname.indexOf('/');
+  var base = pathname.slice(0, slash);
+
+  if (base === 'runRepo') {
+    var repo = pathname.substring(slash + 1);
+    ContainerStore.create(repo, 'latest', () => {});
+  }
 });
 
 SetupStore.setup().then(() => {
