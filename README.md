@@ -13,22 +13,6 @@ Kitematic is a simple application for managing Docker containers on Mac OS X.
 
 Kitematic's documentation and other information can be found at [http://kitematic.com/docs](http://kitematic.com/docs).
 
-### Development
-
-- `npm install`
-
-To run the app in development:
-
-- `npm start`
-
-### Building the Mac OS X Package
-
-- `npm run release`
-
-### Unit Tests
-
-- `npm test`
-
 ## Uninstalling
 
 - Remove Kitematic.app
