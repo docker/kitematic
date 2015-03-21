@@ -6,11 +6,29 @@ Before you fil an issue or a pull request, quickly read of the following tips on
 
 ## Table of Contents
 
+ - [Development](#development)
  - [GitHub Issues](#github-issues)
- - [Pull Requests](#submitting-pull-requests)
+ - [Pull Requests](#pull-requests)
  - [Code Guidelines](#code-guidelines)
  - [Testing](#testing)
  - [License](#license)
+
+### Development		
+		
+- `npm install`		
+		
+To run the app in development:		
+		
+- `npm start`		
+		
+### Building & Release		
+		
+- `npm run release`		
+		
+### Unit Tests		
+		
+- `npm test`		
+		
 
 ## GitHub Issues
 
