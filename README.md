@@ -1,13 +1,12 @@
 [![CircleCI](https://img.shields.io/circleci/project/kitematic/kitematic.svg)](https://circleci.com/gh/kitematic/kitematic/tree/master)
 [![bitHound Score](https://app.bithound.io/kitematic/kitematic/badges/score.svg)](http://app.bithound.io/kitematic/kitematic)
+[![Join the chat at https://gitter.im/kitematic/kitematic](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kitematic/kitematic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ![Kitematic Logo](https://cloud.githubusercontent.com/assets/251292/5269258/1b229c3c-7a2f-11e4-96f1-e7baf3c86d73.png)
 
 Kitematic is a simple application for managing Docker containers on Mac OS X.
 
 ## Installing Kitematic
-
-[![Join the chat at https://gitter.im/kitematic/kitematic](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kitematic/kitematic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [Download the latest version](https://kitematic.com/download) of Kitematic.
 
