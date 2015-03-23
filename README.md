@@ -26,10 +26,10 @@ Please read through our [Contributing Guidelines](https://github.com/kitematic/k
 
 ## Community
 
-- We have a [forum](https://forums.docker.com/c/kitematic).
+- For questions on how to use Kitematic, see our [user forum](https://forums.docker.com/c/kitematic).
 - **#kitematic** on IRC (irc.freenode.net). It's hooked up to [our Gitter channel](https://gitter.im/kitematic/kitematic)
 - Follow [@kitematic on Twitter](https://twitter.com/kitematic).
-- Read and subscribe to [The Kitematic Blog](http://blog.kitematic.com).
+- Read and subscribe to [the Kitematic Blog](http://blog.kitematic.com).
 
 ## Uninstalling
 
