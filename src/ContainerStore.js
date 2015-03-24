@@ -139,6 +139,10 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     }
     existing.kill(function () {
       existing.remove(function () {
+        var x11_display_path = localStorage.getItem('settings.x11DisplayPath');
+        if (x11_display_path) {
+          containerData.Env = ["DISPLAY=" + x11_display_path];
+        }
         docker.client().createContainer(containerData, function (err) {
           if (err) {
             callback(err, null);

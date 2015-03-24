@@ -7,7 +7,8 @@ var Preferences = React.createClass({
   getInitialState: function () {
     return {
       closeVMOnQuit: localStorage.getItem('settings.closeVMOnQuit') === 'true',
-      metricsEnabled: metrics.enabled()
+      metricsEnabled: metrics.enabled(),
+      x11DisplayPath: ""
     };
   },
   handleGoBackClick: function () {
@@ -34,6 +35,13 @@ var Preferences = React.createClass({
       enabled: checked
     });
   },
+  handleDisplayPathChange: function (e) {
+    var display_path = e.target.value;
+    this.setState({
+      x11DisplayPath: display_path
+    });
+    localStorage.setItem('settings.x11DisplayPath', display_path);
+  },
   render: function () {
     return (
       <div className="preferences">
@@ -55,6 +63,14 @@ var Preferences = React.createClass({
             </div>
             <div className="option-value">
               <input type="checkbox" checked={this.state.metricsEnabled} onChange={this.handleChangeMetricsEnabled}/>
+            </div>
+          </div>
+          <div className="option">
+            <div className="option-name">
+              X11 Display path
+            </div>
+            <div className="option-value">
+              <input type="text" onChange={this.handleDisplayPathChange}/>
             </div>
           </div>
         </div>
