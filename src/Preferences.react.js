@@ -8,7 +8,7 @@ var Preferences = React.createClass({
     return {
       closeVMOnQuit: localStorage.getItem('settings.closeVMOnQuit') === 'true',
       metricsEnabled: metrics.enabled(),
-      x11DisplayPath: ""
+      x11DisplayPath: localStorage.getItem('settings.x11DisplayPath')
     };
   },
   handleGoBackClick: function () {
@@ -70,7 +70,7 @@ var Preferences = React.createClass({
               X11 Display path
             </div>
             <div className="option-value">
-              <input type="text" onChange={this.handleDisplayPathChange}/>
+              <input type="text" onChange={this.handleDisplayPathChange} value={this.state.x11DisplayPath} />
             </div>
           </div>
         </div>
