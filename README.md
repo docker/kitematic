@@ -1,5 +1,6 @@
 [![CircleCI](https://img.shields.io/circleci/project/kitematic/kitematic.svg)](https://circleci.com/gh/kitematic/kitematic/tree/master)
 [![bitHound Score](https://app.bithound.io/kitematic/kitematic/badges/score.svg)](http://app.bithound.io/kitematic/kitematic)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kitematic/kitematic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ![Kitematic Logo](https://cloud.githubusercontent.com/assets/251292/5269258/1b229c3c-7a2f-11e4-96f1-e7baf3c86d73.png)
 
@@ -27,6 +28,7 @@ Please read through our [Contributing Guidelines](https://github.com/kitematic/k
 
 - For questions on how to use Kitematic, see our [user forum](https://forums.docker.com/c/kitematic).
 - **#kitematic** on IRC. [Join the channel](http://webchat.freenode.net/?channels=%23kitematic&uio=d4).
+- Join the Kitematic [Gitter Channel](https://gitter.im/kitematic/kitematic)
 - Follow [@kitematic on Twitter](https://twitter.com/kitematic).
 - Read and subscribe to [the Kitematic Blog](http://blog.kitematic.com).
 
