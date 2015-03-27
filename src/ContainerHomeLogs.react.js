@@ -52,6 +52,9 @@ var ContainerHomeLogs = React.createClass({
     var logs = this.state.logs.map(function (l, i) {
       return <p key={i} dangerouslySetInnerHTML={{__html: l}}></p>;
     });
+    if (logs.length === 0) {
+      logs = "No logs for this container.";
+    }
     return (
       <div className="mini-logs wrapper">
         <h4>Logs</h4>
