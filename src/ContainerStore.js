@@ -1,14 +1,12 @@
 var _ = require('underscore');
 var EventEmitter = require('events').EventEmitter;
 var async = require('async');
-var path = require('path');
 var assign = require('object-assign');
 var docker = require('./Docker');
 var metrics = require('./Metrics');
 var registry = require('./Registry');
 var logstore = require('./LogStore');
 var bugsnag = require('bugsnag-js');
-var util = require('./Util');
 
 var _placeholders = {};
 var _containers = {};
@@ -92,38 +90,22 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   },
   _startContainer: function (name, containerData, callback) {
     var self = this;
-    docker.client().getImage(containerData.Image).inspect(function (err, data) {
+    var binds = containerData.Binds || [];
+    var startopts = {
+      Binds: binds
+    };
+    if (containerData.NetworkSettings && containerData.NetworkSettings.Ports) {
+      startopts.PortBindings = containerData.NetworkSettings.Ports;
+    } else{
+      startopts.PublishAllPorts = true;
+    }
+    var container = docker.client().getContainer(name);
+    container.start(startopts, function (err) {
       if (err) {
         callback(err);
         return;
       }
-      var binds = containerData.Binds || [];
-      if (data.Config.Volumes) {
-        _.each(data.Config.Volumes, function (value, key) {
-          var existingBind = _.find(binds, b => {
-            return b.indexOf(':' + key) !== -1;
-          });
-          if (!existingBind) {
-            binds.push(path.join(util.home(), 'Kitematic', name, key)+ ':' + key);
-          }
-        });
-      }
-      var startopts = {
-        Binds: binds
-      };
-      if (containerData.NetworkSettings && containerData.NetworkSettings.Ports) {
-        startopts.PortBindings = containerData.NetworkSettings.Ports;
-      } else{
-        startopts.PublishAllPorts = true;
-      }
-      var container = docker.client().getContainer(name);
-      container.start(startopts, function (err) {
-        if (err) {
-          callback(err);
-          return;
-        }
-        self.fetchContainer(name, callback);
-      });
+      self.fetchContainer(name, callback);
     });
   },
   _createContainer: function (name, containerData, callback) {
@@ -137,6 +119,9 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     if (containerData.Config && containerData.Config.Image) {
       containerData.Image = containerData.Config.Image;
     }
+    if (!containerData.Env) {
+      containerData.Env = containerData.Config.Env;
+    }
     existing.kill(function () {
       existing.remove(function () {
         docker.client().createContainer(containerData, function (err) {
@@ -144,11 +129,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
             callback(err, null);
             return;
           }
-          if (containerData.State && !containerData.State.Running) {
-            self.fetchContainer(containerData.name, callback);
-          } else {
-            self._startContainer(name, containerData, callback);
-          }
+          self._startContainer(name, containerData, callback);
         });
       });
     });
