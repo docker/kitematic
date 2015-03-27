@@ -17,7 +17,8 @@ var ContainerHomeFolder = React.createClass({
 
     if (hostVolume.indexOf(process.env.HOME) === -1) {
       var volumes = _.clone(this.props.container.Volumes);
-      volumes[containerVolume] = path.join(util.home(), 'Kitematic', this.props.container.Name, containerVolume);
+      var newHostVolume = path.join(util.home(), 'Kitematic', this.props.container.Name, containerVolume);
+      volumes[containerVolume] = newHostVolume;
       var binds = _.pairs(volumes).map(function (pair) {
         return pair[1] + ':' + pair[0];
       });
@@ -28,7 +29,7 @@ var ContainerHomeFolder = React.createClass({
           console.log(err);
           return;
         }
-        shell.showItemInFolder(hostVolume);
+        shell.showItemInFolder(newHostVolume);
       });
     } else {
       shell.showItemInFolder(hostVolume);
