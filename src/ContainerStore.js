@@ -119,7 +119,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     if (containerData.Config && containerData.Config.Image) {
       containerData.Image = containerData.Config.Image;
     }
-    if (!containerData.Env) {
+    if (containerData.Config && containerData.Config.Env) {
       containerData.Env = containerData.Config.Env;
     }
     existing.kill(function () {
