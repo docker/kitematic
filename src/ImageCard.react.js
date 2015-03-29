@@ -42,11 +42,11 @@ var ImageCard = React.createClass({
     $tagOverlay.fadeOut(300);
   },
   handleRepoClick: function () {
-    var $repoUri = 'https://registry.hub.docker.com/'
+    var $repoUri = 'https://registry.hub.docker.com/';
     if (this.props.image.is_official) {
-      $repoUri = $repoUri + "_/"
+      $repoUri = $repoUri + "_/";
     } else {
-      $repoUri = $repoUri + "u/"
+      $repoUri = $repoUri + "u/";
     }
     util.exec(['open', $repoUri + this.props.image.name]);
   },
@@ -67,7 +67,7 @@ var ImageCard = React.createClass({
       name = (
         <div>
           <div className="namespace official">{namespace}</div>
-          <OverlayTrigger placement="bottom" overlay={<Tooltip>{this.props.image.name}</Tooltip>}>
+          <OverlayTrigger placement="bottom" overlay={<Tooltip>View on DockerHub</Tooltip>}>
             <span className="repo" onClick={this.handleRepoClick}>{repo}</span>
           </OverlayTrigger>
         </div>
