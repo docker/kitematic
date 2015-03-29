@@ -76,7 +76,7 @@ var ImageCard = React.createClass({
       name = (
         <div>
           <div className="namespace">{namespace}</div>
-          <OverlayTrigger placement="bottom" overlay={<Tooltip>{this.props.image.name}</Tooltip>}>
+          <OverlayTrigger placement="bottom" overlay={<Tooltip>View on DockerHub</Tooltip>}>
             <span className="repo" onClick={this.handleRepoClick}>{repo}</span>
           </OverlayTrigger>
         </div>
