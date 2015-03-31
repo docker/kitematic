@@ -5,6 +5,7 @@ var path = require('path');
 var exec = require('exec');
 var metrics = require('./Metrics');
 var Router = require('react-router');
+var util = require('./Util');
 
 var ContainerHomeFolder = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -12,7 +13,7 @@ var ContainerHomeFolder = React.createClass({
     metrics.track('Opened Volume Directory', {
       from: 'home'
     });
-    exec(['open', path], function (err) {
+    util.openPathOrUrl(path, function (err) {
       if (err) { throw err; }
     });
   },

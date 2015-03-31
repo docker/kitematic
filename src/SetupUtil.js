@@ -1,74 +1,63 @@
 var _ = require('underscore');
 var crypto = require('crypto');
-var fs = require('fs');
+var fs = require('fs-promise');
 var path = require('path');
 var request = require('request');
 var progress = require('request-progress');
 var Promise = require('bluebird');
 var util = require('./Util');
+var resources = require('./Resources');
 
 var SetupUtil = {
-  needsBinaryFix: function () {
-    if (!fs.existsSync('/usr/local') || !fs.existsSync('/usr/local/bin')) {
-      return true;
-    }
-
-    if (fs.statSync('/usr/local/bin').gid !== 80 || fs.statSync('/usr/local/bin').uid !== process.getuid()) {
-      return true;
-    }
-
-    if (fs.existsSync('/usr/local/bin/docker') && (fs.statSync('/usr/local/bin/docker').gid !== 80 || fs.statSync('/usr/local/bin/docker').uid !== process.getuid())) {
-      return true;
-    }
-
-    if (fs.existsSync('/usr/local/bin/docker-machine') && (fs.statSync('/usr/local/bin/docker-machine').gid !== 80 || fs.statSync('/usr/local/bin/docker-machine').uid !== process.getuid())) {
-      return true;
-    }
-    return false;
+  needsBinaryFix() {
+    return !!(util.pathDoesNotExistOrDenied(util.binsPath()) || util.pathDoesNotExistOrDenied(util.dockerBinPath()) || util.pathDoesNotExistOrDenied(util.dockerMachineBinPath()));
   },
-  copycmd: function (src, dest) {
-    return ['rm', '-f', dest, '&&', 'cp', src, dest];
-  },
-  escapePath: function (str) {
+  escapePath(str) {
     return str.replace(/ /g, '\\ ').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
   },
-  shouldUpdateBinaries: function () {
-    var packagejson = util.packagejson();
-    return !fs.existsSync('/usr/local/bin/docker') ||
-      !fs.existsSync('/usr/local/bin/docker-machine') ||
-      this.checksum('/usr/local/bin/docker-machine') !== this.checksum(path.join(util.resourceDir(), 'docker-machine-' + packagejson['docker-machine-version'])) ||
-      this.checksum('/usr/local/bin/docker') !== this.checksum(path.join(util.resourceDir(), 'docker-' + packagejson['docker-version']));
+  shouldUpdateBinaries() {
+    return !fs.existsSync(util.dockerBinPath()) ||
+        !fs.existsSync(util.dockerMachineBinPath()) ||
+        this.checksum(util.dockerMachineBinPath()) !== this.checksum(resources.docker_machine()) ||
+        this.checksum(util.dockerBinPath()) !== this.checksum(resources.docker());
+
   },
-  copyBinariesCmd: function () {
-    var packagejson = util.packagejson();
-    var cmd = ['mkdir', '-p', '/usr/local/bin'];
-    cmd.push('&&');
-    cmd.push.apply(cmd, this.copycmd(this.escapePath(path.join(util.resourceDir(), 'docker-machine-' + packagejson['docker-machine-version'])), '/usr/local/bin/docker-machine'));
-    cmd.push('&&');
-    cmd.push.apply(cmd, this.copycmd(this.escapePath(path.join(util.resourceDir(), 'docker-' + packagejson['docker-version'])), '/usr/local/bin/docker'));
-    return cmd.join(' ');
+  copyBinariesCmd: Promise.coroutine(function* () {
+    yield fs.mkdirs(util.binsPath());
+    yield fs.copy(resources.docker_machine(), util.dockerMachineBinPath());
+    yield fs.copy(resources.docker(), util.dockerBinPath());
+    return Promise.resolve();
+  }),
+  fixBinariesCmd: Promise.coroutine(function* () {
+    if(util.isWindows()) {
+      return;
+    }
+
+    yield fs.chown(util.binsPath(), process.getuid(), '80');
+    yield fs.chown(util.dockerBinPath(), process.getuid(), '80');
+    yield fs.chown(util.dockerMachineBinPath(), process.getuid(), '80');
+    return Promise.resolve();
+  }),
+  installVirtualBoxCmd: Promise.coroutine(function* () {
+    if(util.isWindows()) {
+      yield util.execProper(`powershell.exe -ExecutionPolicy unrestricted -Command "Start-Process \\\"${path.join(util.supportDir(), this.virtualBoxFileName())}\\\" -ArgumentList \\\"--silent --msiparams REBOOT=ReallySuppress\\\" -Verb runAs -Wait"`);
+    } else {
+      yield util.exec(this.macSudoCmd(`installer -pkg ${this.escapePath(path.join(util.supportDir(), this.virtualBoxFileName()))} -target /`));
+    }
+
+    return Promise.resolve();
+  }),
+  virtualBoxUrl() {
+    if(util.isWindows()) {
+      return 'http://download.virtualbox.org/virtualbox/4.3.26/VirtualBox-4.3.26-98988-Win.exe';
+    } else {
+      return `https://github.com/kitematic/virtualbox/releases/download/${util.packagejson()['virtualbox-version']}/${this.virtualBoxFileName()}`;
+    }
   },
-  fixBinariesCmd: function () {
-    var cmd = [];
-    cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, path.join('/usr/local/bin')]);
-    cmd.push('&&');
-    cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, path.join('/usr/local/bin', 'docker-machine')]);
-    cmd.push('&&');
-    cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, path.join('/usr/local/bin', 'docker')]);
-    return cmd.join(' ');
+  macSudoCmd(cmd) {
+    return `${this.escapePath(resources.macsudo())} -p "Kitematic requires administrative privileges to install." sh -c \"${cmd}\"`;
   },
-  installVirtualBoxCmd: function () {
-    var packagejson = util.packagejson();
-    return `installer -pkg ${this.escapePath(path.join(util.supportDir(), packagejson['virtualbox-filename']))} -target /`;
-  },
-  virtualBoxUrl: function () {
-    var packagejson = util.packagejson();
-    return `https://github.com/kitematic/virtualbox/releases/download/${packagejson['virtualbox-version']}/${packagejson['virtualbox-filename']}`;
-  },
-  macSudoCmd: function (cmd) {
-    return `${this.escapePath(path.join(util.resourceDir(), 'macsudo'))} -p "Kitematic requires administrative privileges to install." sh -c \"${cmd}\"`;
-  },
-  simulateProgress: function (estimateSeconds, progress) {
+  simulateProgress(estimateSeconds, progress) {
     var times = _.range(0, estimateSeconds * 1000, 200);
     var timers = [];
     _.each(times, time => {
@@ -78,10 +67,10 @@ var SetupUtil = {
       timers.push(timer);
     });
   },
-  checksum: function (filename) {
+  checksum(filename) {
     return crypto.createHash('sha256').update(fs.readFileSync(filename), 'utf8').digest('hex');
   },
-  download: function (url, filename, checksum, percentCallback) {
+  download(url, filename, checksum, percentCallback) {
     return new Promise((resolve, reject) => {
       if (fs.existsSync(filename)) {
         var existingChecksum = this.checksum(filename);
@@ -109,7 +98,13 @@ var SetupUtil = {
       });
     });
   },
-  compareVersions: function (v1, v2, options) {
+  virtualBoxFileName() {
+    return util.isWindows() ? util.packagejson()['virtualbox-filename-win'] : util.packagejson()['virtualbox-filename'];
+  },
+  virtualBoxChecksum() {
+    return util.isWindows() ? util.packagejson()['virtualbox-checksum-win'] : util.packagejson()['virtualbox-checksum'];
+  },
+  compareVersions(v1, v2, options) {
     var lexicographical = options && options.lexicographical,
     zeroExtend = options && options.zeroExtend,
     v1parts = v1.split('.'),
