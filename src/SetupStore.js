@@ -270,6 +270,8 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
           step: _currentStep,
           message: err.message
         });
+        console.log(err);
+        console.log(err.stack);
         bugsnag.notify('SetupError', err.message, {
           error: err,
           step: _currentStep
