@@ -180,7 +180,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var required = {};
     var vboxfile = path.join(util.supportDir(), setupUtil.virtualBoxFileName());
     var vboxNeedsInstall = !virtualBox.installed();
-      
+
     required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== setupUtil.virtualBoxChecksum());
     required.install = vboxNeedsInstall || setupUtil.needsBinaryFix();
     required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0;

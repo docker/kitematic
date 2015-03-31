@@ -2,7 +2,6 @@ var _ = require('underscore');
 var React = require('react/addons');
 var Router = require('react-router');
 var remote = require('remote');
-var exec = require('exec');
 var dialog = remote.require('dialog');
 var metrics = require('./Metrics');
 var ContainerStore = require('./ContainerStore');
@@ -32,6 +31,21 @@ var ContainerSettingsVolumes = React.createClass({
       }
     });
   },
+  handleRemoveVolumeClick: function (dockerVol) {
+    metrics.track('Removed Volume Directory', {
+      from: 'settings'
+    });
+    var volumes = _.clone(this.props.container.Volumes);
+    delete volumes[dockerVol];
+    var binds = _.pairs(volumes).map(function (pair) {
+      return pair[1] + ':' + pair[0];
+    });
+    ContainerStore.updateContainer(this.props.container.Name, {
+      Binds: binds
+    }, function (err) {
+      if (err) { console.log(err); }
+    });
+  },
   handleOpenVolumeClick: function (path) {
     metrics.track('Opened Volume Directory', {
       from: 'settings'
@@ -51,6 +65,7 @@ var ContainerSettingsVolumes = React.createClass({
           <span>
             <a className="value-right">No Folder</a>
             <a className="btn btn-action small" onClick={self.handleChooseVolumeClick.bind(self, key)}>Change</a>
+            <a className="btn btn-action small" onClick={self.handleRemoveVolumeClick.bind(self, key)}>Remove</a>
           </span>
         );
       } else {
@@ -58,6 +73,7 @@ var ContainerSettingsVolumes = React.createClass({
           <span>
             <a className="value-right" onClick={self.handleOpenVolumeClick.bind(self, val)}>{val.replace(process.env.HOME, '~')}</a>
             <a className="btn btn-action small" onClick={self.handleChooseVolumeClick.bind(self, key)}>Change</a>
+            <a className="btn btn-action small" onClick={self.handleRemoveVolumeClick.bind(self, key)}>Remove</a>
           </span>
         );
       }
