@@ -6,6 +6,7 @@ var exec = require('exec');
 var dialog = remote.require('dialog');
 var metrics = require('./Metrics');
 var ContainerStore = require('./ContainerStore');
+var util = require('./Util');
 
 var ContainerSettingsVolumes = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -35,7 +36,7 @@ var ContainerSettingsVolumes = React.createClass({
     metrics.track('Opened Volume Directory', {
       from: 'settings'
     });
-    exec(['open', path], function (err) {
+    util.openPathOrUrl(path, function (err) {
       if (err) { throw err; }
     });
   },

@@ -2,6 +2,7 @@ var babel = require('gulp-babel');
 var changed = require('gulp-changed');
 var concat = require('gulp-concat');
 var cssmin = require('gulp-cssmin');
+var rename = require('gulp-rename');
 var downloadatomshell = require('gulp-download-atom-shell');
 var fs = require('fs');
 var gulp = require('gulp');
@@ -167,11 +168,56 @@ gulp.task('settings', function () {
   string_src('settings.json', JSON.stringify(settings)).pipe(gulp.dest('dist/osx/' + options.appFilename.replace(' ', '\ ').replace('(','\(').replace(')','\)') + '/Contents/Resources/app'));
 });
 
-gulp.task('release', function () {
-  runSequence('download', 'dist', ['copy', 'images', 'js', 'styles', 'settings'], 'sign', 'zip');
+gulp.task('download-deps', function () {
+    if(process.platform === 'win32') {
+      return gulp.src('').pipe(
+          shell(['powershell.exe -ExecutionPolicy unrestricted -File util\\deps.ps1'])
+      );
+    } else {
+      return gulp.src('').pipe(
+          shell(['./util/deps'])
+      );
+    }
 });
 
-gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function () {
+gulp.task('copy-icns', ['download'], function () {
+  if(process.platform === 'win32') {
+    return gulp.src(options.icon)
+        .pipe(rename('atom.icns'))
+        .pipe(gulp.dest('./cache/resources'));
+  } else {
+    return gulp.src(options.icon)
+        .pipe(rename('atom.icns'))
+        .pipe(gulp.dest('./cache/Atom.app/Contents/Resources'));
+  }
+});
+
+gulp.task('copy-plist', ['download'], function (done) {
+  if(process.platform === 'darwin') {
+    return gulp.src('./util/Info.plist')
+        .pipe(gulp.dest('./cache/Atom.app/Contents'));
+  } else {
+    done();
+  }
+});
+
+gulp.task('reset', function () {
+  if(process.platform === 'win32') {
+    return gulp.src('').pipe(
+        shell(['powershell.exe -ExecutionPolicy unrestricted -Command "Start-Process powershell -verb runas -ArgumentList \\\"-ExecutionPolicy unrestricted  -file c:\\Users\\Dominik\\Documents\\GitHub\\kitematic\\util\\reset.ps1\\\" -Wait"'])
+    );
+  } else {
+    return gulp.src('').pipe(
+        shell(['./util/reset'])
+    );
+  }
+});
+
+gulp.task('release', function () {
+  runSequence('download-deps', 'download', 'copy-icns', 'copy-plist', 'dist', ['copy', 'images', 'js', 'styles', 'settings'], 'sign', 'zip');
+});
+
+gulp.task('default', ['download-deps', 'download', 'copy-icns', 'copy-plist', 'copy', 'js', 'images', 'styles'], function () {
   gulp.watch('src/**/*.js', ['js']);
   gulp.watch('index.html', ['copy']);
   gulp.watch('styles/**/*.less', ['styles']);
@@ -181,7 +227,14 @@ gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function ()
 
   var env = process.env;
   env.NODE_ENV = 'development';
-  gulp.src('').pipe(shell(['./cache/Atom.app/Contents/MacOS/Atom .'], {
-    env: env
-  }));
+
+  if(process.platform === 'win32') {
+      gulp.src('').pipe(shell(['cache\\atom.exe .'], {
+          env: env
+      }));
+  } else {
+      gulp.src('').pipe(shell(['./cache/Atom.app/Contents/MacOS/Atom .'], {
+          env: env
+      }));
+  }
 });

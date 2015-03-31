@@ -104,7 +104,17 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
             return b.indexOf(':' + key) !== -1;
           });
           if (!existingBind) {
-            binds.push(path.join(util.home(), 'Kitematic', name, key)+ ':' + key);
+              var home = util.home();
+              
+              if(util.isWindows()) {
+                  home = home.charAt(0).toLowerCase() + home.slice(1);
+                  home = "/" + home.replace(':', '').replace(/\\/g, '/');
+                  var fullPath = path.join(home, 'Kitematic', name, key);
+                  fullPath = fullPath.replace(/\\/g, '/');
+                  binds.push(fullPath + ':' + key);
+              } else {
+                binds.push(path.join(home, 'Kitematic', name, key) + ':' + key);
+              }
           }
         });
       }

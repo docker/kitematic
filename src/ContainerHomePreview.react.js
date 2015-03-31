@@ -7,6 +7,7 @@ var Router = require('react-router');
 var request = require('request');
 var metrics = require('./Metrics');
 var webPorts = require('./Util').webPorts;
+var util = require('./Util');
 
 var ContainerHomePreview = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -61,7 +62,7 @@ var ContainerHomePreview = React.createClass({
       metrics.track('Opened In Browser', {
         from: 'preview'
       });
-      exec(['open', this.state.ports[this.state.defaultPort].url], function (err) {
+      util.openPathOrUrl(this.state.ports[this.state.defaultPort].url, function (err) {
         if (err) { throw err; }
       });
     }

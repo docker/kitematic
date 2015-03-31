@@ -28,7 +28,7 @@ var ContainerHome = React.createClass({
     resizeWindow();
   },
   handleErrorClick: function () {
-    util.exec(['open', 'https://github.com/kitematic/kitematic/issues/new']);
+    util.openPathOrUrl('https://github.com/kitematic/kitematic/issues/new');
   },
   componentWillReceiveProps: function () {
     this.init();

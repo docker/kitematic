@@ -8,7 +8,14 @@ var path = require('path');
 process.env.NODE_PATH = path.join(__dirname, '/../node_modules');
 process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
 process.chdir(path.join(__dirname, '..'));
-process.env.PATH = '/usr/local/bin:' + process.env.PATH;
+
+if(process.platform === 'win32') {
+  process.env.PATH = process.env.PATH + ';' + process.env['USERPROFILE'] + '\\Kitematic-bins';
+} else {
+  process.env.PATH = '/usr/local/bin:' + process.env.PATH;
+}
+
+
 
 var size = {}, settingsjson = {};
 try {
