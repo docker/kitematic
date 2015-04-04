@@ -74,7 +74,9 @@ var ContainerHome = React.createClass({
     if (this.props.error) {
       body = (
         <div className="details-progress">
-          <h3>There was a problem connecting to the Docker Engine in the VirtualBox VM.<br/>This could be caused because this Mac is currently connected to a VPN, blocking access to the VM. If the issue persists, please <a onClick={this.handleErrorClick}>file a ticket on our GitHub repo.</a></h3>
+          <h3>An error occurred:</h3>
+          <h2>{this.props.error}</h2>
+          <h3>If you feel that this error is invalid, please <a onClick={this.handleErrorClick}>file a ticket on our GitHub repo.</a></h3>
           <Radial progress={100} error={true} thick={true} transparent={true}/>
         </div>
       );
