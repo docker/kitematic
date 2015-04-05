@@ -50,6 +50,14 @@ var ImageCard = React.createClass({
     }
     util.exec(['open', $repoUri + this.props.image.name]);
   },
+  componentDidMount: function() {
+    $.get('https://registry.hub.docker.com/v1/repositories/' + this.props.image.name + '/tags', function (result) {
+      this.setState({
+        tags: result,
+        chosenTag: result[0].name
+      });
+    }.bind(this));
+  },
   render: function () {
     var self = this;
     var name;
