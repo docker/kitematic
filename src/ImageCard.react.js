@@ -31,11 +31,11 @@ var ImageCard = React.createClass({
   handleTagOverlayClick: function (name) {
     var $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
     $tagOverlay.fadeIn(300);
-    $.get('https://registry.hub.docker.com/v1/repositories/' + name + '/tags', function (result) {
+    $.get('https://registry.hub.docker.com/v1/repositories/' + name + '/tags', result => {
       this.setState({
         tags: result
       });
-    }.bind(this));
+    });
   },
   handleCloseTagOverlay: function () {
     var $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
@@ -51,12 +51,12 @@ var ImageCard = React.createClass({
     util.exec(['open', $repoUri + this.props.image.name]);
   },
   componentDidMount: function() {
-    $.get('https://registry.hub.docker.com/v1/repositories/' + this.props.image.name + '/tags', function (result) {
+    $.get('https://registry.hub.docker.com/v1/repositories/' + this.props.image.name + '/tags', result => {
       this.setState({
         tags: result,
         chosenTag: result[0].name
       });
-    }.bind(this));
+    });
   },
   render: function () {
     var self = this;
