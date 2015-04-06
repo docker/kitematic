@@ -3,6 +3,7 @@
 build
 dist
 node_modules
+coverage
 npm-debug.log
 
 # Signing Identity
