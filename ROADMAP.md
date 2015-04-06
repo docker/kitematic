@@ -1,7 +1,5 @@
 ## Kitematic Roadmap
 
-We will be accepting pull requests that help with our roadmap.
-
 **January 2015**
 
 * Automatic updates

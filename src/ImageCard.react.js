@@ -5,6 +5,7 @@ var ContainerStore = require('./ContainerStore');
 var metrics = require('./Metrics');
 var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
 var Tooltip = require('react-bootstrap').Tooltip;
+var util = require('./Util');
 
 var ImageCard = React.createClass({
   getInitialState: function () {
@@ -30,15 +31,32 @@ var ImageCard = React.createClass({
   handleTagOverlayClick: function (name) {
     var $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
     $tagOverlay.fadeIn(300);
-    $.get('https://registry.hub.docker.com/v1/repositories/' + name + '/tags', function (result) {
+    $.get('https://registry.hub.docker.com/v1/repositories/' + name + '/tags', result => {
       this.setState({
         tags: result
       });
-    }.bind(this));
+    });
   },
   handleCloseTagOverlay: function () {
     var $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
     $tagOverlay.fadeOut(300);
+  },
+  handleRepoClick: function () {
+    var $repoUri = 'https://registry.hub.docker.com/';
+    if (this.props.image.is_official) {
+      $repoUri = $repoUri + "_/";
+    } else {
+      $repoUri = $repoUri + "u/";
+    }
+    util.exec(['open', $repoUri + this.props.image.name]);
+  },
+  componentDidMount: function() {
+    $.get('https://registry.hub.docker.com/v1/repositories/' + this.props.image.name + '/tags', result => {
+      this.setState({
+        tags: result,
+        chosenTag: result[0].name
+      });
+    });
   },
   render: function () {
     var self = this;
@@ -57,8 +75,8 @@ var ImageCard = React.createClass({
       name = (
         <div>
           <div className="namespace official">{namespace}</div>
-          <OverlayTrigger placement="bottom" overlay={<Tooltip>{this.props.image.name}</Tooltip>}>
-            <span className="repo">{repo}</span>
+          <OverlayTrigger placement="bottom" overlay={<Tooltip>View on DockerHub</Tooltip>}>
+            <span className="repo" onClick={this.handleRepoClick}>{repo}</span>
           </OverlayTrigger>
         </div>
       );
@@ -66,8 +84,8 @@ var ImageCard = React.createClass({
       name = (
         <div>
           <div className="namespace">{namespace}</div>
-          <OverlayTrigger placement="bottom" overlay={<Tooltip>{this.props.image.name}</Tooltip>}>
-            <span className="repo">{repo}</span>
+          <OverlayTrigger placement="bottom" overlay={<Tooltip>View on DockerHub</Tooltip>}>
+            <span className="repo" onClick={this.handleRepoClick}>{repo}</span>
           </OverlayTrigger>
         </div>
       );

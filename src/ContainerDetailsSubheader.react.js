@@ -107,7 +107,7 @@ var ContainerDetailsSubheader = React.createClass({
       var container = this.props.container;
       var terminal = path.join(process.cwd(), 'resources', 'terminal');
       machine.ip().then(ip => {
-        var cmd = [terminal, 'ssh', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=quiet', '-o', 'StrictHostKeyChecking=no', '-i', '~/.docker/machine/machines/' + machine.name() + '/id_rsa', 'docker@' + ip, '-t', 'docker', 'exec', '-i', '-t', container.Name, 'sh'];
+        var cmd = [terminal, 'ssh', '-p', '22', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=quiet', '-o', 'StrictHostKeyChecking=no', '-i', '~/.docker/machine/machines/' + machine.name() + '/id_rsa', 'docker@' + ip, '-t', 'docker', 'exec', '-i', '-t', container.Name, 'sh'];
         exec(cmd, function (stderr, stdout, code) {
           if (code) {
             console.log(stderr);

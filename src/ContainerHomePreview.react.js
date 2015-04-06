@@ -37,9 +37,6 @@ var ContainerHomePreview = React.createClass({
       });
     }
   },
-  componentDidUpdate: function () {
-    this.reload();
-  },
   componentWillUnmount: function() {
     clearInterval(this.timer);
   },

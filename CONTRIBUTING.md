@@ -6,11 +6,29 @@ Before you fil an issue or a pull request, quickly read of the following tips on
 
 ## Table of Contents
 
+ - [Development](#development)
  - [GitHub Issues](#github-issues)
- - [Pull Requests](#submitting-pull-requests)
+ - [Pull Requests](#pull-requests)
  - [Code Guidelines](#code-guidelines)
  - [Testing](#testing)
  - [License](#license)
+
+### Development		
+		
+- `npm install`		
+		
+To run the app in development:		
+		
+- `npm start`		
+		
+### Building & Release		
+		
+- `npm run release`		
+		
+### Unit Tests		
+		
+- `npm test`		
+		
 
 ## GitHub Issues
 
@@ -34,6 +52,10 @@ Please be as detailed as possible. Include a description of your environment and
 We're thrilled to receive pull requests of any kind. Anything from bug fix, tests or new features are welcome.
 
 That said, please let us know what you're planning to do! For large changes always create a proposal. Maintainers will love to give you advice on building it and it keeps the app's design coherent.
+
+### Pull Request Requirements:
+- Tests
+- [Signed Off](https://github.com/docker/docker/blob/master/CONTRIBUTING.md#sign-your-work)
 
 ## Code Guidelines
 
