@@ -10,8 +10,6 @@ process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
 process.chdir(path.join(__dirname, '..'));
 process.env.PATH = '/usr/local/bin:' + process.env.PATH;
 
-console.log(process.argv);
-
 var size = {}, settingsjson = {};
 try {
   size = JSON.parse(fs.readFileSync(path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], 'Library', 'Application\ Support', 'Kitematic', 'size')));
