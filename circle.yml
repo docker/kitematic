@@ -5,3 +5,6 @@ dependencies:
   cache_directories:
     - "resources"
     - "node_modules"
+notify:
+  webhooks:
+    - url: https://coveralls.io/webhook
