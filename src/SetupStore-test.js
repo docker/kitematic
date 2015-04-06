@@ -1,10 +1,9 @@
-jest.dontMock('../src/SetupStore');
-var setupStore = require('../src/SetupStore');
-var virtualBox = require('../src/VirtualBox');
-var util = require('../src/Util');
-var machine = require('../src/DockerMachine');
-var setupUtil = require('../src/SetupUtil');
-var Promise = require('bluebird');
+jest.dontMock('./SetupStore');
+var setupStore = require('./SetupStore');
+var virtualBox = require('./VirtualBox');
+var util = require('./Util');
+var machine = require('./DockerMachine');
+var setupUtil = require('./SetupUtil');
 
 describe('SetupStore', function () {
   describe('download step', function () {
