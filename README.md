@@ -1,4 +1,4 @@
-[![CircleCI](https://img.shields.io/circleci/project/kitematic/kitematic.svg)](https://circleci.com/gh/kitematic/kitematic/tree/master)
+[![Build Status](https://travis-ci.org/kitematic/kitematic.svg?branch=master)](https://travis-ci.org/kitematic/kitematic)
 [![Coverage Status](https://coveralls.io/repos/kitematic/kitematic/badge.svg?branch=master)](https://coveralls.io/r/kitematic/kitematic?branch=master)
 [![bitHound Score](https://app.bithound.io/kitematic/kitematic/badges/score.svg)](http://app.bithound.io/kitematic/kitematic)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kitematic/kitematic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
