@@ -297,10 +297,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     var imageName = repository + ':' + tag;
     var containerName = this._generateName(repository);
 
-    if (_pending && _pending.repository === repository && _pending.tag === tag) {
-      _pending = null;
-    }
-
     _placeholders[containerName] = {
       Name: containerName,
       Image: imageName,

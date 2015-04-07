@@ -51,16 +51,18 @@ ipc.on('application:open-url', opts => {
     ContainerStore.setPending(repo, 'latest');
   }
 });
-ContainerStore.setPending('kitematic/ghost', 'latest');
 
 SetupStore.setup().then(() => {
+  if (ContainerStore.pending()) {
+    router.transitionTo('pull');
+  } else {
+    router.transitionTo('new');
+  }
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   ContainerStore.on(ContainerStore.SERVER_ERROR_EVENT, (err) => {
     bugsnag.notify(err);
   });
-  ContainerStore.init(function () {
-    router.transitionTo('containers');
-  });
+  ContainerStore.init(function () {});
 }).catch(err => {
   metrics.track('Setup Failed', {
     step: 'catch',
