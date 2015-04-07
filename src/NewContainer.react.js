@@ -4,8 +4,8 @@ var React = require('react/addons');
 var RetinaImage = require('react-retina-image');
 var Radial = require('./Radial.react');
 var ImageCard = require('./ImageCard.react');
-var Promise = require('bluebird');
 var metrics = require('./Metrics');
+var Promise = require('bluebird');
 
 var _recommended = [];
 var _searchPromise = null;
@@ -142,6 +142,7 @@ var NewContainer = React.createClass({
       'icon-magnifier': true,
       'search-icon': true
     });
+
     return (
       <div className="details">
         <div className="new-container">

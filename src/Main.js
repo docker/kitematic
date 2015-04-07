@@ -48,9 +48,10 @@ ipc.on('application:open-url', opts => {
 
   if (base === 'runRepo') {
     var repo = pathname.substring(slash + 1);
-    ContainerStore.create(repo, 'latest', () => {});
+    ContainerStore.setPending(repo, 'latest');
   }
 });
+ContainerStore.setPending('kitematic/ghost', 'latest');
 
 SetupStore.setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));

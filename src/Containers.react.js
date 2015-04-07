@@ -33,7 +33,11 @@ var Containers = React.createClass({
     ContainerStore.on(ContainerStore.SERVER_CONTAINER_EVENT, this.update);
     ContainerStore.on(ContainerStore.CLIENT_CONTAINER_EVENT, this.updateFromClient);
 
-    if (this.state.sorted.length) {
+    console.log(this.state);
+    if (this.state.pending) {
+      console.log('pending');
+      this.transitionTo('pull');
+    } else if (this.state.sorted.length) {
       this.transitionTo('containerHome', {name: this.state.sorted[0].Name});
     }
 
@@ -64,7 +68,8 @@ var Containers = React.createClass({
     this.setState({
       containers: ContainerStore.containers(),
       sorted: ContainerStore.sorted(),
-      downloading: ContainerStore.downloading()
+      downloading: ContainerStore.downloading(),
+      pending: ContainerStore.pending()
     });
     if (status === 'destroy') {
       this.onDestroy();
@@ -74,9 +79,14 @@ var Containers = React.createClass({
     this.setState({
       containers: ContainerStore.containers(),
       sorted: ContainerStore.sorted(),
-      downloading: ContainerStore.downloading()
+      downloading: ContainerStore.downloading(),
+      pending: ContainerStore.pending()
     });
-    if (status === 'create') {
+    console.log('update from client');
+
+    if (this.state.pending) {
+      this.transitionTo('pull');
+    } else if (status === 'create') {
       this.transitionTo('containerHome', {name: name});
     } else if (status === 'destroy') {
       this.onDestroy();
@@ -197,7 +207,7 @@ var Containers = React.createClass({
               <div className="sidebar-buttons-padding"></div>
             </section>
           </div>
-          <Router.RouteHandler container={container} error={this.state.error}/>
+          <Router.RouteHandler pending={this.state.pending} container={container} error={this.state.error}/>
         </div>
       </div>
     );

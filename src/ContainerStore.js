@@ -14,7 +14,7 @@ var _progress = {};
 var _muted = {};
 var _blocked = {};
 var _error = null;
-var _pendingCreates = [];
+var _pending = null;
 
 var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   CLIENT_CONTAINER_EVENT: 'client_container_event',
@@ -237,9 +237,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
       } else {
         callback();
       }
-      _pendingCreates.forEach(e => {
-        this.create(e.repository, e.tag, () => {});
-      });
       var placeholderData = JSON.parse(localStorage.getItem('store.placeholders'));
       if (placeholderData) {
         _placeholders = _.omit(placeholderData, _.keys(_containers));
@@ -296,18 +293,13 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     });
   },
   create: function (repository, tag, callback) {
-    if (!docker.host()) {
-      console.log('buffering ' + repository);
-      _pendingCreates.push({
-        repository: repository,
-        tag: tag
-      });
-      return;
-    }
-
     tag = tag || 'latest';
     var imageName = repository + ':' + tag;
     var containerName = this._generateName(repository);
+
+    if (_pending && _pending.repository === repository && _pending.tag === tag) {
+      _pending = null;
+    }
 
     _placeholders[containerName] = {
       Name: containerName,
@@ -483,6 +475,20 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   },
   downloading: function () {
     return !!_.keys(_placeholders).length;
+  },
+  pending: function () {
+    return _pending;
+  },
+  setPending: function (repository, tag) {
+    _pending = {
+      repository: repository,
+      tag: tag
+    };
+    this.emit(this.CLIENT_CONTAINER_EVENT, null, 'pending');
+  },
+  clearPending: function () {
+    _pending = null;
+    this.emit(this.CLIENT_CONTAINER_EVENT, null, 'pending');
   }
 });
 
