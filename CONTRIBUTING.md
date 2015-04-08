@@ -53,6 +53,10 @@ We're thrilled to receive pull requests of any kind. Anything from bug fix, test
 
 That said, please let us know what you're planning to do! For large changes always create a proposal. Maintainers will love to give you advice on building it and it keeps the app's design coherent.
 
+### Pull Request Requirements:
+- Tests
+- [Signed Off](https://github.com/docker/docker/blob/master/CONTRIBUTING.md#sign-your-work)
+
 ## Code Guidelines
 
 ### Javascript

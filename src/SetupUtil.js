@@ -33,9 +33,9 @@ var SetupUtil = {
       return;
     }
 
-    yield fs.chown(util.binsPath(), process.getuid(), '80');
-    yield fs.chown(util.dockerBinPath(), process.getuid(), '80');
-    yield fs.chown(util.dockerMachineBinPath(), process.getuid(), '80');
+    yield fs.chown(util.binsPath(), process.getuid(), 80);
+    yield fs.chown(util.dockerBinPath(), process.getuid(), 80);
+    yield fs.chown(util.dockerMachineBinPath(), process.getuid(), 80);
     return Promise.resolve();
   }),
   installVirtualBoxCmd: Promise.coroutine(function* () {
