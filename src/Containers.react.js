@@ -118,7 +118,7 @@ var Containers = React.createClass({
     metrics.track('Opened Issue Reporter', {
       from: 'app'
     });
-    util.exec(['open', 'https://github.com/kitematic/kitematic/issues/new']);
+    util.openPathOrUrl('https://github.com/kitematic/kitematic/issues/new');
   },
   handleMouseEnterDockerTerminal: function () {
     this.setState({

@@ -26,8 +26,7 @@ var _steps = [{
   totalPercent: 35,
   percent: 0,
   run: function (progressCallback) {
-    var packagejson = util.packagejson();
-    return setupUtil.download(setupUtil.virtualBoxUrl(), path.join(util.supportDir(), packagejson['virtualbox-filename']), packagejson['virtualbox-checksum'], percent => {
+    return setupUtil.download(setupUtil.virtualBoxUrl(), path.join(util.supportDir(), setupUtil.virtualBoxFileName()), setupUtil.virtualBoxChecksum(), percent => {
       progressCallback(percent);
     });
   }
@@ -39,21 +38,20 @@ var _steps = [{
   percent: 0,
   seconds: 5,
   run: Promise.coroutine(function* (progressCallback) {
-    var cmd = setupUtil.copyBinariesCmd() + ' && ' + setupUtil.fixBinariesCmd();
+    yield setupUtil.copyBinariesCmd();
+    yield setupUtil.fixBinariesCmd();
+
     if (!virtualBox.installed()) {
       yield virtualBox.killall();
-      cmd += ' && ' + setupUtil.installVirtualBoxCmd();
-    } else {
-      if (!setupUtil.needsBinaryFix()) {
-        return;
+      try {
+        progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
+        yield setupUtil.installVirtualBoxCmd();
+      } catch (err) {
+        throw null;
       }
     }
-    try {
-      progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
-      yield util.exec(setupUtil.macSudoCmd(cmd));
-    } catch (err) {
-      throw null;
-    }
+
+    return;
   })
 }, {
   name: 'init',
@@ -70,9 +68,33 @@ var _steps = [{
       try {
         yield machine.rm();
         yield machine.create();
+        if(util.isWindows()) {
+          var home = util.home();
+          var driveLetter = home.charAt(0);
+          var parts = home.split('\\').slice(0, -1);
+          var usersDirName = parts[parts.length-1];
+          var usersDirPath = parts.join('\\');
+          var shareName = driveLetter + "/" + usersDirName;
+
+          yield machine.stop();
+          yield virtualBox.mountSharedDir(machine.name(), shareName, usersDirPath);
+          yield machine.start();
+        }
       } catch (err) {
         rimraf.sync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
         yield machine.create();
+        if(util.isWindows()) {
+          var home = util.home();
+          var driveLetter = home.charAt(0);
+          var parts = home.split('\\').slice(0, -1);
+          var usersDirName = parts[parts.length-1];
+          var usersDirPath = parts.join('\\');
+          var shareName = driveLetter + "/" + usersDirName;
+
+          yield machine.stop();
+          yield virtualBox.mountSharedDir(machine.name(), shareName, usersDirPath);
+          yield machine.start();
+        }
       }
       return;
     }
@@ -156,9 +178,10 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var packagejson = util.packagejson();
     var isoversion = machine.isoversion();
     var required = {};
-    var vboxfile = path.join(util.supportDir(), packagejson['virtualbox-filename']);
+    var vboxfile = path.join(util.supportDir(), setupUtil.virtualBoxFileName());
     var vboxNeedsInstall = !virtualBox.installed();
-    required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== packagejson['virtualbox-checksum']);
+
+    required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== setupUtil.virtualBoxChecksum());
     required.install = vboxNeedsInstall || setupUtil.needsBinaryFix();
     required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0;
 
@@ -233,7 +256,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
           throw {
             message: 'Machine IP could not be fetched. Please retry the setup. If this fails please file a ticket on our GitHub repo.',
             machine: yield machine.info(),
-            ip: ip,
+            ip: ip
           };
         }
         console.log('Finished Steps');
@@ -247,6 +270,8 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
           step: _currentStep,
           message: err.message
         });
+        console.log(err);
+        console.log(err.stack);
         bugsnag.notify('SetupError', err.message, {
           error: err,
           step: _currentStep

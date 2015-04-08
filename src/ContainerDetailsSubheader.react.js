@@ -10,6 +10,8 @@ var machine = require('./DockerMachine');
 var RetinaImage = require('react-retina-image');
 var Router = require('react-router');
 var webPorts = require('./Util').webPorts;
+var util = require('./Util');
+var resources = require('./Resources');
 
 var ContainerDetailsSubheader = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -89,7 +91,7 @@ var ContainerDetailsSubheader = React.createClass({
       metrics.track('Opened In Browser', {
         from: 'header'
       });
-      exec(['open', this.state.ports[this.state.defaultPort].url], function (err) {
+      util.openPathOrUrl(this.state.ports[this.state.defaultPort].url, function (err) {
         if (err) { throw err; }
       });
     }
@@ -105,9 +107,8 @@ var ContainerDetailsSubheader = React.createClass({
     if (!this.disableTerminal()) {
       metrics.track('Terminaled Into Container');
       var container = this.props.container;
-      var terminal = path.join(process.cwd(), 'resources', 'terminal');
       machine.ip().then(ip => {
-        var cmd = [terminal, 'ssh', '-p', '22', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=quiet', '-o', 'StrictHostKeyChecking=no', '-i', '~/.docker/machine/machines/' + machine.name() + '/id_rsa', 'docker@' + ip, '-t', 'docker', 'exec', '-i', '-t', container.Name, 'sh'];
+        var cmd = [resources.terminal(), 'ssh', '-p', '22', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=quiet', '-o', 'StrictHostKeyChecking=no', '-i', '~/.docker/machine/machines/' + machine.name() + '/id_rsa', 'docker@' + ip, '-t', 'docker', 'exec', '-i', '-t', container.Name, 'sh'];
         exec(cmd, function (stderr, stdout, code) {
           if (code) {
             console.log(stderr);

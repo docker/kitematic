@@ -6,6 +6,7 @@ var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
 var metrics = require('./Metrics');
 var webPorts = require('./Util').webPorts;
+var util = require('./Util');
 
 var ContainerSettingsPorts = React.createClass({
   mixins: [Router.State, Router.Navigation],
@@ -38,7 +39,7 @@ var ContainerSettingsPorts = React.createClass({
     metrics.track('Opened In Browser', {
       from: 'settings'
     });
-    exec(['open', url], function (err) {
+    util.openPathOrUrl(url, function (err) {
       if (err) { throw err; }
     });
   },
