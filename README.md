@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/kitematic/kitematic.svg?branch=master)](https://travis-ci.org/kitematic/kitematic)
 [![Coverage Status](https://coveralls.io/repos/kitematic/kitematic/badge.svg?branch=master)](https://coveralls.io/r/kitematic/kitematic?branch=master)
-[![bitHound Score](https://app.bithound.io/kitematic/kitematic/badges/score.svg)](http://app.bithound.io/kitematic/kitematic)
+[![bitHound Score](https://www.bithound.io/github/kitematic/kitematic/badges/score.svg)](https://www.bithound.io/github/kitematic/kitematic)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kitematic/kitematic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ![Kitematic Logo](https://cloud.githubusercontent.com/assets/251292/5269258/1b229c3c-7a2f-11e4-96f1-e7baf3c86d73.png)
