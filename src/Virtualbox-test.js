@@ -1,7 +1,6 @@
-jest.dontMock('../src/VirtualBox');
-var virtualBox = require('../src/VirtualBox');
-var util = require('../src/Util');
-var Promise = require('bluebird');
+jest.dontMock('./VirtualBox');
+var virtualBox = require('./VirtualBox');
+var util = require('./Util');
 
 describe('VirtualBox', function () {
   it('returns the right command', function () {
