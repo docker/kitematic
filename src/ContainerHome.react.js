@@ -112,7 +112,7 @@ var ContainerHome = React.createClass({
                 <ContainerHomePreview />
               </div>
               <div className="right">
-                <ContainerHomeLogs/>
+                <ContainerHomeLogs container={this.props.container}/>
                 <ContainerHomeFolders container={this.props.container} />
               </div>
             </div>
@@ -138,7 +138,7 @@ var ContainerHome = React.createClass({
           <div className="details-panel home">
             <div className="content">
               <div className="left">
-                <ContainerHomeLogs/>
+                <ContainerHomeLogs container={this.props.container}/>
               </div>
               {right}
             </div>
