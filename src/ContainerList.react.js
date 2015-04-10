@@ -9,8 +9,14 @@ var ContainerList = React.createClass({
   render: function () {
     var self = this;
     var containers = this.props.containers.map(function (container) {
+      var containerId = container.Id;
+      if (!containerId && container.State.Downloading) {
+        // Fall back to the container image name when there is no id. (when the
+        // image is downloading).
+        containerId = container.Image;
+      }
       return (
-        <ContainerListItem key={container.Id} container={container} start={self._start}/>
+        <ContainerListItem key={containerId} container={container} start={self._start} />
       );
     });
     return (
