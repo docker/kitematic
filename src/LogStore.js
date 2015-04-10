@@ -2,59 +2,77 @@ var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 var Convert = require('ansi-to-html');
 var docker = require('./Docker');
+var stream = require('stream');
 
 var _convert = new Convert();
 var _logs = {};
 var _streams = {};
 
-var LogStore = assign(Object.create(EventEmitter.prototype), {
+var MAX_LOG_SIZE = 3000;
+
+module.exports = assign(Object.create(EventEmitter.prototype), {
   SERVER_LOGS_EVENT: 'server_logs_event',
-  _escapeHTML: function (html) {
+  _escape: function (html) {
     var text = document.createTextNode(html);
     var div = document.createElement('div');
     div.appendChild(text);
     return div.innerHTML;
   },
-  fetchLogs: function (name) {
+  fetch: function (name) {
     if (!name || !docker.client()) {
       return;
     }
-    var index = 0;
-    var self = this;
     docker.client().getContainer(name).logs({
-      follow: true,
       stdout: true,
       stderr: true,
-      timestamps: true
-    }, function (err, stream) {
-      if (_streams[name]) {
-        return;
-      }
-      _streams[name] = stream;
+      timestamps: false,
+      tail: MAX_LOG_SIZE,
+      follow: false
+    }, (err, logStream) => {
       if (err) {
-        return;
+        throw err;
       }
-      _logs[name] = [];
-      stream.setEncoding('utf8');
-      stream.on('data', function (buf) {
-        // Every other message is a header
-        if (index % 2 === 1) {
-          //var time = buf.substr(0,buf.indexOf(' '));
-          var msg = buf.substr(buf.indexOf(' ')+1);
-          _logs[name].push(_convert.toHtml(self._escapeHTML(msg)));
-          self.emit(self.SERVER_LOGS_EVENT);
-        }
-        index += 1;
+      var logs = [];
+      logStream.setEncoding('utf-8');
+      logStream.on('data', (chunk) => {
+        logs.push(_convert.toHtml(this._escape(chunk)));
       });
-      stream.on('end', function () {
-        delete _streams[name];
+      logStream.on('end', () => {
+        _logs[name] = logs;
+        this.emit(this.SERVER_LOGS_EVENT);
+        this.attach(name);
       });
     });
   },
-  logs: function (name) {
-    if (!_streams[name]) {
-      this.fetchLogs(name);
+  attach: function (name) {
+    if (!name || !docker.client() || _streams[name]) {
+      return;
     }
+    docker.client().getContainer(name).attach({
+      stdout: true,
+      stderr: true,
+      logs: false,
+      stream: true
+    }, (err, logStream) => {
+      if (err) {
+        throw err;
+      }
+      logStream.setEncoding('utf-8');
+      logStream.on('data', (chunk) => {
+        _logs[name].push(_convert.toHtml(this._escape(chunk)));
+        if (_logs[name].length > MAX_LOG_SIZE) {
+           _logs[name] = _logs[name].slice(_logs[name].length - MAX_LOG_SIZE, MAX_LOG_SIZE);
+        }
+        this.emit(this.SERVER_LOGS_EVENT);
+      });
+    });
+  },
+  detach: function (name) {
+    if (_streams[name]) {
+      _streams[name].destroy();
+    }
+  },
+  logs: function (name) {
     return _logs[name] || [];
   },
   rename: function (name, newName) {
@@ -63,5 +81,3 @@ var LogStore = assign(Object.create(EventEmitter.prototype), {
     }
   }
 });
-
-module.exports = LogStore;
