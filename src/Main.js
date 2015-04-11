@@ -34,7 +34,6 @@ ipc.on('application:quitting', opts => {
 });
 
 ipc.on('application:open-url', opts => {
-  console.log('Creating container from protocol');
   var parser = document.createElement('a');
   parser.href = opts.url;
 
@@ -43,12 +42,12 @@ ipc.on('application:open-url', opts => {
   }
 
   var pathname = parser.pathname.replace('//', '');
-  var slash = pathname.indexOf('/');
-  var base = pathname.slice(0, slash);
-
-  if (base === 'runRepo') {
-    var repo = pathname.substring(slash + 1);
-    ContainerStore.setPending(repo, 'latest');
+  var tokens = pathname.split('/');
+  var type = tokens[0];
+  var method = tokens[1];
+  var repo = tokens.slice(2).join('/');
+  if (type === 'repository' && method === 'run') {
+    ContainerStore.setPending(repo, parser.tag || 'latest');
   }
 });
 

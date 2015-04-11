@@ -202,6 +202,10 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     var data = JSON.parse(json);
     console.log(data);
 
+    if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete') {
+      return;
+    }
+
     // If the event is delete, remove the container
     if (data.status === 'destroy') {
       var container = _.findWhere(_.values(_containers), {Id: data.id});
