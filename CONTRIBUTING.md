@@ -46,7 +46,7 @@ Kitematic is an application built using [atom-shell](https://github.com/atom/ato
      └──────────────────────────────────────┘
 ```
 
-As explained in the [Reflux](https://github.com/spoike/refluxjs), there are three primary types of objects:
+As explained in the [Reflux docs](https://github.com/spoike/refluxjs), there are three primary types of objects:
 - **Actions**: The main logic workhorses of the application. These objects interact with the Docker API and other endpoints to fetch new data and flowing it into the stores, which in turn create events that cause views to update.
 - **Views**: Views make up the UI, and trigger available actions.
 - **Stores**: Stores store the state of the application.
