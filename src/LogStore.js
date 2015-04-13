@@ -33,8 +33,9 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
         throw err;
       }
       var logs = [];
-      logStream.setEncoding('utf-8');
-      logStream.on('data', (chunk) => {
+      var outstream = new stream.PassThrough();
+      docker.client().modem.demuxStream(logStream, outstream, outstream);
+      outstream.on('data', (chunk) => {
         logs.push(_convert.toHtml(this._escape(chunk)));
       });
       logStream.on('end', () => {
@@ -57,8 +58,9 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
       if (err) {
         throw err;
       }
-      logStream.setEncoding('utf-8');
-      logStream.on('data', (chunk) => {
+      var outstream = new stream.PassThrough();
+      docker.client().modem.demuxStream(logStream, outstream, outstream);
+      outstream.on('data', (chunk) => {
         _logs[name].push(_convert.toHtml(this._escape(chunk)));
         if (_logs[name].length > MAX_LOG_SIZE) {
            _logs[name] = _logs[name].slice(_logs[name].length - MAX_LOG_SIZE, MAX_LOG_SIZE);
