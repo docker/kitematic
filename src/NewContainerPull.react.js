@@ -29,7 +29,7 @@ module.exports = React.createClass({
       <div className="details">
         <div className="new-container-pull">
           <div className="content">
-            <h1>You&#39;re about to download <a onClick={this.handleOpenClick}>{this.props.pending.repository}</a>.</h1>
+            <h1>You&#39;re about to download and run <a onClick={this.handleOpenClick}>{this.props.pending.repository}:{this.props.pending.tag}</a>.</h1>
             <h1>Please confirm to create the container.</h1>
             <div className="buttons">
               <a className="btn btn-action" onClick={this.handleCancelClick}>Cancel</a> <a onClick={this.handleConfirmClick} className="btn btn-action">Confirm</a>

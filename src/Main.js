@@ -34,6 +34,8 @@ ipc.on('application:quitting', opts => {
 });
 
 ipc.on('application:open-url', opts => {
+  var repoRegexp = /[a-z0-9]+(?:[._-][a-z0-9]+)*/;
+  var tagRegexp = /[\w][\w.-]{0,127}/;
   var parser = document.createElement('a');
   parser.href = opts.url;
 
@@ -44,10 +46,15 @@ ipc.on('application:open-url', opts => {
   var pathname = parser.pathname.replace('//', '');
   var tokens = pathname.split('/');
   var type = tokens[0];
-  var method = tokens[1];
-  var repo = tokens.slice(2).join('/');
-  if (type === 'repository' && method === 'run') {
-    ContainerStore.setPending(repo, parser.tag || 'latest');
+  var repo = tokens.slice(1).join('/');
+  var tag = parser.tag || 'latest';
+
+  if (repo.indexOf('/') !== -1 || !repoRegexp.test(repo) || !tagRegexp.test(tag)) {
+    return;
+  }
+
+  if (type === 'repository') {
+    ContainerStore.setPending(repo, tag);
   }
 });
 
