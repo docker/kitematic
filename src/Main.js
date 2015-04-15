@@ -48,6 +48,7 @@ ipc.on('application:open-url', opts => {
   var method = tokens[1];
   var repo = tokens.slice(2).join('/');
 
+  // Only accept official repos for now
   if (repo.indexOf('/') !== -1 || !repoRegexp.test(repo)) {
     return;
   }
