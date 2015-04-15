@@ -46,14 +46,15 @@ ipc.on('application:open-url', opts => {
   var pathname = parser.pathname.replace('//', '');
   var tokens = pathname.split('/');
   var type = tokens[0];
-  var repo = tokens.slice(1).join('/');
+  var method = tokens[1];
+  var repo = tokens.slice(2).join('/');
   var tag = parser.tag || 'latest';
 
   if (repo.indexOf('/') !== -1 || !repoRegexp.test(repo) || !tagRegexp.test(tag)) {
     return;
   }
 
-  if (type === 'repository') {
+  if (type === 'repository' && method === 'run') {
     ContainerStore.setPending(repo, tag);
   }
 });
