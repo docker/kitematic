@@ -14,6 +14,7 @@ var _progress = {};
 var _muted = {};
 var _blocked = {};
 var _error = null;
+var _pending = null;
 
 var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   CLIENT_CONTAINER_EVENT: 'client_container_event',
@@ -201,6 +202,10 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     var data = JSON.parse(json);
     console.log(data);
 
+    if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete') {
+      return;
+    }
+
     // If the event is delete, remove the container
     if (data.status === 'destroy') {
       var container = _.findWhere(_.values(_containers), {Id: data.id});
@@ -226,7 +231,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     }
   },
   init: function (callback) {
-    // TODO: Load cached data from db on loading
     this.fetchAllContainers(err => {
       if (err) {
         _error = err;
@@ -471,6 +475,20 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   },
   downloading: function () {
     return !!_.keys(_placeholders).length;
+  },
+  pending: function () {
+    return _pending;
+  },
+  setPending: function (repository, tag) {
+    _pending = {
+      repository: repository,
+      tag: tag
+    };
+    this.emit(this.CLIENT_CONTAINER_EVENT, null, 'pending');
+  },
+  clearPending: function () {
+    _pending = null;
+    this.emit(this.CLIENT_CONTAINER_EVENT, null, 'pending');
   }
 });
 

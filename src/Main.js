@@ -27,14 +27,48 @@ setInterval(function () {
 
 router.run(Handler => React.render(<Handler/>, document.body));
 
+ipc.on('application:quitting', opts => {
+  if (!opts.updating && localStorage.getItem('settings.closeVMOnQuit') === 'true') {
+    machine.stop();
+  }
+});
+
+ipc.on('application:open-url', opts => {
+  var repoRegexp = /[a-z0-9]+(?:[._-][a-z0-9]+)*/;
+  var parser = document.createElement('a');
+  parser.href = opts.url;
+
+  if (parser.protocol !== 'docker:') {
+    return;
+  }
+
+  var pathname = parser.pathname.replace('//', '');
+  var tokens = pathname.split('/');
+  var type = tokens[0];
+  var method = tokens[1];
+  var repo = tokens.slice(2).join('/');
+
+  // Only accept official repos for now
+  if (repo.indexOf('/') !== -1 || !repoRegexp.test(repo)) {
+    return;
+  }
+
+  if (type === 'repository' && method === 'run') {
+    ContainerStore.setPending(repo, 'latest');
+  }
+});
+
 SetupStore.setup().then(() => {
+  if (ContainerStore.pending()) {
+    router.transitionTo('pull');
+  } else {
+    router.transitionTo('new');
+  }
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   ContainerStore.on(ContainerStore.SERVER_ERROR_EVENT, (err) => {
     bugsnag.notify(err);
   });
-  ContainerStore.init(function () {
-    router.transitionTo('containers');
-  });
+  ContainerStore.init(function () {});
 }).catch(err => {
   metrics.track('Setup Failed', {
     step: 'catch',
@@ -42,10 +76,4 @@ SetupStore.setup().then(() => {
   });
   console.log(err);
   bugsnag.notify(err);
-});
-
-ipc.on('application:quitting', opts => {
-  if (!opts.updating && localStorage.getItem('settings.closeVMOnQuit') === 'true') {
-    machine.stop();
-  }
 });
