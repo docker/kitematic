@@ -1,6 +1,6 @@
 {
   "name": "Kitematic",
-  "version": "0.5.13",
+  "version": "0.5.14",
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X.",
   "homepage": "https://kitematic.com/",
@@ -16,7 +16,7 @@
     "release": "gulp release",
     "release:beta": "gulp release --beta",
     "preinstall": "./util/deps",
-    "postinstall": "if [ `uname` == 'Darwin' ]; then gulp download  && cp util/Info.plist cache/Atom.app/Contents/Info.plist && cp util/kitematic.icns cache/Atom.app/Contents/Resources/atom.icns; fi",
+    "postinstall": "gulp download",
     "lint": "jsxhint src && jsxhint browser"
   },
   "licenses": [
@@ -45,8 +45,8 @@
       "<rootDir>/node_modules/bluebird"
     ]
   },
-  "docker-version": "1.5.0",
-  "docker-machine-version": "0.1.0-kitematic-0.5.10",
+  "docker-version": "1.6.0",
+  "docker-machine-version": "0.2.0",
   "atom-shell-version": "0.23.0",
   "virtualbox-version": "4.3.26",
   "virtualbox-filename": "VirtualBox-4.3.26.pkg",
