@@ -11,6 +11,7 @@ var metrics = require('./Metrics');
 var router = require('./Router');
 var template = require('./MenuTemplate');
 var webUtil = require('./WebUtil');
+var util = require ('./Util');
 
 webUtil.addWindowSizeSaving();
 webUtil.addLiveReload();
@@ -34,7 +35,6 @@ ipc.on('application:quitting', opts => {
 });
 
 ipc.on('application:open-url', opts => {
-  var repoRegexp = /[a-z0-9]+(?:[._-][a-z0-9]+)*/;
   var parser = document.createElement('a');
   parser.href = opts.url;
 
@@ -49,7 +49,7 @@ ipc.on('application:open-url', opts => {
   var repo = tokens.slice(2).join('/');
 
   // Only accept official repos for now
-  if (repo.indexOf('/') !== -1 || !repoRegexp.test(repo)) {
+  if (repo.indexOf('/') !== -1 || !util.isOfficialRepo(repo)) {
     return;
   }
 
