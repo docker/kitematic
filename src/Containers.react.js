@@ -10,8 +10,6 @@ var metrics = require('./Metrics');
 var autoUpdater = remote.require('auto-updater');
 var RetinaImage = require('react-retina-image');
 var machine = require('./DockerMachine');
-var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
-var Tooltip = require('react-bootstrap').Tooltip;
 var util = require('./Util');
 
 var Containers = React.createClass({
@@ -33,10 +31,6 @@ var Containers = React.createClass({
     ContainerStore.on(ContainerStore.SERVER_CONTAINER_EVENT, this.update);
     ContainerStore.on(ContainerStore.CLIENT_CONTAINER_EVENT, this.updateFromClient);
 
-    if (this.state.sorted.length) {
-      this.transitionTo('containerHome', {name: this.state.sorted[0].Name});
-    }
-
     ipc.on('application:update-available', () => {
       this.setState({
         updateAvailable: true
@@ -48,38 +42,33 @@ var Containers = React.createClass({
     ContainerStore.removeListener(ContainerStore.SERVER_CONTAINER_EVENT, this.update);
     ContainerStore.removeListener(ContainerStore.CLIENT_CONTAINER_EVENT, this.updateFromClient);
   },
-  onDestroy: function () {
-    if (this.state.sorted.length) {
-      this.transitionTo('containerHome', {name: this.state.sorted[0].Name});
-    } else {
-      this.transitionTo('containers');
-    }
-  },
   updateError: function (err) {
     this.setState({
       error: err
     });
   },
   update: function (name, status) {
+    var sorted = ContainerStore.sorted();
     this.setState({
       containers: ContainerStore.containers(),
-      sorted: ContainerStore.sorted(),
+      sorted: sorted,
+      pending: ContainerStore.pending(),
       downloading: ContainerStore.downloading()
     });
     if (status === 'destroy') {
-      this.onDestroy();
+      if (sorted.length) {
+        this.transitionTo('containerHome', {name: sorted[0].Name});
+      } else {
+        this.transitionTo('containers');
+      }
     }
   },
   updateFromClient: function (name, status) {
-    this.setState({
-      containers: ContainerStore.containers(),
-      sorted: ContainerStore.sorted(),
-      downloading: ContainerStore.downloading()
-    });
+    this.update(name, status);
     if (status === 'create') {
       this.transitionTo('containerHome', {name: name});
-    } else if (status === 'destroy') {
-      this.onDestroy();
+    } else if (status === 'pending' && ContainerStore.pending()) {
+      this.transitionTo('pull');
     }
   },
   handleScroll: function (e) {
@@ -162,17 +151,6 @@ var Containers = React.createClass({
       );
     }
 
-    var button;
-    if (this.state.downloading) {
-      button = (
-        <OverlayTrigger placement="bottom" overlay={<Tooltip>Only one Docker image can be downloaded at a time.</Tooltip>}>
-          <a disabled={true} className="btn-new icon icon-add-3"></a>
-        </OverlayTrigger>
-      );
-    } else {
-      button = <a className="btn-new icon icon-add-3" onClick={this.handleNewContainer}></a>;
-    }
-
     var container = this.getParams().name ? this.state.containers[this.getParams().name] : {};
     return (
       <div className="containers">
@@ -182,7 +160,7 @@ var Containers = React.createClass({
             <section className={sidebarHeaderClass}>
               <h4>Containers</h4>
               <div className="create">
-                {button}
+                <a className="btn-new icon icon-add-3" onClick={this.handleNewContainer}></a>
               </div>
             </section>
             <section className="sidebar-containers" onScroll={this.handleScroll}>
@@ -197,7 +175,7 @@ var Containers = React.createClass({
               <div className="sidebar-buttons-padding"></div>
             </section>
           </div>
-          <Router.RouteHandler container={container} error={this.state.error}/>
+          <Router.RouteHandler pending={this.state.pending} container={container} error={this.state.error}/>
         </div>
       </div>
     );

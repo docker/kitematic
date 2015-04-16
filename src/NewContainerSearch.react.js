@@ -10,7 +10,7 @@ var metrics = require('./Metrics');
 var _recommended = [];
 var _searchPromise = null;
 
-var NewContainer = React.createClass({
+module.exports = React.createClass({
   getInitialState: function () {
     return {
       query: '',
@@ -47,7 +47,7 @@ var NewContainer = React.createClass({
       loading: true
     });
 
-    _searchPromise = Promise.delay(200).then(() => Promise.resolve($.get('https://registry.hub.docker.com/v1/search?q=' + query))).cancellable().then(data => {
+    _searchPromise = Promise.delay(200).cancellable().then(() => Promise.resolve($.get('https://registry.hub.docker.com/v1/search?q=' + query))).then(data => {
       metrics.track('Searched for Images');
       this.setState({
         results: data.results,
@@ -166,5 +166,3 @@ var NewContainer = React.createClass({
     );
   }
 });
-
-module.exports = NewContainer;
