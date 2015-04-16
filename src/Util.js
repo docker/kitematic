@@ -44,5 +44,12 @@ module.exports = {
     } catch (err) {}
     return settingsjson;
   },
+  isOfficialRepo: function (name) {
+    if (!name || !name.length) {
+      return false;
+    }
+    var repoRegexp = /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/;
+    return repoRegexp.test(name);
+  },
   webPorts: ['80', '8000', '8080', '3000', '5000', '2368', '9200', '8983']
 };
