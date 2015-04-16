@@ -106,6 +106,7 @@ gulp.task('dist', function () {
     'mkdir -p dist/osx/<%= filename %>/Contents/Resources/app/resources',
     'cp -v resources/* dist/osx/<%= filename %>/Contents/Resources/app/resources/ || :',
     'cp <%= icon %> dist/osx/<%= filename %>/Contents/Resources/atom.icns',
+    'cp ./util/Info.plist dist/osx/<%= filename %>/Contents/Info.plist',
     '/usr/libexec/PlistBuddy -c "Set :CFBundleVersion <%= version %>" dist/osx/<%= filename %>/Contents/Info.plist',
     '/usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName <%= name %>" dist/osx/<%= filename %>/Contents/Info.plist',
     '/usr/libexec/PlistBuddy -c "Set :CFBundleName <%= name %>" dist/osx/<%= filename %>/Contents/Info.plist',
