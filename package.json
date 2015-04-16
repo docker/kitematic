@@ -12,11 +12,10 @@
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
     "start": "gulp",
-    "test": "jest --coverage",
+    "test": "jest",
     "release": "gulp release",
     "release:beta": "gulp release --beta",
     "preinstall": "./util/deps",
-    "postinstall": "gulp download",
     "lint": "jsxhint src && jsxhint browser"
   },
   "licenses": [
