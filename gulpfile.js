@@ -104,7 +104,7 @@ gulp.task('dist', function () {
     'cp package.json dist/osx/<%= filename %>/Contents/Resources/app/',
     'mkdir -p dist/osx/<%= filename %>/Contents/Resources/app/resources',
     'cp -v resources/* dist/osx/<%= filename %>/Contents/Resources/app/resources/ || :',
-    'cp <%= icon %> dist/osx/<%= filename %>/Contents/Resources/electron.icns',
+    'cp <%= icon %> dist/osx/<%= filename %>/Contents/Resources/atom.icns',
     'cp ./util/Info.plist dist/osx/<%= filename %>/Contents/Info.plist',
     '/usr/libexec/PlistBuddy -c "Set :CFBundleVersion <%= version %>" dist/osx/<%= filename %>/Contents/Info.plist',
     '/usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName <%= name %>" dist/osx/<%= filename %>/Contents/Info.plist',
@@ -138,9 +138,19 @@ gulp.task('sign', function () {
   try {
     var signing_identity = fs.readFileSync('./identity', 'utf8').trim();
     return gulp.src('').pipe(shell([
-      'codesign --deep --force --verbose --sign "' + signing_identity + '" ' + options.appFilename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)')
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Electron\\ Framework.framework',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Electron\\ Helper\\ EH.app',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Electron\\ Helper\\ NP.app',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Electron\\ Helper.app',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/ReactiveCocoa.framework',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Squirrel.framework',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Mantle.framework',
+      'codesign --force --verbose --sign <%= identity %> <%= filename %>',
     ], {
-      cwd: './dist/osx/'
+      templateData: {
+        filename: 'dist/osx/' + options.appFilename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)'),
+        identity: '\"' + signing_identity + '\"'
+      }
     }));
   } catch (error) {
     gutil.log(gutil.colors.red('Error: ' + error.message));
