@@ -50,9 +50,7 @@ var ContainerSettingsVolumes = React.createClass({
     metrics.track('Opened Volume Directory', {
       from: 'settings'
     });
-    util.openPathOrUrl(path, function (err) {
-      if (err) { throw err; }
-    });
+    util.showItemInFolder(path);
   },
   render: function () {
     if (!this.props.container) {

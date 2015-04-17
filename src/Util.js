@@ -54,9 +54,6 @@ module.exports = {
       return (!fs.existsSync(path) || fs.statSync(path).gid !== 80 || fs.statSync(path).uid !== process.getuid());
     }
   },
-  openPathOrUrl(pathOrUrl, callback) {
-    open(pathOrUrl, callback);
-  },
   supportDir() {
     var acc = path.join(this.home(), 'Library', 'Application\ Support', 'Kitematic');
     fs.mkdirsSync(acc);

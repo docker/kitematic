@@ -59,9 +59,7 @@ var ContainerHomePreview = React.createClass({
       metrics.track('Opened In Browser', {
         from: 'preview'
       });
-      util.openPathOrUrl(this.state.ports[this.state.defaultPort].url, function (err) {
-        if (err) { throw err; }
-      });
+      util.openExtenral(this.state.ports[this.state.defaultPort].url);
     }
   },
   handleClickNotShowingCorrectly: function () {

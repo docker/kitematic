@@ -9,6 +9,7 @@ var ContainerHomeLogs = require('./ContainerHomeLogs.react');
 var ContainerHomeFolders = require('./ContainerHomeFolders.react');
 var ContainerUtil = require('./ContainerUtil');
 var util = require('./Util');
+var shell = require('shell');
 
 var resizeWindow = function () {
   $('.left .wrapper').height(window.innerHeight - 240);
@@ -28,7 +29,7 @@ var ContainerHome = React.createClass({
     resizeWindow();
   },
   handleErrorClick: function () {
-    util.openPathOrUrl('https://github.com/kitematic/kitematic/issues/new');
+    shell.openExternal('https://github.com/kitematic/kitematic/issues/new');
   },
   componentWillReceiveProps: function () {
     this.init();

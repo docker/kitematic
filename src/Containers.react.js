@@ -12,7 +12,7 @@ var RetinaImage = require('react-retina-image');
 var machine = require('./DockerMachine');
 var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
 var Tooltip = require('react-bootstrap').Tooltip;
-var util = require('./Util');
+var shell = require('shell');
 
 var Containers = React.createClass({
   mixins: [Router.Navigation, Router.State],
@@ -118,7 +118,7 @@ var Containers = React.createClass({
     metrics.track('Opened Issue Reporter', {
       from: 'app'
     });
-    util.openPathOrUrl('https://github.com/kitematic/kitematic/issues/new');
+    shell.openExternal('https://github.com/kitematic/kitematic/issues/new');
   },
   handleMouseEnterDockerTerminal: function () {
     this.setState({

@@ -2,7 +2,6 @@ var _ = require('underscore');
 var $ = require('jquery');
 var React = require('react/addons');
 var exec = require('exec');
-var path =  require('path');
 var metrics = require('./Metrics');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
@@ -10,7 +9,7 @@ var machine = require('./DockerMachine');
 var RetinaImage = require('react-retina-image');
 var Router = require('react-router');
 var webPorts = require('./Util').webPorts;
-var util = require('./Util');
+var shell = require('shell');
 var resources = require('./Resources');
 
 var ContainerDetailsSubheader = React.createClass({
@@ -91,9 +90,7 @@ var ContainerDetailsSubheader = React.createClass({
       metrics.track('Opened In Browser', {
         from: 'header'
       });
-      util.openPathOrUrl(this.state.ports[this.state.defaultPort].url, function (err) {
-        if (err) { throw err; }
-      });
+      shell.openExternal(this.state.ports[this.state.defaultPort].url);
     }
   },
   handleRestart: function () {

@@ -5,6 +5,7 @@ var util = require('./Util');
 var metrics = require('./Metrics');
 var machine = require('./DockerMachine');
 var docker = require('./Docker');
+var shell = require('shell');
 
 // main.js
 var MenuTemplate = function () {
@@ -166,7 +167,7 @@ var MenuTemplate = function () {
             metrics.track('Opened Issue Reporter', {
               from: 'menu'
             });
-            util.openPathOrUrl('https://github.com/kitematic/kitematic/issues/new');
+            shell.openExternal('https://github.com/kitematic/kitematic/issues/new');
           }
         }
       ]
