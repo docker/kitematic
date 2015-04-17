@@ -3,14 +3,15 @@ var React = require('react/addons');
 var exec = require('exec');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
-var Router = require('react-router');
 var request = require('request');
 var metrics = require('./Metrics');
 var webPorts = require('./Util').webPorts;
 var util = require('./Util');
 
 var ContainerHomePreview = React.createClass({
-  mixins: [Router.State, Router.Navigation],
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   getInitialState: function () {
     return {
       ports: {},
@@ -42,7 +43,7 @@ var ContainerHomePreview = React.createClass({
     clearInterval(this.timer);
   },
   init: function () {
-    var container = ContainerStore.container(this.getParams().name);
+    var container = ContainerStore.container(this.context.router.getCurrentParams().name);
     if (!container) {
       return;
     }
@@ -66,7 +67,7 @@ var ContainerHomePreview = React.createClass({
     metrics.track('Viewed Port Settings', {
       from: 'preview'
     });
-    this.transitionTo('containerSettingsPorts', {name: this.getParams().name});
+    this.context.router.transitionTo('containerSettingsPorts', {name: this.context.router.getCurrentParams().name});
   },
   render: function () {
     var preview;

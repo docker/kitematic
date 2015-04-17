@@ -20,6 +20,10 @@ module.exports = React.createClass({
     LogStore.fetch(this.props.container.Name);
   },
   componentWillUnmount: function() {
+    if (!this.props.container) {
+      return;
+    }
+
     LogStore.detach(this.props.container.Name);
     LogStore.removeListener(LogStore.SERVER_LOGS_EVENT, this.update);
   },
@@ -34,6 +38,9 @@ module.exports = React.createClass({
     _prevBottom = parent[0].scrollHeight - parent.height();
   },
   update: function () {
+    if (!this.props.container) {
+      return;
+    }
     this.setState({
       logs: LogStore.logs(this.props.container.Name)
     });

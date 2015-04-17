@@ -1,6 +1,5 @@
 var _ = require('underscore');
 var React = require('react/addons');
-var Router = require('react-router');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
 var metrics = require('./Metrics');
@@ -8,7 +7,9 @@ var webPorts = require('./Util').webPorts;
 var shell = require('shell');
 
 var ContainerSettingsPorts = React.createClass({
-  mixins: [Router.State, Router.Navigation],
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   getInitialState: function () {
     return {
       ports: {},
@@ -22,7 +23,7 @@ var ContainerSettingsPorts = React.createClass({
     this.init();
   },
   init: function () {
-    var container = ContainerStore.container(this.getParams().name);
+    var container = ContainerStore.container(this.context.router.getCurrentParams().name);
     if (!container) {
       return;
     }
@@ -41,7 +42,6 @@ var ContainerSettingsPorts = React.createClass({
     shell.openExternal(url);
   },
   handleChangeDefaultPort: function (port, e) {
-    console.log(e.target.checked);
     if (e.target.checked) {
       this.setState({
         defaultPort: port

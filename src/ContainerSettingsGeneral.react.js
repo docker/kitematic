@@ -28,7 +28,9 @@ var containerNameSlugify = function (text) {
 };
 
 var ContainerSettingsGeneral = React.createClass({
-  mixins: [Router.State, Router.Navigation],
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   getInitialState: function () {
     return {
       slugName: null,
@@ -44,7 +46,7 @@ var ContainerSettingsGeneral = React.createClass({
     this.init();
   },
   init: function () {
-    var container = ContainerStore.container(this.getParams().name);
+    var container = ContainerStore.container(this.context.router.getCurrentParams().name);
     if (!container) {
       return;
     }
@@ -98,7 +100,7 @@ var ContainerSettingsGeneral = React.createClass({
         return;
       }
       metrics.track('Changed Container Name');
-      this.transitionTo('containerSettingsGeneral', {name: newName});
+      this.context.router.transitionTo('containerSettingsGeneral', {name: newName});
       var oldPath = path.join(process.env.HOME, 'Kitematic', oldName);
       var newPath = path.join(process.env.HOME, 'Kitematic', newName);
       rimraf(newPath, () => {

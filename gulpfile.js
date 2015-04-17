@@ -2,7 +2,7 @@ var babel = require('gulp-babel');
 var changed = require('gulp-changed');
 var concat = require('gulp-concat');
 var cssmin = require('gulp-cssmin');
-var downloadatomshell = require('gulp-download-atom-shell');
+var downloadelectron = require('gulp-download-electron');
 var fs = require('fs');
 var gulp = require('gulp');
 var gulpif = require('gulp-if');
@@ -76,8 +76,8 @@ gulp.task('styles', function () {
 });
 
 gulp.task('download', function (cb) {
-  downloadatomshell({
-    version: packagejson['atom-shell-version'],
+  downloadelectron({
+    version: packagejson['electron-version'],
     outputDir: 'cache'
   }, cb);
 });
@@ -97,8 +97,8 @@ gulp.task('dist', function () {
   var stream = gulp.src('').pipe(shell([
     'rm -Rf dist',
     'mkdir -p ./dist/osx',
-    'cp -R ./cache/Atom.app ./dist/osx/<%= filename %>',
-    'mv ./dist/osx/<%= filename %>/Contents/MacOS/Atom ./dist/osx/<%= filename %>/Contents/MacOS/<%= name %>',
+    'cp -R ./cache/Electron.app ./dist/osx/<%= filename %>',
+    'mv ./dist/osx/<%= filename %>/Contents/MacOS/Electron ./dist/osx/<%= filename %>/Contents/MacOS/<%= name %>',
     'mkdir -p ./dist/osx/<%= filename %>/Contents/Resources/app',
     'mkdir -p ./dist/osx/<%= filename %>/Contents/Resources/app/node_modules',
     'cp package.json dist/osx/<%= filename %>/Contents/Resources/app/',
@@ -138,9 +138,19 @@ gulp.task('sign', function () {
   try {
     var signing_identity = fs.readFileSync('./identity', 'utf8').trim();
     return gulp.src('').pipe(shell([
-      'codesign --deep --force --verbose --sign "' + signing_identity + '" ' + options.appFilename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)')
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Electron\\ Framework.framework',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Electron\\ Helper\\ EH.app',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Electron\\ Helper\\ NP.app',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Electron\\ Helper.app',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/ReactiveCocoa.framework',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Squirrel.framework',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Mantle.framework',
+      'codesign --force --verbose --sign <%= identity %> <%= filename %>',
     ], {
-      cwd: './dist/osx/'
+      templateData: {
+        filename: 'dist/osx/' + options.appFilename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)'),
+        identity: '\"' + signing_identity + '\"'
+      }
     }));
   } catch (error) {
     gutil.log(gutil.colors.red('Error: ' + error.message));
@@ -207,11 +217,11 @@ gulp.task('default', ['download-deps', 'download', 'copy', 'js', 'images', 'styl
   env.NODE_ENV = 'development';
 
   if(process.platform === 'win32') {
-      gulp.src('').pipe(shell(['cache\\atom.exe .'], {
+      gulp.src('').pipe(shell(['cache\\electron.exe .'], {
           env: env
       }));
   } else {
-      gulp.src('').pipe(shell(['./cache/Atom.app/Contents/MacOS/Atom .'], {
+      gulp.src('').pipe(shell(['./cache/Electron.app/Contents/MacOS/Electron .'], {
           env: env
       }));
   }

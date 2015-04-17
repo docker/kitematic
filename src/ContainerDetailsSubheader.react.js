@@ -1,19 +1,21 @@
 var _ = require('underscore');
 var $ = require('jquery');
-var React = require('react/addons');
+var React = require('react');
 var exec = require('exec');
 var metrics = require('./Metrics');
 var ContainerStore = require('./ContainerStore');
 var ContainerUtil = require('./ContainerUtil');
 var machine = require('./DockerMachine');
 var RetinaImage = require('react-retina-image');
-var Router = require('react-router');
 var webPorts = require('./Util').webPorts;
 var shell = require('shell');
 var resources = require('./Resources');
+var classNames = require('classNames');
 
 var ContainerDetailsSubheader = React.createClass({
-  mixins: [Router.State, Router.Navigation],
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   getInitialState: function () {
     return {
       defaultPort: null
@@ -27,9 +29,9 @@ var ContainerDetailsSubheader = React.createClass({
   },
   init: function () {
     this.setState({
-      currentRoute: _.last(this.getRoutes()).name
+      currentRoute: _.last(this.context.router.getCurrentRoutes()).name
     });
-    var container = ContainerStore.container(this.getParams().name);
+    var container = ContainerStore.container(this.context.router.getCurrentParams().name);
     if (!container) {
       return;
     }
@@ -70,19 +72,19 @@ var ContainerDetailsSubheader = React.createClass({
       metrics.track('Viewed Home', {
         from: 'header'
       });
-      this.transitionTo('containerHome', {name: this.getParams().name});
+      this.context.router.transitionTo('containerHome', {name: this.context.router.getCurrentParams().name});
     }
   },
   showLogs: function () {
     if (!this.disableTab()) {
       metrics.track('Viewed Logs');
-      this.transitionTo('containerLogs', {name: this.getParams().name});
+      this.context.router.transitionTo('containerLogs', {name: this.context.router.getCurrentParams().name});
     }
   },
   showSettings: function () {
     if (!this.disableTab()) {
       metrics.track('Viewed Settings');
-      this.transitionTo('containerSettings', {name: this.getParams().name});
+      this.context.router.transitionTo('containerSettings', {name: this.context.router.getCurrentParams().name});
     }
   },
   handleRun: function () {
@@ -139,29 +141,29 @@ var ContainerDetailsSubheader = React.createClass({
     $action.css("visibility", "hidden");
   },
   render: function () {
-    var runActionClass = React.addons.classSet({
+    var runActionClass = classNames({
       action: true,
       disabled: this.disableRun()
     });
-    var restartActionClass = React.addons.classSet({
+    var restartActionClass = classNames({
       action: true,
       disabled: this.disableRestart()
     });
-    var terminalActionClass = React.addons.classSet({
+    var terminalActionClass = classNames({
       action: true,
       disabled: this.disableTerminal()
     });
-    var tabHomeClasses = React.addons.classSet({
+    var tabHomeClasses = classNames({
       'tab': true,
       'active': this.state.currentRoute === 'containerHome',
       disabled: this.disableTab()
     });
-    var tabLogsClasses = React.addons.classSet({
+    var tabLogsClasses = classNames({
       'tab': true,
       'active': this.state.currentRoute === 'containerLogs',
       disabled: this.disableTab()
     });
-    var tabSettingsClasses = React.addons.classSet({
+    var tabSettingsClasses = classNames({
       'tab': true,
       'active': this.state.currentRoute && (this.state.currentRoute.indexOf('containerSettings') >= 0),
       disabled: this.disableTab()

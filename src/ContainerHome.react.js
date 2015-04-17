@@ -2,7 +2,6 @@ var _ = require('underscore');
 var $ = require('jquery');
 var React = require('react/addons');
 var ContainerStore = require('./ContainerStore');
-var Router = require('react-router');
 var Radial = require('./Radial.react');
 var ContainerHomePreview = require('./ContainerHomePreview.react');
 var ContainerHomeLogs = require('./ContainerHomeLogs.react');
@@ -17,7 +16,9 @@ var resizeWindow = function () {
 };
 
 var ContainerHome = React.createClass({
-  mixins: [Router.State, Router.Navigation],
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   getInitialState: function () {
     return {
       ports: {},
@@ -48,7 +49,7 @@ var ContainerHome = React.createClass({
     resizeWindow();
   },
   init: function () {
-    var container = ContainerStore.container(this.getParams().name);
+    var container = ContainerStore.container(this.context.router.getCurrentParams().name);
     if (!container) {
       return;
     }
@@ -58,12 +59,12 @@ var ContainerHome = React.createClass({
       defaultPort: _.find(_.keys(ports), function (port) {
         return util.webPorts.indexOf(port) !== -1;
       }),
-      progress: ContainerStore.progress(this.getParams().name),
-      blocked: ContainerStore.blocked(this.getParams().name)
+      progress: ContainerStore.progress(this.context.router.getCurrentParams().name),
+      blocked: ContainerStore.blocked(this.context.router.getCurrentParams().name)
     });
   },
   updateProgress: function (name) {
-    if (name === this.getParams().name) {
+    if (name === this.context.router.getCurrentParams().name) {
       this.setState({
         blocked: ContainerStore.blocked(name),
         progress: ContainerStore.progress(name)

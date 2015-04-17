@@ -15,7 +15,9 @@ var Tooltip = require('react-bootstrap').Tooltip;
 var shell = require('shell');
 
 var Containers = React.createClass({
-  mixins: [Router.Navigation, Router.State],
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   getInitialState: function () {
     return {
       sidebarOffset: 0,
@@ -34,7 +36,7 @@ var Containers = React.createClass({
     ContainerStore.on(ContainerStore.CLIENT_CONTAINER_EVENT, this.updateFromClient);
 
     if (this.state.sorted.length) {
-      this.transitionTo('containerHome', {name: this.state.sorted[0].Name});
+      this.context.router.transitionTo('containerHome', {name: this.state.sorted[0].Name});
     }
 
     ipc.on('application:update-available', () => {
@@ -50,9 +52,9 @@ var Containers = React.createClass({
   },
   onDestroy: function () {
     if (this.state.sorted.length) {
-      this.transitionTo('containerHome', {name: this.state.sorted[0].Name});
+      this.context.router.transitionTo('containerHome', {name: this.state.sorted[0].Name});
     } else {
-      this.transitionTo('containers');
+      this.context.router.transitionTo('containers');
     }
   },
   updateError: function (err) {
@@ -77,7 +79,7 @@ var Containers = React.createClass({
       downloading: ContainerStore.downloading()
     });
     if (status === 'create') {
-      this.transitionTo('containerHome', {name: name});
+      this.context.router.transitionTo('containerHome', {name: name});
     } else if (status === 'destroy') {
       this.onDestroy();
     }
@@ -95,7 +97,7 @@ var Containers = React.createClass({
   },
   handleNewContainer: function () {
     $(this.getDOMNode()).find('.new-container-item').parent().fadeIn();
-    this.transitionTo('new');
+    this.context.router.transitionTo('new');
     metrics.track('Pressed New Container');
   },
   handleAutoUpdateClick: function () {
@@ -106,7 +108,7 @@ var Containers = React.createClass({
     metrics.track('Opened Preferences', {
       from: 'app'
     });
-    this.transitionTo('preferences');
+    this.context.router.transitionTo('preferences');
   },
   handleClickDockerTerminal: function () {
     metrics.track('Opened Docker Terminal', {
@@ -173,7 +175,7 @@ var Containers = React.createClass({
       button = <a className="btn-new icon icon-add-3" onClick={this.handleNewContainer}></a>;
     }
 
-    var container = this.getParams().name ? this.state.containers[this.getParams().name] : {};
+    var container = this.context.router.getCurrentParams().name ? this.state.containers[this.context.router.getCurrentParams().name] : {};
     return (
       <div className="containers">
         <Header />
