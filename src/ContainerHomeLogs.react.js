@@ -6,51 +6,54 @@ var metrics = require('./Metrics');
 
 var _prevBottom = 0;
 
-var ContainerHomeLogs = React.createClass({
-  mixins: [Router.State, Router.Navigation],
+module.exports = React.createClass({
+  mixins: [Router.Navigation],
   getInitialState: function () {
     return {
       logs: []
     };
   },
-  componentWillReceiveProps: function () {
-    this.init();
-  },
   componentDidMount: function() {
-    this.init();
-    LogStore.on(LogStore.SERVER_LOGS_EVENT, this.updateLogs);
+    if (!this.props.container) {
+      return;
+    }
+    this.update();
+    this.scrollToBottom();
+    LogStore.on(LogStore.SERVER_LOGS_EVENT, this.update);
+    LogStore.fetch(this.props.container.Name);
   },
   componentWillUnmount: function() {
-    LogStore.removeListener(LogStore.SERVER_LOGS_EVENT, this.updateLogs);
+    if (!this.props.container) {
+      return;
+    }
+
+    LogStore.detach(this.props.container.Name);
+    LogStore.removeListener(LogStore.SERVER_LOGS_EVENT, this.update);
   },
   componentDidUpdate: function () {
-    // Scroll logs to bottom
+    this.scrollToBottom();
+  },
+  scrollToBottom: function () {
     var parent = $('.logs');
     if (parent.scrollTop() >= _prevBottom - 50) {
       parent.scrollTop(parent[0].scrollHeight - parent.height());
     }
     _prevBottom = parent[0].scrollHeight - parent.height();
   },
-  init: function () {
-    this.updateLogs();
-  },
-  updateLogs: function (name) {
-    if (name && name !== this.getParams().name) {
-      return;
-    }
-    this.setState({
-      logs: LogStore.logs(this.getParams().name)
-    });
-  },
   handleClickLogs: function () {
     metrics.track('Viewed Logs', {
       from: 'preview'
     });
-    this.transitionTo('containerLogs', {name: this.getParams().name});
+    this.transitionTo('containerLogs', {name: this.props.container.Name});
+  },
+  update: function () {
+    this.setState({
+      logs: LogStore.logs(this.props.container.Name)
+    });
   },
   render: function () {
     var logs = this.state.logs.map(function (l, i) {
-      return <p key={i} dangerouslySetInnerHTML={{__html: l}}></p>;
+      return <span key={i} dangerouslySetInnerHTML={{__html: l}}></span>;
     });
     if (logs.length === 0) {
       logs = "No logs for this container.";
@@ -62,11 +65,8 @@ var ContainerHomeLogs = React.createClass({
           <div className="logs">
             {logs}
           </div>
-          <div className="mini-logs-overlay" onClick={this.handleClickLogs}><span className="icon icon-scale-spread-1"></span><div className="text">View Logs</div></div>
-        </div>
+          <div className="mini-logs-overlay" onClick={this.handleClickLogs}><span className="icon icon-scale-spread-1"></span><div className="text">View Logs</div></div> </div>
       </div>
     );
   }
 });
-
-module.exports = ContainerHomeLogs;

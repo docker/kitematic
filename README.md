@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/kitematic/kitematic.svg?branch=master)](https://travis-ci.org/kitematic/kitematic)
 [![Coverage Status](https://coveralls.io/repos/kitematic/kitematic/badge.svg?branch=master)](https://coveralls.io/r/kitematic/kitematic?branch=master)
-[![bitHound Score](https://app.bithound.io/kitematic/kitematic/badges/score.svg)](http://app.bithound.io/kitematic/kitematic)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kitematic/kitematic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![bitHound Score](https://www.bithound.io/github/kitematic/kitematic/badges/score.svg)](https://www.bithound.io/github/kitematic/kitematic)
+
 
 ![Kitematic Logo](https://cloud.githubusercontent.com/assets/251292/5269258/1b229c3c-7a2f-11e4-96f1-e7baf3c86d73.png)
 
@@ -27,9 +27,9 @@ Please read through our [Contributing Guidelines](https://github.com/kitematic/k
 
 ## Community
 
-- For questions on how to use Kitematic, see our [user forum](https://forums.docker.com/c/kitematic).
+- [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kitematic/kitematic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+- Ask questions on our [user forum](https://forums.docker.com/c/kitematic).
 - **#kitematic** on IRC. [Join the channel](http://webchat.freenode.net/?channels=%23kitematic&uio=d4).
-- Join the Kitematic [Gitter Channel](https://gitter.im/kitematic/kitematic)
 - Follow [@kitematic on Twitter](https://twitter.com/kitematic).
 - Read and subscribe to [the Kitematic Blog](http://blog.kitematic.com).
 

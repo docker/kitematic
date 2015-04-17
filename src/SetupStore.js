@@ -99,19 +99,14 @@ var _steps = [{
       return;
     }
 
-    if ((yield machine.state()) === 'Saved') {
-      yield virtualBox.wake(machine.name());
-    }
-
     var isoversion = machine.isoversion();
     var packagejson = util.packagejson();
     if (!isoversion || setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0) {
-      yield machine.stop();
+      yield machine.start();
       yield machine.upgrade();
     }
     if ((yield machine.state()) !== 'Running') {
       yield machine.start();
-      yield machine.regenerateCerts();
     }
   })
 }];

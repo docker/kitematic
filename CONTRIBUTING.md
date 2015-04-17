@@ -6,29 +6,54 @@ Before you fil an issue or a pull request, quickly read of the following tips on
 
 ## Table of Contents
 
- - [Development](#development)
+ - [Getting Started](#getting-started)
+ - [Architecture](#architecture)
  - [GitHub Issues](#github-issues)
  - [Pull Requests](#pull-requests)
  - [Code Guidelines](#code-guidelines)
  - [Testing](#testing)
  - [License](#license)
 
-### Development		
-		
-- `npm install`		
-		
-To run the app in development:		
-		
-- `npm start`		
-		
-### Building & Release		
-		
-- `npm run release`		
-		
-### Unit Tests		
-		
-- `npm test`		
-		
+### Getting Started
+
+- `npm install`
+
+To run the app in development:
+
+- `npm start`
+
+### Building & Release
+
+- `npm run release`
+
+### Unit Tests
+
+- `npm test`
+
+## Architecture
+
+### Overview
+
+**Note: This architecture is work in progress and doesn't reflect the current state of the app, yet!**
+
+Kitematic is an application built using [atom-shell](https://github.com/atom/atom-shell) and is powered by the [Docker Engine](https://github.com/docker/docker). While it's work in progress, the goal is to make Kitematic a high-performance, portable Javascript ES6 application built with React and Reflux. It adopts a single data flow pattern:
+
+```
+╔═════════╗       ╔════════╗       ╔═════════════════╗
+║ Actions ║──────>║ Stores ║──────>║ View Components ║
+╚═════════╝       ╚════════╝       ╚═════════════════╝
+     ^                                      │
+     └──────────────────────────────────────┘
+```
+
+As explained in the [Reflux docs](https://github.com/spoike/refluxjs), there are three primary types of objects:
+- **Actions**: The main logic workhorses of the application. These objects interact with the Docker API and other endpoints to fetch new data and flowing it into the stores, which in turn create events that cause views to update.
+- **Views**: Views make up the UI, and trigger available actions.
+- **Stores**: Stores store the state of the application.
+
+### Guidelines
+
+- Avoid asynchronous code in Stores or Views. Instead, put code involving callbacks, promises or generators in actions.
 
 ## GitHub Issues
 
@@ -54,8 +79,14 @@ We're thrilled to receive pull requests of any kind. Anything from bug fix, test
 That said, please let us know what you're planning to do! For large changes always create a proposal. Maintainers will love to give you advice on building it and it keeps the app's design coherent.
 
 ### Pull Request Requirements:
-- Tests
+- Includes tests
 - [Signed Off](https://github.com/docker/docker/blob/master/CONTRIBUTING.md#sign-your-work)
+
+## Testing
+
+Please try to test any new code.
+- Tests can be run using `npm test`
+- Kitematic uses the [Jest framework](https://facebook.github.io/jest/) by Facebook. To keep tests fast, please mock as much as possible.
 
 ## Code Guidelines
 
@@ -70,17 +101,7 @@ Kitematic is es6 ready. Please use es6 constructs where possible, they are power
 
 Run `npm run lint` before committing to ensure your javascript is up to standard. Feel free to suggest changes to the lint spec in `.jshint`.
 
-### React
-
-- Use tags and elements appropriate for React / an HTML5 doctype (e.g., self-closing tags)
-- Try to avoid using JQuery or manually changing the DOM. Use React instead.
-- Try to build self-contained components that listen and emit events. This is definitely nowhere near perfect yet for the existing codebase.
-
-## Testing
-
-While the project is early, please try to test any new code.
-- Tests can be run using `npm test`
-- Kitematic uses the [Jest framework](https://facebook.github.io/jest/) by Facebook. To keep tests fast, please mock as much as possible.
+We designed Kitematic to be easy to build, extend and distribute for developers.
 
 ## License
 
