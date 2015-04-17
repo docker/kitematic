@@ -46,7 +46,7 @@
   },
   "docker-version": "1.6.0",
   "docker-machine-version": "0.2.0",
-  "atom-shell-version": "0.23.0",
+  "electron-version": "0.24.0",
   "virtualbox-version": "4.3.26",
   "virtualbox-filename": "VirtualBox-4.3.26.pkg",
   "virtualbox-checksum": "668f61c95efe37f8fc65cafe95b866fba64e37f2492dfc1e2b44a7ac3dcafa3b",

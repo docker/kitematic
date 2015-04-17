@@ -2,7 +2,7 @@ var babel = require('gulp-babel');
 var changed = require('gulp-changed');
 var concat = require('gulp-concat');
 var cssmin = require('gulp-cssmin');
-var downloadatomshell = require('gulp-download-atom-shell');
+var downloadelectron = require('gulp-download-atom-shell');
 var fs = require('fs');
 var gulp = require('gulp');
 var gulpif = require('gulp-if');
@@ -76,8 +76,8 @@ gulp.task('styles', function () {
 });
 
 gulp.task('download', function (cb) {
-  downloadatomshell({
-    version: packagejson['atom-shell-version'],
+  downloadelectron({
+    version: packagejson['electron-version'],
     outputDir: 'cache'
   }, cb);
 });
