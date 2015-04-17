@@ -23,6 +23,10 @@ module.exports = React.createClass({
     LogStore.fetch(this.props.container.Name);
   },
   componentWillUnmount: function() {
+    if (!this.props.container) {
+      return;
+    }
+
     LogStore.detach(this.props.container.Name);
     LogStore.removeListener(LogStore.SERVER_LOGS_EVENT, this.update);
   },
