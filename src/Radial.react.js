@@ -1,4 +1,5 @@
-var React = require('react/addons');
+var React = require('react');
+var classNames = require('classnames');
 
 var Radial = React.createClass({
   render: function () {
@@ -10,7 +11,7 @@ var Radial = React.createClass({
     } else {
       percentage = <div></div>;
     }
-    var classes = React.addons.classSet({
+    var classes = classNames({
       'radial-progress': true,
       'radial-spinner': this.props.spin,
       'radial-negative': this.props.error,

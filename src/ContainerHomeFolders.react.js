@@ -5,11 +5,12 @@ var path = require('path');
 var shell = require('shell');
 var util = require('./Util');
 var metrics = require('./Metrics');
-var Router = require('react-router');
 var ContainerStore = require('./ContainerStore');
 
 var ContainerHomeFolder = React.createClass({
-  mixins: [Router.State, Router.Navigation],
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   handleClickFolder: function (hostVolume, containerVolume) {
     metrics.track('Opened Volume Directory', {
       from: 'home'
@@ -39,7 +40,7 @@ var ContainerHomeFolder = React.createClass({
     metrics.track('Viewed Volume Settings', {
       from: 'preview'
     });
-    this.transitionTo('containerSettingsVolumes', {name: this.getParams().name});
+    this.context.router.transitionTo('containerSettingsVolumes', {name: this.context.router.getCurrentParams().name});
   },
   render: function () {
     if (!this.props.container) {

@@ -5,7 +5,6 @@ var ContainerStore = require('./ContainerStore');
 var metrics = require('./Metrics');
 
 var ContainerListNewItem = React.createClass({
-  mixins: [Router.State, Router.Navigation],
   handleItemMouseEnter: function () {
     var $action = $(this.getDOMNode()).find('.action');
     $action.show();

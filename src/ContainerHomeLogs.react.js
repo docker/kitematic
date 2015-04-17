@@ -44,9 +44,12 @@ module.exports = React.createClass({
     metrics.track('Viewed Logs', {
       from: 'preview'
     });
-    this.transitionTo('containerLogs', {name: this.props.container.Name});
+    this.context.router.transitionTo('containerLogs', {name: this.props.container.Name});
   },
   update: function () {
+    if (!this.props.container) {
+      return;
+    }
     this.setState({
       logs: LogStore.logs(this.props.container.Name)
     });

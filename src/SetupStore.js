@@ -222,7 +222,6 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
   setup: Promise.coroutine(function * () {
     while (true) {
       try {
-        console.log('Starting Steps');
         var ip = yield this.run();
         if (!ip || !ip.length) {
           throw {
@@ -231,8 +230,6 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
             ip: ip,
           };
         }
-        console.log('Finished Steps');
-        console.log(ip);
         docker.setup(ip, machine.name());
         yield docker.waitForConnection();
         metrics.track('Setup Finished');

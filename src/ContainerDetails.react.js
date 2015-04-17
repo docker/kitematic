@@ -5,7 +5,9 @@ var ContainerDetailsSubheader = require('./ContainerDetailsSubheader.react');
 var Router = require('react-router');
 
 var ContainerDetail = React.createClass({
-  mixins: [Router.State, Router.Navigation],
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   getInitialState: function () {
     return {
       currentRoute: null
@@ -18,9 +20,9 @@ var ContainerDetail = React.createClass({
     this.init();
   },
   init: function () {
-    var currentRoute = _.last(this.getRoutes()).name;
+    var currentRoute = _.last(this.context.router.getCurrentRoutes()).name;
     if (currentRoute === 'containerDetails') {
-      this.transitionTo('containerHome', {name: this.getParams().name});
+      this.context.router.transitionTo('containerHome', {name: this.context.router.getCurrentParams().name});
     }
   },
   render: function () {

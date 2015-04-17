@@ -32,7 +32,6 @@ var Docker = {
     delay = delay || 1000;
     var tryCount = 1;
     while (true) {
-      console.log('Connecting: ' + tryCount + ' tries...');
       try {
         yield new Promise((resolve, reject) => {
           this._client.listContainers((err) => {

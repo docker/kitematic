@@ -3,7 +3,9 @@ var React = require('react/addons');
 var Router = require('react-router');
 
 var ContainerSettings = React.createClass({
-  mixins: [Router.State, Router.Navigation],
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   componentWillReceiveProps: function () {
     this.init();
   },
@@ -11,9 +13,9 @@ var ContainerSettings = React.createClass({
     this.init();
   },
   init: function () {
-    var currentRoute = _.last(this.getRoutes()).name;
+    var currentRoute = _.last(this.context.router.getCurrentRoutes()).name;
     if (currentRoute === 'containerSettings') {
-      this.transitionTo('containerSettingsGeneral', {name: this.getParams().name});
+      this.context.router.transitionTo('containerSettingsGeneral', {name: this.context.router.getCurrentParams().name});
     }
   },
   render: function () {
