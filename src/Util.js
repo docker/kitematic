@@ -3,7 +3,6 @@ var execProper = require('child_process').exec;
 var Promise = require('bluebird');
 var fs = require('fs-promise');
 var path = require('path');
-var open = require('open');
 
 module.exports = {
   exec(args, options) {
