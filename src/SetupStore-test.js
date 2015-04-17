@@ -80,11 +80,9 @@ describe('SetupStore', function () {
       setupUtil.compareVersions.mockReturnValue(-1);
       machine.create.mockClear();
       machine.upgrade.mockClear();
-      machine.stop.mockClear();
       machine.start.mockClear();
       return setupStore.steps().init.run(() => {}).then(() => {
         expect(machine.create).not.toBeCalled();
-        expect(machine.stop).toBeCalled();
         expect(machine.upgrade).toBeCalled();
         expect(machine.start).toBeCalled();
       });
