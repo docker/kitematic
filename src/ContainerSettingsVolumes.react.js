@@ -1,6 +1,5 @@
 var _ = require('underscore');
 var React = require('react/addons');
-var Router = require('react-router');
 var remote = require('remote');
 var exec = require('exec');
 var dialog = remote.require('dialog');
@@ -8,7 +7,6 @@ var metrics = require('./Metrics');
 var ContainerStore = require('./ContainerStore');
 
 var ContainerSettingsVolumes = React.createClass({
-  mixins: [Router.State, Router.Navigation],
   handleChooseVolumeClick: function (dockerVol) {
     var self = this;
     dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']}, function (filenames) {

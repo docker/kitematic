@@ -30,7 +30,7 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
       follow: false
     }, (err, logStream) => {
       if (err) {
-        throw err;
+        return;
       }
       var logs = [];
       var outstream = new stream.PassThrough();
@@ -56,8 +56,9 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
       stream: true
     }, (err, logStream) => {
       if (err) {
-        throw err;
+        return;
       }
+      _streams[name] = logStream;
       var outstream = new stream.PassThrough();
       docker.client().modem.demuxStream(logStream, outstream, outstream);
       outstream.on('data', (chunk) => {

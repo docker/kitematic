@@ -1,11 +1,12 @@
 var _ = require('underscore');
 var $ = require('jquery');
-var React = require('react/addons');
+var React = require('react');
 var RetinaImage = require('react-retina-image');
 var Radial = require('./Radial.react');
 var ImageCard = require('./ImageCard.react');
 var Promise = require('bluebird');
 var metrics = require('./Metrics');
+var classNames = require('classnames');
 
 var _recommended = [];
 var _searchPromise = null;
@@ -132,11 +133,11 @@ var NewContainer = React.createClass({
         );
       }
     }
-    var loadingClasses = React.addons.classSet({
+    var loadingClasses = classNames({
       hidden: !this.state.loading,
       loading: true
     });
-    var magnifierClasses = React.addons.classSet({
+    var magnifierClasses = classNames({
       hidden: this.state.loading,
       icon: true,
       'icon-magnifier': true,
