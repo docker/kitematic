@@ -2,7 +2,6 @@ var babel = require('gulp-babel');
 var changed = require('gulp-changed');
 var concat = require('gulp-concat');
 var cssmin = require('gulp-cssmin');
-var rename = require('gulp-rename');
 var downloadatomshell = require('gulp-download-atom-shell');
 var fs = require('fs');
 var gulp = require('gulp');
@@ -180,27 +179,6 @@ gulp.task('download-deps', function () {
     }
 });
 
-gulp.task('copy-icns', ['download'], function () {
-  if(process.platform === 'win32') {
-    return gulp.src(options.icon)
-        .pipe(rename('atom.icns'))
-        .pipe(gulp.dest('./cache/resources'));
-  } else {
-    return gulp.src(options.icon)
-        .pipe(rename('atom.icns'))
-        .pipe(gulp.dest('./cache/Atom.app/Contents/Resources'));
-  }
-});
-
-gulp.task('copy-plist', ['download'], function (done) {
-  if(process.platform === 'darwin') {
-    return gulp.src('./util/Info.plist')
-        .pipe(gulp.dest('./cache/Atom.app/Contents'));
-  } else {
-    done();
-  }
-});
-
 gulp.task('reset', function () {
   if(process.platform === 'win32') {
     return gulp.src('').pipe(
@@ -214,10 +192,10 @@ gulp.task('reset', function () {
 });
 
 gulp.task('release', function () {
-  runSequence('download-deps', 'download', 'copy-icns', 'copy-plist', 'dist', ['copy', 'images', 'js', 'styles', 'settings'], 'sign', 'zip');
+  runSequence('download-deps', 'download', 'dist', ['copy', 'images', 'js', 'styles', 'settings'], 'sign', 'zip');
 });
 
-gulp.task('default', ['download-deps', 'download', 'copy-icns', 'copy-plist', 'copy', 'js', 'images', 'styles'], function () {
+gulp.task('default', ['download-deps', 'download', 'copy', 'js', 'images', 'styles'], function () {
   gulp.watch('src/**/*.js', ['js']);
   gulp.watch('index.html', ['copy']);
   gulp.watch('styles/**/*.less', ['styles']);
