@@ -38,6 +38,7 @@
       "tty",
       "net",
       "crypto",
+      "babel",
       "<rootDir>/node_modules/.*JSONStream",
       "<rootDir>/node_modules/object-assign",
       "<rootDir>/node_modules/underscore",
