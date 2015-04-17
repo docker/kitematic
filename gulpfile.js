@@ -2,7 +2,7 @@ var babel = require('gulp-babel');
 var changed = require('gulp-changed');
 var concat = require('gulp-concat');
 var cssmin = require('gulp-cssmin');
-var downloadelectron = require('gulp-download-atom-shell');
+var downloadelectron = require('gulp-download-electron');
 var fs = require('fs');
 var gulp = require('gulp');
 var gulpif = require('gulp-if');
@@ -97,14 +97,14 @@ gulp.task('dist', function () {
   var stream = gulp.src('').pipe(shell([
     'rm -Rf dist',
     'mkdir -p ./dist/osx',
-    'cp -R ./cache/Atom.app ./dist/osx/<%= filename %>',
-    'mv ./dist/osx/<%= filename %>/Contents/MacOS/Atom ./dist/osx/<%= filename %>/Contents/MacOS/<%= name %>',
+    'cp -R ./cache/Electron.app ./dist/osx/<%= filename %>',
+    'mv ./dist/osx/<%= filename %>/Contents/MacOS/Electron ./dist/osx/<%= filename %>/Contents/MacOS/<%= name %>',
     'mkdir -p ./dist/osx/<%= filename %>/Contents/Resources/app',
     'mkdir -p ./dist/osx/<%= filename %>/Contents/Resources/app/node_modules',
     'cp package.json dist/osx/<%= filename %>/Contents/Resources/app/',
     'mkdir -p dist/osx/<%= filename %>/Contents/Resources/app/resources',
     'cp -v resources/* dist/osx/<%= filename %>/Contents/Resources/app/resources/ || :',
-    'cp <%= icon %> dist/osx/<%= filename %>/Contents/Resources/atom.icns',
+    'cp <%= icon %> dist/osx/<%= filename %>/Contents/Resources/electron.icns',
     'cp ./util/Info.plist dist/osx/<%= filename %>/Contents/Info.plist',
     '/usr/libexec/PlistBuddy -c "Set :CFBundleVersion <%= version %>" dist/osx/<%= filename %>/Contents/Info.plist',
     '/usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName <%= name %>" dist/osx/<%= filename %>/Contents/Info.plist',
@@ -181,7 +181,7 @@ gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function ()
 
   var env = process.env;
   env.NODE_ENV = 'development';
-  gulp.src('').pipe(shell(['./cache/Atom.app/Contents/MacOS/Atom .'], {
+  gulp.src('').pipe(shell(['./cache/Electron.app/Contents/MacOS/Electron .'], {
     env: env
   }));
 });
