@@ -8,7 +8,6 @@ module.exports = {
     options = options || {};
     return new Promise((resolve, reject) => {
       exec(args, options, (stderr, stdout, code) => {
-        console.log(stderr);
         if (code) {
           reject(new Error(stderr));
         } else {
