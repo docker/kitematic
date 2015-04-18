@@ -35,10 +35,15 @@ var WebUtil = {
       };
 
       bugsnag.beforeNotify = function(payload) {
-        var re = new RegExp(util.home().replace(/\s+/g, '\\s+'), 'g');
-        payload.stacktrace = payload.stacktrace.replace(/%20/g, ' ').replace(re, '<redacted homedir>');
-        payload.context = payload.context.replace(/%20/g, ' ').replace(re, '<redacted homedir>');
-        payload.file = payload.file.replace(/%20/g, ' ').replace(re, '<redacted homedir>');
+        payload.stacktrace = util.removeSensitiveData(payload.stacktrace);
+        payload.context = util.removeSensitiveData(payload.context);
+        payload.file = util.removeSensitiveData(payload.file);
+
+        for(var key in payload.metaData) {
+          payload.metaData[key] = util.removeSensitiveData(payload.metaData[key]);
+        }
+
+        payload.message = '<redacted url>';
         payload.url = '<redacted url>';
       };
     }

@@ -187,7 +187,6 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     yield this.updateBinaries();
     var steps = yield this.requiredSteps();
     for (let step of steps) {
-      console.log(step.name);
       _currentStep = step;
       step.percent = 0;
       while (true) {
@@ -241,6 +240,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
         });
         bugsnag.notify('SetupError', err.message, {
           error: err,
+          stderr: err.message,
           step: _currentStep
         }, 'info');
         _error = err;

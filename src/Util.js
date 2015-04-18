@@ -8,9 +8,9 @@ module.exports = {
     options = options || {};
     return new Promise((resolve, reject) => {
       exec(args, options, (stderr, stdout, code) => {
+        console.log(stderr);
         if (code) {
-          var cmd = Array.isArray(args) ? args.join(' ') : args;
-          reject(new Error(cmd + ' returned non zero exit code\nstdout:' + stdout + '\nstderr:' + stderr));
+          reject(new Error(stderr));
         } else {
           resolve(stdout);
         }
@@ -30,6 +30,14 @@ module.exports = {
       }
     });
     return acc;
+  },
+  removeSensitiveData: function (str) {
+    if (!str || str.length === 0 || typeof str !== 'string' ) {
+      return str;
+    }
+    return str.replace(/-----BEGIN CERTIFICATE-----.*-----END CERTIFICATE-----/mg, '<redacted>')
+      .replace(/-----BEGIN RSA PRIVATE KEY-----.*-----END RSA PRIVATE KEY-----/mg, '<redacted>')
+      .replace(/\/Users\/.*\//mg, '<redacted>');
   },
   resourceDir: function () {
     return process.env.RESOURCES_PATH;
