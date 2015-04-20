@@ -45,9 +45,9 @@ app.on('ready', function () {
   });
 
   app.on('before-quit', function () {
-    mainWindow.webContents.send('application:quitting', {
-      updating: updating
-    });
+    if (!updating) {
+      mainWindow.webContents.send('application:quitting');
+    }
   });
 
   mainWindow.webContents.on('new-window', function (e) {

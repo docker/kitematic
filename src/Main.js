@@ -44,8 +44,8 @@ SetupStore.setup().then(() => {
   bugsnag.notify(err);
 });
 
-ipc.on('application:quitting', opts => {
-  if (!opts.updating && localStorage.getItem('settings.closeVMOnQuit') === 'true') {
+ipc.on('application:quitting', () => {
+  if (localStorage.getItem('settings.closeVMOnQuit') === 'true') {
     machine.stop();
   }
 });
