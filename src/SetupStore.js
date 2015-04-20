@@ -67,9 +67,11 @@ var _steps = [{
     var exists = yield machine.exists();
     if (!exists) {
       yield machine.create();
+      return;
     } else if ((yield machine.state()) === 'Error') {
       yield machine.rm();
       yield machine.create();
+      return;
     }
 
     var isoversion = machine.isoversion();
