@@ -38,13 +38,15 @@ var WebUtil = {
         payload.stacktrace = util.removeSensitiveData(payload.stacktrace);
         payload.context = util.removeSensitiveData(payload.context);
         payload.file = util.removeSensitiveData(payload.file);
+        payload.message = util.removeSensitiveData(payload.message);
+        payload.url = util.removeSensitiveData(payload.url);
+        payload.name = util.removeSensitiveData(payload.name);
+        payload.file = util.removeSensitiveData(payload.file);
 
         for(var key in payload.metaData) {
           payload.metaData[key] = util.removeSensitiveData(payload.metaData[key]);
         }
-
-        payload.message = '<redacted url>';
-        payload.url = '<redacted url>';
+        console.log(payload);
       };
     }
   },

@@ -10,7 +10,6 @@ var util = require('./Util');
 var assign = require('object-assign');
 var metrics = require('./Metrics');
 var bugsnag = require('bugsnag-js');
-var rimraf = require('rimraf');
 var docker = require('./Docker');
 
 var _currentStep = null;
@@ -66,15 +65,11 @@ var _steps = [{
     setupUtil.simulateProgress(this.seconds, progressCallback);
     yield virtualBox.vmdestroy('kitematic-vm');
     var exists = yield machine.exists();
-    if (!exists || (yield machine.state()) === 'Error') {
-      try {
-        yield machine.rm();
-        yield machine.create();
-      } catch (err) {
-        rimraf.sync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
-        yield machine.create();
-      }
-      return;
+    if (!exists) {
+      yield machine.create();
+    } else if ((yield machine.state()) === 'Error') {
+      yield machine.rm();
+      yield machine.create();
     }
 
     var isoversion = machine.isoversion();
@@ -240,8 +235,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
         });
         bugsnag.notify('SetupError', err.message, {
           error: err,
-          stderr: err.message,
-          step: _currentStep
+          output: err.message
         }, 'info');
         _error = err;
         this.emit(this.ERROR_EVENT);
