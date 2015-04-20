@@ -83,12 +83,22 @@ var ContainerHome = React.createClass({
       );
     } else if (this.props.container && this.props.container.State.Downloading) {
       if (this.state.progress !== undefined) {
-        body = (
-          <div className="details-progress">
-            <h2>Downloading Image</h2>
-            <Radial progress={Math.min(Math.round(this.state.progress * 100), 99)} thick={true} gray={true}/>
-          </div>
-        );
+        if (this.state.progress > 0) {
+          body = (
+            <div className="details-progress">
+              <h2>Downloading Image</h2>
+              <Radial progress={Math.min(Math.round(this.state.progress * 100), 99)} thick={true} gray={true}/>
+            </div>
+          );
+        } else {
+          body = (
+            <div className="details-progress">
+              <h2>Downloading Image</h2>
+              <Radial spin="true" progress="90" thick={true} transparent={true}/>
+            </div>
+          );
+        }
+
       } else if (this.state.blocked) {
         body = (
           <div className="details-progress">
