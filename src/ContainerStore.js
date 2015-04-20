@@ -72,7 +72,8 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
               var current = data.progressDetail.current;
               var total = data.progressDetail.total;
               if (total <= 0) {
-                layerProgress[data.id] = 0;
+                progressCallback(0);
+                return;
               } else {
                 layerProgress[data.id] = current / total;
               }
@@ -177,6 +178,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         stream.on('data', function () {});
         stream.on('end', function () {
           delete _placeholders[container.Name];
+          delete _progress[container.Name];
           localStorage.setItem('store.placeholders', JSON.stringify(_placeholders));
           self._createContainer(container.Name, {Image: container.Config.Image}, err => {
             if (err) {
@@ -316,7 +318,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     this.emit(this.CLIENT_CONTAINER_EVENT, containerName, 'create');
 
     _muted[containerName] = true;
-    _progress[containerName] = 0;
     this._pullImage(repository, tag, err => {
       if (err) {
         _error = err;
