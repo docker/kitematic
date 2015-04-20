@@ -87,8 +87,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
                 return pv + sv;
               }, 0);
 
-              console.log(totalReceived, totalBytes);
-
               var totalProgress = totalReceived / totalBytes;
               progressCallback(totalProgress);
             }
