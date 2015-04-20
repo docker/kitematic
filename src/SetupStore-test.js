@@ -60,15 +60,6 @@ describe('SetupStore', function () {
 
   describe('init step', function () {
     virtualBox.vmdestroy.mockReturnValue(Promise.resolve());
-    pit('inintializes the machine vm if it does not exist', function () {
-      util.home.mockReturnValue('home');
-      machine.name.mockReturnValue('name');
-      machine.exists.mockReturnValue(Promise.resolve(false));
-      machine.create.mockReturnValue(Promise.resolve());
-      return setupStore.steps().init.run().then(() => {
-        expect(machine.create).toBeCalled();
-      });
-    });
 
     pit('upgrades the vm if it exists and is out of date', function () {
       machine.exists.mockReturnValue(Promise.resolve(true));

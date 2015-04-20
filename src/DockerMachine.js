@@ -64,10 +64,10 @@ var DockerMachine = {
   },
 
   create: function () {
-    return util.exec([DockerMachine.command(), 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', NAME]);
+    return util.exec([DockerMachine.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', NAME]);
   },
   start: function () {
-    return util.exec([DockerMachine.command(), 'start', NAME]);
+    return util.exec([DockerMachine.command(), '-D', 'start', NAME]);
   },
   stop: function () {
     return util.exec([DockerMachine.command(), 'stop', NAME]);
@@ -79,7 +79,7 @@ var DockerMachine = {
     return util.exec([DockerMachine.command(), 'rm', '-f', NAME]);
   },
   ip: function () {
-    return util.exec([DockerMachine.command(), 'ip', NAME]).then(stdout => {
+    return util.exec([DockerMachine.command(), '-D', 'ip', NAME]).then(stdout => {
       return Promise.resolve(stdout.trim().replace('\n', ''));
     });
   },

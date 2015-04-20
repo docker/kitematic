@@ -10,7 +10,7 @@ module.exports = {
       exec(args, options, (stderr, stdout, code) => {
         if (code) {
           var cmd = Array.isArray(args) ? args.join(' ') : args;
-          reject(new Error(cmd + ' returned non zero exit code\nstdout:' + stdout + '\nstderr:' + stderr));
+          reject(new Error(cmd + ' returned non zero exit code. Stderr: ' + stderr));
         } else {
           resolve(stdout);
         }
@@ -30,6 +30,14 @@ module.exports = {
       }
     });
     return acc;
+  },
+  removeSensitiveData: function (str) {
+    if (!str || str.length === 0 || typeof str !== 'string' ) {
+      return str;
+    }
+    return str.replace(/-----BEGIN CERTIFICATE-----.*-----END CERTIFICATE-----/mg, '<redacted>')
+      .replace(/-----BEGIN RSA PRIVATE KEY-----.*-----END RSA PRIVATE KEY-----/mg, '<redacted>')
+      .replace(/\/Users\/[a-z_][a-z0-9_]+\//mg, '/Users/<redacted>/');
   },
   resourceDir: function () {
     return process.env.RESOURCES_PATH;
