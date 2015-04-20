@@ -32,7 +32,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
           return image.Id.slice(0, 12);
         }));
         var layersToDownload = layerSizes.filter(function (layerSize) {
-          return !existingIds.has(layerSize.Id);
+          return !existingIds.has(layerSize.Id) && !isNaN(layerSize.size);
         });
 
         var totalBytes = layersToDownload.map(function (s) { return s.size; }).reduce(function (pv, sv) { return pv + sv; }, 0);
@@ -54,7 +54,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
 
           stream.on('data', str => {
             var data = JSON.parse(str);
-            console.log(data);
 
             if (data.error) {
               _error = data.error;
@@ -72,20 +71,26 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
             } else if (data.status === 'Downloading') {
               var current = data.progressDetail.current;
               var total = data.progressDetail.total;
-              var layerFraction = current / total;
-              layerProgress[data.id] = layerFraction;
+              if (total <= 0) {
+                layerProgress[data.id] = 0;
+              } else {
+                layerProgress[data.id] = current / total;
+              }
+
+              var chunks = layersToDownload.map(function (s) {
+                var progress = layerProgress[s.Id] || 0;
+                return progress * s.size;
+              });
+
+              var totalReceived = chunks.reduce(function (pv, sv) {
+                return pv + sv;
+              }, 0);
+
+              console.log(totalReceived, totalBytes);
+
+              var totalProgress = totalReceived / totalBytes;
+              progressCallback(totalProgress);
             }
-
-            var chunks = layersToDownload.map(function (s) {
-              return layerProgress[s.Id] * s.size;
-            });
-
-            var totalReceived = chunks.reduce(function (pv, sv) {
-              return pv + sv;
-            }, 0);
-
-            var totalProgress = totalReceived / totalBytes;
-            progressCallback(totalProgress);
           });
           stream.on('end', function () {
             callback(_error);
