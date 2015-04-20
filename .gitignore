@@ -11,6 +11,7 @@ identity*
 
 # Resources
 resources/docker-*
+resources/boot2docker-*
 
 # Cache
 cache
