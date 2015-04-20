@@ -164,17 +164,6 @@ var Containers = React.createClass({
       );
     }
 
-    var button;
-    if (this.state.downloading) {
-      button = (
-        <OverlayTrigger placement="bottom" overlay={<Tooltip>Only one Docker image can be downloaded at a time.</Tooltip>}>
-          <a disabled={true} className="btn-new icon icon-add-3"></a>
-        </OverlayTrigger>
-      );
-    } else {
-      button = <a className="btn-new icon icon-add-3" onClick={this.handleNewContainer}></a>;
-    }
-
     var container = this.context.router.getCurrentParams().name ? this.state.containers[this.context.router.getCurrentParams().name] : {};
     return (
       <div className="containers">
@@ -184,7 +173,7 @@ var Containers = React.createClass({
             <section className={sidebarHeaderClass}>
               <h4>Containers</h4>
               <div className="create">
-                {button}
+                <a className="btn-new icon icon-add-3" onClick={this.handleNewContainer}></a>
               </div>
             </section>
             <section className="sidebar-containers" onScroll={this.handleScroll}>
