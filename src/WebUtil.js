@@ -46,7 +46,6 @@ var WebUtil = {
         for(var key in payload.metaData) {
           payload.metaData[key] = util.removeSensitiveData(payload.metaData[key]);
         }
-        console.log(payload);
       };
     }
   },

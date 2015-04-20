@@ -237,6 +237,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
           error: err,
           output: err.message
         }, 'info');
+        err.message = util.removeSensitiveData(err.message);
         _error = err;
         this.emit(this.ERROR_EVENT);
         yield this.pause();
