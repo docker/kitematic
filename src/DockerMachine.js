@@ -64,7 +64,8 @@ var DockerMachine = {
   },
 
   create: function () {
-    return util.exec([DockerMachine.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', NAME]);
+    var dockerversion = util.packagejson()['docker-version'];
+    return util.exec([DockerMachine.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-boot2docker-url', path.join(process.cwd(), 'resources', 'boot2docker-' + dockerversion + '.iso'), '--virtualbox-memory', '2048', NAME]);
   },
   start: function () {
     return util.exec([DockerMachine.command(), '-D', 'start', NAME]);
