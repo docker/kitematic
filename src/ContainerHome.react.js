@@ -83,7 +83,6 @@ var ContainerHome = React.createClass({
       );
     } else if (this.props.container && this.props.container.State.Downloading) {
       if (this.state.progress !== undefined) {
-        console.log(this.state.progress);
         body = (
           <div className="details-progress">
             <h2>Downloading Image</h2>
