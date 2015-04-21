@@ -9,7 +9,7 @@ var ContainerUtil = require('./ContainerUtil');
 var machine = require('./DockerMachine');
 var RetinaImage = require('react-retina-image');
 var webPorts = require('./Util').webPorts;
-var classNames = require('classNames');
+var classNames = require('classnames');
 
 var ContainerDetailsSubheader = React.createClass({
   contextTypes: {
