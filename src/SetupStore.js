@@ -234,7 +234,6 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
         err.message = util.removeSensitiveData(err.message);
         metrics.track('Setup Failed', {
           step: _currentStep,
-          message: err.message
         });
         bugsnag.notify('SetupError', err.message, {
           error: err,
