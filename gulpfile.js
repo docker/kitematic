@@ -45,7 +45,6 @@ gulp.task('js', function () {
       this.emit('end');
     }))
     .pipe(sourcemaps.init())
-    .pipe(react())
     .pipe(babel({blacklist: ['regenerator']}))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.appFilename + '/Contents/Resources/app/build'))
