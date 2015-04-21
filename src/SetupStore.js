@@ -231,6 +231,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
         metrics.track('Setup Finished');
         break;
       } catch (err) {
+        err.message = util.removeSensitiveData(err.message);
         metrics.track('Setup Failed', {
           step: _currentStep,
           message: err.message
@@ -239,7 +240,6 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
           error: err,
           output: err.message
         }, 'info');
-        err.message = util.removeSensitiveData(err.message);
         _error = err;
         this.emit(this.ERROR_EVENT);
         yield this.pause();
