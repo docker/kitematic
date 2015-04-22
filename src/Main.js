@@ -1,16 +1,16 @@
 require.main.paths.splice(0, 0, process.env.NODE_PATH);
 var remote = require('remote');
-var ContainerStore = require('./ContainerStore');
+var ContainerStore = require('./stores/ContainerStore');
 var Menu = remote.require('menu');
 var React = require('react');
-var SetupStore = require('./SetupStore');
+var SetupStore = require('./stores/SetupStore');
 var bugsnag = require('bugsnag-js');
 var ipc = require('ipc');
 var machine = require('./DockerMachine');
 var metrics = require('./Metrics');
 var router = require('./Router');
 var template = require('./MenuTemplate');
-var webUtil = require('./WebUtil');
+var webUtil = require('./utils/WebUtil');
 
 webUtil.addWindowSizeSaving();
 webUtil.addLiveReload();

@@ -1,18 +1,16 @@
 var $ = require('jquery');
 var React = require('react/addons');
 var Router = require('react-router');
-var ContainerStore = require('./ContainerStore');
+var ContainerStore = require('../stores/ContainerStore');
 var ContainerList = require('./ContainerList.react');
 var Header = require('./Header.react');
 var ipc = require('ipc');
 var remote = require('remote');
-var metrics = require('./Metrics');
+var metrics = require('../Metrics');
 var autoUpdater = remote.require('auto-updater');
 var RetinaImage = require('react-retina-image');
-var machine = require('./DockerMachine');
-var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
-var Tooltip = require('react-bootstrap').Tooltip;
-var util = require('./Util');
+var machine = require('../DockerMachine');
+var util = require('../utils/Util');
 
 var Containers = React.createClass({
   contextTypes: {

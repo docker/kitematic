@@ -3,8 +3,8 @@ var React = require('react/addons');
 var Router = require('react-router');
 var remote = require('remote');
 var dialog = remote.require('dialog');
-var metrics = require('./Metrics');
-var ContainerStore = require('./ContainerStore');
+var metrics = require('../Metrics');
+var ContainerStore = require('../stores/ContainerStore');
 var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
 var Tooltip = require('react-bootstrap').Tooltip;
 

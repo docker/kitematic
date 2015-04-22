@@ -1,5 +1,5 @@
 var fs = require('fs');
-var util = require('./Util');
+var util = require('./utils/Util');
 var Promise = require('bluebird');
 
 var VirtualBox = {

@@ -3,12 +3,12 @@ var $ = require('jquery');
 var React = require('react');
 var exec = require('exec');
 var path =  require('path');
-var metrics = require('./Metrics');
-var ContainerStore = require('./ContainerStore');
-var ContainerUtil = require('./ContainerUtil');
-var machine = require('./DockerMachine');
+var metrics = require('../Metrics');
+var ContainerStore = require('../stores/ContainerStore');
+var ContainerUtil = require('../utils/ContainerUtil');
+var machine = require('../DockerMachine');
 var RetinaImage = require('react-retina-image');
-var webPorts = require('./Util').webPorts;
+var webPorts = require('../utils/Util').webPorts;
 var classNames = require('classnames');
 
 var ContainerDetailsSubheader = React.createClass({

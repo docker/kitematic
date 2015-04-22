@@ -1,7 +1,7 @@
 var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 var Convert = require('ansi-to-html');
-var docker = require('./Docker');
+var docker = require('../Docker');
 var stream = require('stream');
 
 var _convert = new Convert();

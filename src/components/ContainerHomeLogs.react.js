@@ -1,10 +1,13 @@
 var $ = require('jquery');
 var React = require('react/addons');
-var LogStore = require('./LogStore');
+var LogStore = require('../stores/LogStore');
+var Router = require('react-router');
+var metrics = require('../Metrics');
 
 var _prevBottom = 0;
 
 module.exports = React.createClass({
+  mixins: [Router.Navigation],
   getInitialState: function () {
     return {
       logs: []
@@ -31,11 +34,17 @@ module.exports = React.createClass({
     this.scrollToBottom();
   },
   scrollToBottom: function () {
-    var parent = $('.details-logs');
+    var parent = $('.logs');
     if (parent.scrollTop() >= _prevBottom - 50) {
       parent.scrollTop(parent[0].scrollHeight - parent.height());
     }
     _prevBottom = parent[0].scrollHeight - parent.height();
+  },
+  handleClickLogs: function () {
+    metrics.track('Viewed Logs', {
+      from: 'preview'
+    });
+    this.context.router.transitionTo('containerLogs', {name: this.props.container.Name});
   },
   update: function () {
     if (!this.props.container) {
@@ -53,8 +62,13 @@ module.exports = React.createClass({
       logs = "No logs for this container.";
     }
     return (
-      <div className="details-panel details-logs logs">
-        {logs}
+      <div className="mini-logs wrapper">
+        <h4>Logs</h4>
+        <div className="widget">
+          <div className="logs">
+            {logs}
+          </div>
+          <div className="mini-logs-overlay" onClick={this.handleClickLogs}><span className="icon icon-scale-spread-1"></span><div className="text">View Logs</div></div> </div>
       </div>
     );
   }

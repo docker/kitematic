@@ -1,6 +1,6 @@
 jest.dontMock('./VirtualBox');
 var virtualBox = require('./VirtualBox');
-var util = require('./Util');
+var util = require('./utils/Util');
 
 describe('VirtualBox', function () {
   it('returns the right command', function () {

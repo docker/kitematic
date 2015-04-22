@@ -3,8 +3,8 @@ var React = require('react/addons');
 var remote = require('remote');
 var exec = require('exec');
 var dialog = remote.require('dialog');
-var metrics = require('./Metrics');
-var ContainerStore = require('./ContainerStore');
+var metrics = require('../Metrics');
+var ContainerStore = require('../stores/ContainerStore');
 
 var ContainerSettingsVolumes = React.createClass({
   handleChooseVolumeClick: function (dockerVol) {

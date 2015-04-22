@@ -15,6 +15,7 @@ var react = require('gulp-react');
 var runSequence = require('run-sequence');
 var shell = require('gulp-shell');
 var sourcemaps = require('gulp-sourcemaps');
+var path = require('path');
 
 var dependencies = Object.keys(packagejson.dependencies);
 var argv = require('minimist')(process.argv.slice(2));

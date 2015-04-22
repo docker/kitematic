@@ -1,8 +1,8 @@
 var $ = require('jquery');
 var React = require('react/addons');
 var Router = require('react-router');
-var ContainerStore = require('./ContainerStore');
-var metrics = require('./Metrics');
+var ContainerStore = require('../stores/ContainerStore');
+var metrics = require('../Metrics');
 
 var ContainerListNewItem = React.createClass({
   handleItemMouseEnter: function () {
