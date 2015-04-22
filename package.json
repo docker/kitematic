@@ -27,6 +27,7 @@
   "jest": {
     "scriptPreprocessor": "<rootDir>/util/preprocessor.js",
     "setupEnvScriptFile": "<rootDir>/util/testenv.js",
+    "setupTestFrameworkScriptFile": "<rootDir>/util/prepare.js",
     "collectCoverage": true,
     "testDirectoryName": "src",
     "testPathIgnorePatterns": [
@@ -42,7 +43,8 @@
       "<rootDir>/node_modules/.*JSONStream",
       "<rootDir>/node_modules/object-assign",
       "<rootDir>/node_modules/underscore",
-      "<rootDir>/node_modules/bluebird"
+      "<rootDir>/node_modules/bluebird",
+      "<rootDir>/node_modules/source-map-support"
     ]
   },
   "docker-version": "1.6.0",
@@ -52,6 +54,7 @@
   "virtualbox-filename": "VirtualBox-4.3.26.pkg",
   "virtualbox-checksum": "668f61c95efe37f8fc65cafe95b866fba64e37f2492dfc1e2b44a7ac3dcafa3b",
   "dependencies": {
+    "alt": "^0.15.6",
     "ansi-to-html": "0.3.0",
     "async": "^0.9.0",
     "bluebird": "^2.9.24",
@@ -93,6 +96,7 @@
     "jsxhint": "^0.14.0",
     "minimist": "^1.1.1",
     "react-tools": "^0.13.1",
-    "run-sequence": "^1.0.2"
+    "run-sequence": "^1.0.2",
+    "source-map-support": "^0.2.10"
   }
 }
