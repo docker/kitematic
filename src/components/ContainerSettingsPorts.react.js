@@ -1,10 +1,10 @@
 var _ = require('underscore');
 var React = require('react/addons');
 var exec = require('exec');
-var ContainerStore = require('./ContainerStore');
-var ContainerUtil = require('./ContainerUtil');
-var metrics = require('./Metrics');
-var webPorts = require('./Util').webPorts;
+var ContainerStore = require('../stores/ContainerStore');
+var ContainerUtil = require('../utils/ContainerUtil');
+var metrics = require('../utils/MetricsUtil');
+var webPorts = require('../utils/Util').webPorts;
 
 var ContainerSettingsPorts = React.createClass({
   contextTypes: {

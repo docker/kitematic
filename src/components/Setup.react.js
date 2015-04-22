@@ -1,11 +1,11 @@
 var React = require('react/addons');
 var Router = require('react-router');
 var Radial = require('./Radial.react.js');
-var SetupStore = require('./SetupStore');
+var SetupStore = require('../stores/SetupStore');
 var RetinaImage = require('react-retina-image');
 var Header = require('./Header.react');
-var Util = require('./Util');
-var metrics = require('./Metrics');
+var Util = require('../utils/Util');
+var metrics = require('../utils/MetricsUtil');
 
 var Setup = React.createClass({
   mixins: [ Router.Navigation ],

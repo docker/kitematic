@@ -3,9 +3,9 @@ var React = require('react/addons');
 var RetinaImage = require('react-retina-image');
 var path = require('path');
 var shell = require('shell');
-var util = require('./Util');
-var metrics = require('./Metrics');
-var ContainerStore = require('./ContainerStore');
+var util = require('../utils/Util');
+var metrics = require('../utils/MetricsUtil');
+var ContainerStore = require('../stores/ContainerStore');
 
 var ContainerHomeFolder = React.createClass({
   contextTypes: {

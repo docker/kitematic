@@ -16,7 +16,7 @@ var DockerMachine = {
   },
   version: function () {
     try {
-      return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'))['docker-machine-version'];
+      return util.packagejson()['docker-machine-version'];
     } catch (err) {
       return null;
     }

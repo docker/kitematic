@@ -1,15 +1,14 @@
 var _ = require('underscore');
 var $ = require('jquery');
 var React = require('react/addons');
-var Router = require('react-router');
 var path =  require('path');
 var remote = require('remote');
 var rimraf = require('rimraf');
 var fs = require('fs');
-var metrics = require('./Metrics');
+var metrics = require('../utils/MetricsUtil');
 var dialog = remote.require('dialog');
-var ContainerStore = require('./ContainerStore');
-var ContainerUtil = require('./ContainerUtil');
+var ContainerStore = require('../stores/ContainerStore');
+var ContainerUtil = require('../utils/ContainerUtil');
 
 var containerNameSlugify = function (text) {
   text = text.replace(/^\s+|\s+$/g, ''); // Trim

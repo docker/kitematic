@@ -1,5 +1,5 @@
 var React = require('react/addons');
-var metrics = require('./Metrics');
+var metrics = require('../utils/MetricsUtil');
 var Router = require('react-router');
 
 var Preferences = React.createClass({
@@ -30,7 +30,7 @@ var Preferences = React.createClass({
       metricsEnabled: checked
     });
     metrics.setEnabled(checked);
-    metrics.track('Toggled Metrics', {
+    metrics.track('Toggled util/MetricsUtil', {
       enabled: checked
     });
   },

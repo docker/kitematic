@@ -1,13 +1,13 @@
 var _ = require('underscore');
 var $ = require('jquery');
 var React = require('react/addons');
-var ContainerStore = require('./ContainerStore');
+var ContainerStore = require('../stores/ContainerStore');
 var Radial = require('./Radial.react');
 var ContainerHomePreview = require('./ContainerHomePreview.react');
 var ContainerHomeLogs = require('./ContainerHomeLogs.react');
 var ContainerHomeFolders = require('./ContainerHomeFolders.react');
-var ContainerUtil = require('./ContainerUtil');
-var util = require('./Util');
+var ContainerUtil = require('../utils/ContainerUtil');
+var util = require('../utils/Util');
 
 var resizeWindow = function () {
   $('.left .wrapper').height(window.innerHeight - 240);

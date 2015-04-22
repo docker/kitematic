@@ -2,10 +2,10 @@ var _ = require('underscore');
 var EventEmitter = require('events').EventEmitter;
 var async = require('async');
 var assign = require('object-assign');
-var docker = require('./Docker');
-var metrics = require('./Metrics');
-var registry = require('./Registry');
-var logstore = require('./LogStore');
+var docker = require('../utils/DockerUtil');
+var metrics = require('../utils/MetricsUtil');
+var registry = require('../utils/RegistryUtil');
+var logstore = require('../stores/LogStore');
 var bugsnag = require('bugsnag-js');
 
 var _placeholders = {};

@@ -43,7 +43,7 @@ module.exports = {
     return process.env.RESOURCES_PATH;
   },
   packagejson: function () {
-    return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
+    return JSON.parse(fs.readFileSync(path.join(__dirname, '../..', 'package.json'), 'utf8'));
   },
   settingsjson: function () {
     var settingsjson = {};
