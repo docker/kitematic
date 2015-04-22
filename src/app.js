@@ -7,9 +7,9 @@ var SetupStore = require('./stores/SetupStore');
 var bugsnag = require('bugsnag-js');
 var ipc = require('ipc');
 var machine = require('./utils/DockerMachineUtil');
-var metrics = require('./util/MetricsUtil');
+var metrics = require('./utils/MetricsUtil');
 var router = require('./router');
-var template = require('./MenuTemplate');
+var template = require('./menutemplate');
 var webUtil = require('./utils/WebUtil');
 
 webUtil.addWindowSizeSaving();

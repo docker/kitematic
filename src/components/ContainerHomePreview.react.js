@@ -4,7 +4,7 @@ var exec = require('exec');
 var ContainerStore = require('../stores/ContainerStore');
 var ContainerUtil = require('../utils/ContainerUtil');
 var request = require('request');
-var metrics = require('../util/MetricsUtil');
+var metrics = require('../utils/MetricsUtil');
 var webPorts = require('../utils/Util').webPorts;
 
 var ContainerHomePreview = React.createClass({

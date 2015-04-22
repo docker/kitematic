@@ -5,7 +5,7 @@ var RetinaImage = require('react-retina-image');
 var Radial = require('./Radial.react');
 var ImageCard = require('./ImageCard.react');
 var Promise = require('bluebird');
-var metrics = require('../util/MetricsUtil');
+var metrics = require('../utils/MetricsUtil');
 var classNames = require('classnames');
 
 var _recommended = [];

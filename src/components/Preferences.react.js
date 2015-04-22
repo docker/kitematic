@@ -1,5 +1,5 @@
 var React = require('react/addons');
-var metrics = require('../util/MetricsUtil');
+var metrics = require('../utils/MetricsUtil');
 var Router = require('react-router');
 
 var Preferences = React.createClass({

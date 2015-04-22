@@ -3,7 +3,7 @@ var Mixpanel = require('mixpanel');
 var uuid = require('node-uuid');
 var fs = require('fs');
 var path = require('path');
-var util = require('./utils/Util');
+var util = require('./Util');
 var settings;
 
 try {

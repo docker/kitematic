@@ -8,7 +8,7 @@ var virtualBox = require('../utils/VirtualBoxUtil');
 var setupUtil = require('../utils/SetupUtil');
 var util = require('../utils/Util');
 var assign = require('object-assign');
-var metrics = require('../util/MetricsUtil');
+var metrics = require('../utils/MetricsUtil');
 var bugsnag = require('bugsnag-js');
 var docker = require('../utils/DockerUtil');
 

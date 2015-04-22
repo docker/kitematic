@@ -2,7 +2,7 @@ var $ = require('jquery');
 var React = require('react/addons');
 var LogStore = require('../stores/LogStore');
 var Router = require('react-router');
-var metrics = require('../util/MetricsUtil');
+var metrics = require('../utils/MetricsUtil');
 
 var _prevBottom = 0;
 
