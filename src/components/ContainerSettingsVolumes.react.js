@@ -3,7 +3,7 @@ var React = require('react/addons');
 var remote = require('remote');
 var exec = require('exec');
 var dialog = remote.require('dialog');
-var metrics = require('../util/Metrics');
+var metrics = require('../util/MetricsUtil');
 var ContainerStore = require('../stores/ContainerStore');
 
 var ContainerSettingsVolumes = React.createClass({
