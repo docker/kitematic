@@ -5,7 +5,7 @@ var SetupStore = require('../stores/SetupStore');
 var RetinaImage = require('react-retina-image');
 var Header = require('./Header.react');
 var Util = require('../utils/Util');
-var metrics = require('../Metrics');
+var metrics = require('../util/Metrics');
 
 var Setup = React.createClass({
   mixins: [ Router.Navigation ],

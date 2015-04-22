@@ -4,7 +4,7 @@ var RetinaImage = require('react-retina-image');
 var path = require('path');
 var shell = require('shell');
 var util = require('../utils/Util');
-var metrics = require('../Metrics');
+var metrics = require('../util/Metrics');
 var ContainerStore = require('../stores/ContainerStore');
 
 var ContainerHomeFolder = React.createClass({

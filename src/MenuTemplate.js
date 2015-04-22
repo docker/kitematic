@@ -2,7 +2,7 @@ var remote = require('remote');
 var app = remote.require('app');
 var router = require('./Router');
 var util = require('./utils/Util');
-var metrics = require('./Metrics');
+var metrics = require('./util/Metrics');
 var machine = require('./utils/DockerMachineUtil');
 var docker = require('./utils/DockerUtil');
 
