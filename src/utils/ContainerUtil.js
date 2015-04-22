@@ -1,5 +1,5 @@
 var _ = require('underscore');
-var docker = require('../Docker');
+var docker = require('../utils/DockerUtil');
 
 var ContainerUtil = {
   env: function (container) {
@@ -12,6 +12,7 @@ var ContainerUtil = {
       return splits;
     }));
   },
+  // TODO (jeffdm): inject host here instead of requiring Docker
   ports: function (container) {
     if (!container.NetworkSettings) {
       return {};

@@ -9,7 +9,7 @@ var remote = require('remote');
 var metrics = require('../Metrics');
 var autoUpdater = remote.require('auto-updater');
 var RetinaImage = require('react-retina-image');
-var machine = require('../DockerMachine');
+var machine = require('../utils/DockerMachineUtil');
 var util = require('../utils/Util');
 
 var Containers = React.createClass({

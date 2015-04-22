@@ -3,8 +3,8 @@ var app = remote.require('app');
 var router = require('./Router');
 var util = require('./utils/Util');
 var metrics = require('./Metrics');
-var machine = require('./DockerMachine');
-var docker = require('./Docker');
+var machine = require('./utils/DockerMachineUtil');
+var docker = require('./utils/DockerUtil');
 
 // main.js
 var MenuTemplate = function () {

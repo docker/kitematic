@@ -1,8 +1,8 @@
 jest.dontMock('./SetupStore');
 var setupStore = require('./SetupStore');
-var virtualBox = require('../VirtualBox');
+var virtualBox = require('../utils/VirtualBoxUtil');
 var util = require('../utils/Util');
-var machine = require('../DockerMachine');
+var machine = require('../utils/DockerMachineUtil');
 var setupUtil = require('../utils/SetupUtil');
 
 describe('SetupStore', function () {

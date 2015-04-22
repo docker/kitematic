@@ -3,7 +3,7 @@ var path = require('path');
 var Promise = require('bluebird');
 var _ = require('underscore');
 var fs = require('fs');
-var util = require('./utils/Util');
+var util = require('./Util');
 
 var NAME = 'dev';
 

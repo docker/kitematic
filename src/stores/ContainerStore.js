@@ -2,9 +2,9 @@ var _ = require('underscore');
 var EventEmitter = require('events').EventEmitter;
 var async = require('async');
 var assign = require('object-assign');
-var docker = require('../Docker');
+var docker = require('../util/DockerUtil');
 var metrics = require('../Metrics');
-var registry = require('../Registry');
+var registry = require('../utils/RegistryUtil');
 var logstore = require('../stores/LogStore');
 var bugsnag = require('bugsnag-js');
 
