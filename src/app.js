@@ -8,7 +8,7 @@ var bugsnag = require('bugsnag-js');
 var ipc = require('ipc');
 var machine = require('./utils/DockerMachineUtil');
 var metrics = require('./util/Metrics');
-var router = require('./Router');
+var router = require('./router');
 var template = require('./MenuTemplate');
 var webUtil = require('./utils/WebUtil');
 

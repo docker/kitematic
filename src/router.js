@@ -1,5 +1,5 @@
 var Router = require('react-router');
-var routes = require('./Routes');
+var routes = require('./routes');
 
 var router = Router.create({
   routes: routes
