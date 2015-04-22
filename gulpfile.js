@@ -11,7 +11,6 @@ var less = require('gulp-less');
 var livereload = require('gulp-livereload');
 var packagejson = require('./package.json');
 var plumber = require('gulp-plumber');
-var react = require('gulp-react');
 var runSequence = require('run-sequence');
 var shell = require('gulp-shell');
 var sourcemaps = require('gulp-sourcemaps');
