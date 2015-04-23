@@ -36,7 +36,7 @@ To run the app in development:
 
 **Note: This architecture is work in progress and doesn't reflect the current state of the app, yet!**
 
-Kitematic is an application built using [atom-shell](https://github.com/atom/atom-shell) and is powered by the [Docker Engine](https://github.com/docker/docker). While it's work in progress, the goal is to make Kitematic a high-performance, portable Javascript ES6 application built with React and Reflux. It adopts a single data flow pattern:
+Kitematic is an application built using [electron](https://github.com/atom/electron) and is powered by the [Docker Engine](https://github.com/docker/docker). While it's work in progress, the goal is to make Kitematic a high-performance, portable Javascript ES6 application built with React and Reflux. It adopts a single data flow pattern:
 
 ```
 ╔═════════╗       ╔════════╗       ╔═════════════════╗

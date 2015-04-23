@@ -2,7 +2,7 @@ var babel = require('gulp-babel');
 var changed = require('gulp-changed');
 var concat = require('gulp-concat');
 var cssmin = require('gulp-cssmin');
-var downloadatomshell = require('gulp-download-atom-shell');
+var downloadelectron = require('gulp-download-electron');
 var fs = require('fs');
 var gulp = require('gulp');
 var gulpif = require('gulp-if');
@@ -11,13 +11,12 @@ var less = require('gulp-less');
 var livereload = require('gulp-livereload');
 var packagejson = require('./package.json');
 var plumber = require('gulp-plumber');
-var react = require('gulp-react');
 var runSequence = require('run-sequence');
 var shell = require('gulp-shell');
 var sourcemaps = require('gulp-sourcemaps');
 
 var dependencies = Object.keys(packagejson.dependencies);
-var isBeta = process.argv.indexOf('--beta') !== -1;
+var argv = require('minimist')(process.argv.slice(2));
 
 var settings;
 try {
@@ -25,15 +24,15 @@ try {
 } catch (err) {
   settings = {};
 }
-settings.beta = isBeta;
+settings.beta = argv.beta;
 
 var options = {
   dev: process.argv.indexOf('release') === -1,
-  beta: isBeta,
-  appFilename: isBeta ? 'Kitematic (Beta).app' : 'Kitematic.app',
-  appName: isBeta ? 'Kitematic (Beta)' : 'Kitematic',
+  beta: argv.beta,
+  appFilename: argv.beta ? 'Kitematic (Beta).app' : 'Kitematic.app',
+  appName: argv.beta ? 'Kitematic (Beta)' : 'Kitematic',
   name: 'Kitematic',
-  icon: isBeta ? './util/kitematic-beta.icns' : './util/kitematic.icns',
+  icon: argv.beta ? './util/kitematic-beta.icns' : './util/kitematic.icns',
   bundle: 'com.kitematic.kitematic'
 };
 
@@ -45,7 +44,6 @@ gulp.task('js', function () {
       this.emit('end');
     }))
     .pipe(sourcemaps.init())
-    .pipe(react())
     .pipe(babel({blacklist: ['regenerator']}))
     .pipe(sourcemaps.write())
     .pipe(gulp.dest(options.dev ? './build' : './dist/osx/' + options.appFilename + '/Contents/Resources/app/build'))
@@ -63,7 +61,6 @@ gulp.task('styles', function () {
   return gulp.src('styles/main.less')
     .pipe(plumber(function(error) {
       gutil.log(gutil.colors.red('Error (' + error.plugin + '): ' + error.message));
-      // emit the end event, to properly end the task
       this.emit('end');
     }))
     .pipe(gulpif(options.dev, changed('./build')))
@@ -77,8 +74,8 @@ gulp.task('styles', function () {
 });
 
 gulp.task('download', function (cb) {
-  downloadatomshell({
-    version: packagejson['atom-shell-version'],
+  downloadelectron({
+    version: packagejson['electron-version'],
     outputDir: 'cache'
   }, cb);
 });
@@ -98,14 +95,15 @@ gulp.task('dist', function () {
   var stream = gulp.src('').pipe(shell([
     'rm -Rf dist',
     'mkdir -p ./dist/osx',
-    'cp -R ./cache/Atom.app ./dist/osx/<%= filename %>',
-    'mv ./dist/osx/<%= filename %>/Contents/MacOS/Atom ./dist/osx/<%= filename %>/Contents/MacOS/<%= name %>',
+    'cp -R ./cache/Electron.app ./dist/osx/<%= filename %>',
+    'mv ./dist/osx/<%= filename %>/Contents/MacOS/Electron ./dist/osx/<%= filename %>/Contents/MacOS/<%= name %>',
     'mkdir -p ./dist/osx/<%= filename %>/Contents/Resources/app',
     'mkdir -p ./dist/osx/<%= filename %>/Contents/Resources/app/node_modules',
     'cp package.json dist/osx/<%= filename %>/Contents/Resources/app/',
     'mkdir -p dist/osx/<%= filename %>/Contents/Resources/app/resources',
     'cp -v resources/* dist/osx/<%= filename %>/Contents/Resources/app/resources/ || :',
     'cp <%= icon %> dist/osx/<%= filename %>/Contents/Resources/atom.icns',
+    'cp ./util/Info.plist dist/osx/<%= filename %>/Contents/Info.plist',
     '/usr/libexec/PlistBuddy -c "Set :CFBundleVersion <%= version %>" dist/osx/<%= filename %>/Contents/Info.plist',
     '/usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName <%= name %>" dist/osx/<%= filename %>/Contents/Info.plist',
     '/usr/libexec/PlistBuddy -c "Set :CFBundleName <%= name %>" dist/osx/<%= filename %>/Contents/Info.plist',
@@ -138,9 +136,19 @@ gulp.task('sign', function () {
   try {
     var signing_identity = fs.readFileSync('./identity', 'utf8').trim();
     return gulp.src('').pipe(shell([
-      'codesign --deep --force --verbose --sign "' + signing_identity + '" ' + options.appFilename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)')
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Electron\\ Framework.framework',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Electron\\ Helper\\ EH.app',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Electron\\ Helper\\ NP.app',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Electron\\ Helper.app',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/ReactiveCocoa.framework',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Squirrel.framework',
+      'codesign --deep --force --verbose --sign <%= identity %> <%= filename %>/Contents/Frameworks/Mantle.framework',
+      'codesign --force --verbose --sign <%= identity %> <%= filename %>',
     ], {
-      cwd: './dist/osx/'
+      templateData: {
+        filename: 'dist/osx/' + options.appFilename.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)'),
+        identity: '\"' + signing_identity + '\"'
+      }
     }));
   } catch (error) {
     gutil.log(gutil.colors.red('Error: ' + error.message));
@@ -181,7 +189,7 @@ gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function ()
 
   var env = process.env;
   env.NODE_ENV = 'development';
-  gulp.src('').pipe(shell(['./cache/Atom.app/Contents/MacOS/Atom .'], {
+  gulp.src('').pipe(shell(['./cache/Electron.app/Contents/MacOS/Electron .'], {
     env: env
   }));
 });
