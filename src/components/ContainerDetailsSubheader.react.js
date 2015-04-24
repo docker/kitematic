@@ -54,7 +54,7 @@ var ContainerDetailsSubheader = React.createClass({
     }
     return (this.props.container.State.Downloading || this.props.container.State.Restarting);
   },
-  disableStop: function () {
+  stopDisabled: function () {
     if (!this.props.container) {
       return false;
     }
@@ -110,7 +110,7 @@ var ContainerDetailsSubheader = React.createClass({
     }
   },
   handleStop: function () {
-    if (!this.disableStop()) {
+    if (!this.stopDisabled()) {
       metrics.track('Stopped Container');
       ContainerStore.stop(this.props.container.Name, function () {
       });
@@ -174,7 +174,7 @@ var ContainerDetailsSubheader = React.createClass({
     });
     var stopActionClass = classNames({
       action: true,
-      disabled: this.disableStop()
+      disabled: this.stopDisabled()
     });
     var terminalActionClass = classNames({
       action: true,
