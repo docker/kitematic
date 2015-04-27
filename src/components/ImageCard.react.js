@@ -75,7 +75,7 @@ var ImageCard = React.createClass({
       name = (
         <div>
           <div className="namespace official">{namespace}</div>
-          <OverlayTrigger placement="bottom" overlay={<Tooltip>View on DockerHub</Tooltip>}>
+          <OverlayTrigger placement="bottom" overlay={<Tooltip>View on Docker Hub</Tooltip>}>
             <span className="repo" onClick={this.handleRepoClick}>{repo}</span>
           </OverlayTrigger>
         </div>
@@ -84,7 +84,7 @@ var ImageCard = React.createClass({
       name = (
         <div>
           <div className="namespace">{namespace}</div>
-          <OverlayTrigger placement="bottom" overlay={<Tooltip>View on DockerHub</Tooltip>}>
+          <OverlayTrigger placement="bottom" overlay={<Tooltip>View on Docker Hub</Tooltip>}>
             <span className="repo" onClick={this.handleRepoClick}>{repo}</span>
           </OverlayTrigger>
         </div>
