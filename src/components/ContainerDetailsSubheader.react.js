@@ -224,14 +224,14 @@ var ContainerDetailsSubheader = React.createClass({
     if (this.disableStop()) {
       startStopToggle = (
         <div className={startActionClass} onMouseEnter={this.handleItemMouseEnterStart} onMouseLeave={this.handleItemMouseLeaveStart}>
-          <div className="action-icon" onClick={this.handleStart}><RetinaImage src="button-start.png"/></div>
+          <div className="action-icon" onClick={this.handleStart}><RetinaImage src="button-start.png" /></div>
           <span className="btn-label start">Start</span>
         </div>
       );
     } else {
       startStopToggle = (
         <div className={stopActionClass} onMouseEnter={this.handleItemMouseEnterStop} onMouseLeave={this.handleItemMouseLeaveStop}>
-          <div className="action-icon" onClick={this.handleStop}><RetinaImage src="button-stop.png"/></div>
+          <div className="action-icon" onClick={this.handleStop}><RetinaImage src="button-stop.png" /></div>
           <span className="btn-label stop">Stop</span>
         </div>
       );
