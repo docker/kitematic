@@ -12,6 +12,7 @@ var router = require('./router');
 var template = require('./menutemplate');
 var webUtil = require('./utils/WebUtil');
 var urlUtil = require ('./utils/URLUtil');
+var util = require('./Util');
 var app = remote.require('app');
 var request = require('request');
 
@@ -63,7 +64,12 @@ ipc.on('application:open-url', opts => {
     if (err || response.statusCode !== 200) {
       return;
     }
+
     var flags = JSON.parse(body);
+    if (!flags) {
+      return;
+    }
+
     urlUtil.openUrl(opts.url, flags, app.getVersion());
   });
 });

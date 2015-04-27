@@ -56,6 +56,11 @@ module.exports = {
     if (!name || !name.length) {
       return false;
     }
+
+    // An official repo is alphanumeric characters separated by dashes or
+    // underscores.
+    // Examples: myrepo, my-docker-repo, my_docker_repo
+    // Non-exapmles: mynamespace/myrepo, my%!repo
     var repoRegexp = /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/;
     return repoRegexp.test(name);
   },

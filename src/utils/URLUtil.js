@@ -3,8 +3,10 @@ var parseUri = require('parseUri');
 var containerStore = require('../stores/ContainerStore');
 
 module.exports = {
+  TYPE_WHITELIST: ['repository'],
+  METHOD_WHITELIST: ['run'],
   openUrl: function (url, flags, appVersion) {
-    if (!url || !flags || !flags.dockerURLEnabledVersion) {
+    if (!url || !flags || !flags.dockerURLEnabledVersion || !appVersion) {
       return false;
     }
 
@@ -22,14 +24,27 @@ module.exports = {
     // Get the type of object we're operating on, e.g. 'repository'
     var type = parser.host;
 
+    if (this.TYPE_WHITELIST.indexOf(type) === -1) {
+      return false;
+    }
+
     // Separate the path into [run', 'redis']
     var tokens = parser.path.replace('/', '').split('/');
 
     // Get the method trying to be executed, e.g. 'run'
     var method = tokens[0];
 
+    if (this.METHOD_WHITELIST.indexOf(method) === -1) {
+      return false;
+    }
+
     // Get the repository namespace and repo name, e.g. 'redis' or 'myusername/myrepo'
     var repo = tokens.slice(1).join('/');
+
+    // Only accept official repos for now (one component)
+    if (tokens > 1) {
+      return false;
+    }
 
     // Only accept official repos for now
     if (!util.isOfficialRepo(repo)) {
@@ -40,5 +55,6 @@ module.exports = {
       containerStore.setPending(repo, 'latest');
       return true;
     }
+    return false;
   }
 };

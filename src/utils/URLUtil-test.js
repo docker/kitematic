@@ -15,7 +15,7 @@ describe('URLUtil', function () {
     expect(urlUtil.openUrl()).toBe(false);
   });
 
-  it('does nothing if the flags are undefined', () => {
+  it('does nothing if the flags object is undefined', () => {
     util.compareVersions.mockReturnValue(1);
     util.isOfficialRepo.mockReturnValue(true);
     expect(urlUtil.openUrl('docker://repository/run/redis')).toBe(false);
@@ -27,10 +27,22 @@ describe('URLUtil', function () {
     expect(urlUtil.openUrl('docker://repository/run/redis', {dockerURLEnabledVersion: undefined})).toBe(false);
   });
 
-  it('does nothing if the url enabled flag is less than the flag version', () => {
+  it('does nothing if the url enabled flag version is higher than the app version', () => {
     util.compareVersions.mockReturnValue(-1);
     util.isOfficialRepo.mockReturnValue(true);
     expect(urlUtil.openUrl('docker://repository/run/redis', {dockerURLEnabledVersion: '0.5.19'}, '0.5.18')).toBe(false);
+  });
+
+  it('does nothing if the type is not in the whitelist', () => {
+    util.compareVersions.mockReturnValue(1);
+    util.isOfficialRepo.mockReturnValue(true);
+    expect(urlUtil.openUrl('docker://badtype/run/redis', {dockerURLEnabledVersion: '0.5.19'}, '0.5.18')).toBe(false);
+  });
+
+  it('does nothing if the method is not in the whitelist', () => {
+    util.compareVersions.mockReturnValue(1);
+    util.isOfficialRepo.mockReturnValue(true);
+    expect(urlUtil.openUrl('docker://repository/badmethod/redis', {dockerURLEnabledVersion: '0.5.19'}, '0.5.18')).toBe(false);
   });
 
   it('does nothing if protocol is not docker:', () => {
