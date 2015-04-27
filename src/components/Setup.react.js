@@ -126,7 +126,10 @@ var Setup = React.createClass({
             <h1>We&#39;re Sorry!</h1>
             <p>There seems to have been an unexpected error with Kitematic:</p>
             <p className="error">{this.state.error.message || this.state.error}</p>
-            <p><button className="btn btn-action" onClick={this.handleErrorRetry}>Retry Setup</button> <button className="btn btn-action" onClick={this.handleErrorRemoveRetry}>Delete VM and Retry Setup</button></p>
+            <p className="setup-actions">
+              <button className="btn btn-action" onClick={this.handleErrorRetry}>Retry Setup</button>
+              <button className="btn btn-action" onClick={this.handleErrorRemoveRetry}>Delete VM and Retry Setup</button>
+            </p>
           </div>
         </div>
       </div>
