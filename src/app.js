@@ -66,5 +66,3 @@ ipc.on('application:open-url', opts => {
     urlUtil.openUrl(opts.url, flags, app.getVersion());
   });
 });
-
-urlUtil.openUrl('docker://repository/run/redis', {dockerURLEnabledVersion: '0.5.19'}, app.getVersion());
