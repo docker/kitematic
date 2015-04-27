@@ -413,13 +413,10 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
   },
   start: function (name, callback) {
     var container = docker.client().getContainer(name);
-    _muted[name] = true;
     container.start(err => {
       if (err && err.statusCode !== 304) {
-        _muted[name] = false;
         callback(err);
       } else {
-        _muted[name] = false;
         this.fetchContainer(name, callback);
       }
     });
