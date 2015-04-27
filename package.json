@@ -66,6 +66,7 @@
     "mixpanel": "0.2.0",
     "node-uuid": "^1.4.3",
     "object-assign": "^2.0.0",
+    "parseUri": "^1.2.3-2",
     "react": "^0.13.1",
     "react-bootstrap": "^0.20.3",
     "react-retina-image": "^1.1.2",

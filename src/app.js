@@ -11,7 +11,9 @@ var metrics = require('./utils/MetricsUtil');
 var router = require('./router');
 var template = require('./menutemplate');
 var webUtil = require('./utils/WebUtil');
-var util = require ('./utils/Util');
+var urlUtil = require ('./utils/URLUtil');
+var app = remote.require('app');
+var request = require('request');
 
 webUtil.addWindowSizeSaving();
 webUtil.addLiveReload();
@@ -27,12 +29,6 @@ setInterval(function () {
 }, 14400000);
 
 router.run(Handler => React.render(<Handler/>, document.body));
-
-ipc.on('application:quitting', opts => {
-  if (!opts.updating && localStorage.getItem('settings.closeVMOnQuit') === 'true') {
-    machine.stop();
-  }
-});
 
 SetupStore.setup().then(() => {
   if (ContainerStore.pending()) {
@@ -60,26 +56,15 @@ ipc.on('application:quitting', () => {
   }
 });
 
+// Event fires when the app receives a docker:// URL such as
+// docker://repository/run/redis
 ipc.on('application:open-url', opts => {
-  var parser = document.createElement('a');
-  parser.href = opts.url;
-
-  if (parser.protocol !== 'docker:') {
-    return;
-  }
-
-  var pathname = parser.pathname.replace('//', '');
-  var tokens = pathname.split('/');
-  var type = tokens[0];
-  var method = tokens[1];
-  var repo = tokens.slice(2).join('/');
-
-  // Only accept official repos for now
-  if (!util.isOfficialRepo(repo)) {
-    return;
-  }
-
-  if (type === 'repository' && method === 'run') {
-    ContainerStore.setPending(repo, 'latest');
-  }
+  request.get('https://kitematic.com/flags.json', (flags, err) => {
+    if (err || !flags) {
+      return;
+    }
+    urlUtil.openUrl(opts.url, flags, app.getVersion());
+  });
 });
+
+urlUtil.openUrl('docker://repository/run/redis', {dockerURLEnabledVersion: '0.5.19'}, app.getVersion());

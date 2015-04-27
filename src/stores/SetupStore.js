@@ -76,7 +76,7 @@ var _steps = [{
 
     var isoversion = machine.isoversion();
     var packagejson = util.packagejson();
-    if (!isoversion || setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0) {
+    if (!isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0) {
       yield machine.start();
       yield machine.upgrade();
     }
@@ -152,10 +152,10 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var vboxNeedsInstall = !virtualBox.installed();
     required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== packagejson['virtualbox-checksum']);
     required.install = vboxNeedsInstall || setupUtil.needsBinaryFix();
-    required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0;
+    required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0;
 
     var exists = yield machine.exists();
-    if (isoversion && setupUtil.compareVersions(isoversion, packagejson['docker-version']) < 0) {
+    if (isoversion && util.compareVersions(isoversion, packagejson['docker-version']) < 0) {
       this.steps().init.seconds = 33;
     } else if (exists && (yield machine.state()) === 'Saved') {
       this.steps().init.seconds = 8;
