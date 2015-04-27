@@ -5,6 +5,9 @@ var ContainerStore = require('../stores/ContainerStore');
 var metrics = require('../utils/MetricsUtil');
 
 var ContainerListNewItem = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func
+  },
   handleItemMouseEnter: function () {
     var $action = $(this.getDOMNode()).find('.action');
     $action.show();
@@ -20,10 +23,10 @@ var ContainerListNewItem = React.createClass({
       type: 'new'
     });
     var containers = ContainerStore.sorted();
-    $(self.getDOMNode()).fadeOut(300, function () {
+    $(self.getDOMNode()).fadeOut(300, () => {
       if (containers.length > 0) {
         var name = containers[0].Name;
-        self.transitionTo('containerHome', {name: name});
+        this.context.router.transitionTo('containerHome', {name: name});
       }
     });
   },

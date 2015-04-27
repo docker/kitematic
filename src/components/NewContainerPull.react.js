@@ -15,7 +15,7 @@ module.exports = React.createClass({
   },
   handleCancelClick: function () {
     ContainerStore.clearPending();
-    this.transitionTo('new');
+    this.context.router.transitionTo('new');
   },
   handleConfirmClick: function () {
     ContainerStore.clearPending();

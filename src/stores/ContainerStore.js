@@ -307,6 +307,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     var containerName = this._generateName(repository);
 
     _placeholders[containerName] = {
+      Id: require('crypto').randomBytes(32).toString('hex'),
       Name: containerName,
       Image: imageName,
       Config: {

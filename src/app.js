@@ -59,10 +59,11 @@ ipc.on('application:quitting', () => {
 // Event fires when the app receives a docker:// URL such as
 // docker://repository/run/redis
 ipc.on('application:open-url', opts => {
-  request.get('https://kitematic.com/flags.json', (flags, err) => {
-    if (err || !flags) {
+  request.get('https://kitematic.com/flags.json', (err, response, body) => {
+    if (err || response.statusCode !== 200) {
       return;
     }
+    var flags = JSON.parse(body);
     urlUtil.openUrl(opts.url, flags, app.getVersion());
   });
 });

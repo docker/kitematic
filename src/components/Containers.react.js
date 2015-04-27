@@ -59,9 +59,9 @@ var Containers = React.createClass({
     });
     if (status === 'destroy') {
       if (sorted.length) {
-        this.transitionTo('containerHome', {name: sorted[0].Name});
+        this.context.router.transitionTo('containerHome', {name: sorted[0].Name});
       } else {
-        this.transitionTo('containers');
+        this.context.router.transitionTo('containers');
       }
     }
   },
