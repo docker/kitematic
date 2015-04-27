@@ -27,6 +27,7 @@
   "jest": {
     "scriptPreprocessor": "<rootDir>/util/preprocessor.js",
     "setupEnvScriptFile": "<rootDir>/util/testenv.js",
+    "setupTestFrameworkScriptFile": "<rootDir>/util/prepare.js",
     "collectCoverage": true,
     "testDirectoryName": "src",
     "testPathIgnorePatterns": [
@@ -42,7 +43,8 @@
       "<rootDir>/node_modules/.*JSONStream",
       "<rootDir>/node_modules/object-assign",
       "<rootDir>/node_modules/underscore",
-      "<rootDir>/node_modules/bluebird"
+      "<rootDir>/node_modules/bluebird",
+      "<rootDir>/node_modules/source-map-support"
     ]
   },
   "docker-version": "1.6.0",
@@ -93,6 +95,7 @@
     "jsxhint": "^0.14.0",
     "minimist": "^1.1.1",
     "react-tools": "^0.13.1",
-    "run-sequence": "^1.0.2"
+    "run-sequence": "^1.0.2",
+    "source-map-support": "^0.2.10"
   }
 }
