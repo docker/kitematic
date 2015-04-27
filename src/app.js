@@ -12,7 +12,6 @@ var router = require('./router');
 var template = require('./menutemplate');
 var webUtil = require('./utils/WebUtil');
 var urlUtil = require ('./utils/URLUtil');
-var util = require('./Util');
 var app = remote.require('app');
 var request = require('request');
 
