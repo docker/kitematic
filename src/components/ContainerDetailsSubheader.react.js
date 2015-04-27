@@ -54,11 +54,17 @@ var ContainerDetailsSubheader = React.createClass({
     }
     return (this.props.container.State.Downloading || this.props.container.State.Restarting);
   },
-  stopDisabled: function () {
+  disableStop: function () {
     if (!this.props.container) {
       return false;
     }
     return (this.props.container.State.Downloading || this.props.container.State.ExitCode);
+  },
+  disableStart: function () {
+    if (!this.props.container) {
+      return false;
+    }
+    return (this.props.container.State.Downloading || this.props.container.State.Running);
   },
   disableTerminal: function () {
     if (!this.props.container) {
@@ -110,9 +116,16 @@ var ContainerDetailsSubheader = React.createClass({
     }
   },
   handleStop: function () {
-    if (!this.stopDisabled()) {
+    if (!this.disableStop()) {
       metrics.track('Stopped Container');
       ContainerStore.stop(this.props.container.Name, function () {
+      });
+    }
+  },
+  handleStart: function () {
+    if (!this.disableStart()) {
+      metrics.track('Started Container');
+      ContainerStore.start(this.props.container.Name, function () {
       });
     }
   },
@@ -155,6 +168,14 @@ var ContainerDetailsSubheader = React.createClass({
     var $action = $(this.getDOMNode()).find('.action .stop');
     $action.css("visibility", "hidden");
   },
+  handleItemMouseEnterStart: function () {
+    var $action = $(this.getDOMNode()).find('.action .start');
+    $action.css("visibility", "visible");
+  },
+  handleItemMouseLeaveStart: function () {
+    var $action = $(this.getDOMNode()).find('.action .start');
+    $action.css("visibility", "hidden");
+  },
   handleItemMouseEnterTerminal: function () {
     var $action = $(this.getDOMNode()).find('.action .terminal');
     $action.css("visibility", "visible");
@@ -174,7 +195,11 @@ var ContainerDetailsSubheader = React.createClass({
     });
     var stopActionClass = classNames({
       action: true,
-      disabled: this.stopDisabled()
+      disabled: this.disableStop()
+    });
+    var startActionClass = classNames({
+      action: true,
+      disabled: this.disableStart()
     });
     var terminalActionClass = classNames({
       action: true,
@@ -195,6 +220,22 @@ var ContainerDetailsSubheader = React.createClass({
       'active': this.state.currentRoute && (this.state.currentRoute.indexOf('containerSettings') >= 0),
       disabled: this.disableTab()
     });
+    var startStopToggle;
+    if (this.disableStop()) {
+      startStopToggle = (
+        <div className={startActionClass} onMouseEnter={this.handleItemMouseEnterStart} onMouseLeave={this.handleItemMouseLeaveStart}>
+          <div className="action-icon" onClick={this.handleStart}><RetinaImage src="button-start.png" /></div>
+          <span className="btn-label start">Start</span>
+        </div>
+      );
+    } else {
+      startStopToggle = (
+        <div className={stopActionClass} onMouseEnter={this.handleItemMouseEnterStop} onMouseLeave={this.handleItemMouseLeaveStop}>
+          <div className="action-icon" onClick={this.handleStop}><RetinaImage src="button-stop.png" /></div>
+          <span className="btn-label stop">Stop</span>
+        </div>
+      );
+    }
     return (
       <div className="details-subheader">
         <div className="details-header-actions">
@@ -206,10 +247,7 @@ var ContainerDetailsSubheader = React.createClass({
             <div className="action-icon" onClick={this.handleRestart}><RetinaImage src="button-restart.png"/></div>
             <span className="btn-label restart">Restart</span>
           </div>
-          <div className={stopActionClass} onMouseEnter={this.handleItemMouseEnterStop} onMouseLeave={this.handleItemMouseLeaveStop}>
-            <div className="action-icon" onClick={this.handleStop}><RetinaImage src="button-stop.png"/></div>
-            <span className="btn-label stop">Stop</span>
-          </div>
+          {{startStopToggle}}
           <div className={terminalActionClass} onMouseEnter={this.handleItemMouseEnterTerminal} onMouseLeave={this.handleItemMouseLeaveTerminal}>
             <div className="action-icon" onClick={this.handleTerminal}><RetinaImage src="button-terminal.png"/></div>
             <span className="btn-label terminal">Terminal</span>

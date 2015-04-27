@@ -411,6 +411,16 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
       }
     });
   },
+  start: function (name, callback) {
+    var container = docker.client().getContainer(name);
+    container.start(err => {
+      if (err && err.statusCode !== 304) {
+        callback(err);
+      } else {
+        this.fetchContainer(name, callback);
+      }
+    });
+  },
   remove: function (name, callback) {
     if (_placeholders[name]) {
       delete _placeholders[name];
