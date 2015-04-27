@@ -21,7 +21,7 @@ var ContainerList = React.createClass({
     });
     return (
       <ul>
-        <ContainerListNewItem key={'newcontainer'} containers={this.props.containers} />
+        <ContainerListNewItem key={'newcontainer'} containers={this.props.containers}/>
         {containers}
       </ul>
     );

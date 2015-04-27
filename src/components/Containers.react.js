@@ -33,10 +33,6 @@ var Containers = React.createClass({
     ContainerStore.on(ContainerStore.SERVER_CONTAINER_EVENT, this.update);
     ContainerStore.on(ContainerStore.CLIENT_CONTAINER_EVENT, this.updateFromClient);
 
-    if (this.state.sorted.length) {
-      this.context.router.transitionTo('containerHome', {name: this.state.sorted[0].Name});
-    }
-
     ipc.on('application:update-available', () => {
       this.setState({
         updateAvailable: true
@@ -48,36 +44,33 @@ var Containers = React.createClass({
     ContainerStore.removeListener(ContainerStore.SERVER_CONTAINER_EVENT, this.update);
     ContainerStore.removeListener(ContainerStore.CLIENT_CONTAINER_EVENT, this.updateFromClient);
   },
-  onDestroy: function () {
-    if (this.state.sorted.length) {
-      this.context.router.transitionTo('containerHome', {name: this.state.sorted[0].Name});
-    } else {
-      this.context.router.transitionTo('containers');
-    }
-  },
   updateError: function (err) {
     this.setState({
       error: err
     });
   },
   update: function (name, status) {
+    var sorted = ContainerStore.sorted();
     this.setState({
       containers: ContainerStore.containers(),
-      sorted: ContainerStore.sorted(),
+      sorted: sorted,
+      pending: ContainerStore.pending(),
       downloading: ContainerStore.downloading()
     });
     if (status === 'destroy') {
-      this.onDestroy();
+      if (sorted.length) {
+        this.context.router.transitionTo('containerHome', {name: sorted[0].Name});
+      } else {
+        this.context.router.transitionTo('containers');
+      }
     }
   },
   updateFromClient: function (name, status) {
-    this.setState({
-      containers: ContainerStore.containers(),
-      sorted: ContainerStore.sorted(),
-      downloading: ContainerStore.downloading()
-    });
+    this.update(name, status);
     if (status === 'create') {
       this.context.router.transitionTo('containerHome', {name: name});
+    } else if (status === 'pending' && ContainerStore.pending()) {
+      this.context.router.transitionTo('pull');
     } else if (status === 'destroy') {
       this.onDestroy();
     }
@@ -186,7 +179,7 @@ var Containers = React.createClass({
               <div className="sidebar-buttons-padding"></div>
             </section>
           </div>
-          <Router.RouteHandler container={container} error={this.state.error}/>
+          <Router.RouteHandler pending={this.state.pending} container={container} error={this.state.error}/>
         </div>
       </div>
     );

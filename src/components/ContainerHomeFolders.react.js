@@ -6,6 +6,7 @@ var shell = require('shell');
 var util = require('../utils/Util');
 var metrics = require('../utils/MetricsUtil');
 var ContainerStore = require('../stores/ContainerStore');
+var dialog = require('remote').require('dialog');
 
 var ContainerHomeFolder = React.createClass({
   contextTypes: {
@@ -17,20 +18,27 @@ var ContainerHomeFolder = React.createClass({
     });
 
     if (hostVolume.indexOf(process.env.HOME) === -1) {
-      var volumes = _.clone(this.props.container.Volumes);
-      var newHostVolume = path.join(util.home(), 'Kitematic', this.props.container.Name, containerVolume);
-      volumes[containerVolume] = newHostVolume;
-      var binds = _.pairs(volumes).map(function (pair) {
-        return pair[1] + ':' + pair[0];
-      });
-      ContainerStore.updateContainer(this.props.container.Name, {
-        Binds: binds
-      }, function (err) {
-        if (err) {
-          console.log(err);
-          return;
+      dialog.showMessageBox({
+        message: 'Enable all volumes to edit files via Finder? This may not work with all database containers.',
+        buttons: ['Enable Volumes', 'Cancel']
+      }, (index) => {
+        if (index === 0) {
+          var volumes = _.clone(this.props.container.Volumes);
+          var newHostVolume = path.join(util.home(), 'Kitematic', this.props.container.Name, containerVolume);
+          volumes[containerVolume] = newHostVolume;
+          var binds = _.pairs(volumes).map(function (pair) {
+            return pair[1] + ':' + pair[0];
+          });
+          ContainerStore.updateContainer(this.props.container.Name, {
+            Binds: binds
+          }, (err) => {
+            if (err) {
+              console.log(err);
+              return;
+            }
+            shell.showItemInFolder(newHostVolume);
+          });
         }
-        shell.showItemInFolder(newHostVolume);
       });
     } else {
       shell.showItemInFolder(hostVolume);

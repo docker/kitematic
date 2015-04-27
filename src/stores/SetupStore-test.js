@@ -21,7 +21,7 @@ describe('SetupStore', function () {
     pit('downloads virtualbox if it is installed but has an outdated version', function () {
       virtualBox.installed.mockReturnValue(true);
       virtualBox.version.mockReturnValue(Promise.resolve('4.3.16'));
-      setupUtil.compareVersions.mockReturnValue(-1);
+      util.compareVersions.mockReturnValue(-1);
       setupUtil.download.mockReturnValue(Promise.resolve());
       util.packagejson.mockReturnValue({'virtualbox-filename': ''});
       util.supportDir.mockReturnValue('');
@@ -50,7 +50,7 @@ describe('SetupStore', function () {
 
     pit('only installs binaries if virtualbox is installed', function () {
       virtualBox.installed.mockReturnValue(true);
-      setupUtil.compareVersions.mockReturnValue(0);
+      util.compareVersions.mockReturnValue(0);
       setupUtil.needsBinaryFix.mockReturnValue(true);
       return setupStore.steps().install.run().then(() => {
         expect(util.exec).toBeCalledWith('macsudo copycmd && fixcmd');
@@ -68,7 +68,7 @@ describe('SetupStore', function () {
       machine.stop.mockReturnValue(Promise.resolve());
       machine.start.mockReturnValue(Promise.resolve());
       machine.upgrade.mockReturnValue(Promise.resolve());
-      setupUtil.compareVersions.mockReturnValue(-1);
+      util.compareVersions.mockReturnValue(-1);
       machine.create.mockClear();
       machine.upgrade.mockClear();
       machine.start.mockClear();

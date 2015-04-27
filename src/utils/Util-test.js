@@ -2,7 +2,7 @@ jest.dontMock('./Util');
 var util = require('./Util');
 
 describe('Util', function () {
-  describe('removeSensitiveData', function () {
+  describe('when removing sensitive data', function () {
     it('filters ssh certificate data', function () {
       var testdata = String.raw`time="2015-04-17T21:43:47-04:00" level="debug" msg="executing: ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectionAttempts=30 -o LogLevel=quiet -p 50483 -i /Users/johnappleseed/.docker/machine/machines/dev2/id_rsa docker@localhost sudo mkdir -p /var/lib/boot2docker" time="2015-04-17T21:43:47-04:00" level="debug" msg="executing: ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectionAttempts=30 -o LogLevel=quiet -p 50483 -i /Users/johnappleseed/.docker/machine/machines/dev2/id_rsa docker@localhost echo \"-----BEGIN CERTIFICATE-----\nMIIC+DCCAeKgAwIBAgIRANfIbsa2M94gDY+fBiBiQBkwCwYJKoZIhvcNAQELMBIx\nEDAOBgNVBAoTB2ptb3JnYW4wHhcNMTUwNDE4MDEzODAwWhcNMTgwNDAyMDEzODAw\nWjAPMQ0wCwYDVQQKEwRkZXYyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC\nAQEA1yamWT0bk0pRU7eiStjiXe2jkzdeI0SdJZo+bjczkl6kzNW/FmR/OkcP8gHX\nCO3fUCWkR/+rBgz3nuM1Sy0BIUo0EMQGfx17OqIJPXO+BrpCHsXlphHmbQl5bE2Y\nF+bAsGc6WCippw/caNnIHRsb6zAZVYX2AHLYY0fwIDAQABo1AwTjAOBgNVHQ8BAf8EBAMCAKAwHQYD\nVR0lBBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMBMAwGA1UdEwEB/wQCMAAwDwYDVR0R\nBAgwBocEwKhjZTALBgkqhkiG9w0BAQsDggEBAKBdD86+kl4X1VMjgGlNYnc42tWa\nbo1iDl/frxiLkfPSc2McAOm3AqX1ao+ynjqq1XTlBLPTQByu/oNZgA724LRJDfdG\nCKGUV8latW7rB1yhf/SZSmyhNjufuWlgCtbkw7Q/oPddzYuSOdDW8tVok9gMC0vL\naqKCWfVKkCmvGH+8/wPrkYmro/f0uwJ8ee+yrbBPlBE/qE+Lqcfr0YcXEDaS8CmL\nDjWg7KNFpA6M+/tFNQhplbjwRsCt7C4bzQu0aBIG5XH1Jr2HrKlLjWdmluPHWUL6\nX5Vh1bslYJzsSdBNZFWSKShZ+gtRpjtV7NynANDJPQNIRhDxAf4uDY9hA2c=\n-----END CERTIFICATE-----\n\" | sudo tee /var/lib/boot2docker/server.pem"
   time="2015-04-17T21:43:47-04:00" level="debug" msg="executing: /usr/bin/VBoxManage showvminfo dev2 --machinereadable"`;
@@ -30,6 +30,28 @@ describe('Util', function () {
       expect(util.removeSensitiveData('')).toBe('');
       expect(util.removeSensitiveData(1)).toBe(1);
       expect(util.removeSensitiveData(undefined)).toBe(undefined);
+    });
+  });
+
+  describe('when verifying that a repo is official', function () {
+    it('accepts official repo', () => {
+      expect(util.isOfficialRepo('redis')).toBe(true);
+    });
+
+    it('rejects falsy value as official repo', () => {
+      expect(util.isOfficialRepo(undefined)).toBe(false);
+    });
+
+    it('rejects empty repo name', () => {
+      expect(util.isOfficialRepo('')).toBe(false);
+    });
+
+    it('rejects repo with non official namespace', () => {
+      expect(util.isOfficialRepo('kitematic/html')).toBe(false);
+    });
+
+    it('rejects repo with a different registry address', () => {
+      expect(util.isOfficialRepo('www.myregistry.com/kitematic/html')).toBe(false);
     });
   });
 });
