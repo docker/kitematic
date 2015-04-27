@@ -1,6 +1,6 @@
 var util = require('./Util');
 var parseUri = require('parseUri');
-var containerStore = require('../Stores/ContainerStore');
+var containerStore = require('../stores/ContainerStore');
 
 module.exports = {
   openUrl: function (url, flags, appVersion) {
