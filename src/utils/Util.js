@@ -37,7 +37,7 @@ module.exports = {
     }
     return str.replace(/-----BEGIN CERTIFICATE-----.*-----END CERTIFICATE-----/mg, '<redacted>')
       .replace(/-----BEGIN RSA PRIVATE KEY-----.*-----END RSA PRIVATE KEY-----/mg, '<redacted>')
-      .replace(/\/Users\/[a-z_][a-z0-9_]+\//mg, '/Users/<redacted>/');
+      .replace(/\/Users\/.*\//mg, '/Users/<redacted>/');
   },
   resourceDir: function () {
     return process.env.RESOURCES_PATH;
@@ -48,7 +48,7 @@ module.exports = {
   settingsjson: function () {
     var settingsjson = {};
     try {
-      settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
+      settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '../..', 'settings.json'), 'utf8'));
     } catch (err) {}
     return settingsjson;
   },

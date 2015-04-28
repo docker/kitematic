@@ -3,6 +3,7 @@ var fs = require('fs');
 var util = require('./Util');
 var path = require('path');
 var bugsnag = require('bugsnag-js');
+var metrics = require('./MetricsUtil');
 
 var WebUtil = {
   addWindowSizeSaving: function () {
@@ -24,6 +25,7 @@ var WebUtil = {
   },
   addBugReporting: function () {
     var settingsjson = util.settingsjson();
+
     if (settingsjson.bugsnag) {
       bugsnag.apiKey = settingsjson.bugsnag;
       bugsnag.autoNotify = true;
@@ -35,6 +37,10 @@ var WebUtil = {
       };
 
       bugsnag.beforeNotify = function(payload) {
+        if (!metrics.enabled()) {
+          return false;
+        }
+
         payload.stacktrace = util.removeSensitiveData(payload.stacktrace);
         payload.context = util.removeSensitiveData(payload.context);
         payload.file = util.removeSensitiveData(payload.file);

@@ -24,6 +24,10 @@ describe('Util', function () {
       var testdata = String.raw`/Users/johnappleseed/.docker/machine/machines/dev2/id_rsa docker@localhost echo`;
       expect(util.removeSensitiveData(testdata).indexOf('/Users/johnappleseed/')).toEqual(-1);
       expect(util.removeSensitiveData(testdata).indexOf('/Users/<redacted>/')).toNotEqual(-1);
+
+      testdata = String.raw`/Users/some.wei-rdUsername/.docker/machine/machines/dev2/id_rsa docker@localhost echo`;
+      expect(util.removeSensitiveData(testdata).indexOf('/Users/johnappleseed/')).toEqual(-1);
+      expect(util.removeSensitiveData(testdata).indexOf('/Users/<redacted>/')).toNotEqual(-1);
     });
 
     it ('returns input if empty or not a string', function () {
