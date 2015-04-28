@@ -26,7 +26,7 @@ describe('Util', function () {
       expect(util.removeSensitiveData(testdata).indexOf('/Users/<redacted>/')).toNotEqual(-1);
 
       testdata = String.raw`/Users/some.wei-rdUsername/.docker/machine/machines/dev2/id_rsa docker@localhost echo`;
-      expect(util.removeSensitiveData(testdata).indexOf('/Users/johnappleseed/')).toEqual(-1);
+      expect(util.removeSensitiveData(testdata).indexOf('/Users/some.wei-rdUsername/')).toEqual(-1);
       expect(util.removeSensitiveData(testdata).indexOf('/Users/<redacted>/')).toNotEqual(-1);
     });
 
