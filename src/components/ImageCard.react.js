@@ -23,7 +23,9 @@ var ImageCard = React.createClass({
     metrics.track('Selected Image Tag');
   },
   handleClick: function (name) {
-    metrics.track('Created Container');
+    metrics.track('Created Container', {
+      from: 'search'
+    });
     ContainerStore.create(name, this.state.chosenTag, function () {
       $(document.body).find('.new-container-item').parent().fadeOut();
     }.bind(this));

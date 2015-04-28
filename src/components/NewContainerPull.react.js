@@ -2,6 +2,7 @@ var React = require('react/addons');
 var Router = require('react-router');
 var shell = require('shell');
 var ContainerStore = require('../stores/ContainerStore');
+var metrics = require('../utils/MetricsUtil');
 
 module.exports = React.createClass({
   mixins: [Router.Navigation],
@@ -14,10 +15,14 @@ module.exports = React.createClass({
     }
   },
   handleCancelClick: function () {
+    metrics.track('Canceled Click-To-Pull');
     ContainerStore.clearPending();
     this.context.router.transitionTo('new');
   },
   handleConfirmClick: function () {
+    metrics.track('Created Container', {
+      from: 'click-to-pull'
+    });
     ContainerStore.clearPending();
     ContainerStore.create(this.props.pending.repository, this.props.pending.tag, function () {});
   },
