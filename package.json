@@ -1,6 +1,6 @@
 {
   "name": "Kitematic",
-  "version": "0.5.15",
+  "version": "0.5.22",
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X.",
   "homepage": "https://kitematic.com/",
@@ -15,7 +15,7 @@
     "test": "jest",
     "release": "gulp release",
     "release:beta": "gulp release --beta",
-    "lint": "jsxhint src && jsxhint browser",
+    "lint": "jsxhint src",
     "reset": "gulp reset"
   },
   "licenses": [
@@ -27,6 +27,7 @@
   "jest": {
     "scriptPreprocessor": "<rootDir>/util/preprocessor.js",
     "setupEnvScriptFile": "<rootDir>/util/testenv.js",
+    "setupTestFrameworkScriptFile": "<rootDir>/util/prepare.js",
     "collectCoverage": true,
     "testDirectoryName": "src",
     "testPathIgnorePatterns": [
@@ -42,7 +43,8 @@
       "<rootDir>/node_modules/.*JSONStream",
       "<rootDir>/node_modules/object-assign",
       "<rootDir>/node_modules/underscore",
-      "<rootDir>/node_modules/bluebird"
+      "<rootDir>/node_modules/bluebird",
+      "<rootDir>/node_modules/source-map-support"
     ]
   },
   "docker-version": "1.6.0",
@@ -69,6 +71,7 @@
     "mixpanel": "0.2.0",
     "node-uuid": "^1.4.3",
     "object-assign": "^2.0.0",
+    "parseUri": "^1.2.3-2",
     "react": "^0.13.1",
     "react-bootstrap": "^0.20.3",
     "react-retina-image": "^1.1.2",
@@ -91,7 +94,6 @@
     "gulp-less": "^3.0.2",
     "gulp-livereload": "^3.8.0",
     "gulp-plumber": "^1.0.0",
-    "gulp-react": "^3.0.1",
     "gulp-shell": "^0.4.1",
     "gulp-sourcemaps": "^1.5.2",
     "gulp-util": "^3.0.4",
@@ -99,6 +101,7 @@
     "jsxhint": "^0.14.0",
     "minimist": "^1.1.1",
     "react-tools": "^0.13.1",
-    "run-sequence": "^1.0.2"
+    "run-sequence": "^1.0.2",
+    "source-map-support": "^0.2.10"
   }
 }

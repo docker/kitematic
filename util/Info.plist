@@ -26,5 +26,16 @@
 	<string>AtomApplication</string>
 	<key>NSSupportsAutomaticGraphicsSwitching</key>
 	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>docker</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>Docker App Protocol</string>
+		</dict>
+	</array>
 </dict>
 </plist>

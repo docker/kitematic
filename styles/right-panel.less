@@ -25,6 +25,10 @@
       .action {
         display: inline-block;
         position: relative;
+        img {
+          width: 42px;
+          height: 42px;
+        }
         &.disabled {
           opacity: 0.3;
         }
@@ -40,15 +44,18 @@
           top: 45px;
           &.view {
             left: 7px;
-            //left: 0px;
           }
           &.restart {
             left: 2px;
-            //left: -18px;
+          }
+          &.stop {
+            left: 7px;
+          }
+          &.start {
+            left: 7px;
           }
           &.terminal {
             left: -1px;
-            //left: -30px;
           }
           visibility: hidden;
         }
@@ -66,7 +73,7 @@
         display: inline-block;
         &:hover {
           border-radius: 40px;
-          background-color: @color-background;
+          background-color: darken(@color-background, 2%);
         }
         &.active {
           border-radius: 40px;

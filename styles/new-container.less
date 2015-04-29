@@ -1,3 +1,32 @@
+.new-container-pull {
+  display: flex;
+  flex: 1 auto;
+  align-items: center;
+  justify-content: center;
+  .content {
+    text-align: center;
+
+    .buttons {
+      margin-top: 30px;
+      .btn {
+        margin-left: 10px;
+        margin-right: 10px;
+        padding: 8px 18px;
+        font-size: 14px;
+        background: white;
+        font-weight: 300;
+      }
+    }
+  }
+  h1 {
+    font-size: 20px;
+    color: @gray-normal;
+    font-weight: 400;
+    text-align: center;
+    margin-top: 10px;
+  }
+}
+
 .new-container {
   display: flex;
   flex: 1 auto;
@@ -69,14 +98,14 @@
           padding: 4px 8px 4px 35px;
           color: @gray-darkest;
           margin-bottom: 3px;
-          border-color: @gray-lightest;
+          border-color: @gray-lighter;
           box-shadow: none;
           &:focus {
             box-shadow: none;
-            border-color: @gray-lighter;
+            border-color: @brand-primary;
           }
           &::-webkit-input-placeholder {
-            color: #DDD;
+            color: @gray-lightest;
             font-weight: 400;
           }
         }
@@ -93,10 +122,10 @@
   overflow: auto;
   .image-item {
     display: flex;
+    position: relative;
     width: 320px;
     height: 166px;
     border-radius: 4px;
-    border: 1px solid @gray-lightest;
     background-color: white;
     margin-right: 20px;
     margin-bottom: 20px;
@@ -150,10 +179,11 @@
       flex: 1 auto;
       min-width: 90px;
       background-color: @brand-action;
-      border-top-left-radius: 3px;
-      border-bottom-left-radius: 3px;
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
       justify-content: center;
       text-align: center;
+      box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,0.2);
       img {
         margin-top: 15px;
       }
@@ -161,6 +191,10 @@
     .card {
       padding: 10px 20px 10px 20px;
       position: relative;
+      border: 1px solid @gray-lighter;
+      border-left: 0;
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
       .badges {
         position: absolute;
         right: 15px;
@@ -186,7 +220,6 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          text-decoration: underline;
         }
       }
       .description {
