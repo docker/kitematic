@@ -40,13 +40,14 @@ module.exports = {
   },
   supportDir: function () {
     var dirs = ['Library', 'Application\ Support', 'Kitematic'];
-    var acc = process.env.HOME;
+    var acc = this.home();
     dirs.forEach(function (d) {
       acc = path.join(acc, d);
       if (!fs.existsSync(acc)) {
         fs.mkdirSync(acc);
       }
     });
+    return acc;
   },
   CommandOrCtrl: function () {
     return this.isWindows() ? 'Ctrl' : 'Command';

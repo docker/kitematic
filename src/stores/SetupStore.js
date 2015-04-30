@@ -240,6 +240,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
         metrics.track('Setup Failed', {
           step: _currentStep,
         });
+        console.log(err);
         bugsnag.notify('SetupError', err.message, {
           error: err,
           output: err.message
