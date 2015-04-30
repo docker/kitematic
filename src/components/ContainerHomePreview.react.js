@@ -3,7 +3,7 @@ var React = require('react/addons');
 var ContainerStore = require('../stores/ContainerStore');
 var ContainerUtil = require('../utils/ContainerUtil');
 var request = require('request');
-var util = require('../utils/Util');
+var shell = require('shell');
 var metrics = require('../utils/MetricsUtil');
 var webPorts = require('../utils/Util').webPorts;
 
@@ -59,7 +59,7 @@ var ContainerHomePreview = React.createClass({
       metrics.track('Opened In Browser', {
         from: 'preview'
       });
-      util.openExtenral(this.state.ports[this.state.defaultPort].url);
+      shell.openExternal(this.state.ports[this.state.defaultPort].url);
     }
   },
   handleClickNotShowingCorrectly: function () {
