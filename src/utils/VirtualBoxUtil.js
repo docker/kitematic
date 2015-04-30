@@ -20,7 +20,7 @@ var VirtualBox = {
     if(util.isWindows()) {
       return 'http://download.virtualbox.org/virtualbox/4.3.26/VirtualBox-4.3.26-98988-Win.exe';
     } else {
-      return `https://github.com/kitematic/virtualbox/releases/download/${util.packagejson()['virtualbox-version']}/${this.virtualBoxFileName()}`;
+      return `https://github.com/kitematic/virtualbox/releases/download/${util.packagejson()['virtualbox-version']}/${this.filename()}`;
     }
   },
   installed: function () {

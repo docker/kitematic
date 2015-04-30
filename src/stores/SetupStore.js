@@ -37,7 +37,7 @@ var _steps = [{
   percent: 0,
   seconds: 5,
   run: Promise.coroutine(function* (progressCallback) {
-    var cmd = '';
+    var cmd = setupUtil.copyBinariesCmd() + ' && ' + setupUtil.fixBinariesCmd();
 
     if (!virtualBox.installed()) {
       yield virtualBox.killall();
@@ -49,7 +49,7 @@ var _steps = [{
     }
     try {
       progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
-      yield setupUtil.installVirtualBoxCmd();
+      yield util.exec(setupUtil.macSudoCmd(cmd));
     } catch (err) {
       throw null;
     }
@@ -73,8 +73,6 @@ var _steps = [{
         let usersDirName = parts[parts.length-1];
         let usersDirPath = parts.join('\\');
         let shareName = driveLetter + '/' + usersDirName;
-
-        yield machine.stop();
         yield virtualBox.mountSharedDir(machine.name(), shareName, usersDirPath);
         yield machine.start();
       }
@@ -243,6 +241,8 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
         metrics.track('Setup Failed', {
           step: _currentStep,
         });
+        console.log(err);
+        console.log(err.message);
         bugsnag.notify('SetupError', err.message, {
           error: err,
           output: err.message

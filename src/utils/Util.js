@@ -5,9 +5,6 @@ var path = require('path');
 
 module.exports = {
   exec: function (args, options) {
-    if (typeof args === 'string') {
-      args = args.split(' ');
-    }
     options = options || {};
     return new Promise((resolve, reject) => {
       exec(args, options, (stderr, stdout, code) => {

@@ -28,6 +28,9 @@ var SetupUtil = {
         this.checksum(util.dockerMachineBinPath()) !== this.checksum(resources.dockerMachine()) ||
         this.checksum(util.dockerBinPath()) !== this.checksum(resources.docker());
   },
+  copycmd: function (src, dest) {
+    return ['rm', '-f', dest, '&&', 'cp', src, dest];
+   },
   copyBinariesCmd: function () {
     var cmd = ['mkdir', '-p', '/usr/local/bin'];
     cmd.push('&&');

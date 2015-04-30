@@ -6,6 +6,7 @@ var Radial = require('./Radial.react');
 var ImageCard = require('./ImageCard.react');
 var Promise = require('bluebird');
 var metrics = require('../utils/MetricsUtil');
+var classNames = require('classnames');
 
 var _recommended = [];
 var _searchPromise = null;
@@ -132,11 +133,11 @@ module.exports = React.createClass({
         );
       }
     }
-    var loadingClasses = React.addons.classSet({
+    var loadingClasses = classNames({
       hidden: !this.state.loading,
       loading: true
     });
-    var magnifierClasses = React.addons.classSet({
+    var magnifierClasses = classNames({
       hidden: this.state.loading,
       icon: true,
       'icon-magnifier': true,
