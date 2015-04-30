@@ -17,12 +17,30 @@ module.exports = {
       });
     });
   },
+  isWindows: function () {
+    return process.platform === 'win32';
+  },
+  binsPath: function () {
+    return this.isWindows() ? path.join(this.home(), 'Kitematic-bins') : path.join('/usr/local/bin');
+  },
+  binsEnding: function () {
+    return this.isWindows() ? '.exe' : '';
+  },
+  dockerBinPath: function () {
+    return path.join(this.binsPath(), 'docker' + this.binsEnding());
+  },
+  dockerMachineBinPath: function () {
+    return path.join(this.binsPath(), 'docker-machine' + this.binsEnding());
+  },
+  escapePath: function (str) {
+    return str.replace(/ /g, '\\ ').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+  },
   home: function () {
-    return process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'];
+    return process.env[this.isWindows() ? 'USERPROFILE' : 'HOME'];
   },
   supportDir: function () {
     var dirs = ['Library', 'Application\ Support', 'Kitematic'];
-    var acc = process.env.HOME;
+    var acc = this.home();
     dirs.forEach(function (d) {
       acc = path.join(acc, d);
       if (!fs.existsSync(acc)) {
@@ -31,6 +49,9 @@ module.exports = {
     });
     return acc;
   },
+  CommandOrCtrl: function () {
+    return this.isWindows() ? 'Ctrl' : 'Command';
+  },
   removeSensitiveData: function (str) {
     if (!str || str.length === 0 || typeof str !== 'string' ) {
       return str;
@@ -38,9 +59,6 @@ module.exports = {
     return str.replace(/-----BEGIN CERTIFICATE-----.*-----END CERTIFICATE-----/mg, '<redacted>')
       .replace(/-----BEGIN RSA PRIVATE KEY-----.*-----END RSA PRIVATE KEY-----/mg, '<redacted>')
       .replace(/\/Users\/.*\//mg, '/Users/<redacted>/');
-  },
-  resourceDir: function () {
-    return process.env.RESOURCES_PATH;
   },
   packagejson: function () {
     return JSON.parse(fs.readFileSync(path.join(__dirname, '../..', 'package.json'), 'utf8'));

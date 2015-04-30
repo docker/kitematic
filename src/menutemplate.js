@@ -1,5 +1,6 @@
 var remote = require('remote');
 var app = remote.require('app');
+var shell = require('shell');
 var router = require('./router');
 var util = require('./utils/Util');
 var metrics = require('./utils/MetricsUtil');
@@ -21,7 +22,7 @@ var MenuTemplate = function () {
       },
       {
         label: 'Preferences',
-        accelerator: 'Command+,',
+        accelerator: util.CommandOrCtrl() + '+,',
         enabled: !!docker.host(),
         click: function () {
           metrics.track('Opened Preferences', {
@@ -42,12 +43,12 @@ var MenuTemplate = function () {
       },
       {
         label: 'Hide Kitematic',
-        accelerator: 'Command+H',
+        accelerator: util.CommandOrCtrl() + '+H',
         selector: 'hide:'
       },
       {
         label: 'Hide Others',
-        accelerator: 'Command+Shift+H',
+        accelerator: util.CommandOrCtrl() + '+Shift+H',
         selector: 'hideOtherApplications:'
       },
       {
@@ -59,11 +60,11 @@ var MenuTemplate = function () {
       },
       {
         label: 'Quit',
-        accelerator: 'Command+Q',
+        accelerator: util.CommandOrCtrl() + '+Q',
         click: function() {
           app.quit();
         }
-      },
+      }
       ]
     },
     {
@@ -74,7 +75,7 @@ var MenuTemplate = function () {
       },
       {
         label: 'Open Docker Command Line Terminal',
-        accelerator: 'Command+Shift+T',
+        accelerator: util.CommandOrCtrl() + '+Shift+T',
         enabled: !!docker.host(),
         click: function() {
           metrics.track('Opened Docker Terminal', {
@@ -82,7 +83,7 @@ var MenuTemplate = function () {
           });
           machine.dockerTerminal();
         }
-      },
+      }
       ]
     },
     {
@@ -90,12 +91,12 @@ var MenuTemplate = function () {
       submenu: [
       {
         label: 'Undo',
-        accelerator: 'Command+Z',
+        accelerator: util.CommandOrCtrl() + '+Z',
         selector: 'undo:'
       },
       {
         label: 'Redo',
-        accelerator: 'Shift+Command+Z',
+        accelerator: 'Shift+' + util.CommandOrCtrl() + '+Z',
         selector: 'redo:'
       },
       {
@@ -103,24 +104,24 @@ var MenuTemplate = function () {
       },
       {
         label: 'Cut',
-        accelerator: 'Command+X',
+        accelerator: util.CommandOrCtrl() + '+X',
         selector: 'cut:'
       },
       {
         label: 'Copy',
-        accelerator: 'Command+C',
+        accelerator: util.CommandOrCtrl() + '+C',
         selector: 'copy:'
       },
       {
         label: 'Paste',
-        accelerator: 'Command+V',
+        accelerator: util.CommandOrCtrl() + '+V',
         selector: 'paste:'
       },
       {
         label: 'Select All',
-        accelerator: 'Command+A',
+        accelerator: util.CommandOrCtrl() + '+A',
         selector: 'selectAll:'
-      },
+      }
       ]
     },
     {
@@ -128,9 +129,9 @@ var MenuTemplate = function () {
       submenu: [
         {
           label: 'Toggle DevTools',
-          accelerator: 'Alt+Command+I',
+          accelerator: 'Alt+' + util.CommandOrCtrl() + '+I',
           click: function() { remote.getCurrentWindow().toggleDevTools(); }
-        },
+        }
       ]
     },
     {
@@ -138,12 +139,12 @@ var MenuTemplate = function () {
       submenu: [
       {
         label: 'Minimize',
-        accelerator: 'Command+M',
+        accelerator: util.CommandOrCtrl() + '+M',
         selector: 'performMiniaturize:'
       },
       {
         label: 'Close',
-        accelerator: 'Command+W',
+        accelerator: util.CommandOrCtrl() + '+W',
         click: function () {
           remote.getCurrentWindow().hide();
         }
@@ -154,7 +155,7 @@ var MenuTemplate = function () {
       {
         label: 'Bring All to Front',
         selector: 'arrangeInFront:'
-      },
+      }
       ]
     },
     {
@@ -166,11 +167,11 @@ var MenuTemplate = function () {
             metrics.track('Opened Issue Reporter', {
               from: 'menu'
             });
-            util.exec(['open', 'https://github.com/kitematic/kitematic/issues/new']);
+            shell.openExternal('https://github.com/kitematic/kitematic/issues/new');
           }
-        },
+        }
       ]
-    },
+    }
   ];
 };
 

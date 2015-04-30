@@ -27,6 +27,14 @@ var ContainerHomeFolder = React.createClass({
           var newHostVolume = path.join(util.home(), 'Kitematic', this.props.container.Name, containerVolume);
           volumes[containerVolume] = newHostVolume;
           var binds = _.pairs(volumes).map(function (pair) {
+            if(util.isWindows()) {
+              var home = util.home();
+              home = home.charAt(0).toLowerCase() + home.slice(1);
+              home = '/' + home.replace(':', '').replace(/\\/g, '/');
+              var fullPath = path.join(home, 'Kitematic', pair[1], pair[0]);
+              fullPath = fullPath.replace(/\\/g, '/');
+              return fullPath + ':' + pair[0];
+            }
             return pair[1] + ':' + pair[0];
           });
           ContainerStore.updateContainer(this.props.container.Name, {

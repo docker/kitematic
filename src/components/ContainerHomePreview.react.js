@@ -1,9 +1,9 @@
 var _ = require('underscore');
 var React = require('react/addons');
-var exec = require('exec');
 var ContainerStore = require('../stores/ContainerStore');
 var ContainerUtil = require('../utils/ContainerUtil');
 var request = require('request');
+var shell = require('shell');
 var metrics = require('../utils/MetricsUtil');
 var webPorts = require('../utils/Util').webPorts;
 
@@ -59,9 +59,7 @@ var ContainerHomePreview = React.createClass({
       metrics.track('Opened In Browser', {
         from: 'preview'
       });
-      exec(['open', this.state.ports[this.state.defaultPort].url], function (err) {
-        if (err) { throw err; }
-      });
+      shell.openExternal(this.state.ports[this.state.defaultPort].url);
     }
   },
   handleClickNotShowingCorrectly: function () {

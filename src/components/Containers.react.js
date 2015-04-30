@@ -9,8 +9,8 @@ var remote = require('remote');
 var metrics = require('../utils/MetricsUtil');
 var autoUpdater = remote.require('auto-updater');
 var RetinaImage = require('react-retina-image');
+var shell = require('shell');
 var machine = require('../utils/DockerMachineUtil');
-var util = require('../utils/Util');
 
 var Containers = React.createClass({
   contextTypes: {
@@ -111,7 +111,7 @@ var Containers = React.createClass({
     metrics.track('Opened Issue Reporter', {
       from: 'app'
     });
-    util.exec(['open', 'https://github.com/kitematic/kitematic/issues/new']);
+    shell.openExternal('https://github.com/kitematic/kitematic/issues/new');
   },
   handleMouseEnterDockerTerminal: function () {
     this.setState({

@@ -15,8 +15,8 @@
     "test": "jest",
     "release": "gulp release",
     "release:beta": "gulp release --beta",
-    "preinstall": "./util/deps",
-    "lint": "jsxhint src && jsxhint browser"
+    "lint": "jsxhint src",
+    "reset": "gulp reset"
   },
   "licenses": [
     {
@@ -52,9 +52,12 @@
   "electron-version": "0.24.0",
   "virtualbox-version": "4.3.26",
   "virtualbox-filename": "VirtualBox-4.3.26.pkg",
+  "virtualbox-filename-win": "VirtualBox-4.3.26.exe",
   "virtualbox-checksum": "668f61c95efe37f8fc65cafe95b866fba64e37f2492dfc1e2b44a7ac3dcafa3b",
+  "virtualbox-checksum-win": "9cb265babf307d825f5178693af95ffca077f80ae22cf43868c3538c159123ff",
   "dependencies": {
     "ansi-to-html": "0.3.0",
+    "any-promise": "^0.1.0",
     "async": "^0.9.0",
     "bluebird": "^2.9.24",
     "bugsnag-js": "^2.4.7",

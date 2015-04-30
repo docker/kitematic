@@ -19,3 +19,6 @@ cache
 # Tests
 .test
 settings.json
+
+# IDEs
+.idea

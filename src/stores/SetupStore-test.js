@@ -11,7 +11,7 @@ describe('SetupStore', function () {
     pit('downloads virtualbox if it is not installed', function () {
       virtualBox.installed.mockReturnValue(false);
       setupUtil.download.mockReturnValue(Promise.resolve());
-      util.packagejson.mockReturnValue({'virtualbox-filename': ''});
+      virtualBox.filename.mockReturnValue('');
       util.supportDir.mockReturnValue('');
       return setupStore.steps().download.run().then(() => {
         expect(setupUtil.download).toBeCalled();
@@ -23,7 +23,7 @@ describe('SetupStore', function () {
       virtualBox.version.mockReturnValue(Promise.resolve('4.3.16'));
       util.compareVersions.mockReturnValue(-1);
       setupUtil.download.mockReturnValue(Promise.resolve());
-      util.packagejson.mockReturnValue({'virtualbox-filename': ''});
+      virtualBox.filename.mockReturnValue('');
       util.supportDir.mockReturnValue('');
       return setupStore.steps().download.run().then(() => {
         expect(setupUtil.download).toBeCalled();
@@ -33,10 +33,10 @@ describe('SetupStore', function () {
 
   describe('install step', function () {
     util.exec.mockReturnValue(Promise.resolve());
-    setupUtil.copyBinariesCmd.mockReturnValue('copycmd');
-    setupUtil.fixBinariesCmd.mockReturnValue('fixcmd');
+    setupUtil.copyBinariesCmd.mockReturnValue(Promise.resolve());
+    setupUtil.fixBinariesCmd.mockReturnValue(Promise.resolve());
     virtualBox.killall.mockReturnValue(Promise.resolve());
-    setupUtil.installVirtualBoxCmd.mockReturnValue('installvb');
+    setupUtil.installVirtualBoxCmd.mockReturnValue(Promise.resolve());
     setupUtil.macSudoCmd.mockImplementation(cmd => 'macsudo ' + cmd);
 
     pit('installs virtualbox if it is not installed', function () {
@@ -44,7 +44,9 @@ describe('SetupStore', function () {
       util.exec.mockReturnValue(Promise.resolve());
       return setupStore.steps().install.run().then(() => {
         expect(virtualBox.killall).toBeCalled();
-        expect(util.exec).toBeCalledWith('macsudo copycmd && fixcmd && installvbcmd');
+        expect(setupUtil.copyBinariesCmd).toBeCalled();
+        expect(setupUtil.fixBinariesCmd).toBeCalled();
+        expect(setupUtil.installVirtualBoxCmd).toBeCalled();
       });
     });
 
@@ -53,14 +55,14 @@ describe('SetupStore', function () {
       util.compareVersions.mockReturnValue(0);
       setupUtil.needsBinaryFix.mockReturnValue(true);
       return setupStore.steps().install.run().then(() => {
-        expect(util.exec).toBeCalledWith('macsudo copycmd && fixcmd');
+        expect(setupUtil.copyBinariesCmd).toBeCalled();
+        expect(setupUtil.fixBinariesCmd).toBeCalled();
+        expect(setupUtil.installVirtualBoxCmd).not.toBeCalled();
       });
     });
   });
 
   describe('init step', function () {
-    virtualBox.vmdestroy.mockReturnValue(Promise.resolve());
-
     pit('upgrades the vm if it exists and is out of date', function () {
       machine.exists.mockReturnValue(Promise.resolve(true));
       machine.state.mockReturnValue(Promise.resolve('Stopped'));

@@ -6,6 +6,7 @@ var Radial = require('./Radial.react');
 var ContainerHomePreview = require('./ContainerHomePreview.react');
 var ContainerHomeLogs = require('./ContainerHomeLogs.react');
 var ContainerHomeFolders = require('./ContainerHomeFolders.react');
+var shell = require('shell');
 var ContainerUtil = require('../utils/ContainerUtil');
 var util = require('../utils/Util');
 
@@ -29,7 +30,7 @@ var ContainerHome = React.createClass({
     resizeWindow();
   },
   handleErrorClick: function () {
-    util.exec(['open', 'https://github.com/kitematic/kitematic/issues/new']);
+    shell.openExternal('https://github.com/kitematic/kitematic/issues/new');
   },
   componentWillReceiveProps: function () {
     this.init();

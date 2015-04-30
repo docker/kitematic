@@ -2,12 +2,13 @@ var fs = require('fs');
 var path = require('path');
 var dockerode = require('dockerode');
 var Promise = require('bluebird');
+var util = require('./Util');
 
 var Docker = {
   _host: null,
   _client: null,
   setup: function(ip, name) {
-    var certDir = path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], '.docker/machine/machines', name);
+    var certDir = path.join(util.home(), '.docker/machine/machines', name);
     if (!fs.existsSync(certDir)) {
       return;
     }

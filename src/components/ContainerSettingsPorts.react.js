@@ -1,6 +1,6 @@
 var _ = require('underscore');
 var React = require('react/addons');
-var exec = require('exec');
+var shell = require('shell');
 var ContainerStore = require('../stores/ContainerStore');
 var ContainerUtil = require('../utils/ContainerUtil');
 var metrics = require('../utils/MetricsUtil');
@@ -39,9 +39,7 @@ var ContainerSettingsPorts = React.createClass({
     metrics.track('Opened In Browser', {
       from: 'settings'
     });
-    exec(['open', url], function (err) {
-      if (err) { throw err; }
-    });
+    shell.openExternal(url);
   },
   handleChangeDefaultPort: function (port, e) {
     if (e.target.checked) {

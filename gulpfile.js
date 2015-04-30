@@ -175,11 +175,35 @@ gulp.task('settings', function () {
   string_src('settings.json', JSON.stringify(settings)).pipe(gulp.dest('dist/osx/' + options.appFilename.replace(' ', '\ ').replace('(','\(').replace(')','\)') + '/Contents/Resources/app'));
 });
 
-gulp.task('release', function () {
-  runSequence('download', 'dist', ['copy', 'images', 'js', 'styles', 'settings'], 'sign', 'zip');
+gulp.task('download-deps', function () {
+    if(process.platform === 'win32') {
+      return gulp.src('').pipe(
+          shell(['powershell.exe -ExecutionPolicy unrestricted -File util\\deps.ps1'])
+      );
+    } else {
+      return gulp.src('').pipe(
+          shell(['./util/deps'])
+      );
+    }
 });
 
-gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function () {
+gulp.task('reset', function () {
+  if(process.platform === 'win32') {
+    return gulp.src('').pipe(
+        shell(['powershell.exe -ExecutionPolicy unrestricted -Command "Start-Process powershell -verb runas -ArgumentList \\\"-ExecutionPolicy unrestricted  -file c:\\Users\\Dominik\\Documents\\GitHub\\kitematic\\util\\reset.ps1\\\" -Wait"'])
+    );
+  } else {
+    return gulp.src('').pipe(
+        shell(['./util/reset'])
+    );
+  }
+});
+
+gulp.task('release', function () {
+  runSequence('download-deps', 'download', 'dist', ['copy', 'images', 'js', 'styles', 'settings'], 'sign', 'zip');
+});
+
+gulp.task('default', ['download-deps', 'download', 'copy', 'js', 'images', 'styles'], function () {
   gulp.watch('src/**/*.js', ['js']);
   gulp.watch('index.html', ['copy']);
   gulp.watch('styles/**/*.less', ['styles']);
@@ -189,7 +213,14 @@ gulp.task('default', ['download', 'copy', 'js', 'images', 'styles'], function ()
 
   var env = process.env;
   env.NODE_ENV = 'development';
-  gulp.src('').pipe(shell(['./cache/Electron.app/Contents/MacOS/Electron .'], {
-    env: env
-  }));
+
+  if(process.platform === 'win32') {
+      gulp.src('').pipe(shell(['cache\\electron.exe .'], {
+          env: env
+      }));
+  } else {
+      gulp.src('').pipe(shell(['./cache/Electron.app/Contents/MacOS/Electron .'], {
+          env: env
+      }));
+  }
 });
