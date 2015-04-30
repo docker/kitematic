@@ -81,10 +81,5 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
   },
   logs: function (name) {
     return _logs[name] || [];
-  },
-  rename: function (name, newName) {
-    if (_logs[name]) {
-      _logs[newName] = _logs[name];
-    }
   }
 });
