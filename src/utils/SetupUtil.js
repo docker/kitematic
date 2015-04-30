@@ -55,7 +55,7 @@ var SetupUtil = {
       return `installer -pkg ${util.escapePath(path.join(util.supportDir(), virtualBox.filename()))} -target /`;
     }
   },
-  macSudoCmd(cmd) {
+  macSudoCmd: function (cmd) {
     return `${util.escapePath(resources.macsudo())} -p "Kitematic requires administrative privileges to install." sh -c \"${cmd}\"`;
   },
   simulateProgress(estimateSeconds, progress) {
