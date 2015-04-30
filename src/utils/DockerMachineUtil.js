@@ -9,7 +9,7 @@ var NAME = 'dev';
 
 var DockerMachine = {
   command: function () {
-    return resources.docker_machine();
+    return resources.dockerMachine();
   },
   name: function () {
     return NAME;

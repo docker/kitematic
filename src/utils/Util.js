@@ -1,10 +1,13 @@
 var exec = require('exec');
 var Promise = require('bluebird');
-var fs = require('fs');
+var fs = require('fs-promise');
 var path = require('path');
 
 module.exports = {
   exec: function (args, options) {
+    if (typeof args === 'string') {
+      args = args.split(' ');
+    }
     options = options || {};
     return new Promise((resolve, reject) => {
       exec(args, options, (stderr, stdout, code) => {
@@ -20,18 +23,6 @@ module.exports = {
   isWindows: function () {
     return process.platform === 'win32';
   },
-  home: function () {
-    return process.env[this.isWindows() ? 'USERPROFILE' : 'HOME'];
-  },
-  supportDir: function () {
-    var acc = path.join(this.home(), 'Library', 'Application\ Support', 'Kitematic');
-    fs.mkdirsSync(acc);
-    return acc;
-  },
-  CommandOrCtrl: function () {
-    return this.isWindows() ? 'Ctrl' : 'Command';
-  },
-
   binsPath: function () {
     return this.isWindows() ? path.join(this.home(), 'Kitematic-bins') : path.join('/usr/local/bin');
   },
@@ -43,6 +34,20 @@ module.exports = {
   },
   dockerMachineBinPath: function () {
     return path.join(this.binsPath(), 'docker-machine' + this.binsEnding());
+  },
+  escapePath: function (str) {
+    return str.replace(/ /g, '\\ ').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+  },
+  home: function () {
+    return process.env[this.isWindows() ? 'USERPROFILE' : 'HOME'];
+  },
+  supportDir: function () {
+    var acc = path.join(this.home(), 'Library', 'Application\ Support', 'Kitematic');
+    fs.mkdirsSync(acc);
+    return acc;
+  },
+  CommandOrCtrl: function () {
+    return this.isWindows() ? 'Ctrl' : 'Command';
   },
   removeSensitiveData: function (str) {
     if (!str || str.length === 0 || typeof str !== 'string' ) {

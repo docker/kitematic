@@ -25,7 +25,7 @@ var _steps = [{
   totalPercent: 35,
   percent: 0,
   run: function (progressCallback) {
-    return setupUtil.download(setupUtil.virtualBoxUrl(), path.join(util.supportDir(), setupUtil.virtualBoxFileName()), setupUtil.virtualBoxChecksum(), percent => {
+    return setupUtil.download(virtualBox.url(), path.join(util.supportDir(), virtualBox.filename()), virtualBox.checksum(), percent => {
       progressCallback(percent);
     });
   }
@@ -37,20 +37,22 @@ var _steps = [{
   percent: 0,
   seconds: 5,
   run: Promise.coroutine(function* (progressCallback) {
-    yield setupUtil.copyBinariesCmd();
-    yield setupUtil.fixBinariesCmd();
+    var cmd = '';
 
     if (!virtualBox.installed()) {
       yield virtualBox.killall();
-      try {
-        progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
-        yield setupUtil.installVirtualBoxCmd();
-      } catch (err) {
-        throw null;
+      cmd += ' && ' + setupUtil.installVirtualBoxCmd();
+    } else {
+      if (!setupUtil.needsBinaryFix()) {
+        return;
       }
     }
-
-    return;
+    try {
+      progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
+      yield setupUtil.installVirtualBoxCmd();
+    } catch (err) {
+      throw null;
+    }
   })
 }, {
   name: 'init',
@@ -70,23 +72,7 @@ var _steps = [{
         let parts = home.split('\\').slice(0, -1);
         let usersDirName = parts[parts.length-1];
         let usersDirPath = parts.join('\\');
-        let shareName = driveLetter + "/" + usersDirName;
-
-        yield machine.stop();
-        yield virtualBox.mountSharedDir(machine.name(), shareName, usersDirPath);
-        yield machine.start();
-      }
-      return;
-    } else if ((yield machine.state()) === 'Error') {
-      yield machine.rm();
-      yield machine.create();
-      if(util.isWindows()) {
-        let home = util.home();
-        let driveLetter = home.charAt(0);
-        let parts = home.split('\\').slice(0, -1);
-        let usersDirName = parts[parts.length-1];
-        let usersDirPath = parts.join('\\');
-        let shareName = driveLetter + "/" + usersDirName;
+        let shareName = driveLetter + '/' + usersDirName;
 
         yield machine.stop();
         yield virtualBox.mountSharedDir(machine.name(), shareName, usersDirPath);
@@ -169,10 +155,10 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var packagejson = util.packagejson();
     var isoversion = machine.isoversion();
     var required = {};
-    var vboxfile = path.join(util.supportDir(), setupUtil.virtualBoxFileName());
+    var vboxfile = path.join(util.supportDir(), virtualBox.filename());
     var vboxNeedsInstall = !virtualBox.installed();
 
-    required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== setupUtil.virtualBoxChecksum());
+    required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== virtualBox.checksum());
     required.install = vboxNeedsInstall || setupUtil.needsBinaryFix();
     required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0;
 
@@ -257,8 +243,6 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
         metrics.track('Setup Failed', {
           step: _currentStep,
         });
-        console.log(err);
-        console.log(err.stack);
         bugsnag.notify('SetupError', err.message, {
           error: err,
           output: err.message

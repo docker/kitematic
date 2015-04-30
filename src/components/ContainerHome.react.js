@@ -6,14 +6,9 @@ var Radial = require('./Radial.react');
 var ContainerHomePreview = require('./ContainerHomePreview.react');
 var ContainerHomeLogs = require('./ContainerHomeLogs.react');
 var ContainerHomeFolders = require('./ContainerHomeFolders.react');
-<<<<<<< HEAD:src/ContainerHome.react.js
-var ContainerUtil = require('./ContainerUtil');
-var util = require('./Util');
 var shell = require('shell');
-=======
 var ContainerUtil = require('../utils/ContainerUtil');
 var util = require('../utils/Util');
->>>>>>> master:src/components/ContainerHome.react.js
 
 var resizeWindow = function () {
   $('.left .wrapper').height(window.innerHeight - 240);

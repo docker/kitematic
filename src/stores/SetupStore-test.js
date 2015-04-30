@@ -11,7 +11,7 @@ describe('SetupStore', function () {
     pit('downloads virtualbox if it is not installed', function () {
       virtualBox.installed.mockReturnValue(false);
       setupUtil.download.mockReturnValue(Promise.resolve());
-      setupUtil.virtualBoxFileName.mockReturnValue('');
+      virtualBox.filename.mockReturnValue('');
       util.supportDir.mockReturnValue('');
       return setupStore.steps().download.run().then(() => {
         expect(setupUtil.download).toBeCalled();
@@ -23,7 +23,7 @@ describe('SetupStore', function () {
       virtualBox.version.mockReturnValue(Promise.resolve('4.3.16'));
       util.compareVersions.mockReturnValue(-1);
       setupUtil.download.mockReturnValue(Promise.resolve());
-      setupUtil.virtualBoxFileName.mockReturnValue('');
+      virtualBox.filename.mockReturnValue('');
       util.supportDir.mockReturnValue('');
       return setupStore.steps().download.run().then(() => {
         expect(setupUtil.download).toBeCalled();
@@ -33,7 +33,6 @@ describe('SetupStore', function () {
 
   describe('install step', function () {
     util.exec.mockReturnValue(Promise.resolve());
-    util.execProper.mockReturnValue(Promise.resolve());
     setupUtil.copyBinariesCmd.mockReturnValue(Promise.resolve());
     setupUtil.fixBinariesCmd.mockReturnValue(Promise.resolve());
     virtualBox.killall.mockReturnValue(Promise.resolve());
@@ -64,8 +63,6 @@ describe('SetupStore', function () {
   });
 
   describe('init step', function () {
-    virtualBox.vmdestroy.mockReturnValue(Promise.resolve());
-
     pit('upgrades the vm if it exists and is out of date', function () {
       machine.exists.mockReturnValue(Promise.resolve(true));
       machine.state.mockReturnValue(Promise.resolve('Stopped'));

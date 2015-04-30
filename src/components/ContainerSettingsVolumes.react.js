@@ -2,9 +2,9 @@ var _ = require('underscore');
 var React = require('react/addons');
 var remote = require('remote');
 var dialog = remote.require('dialog');
+var shell = require('shell');
 var metrics = require('../utils/MetricsUtil');
 var ContainerStore = require('../stores/ContainerStore');
-var util = require('../utils/Util');
 
 var ContainerSettingsVolumes = React.createClass({
   handleChooseVolumeClick: function (dockerVol) {
@@ -48,7 +48,7 @@ var ContainerSettingsVolumes = React.createClass({
     metrics.track('Opened Volume Directory', {
       from: 'settings'
     });
-    util.showItemInFolder(path);
+    shell.showItemInFolder(path);
   },
   render: function () {
     if (!this.props.container) {

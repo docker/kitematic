@@ -4,22 +4,35 @@ var Promise = require('bluebird');
 
 var VirtualBox = {
   command: function () {
-      if(util.isWindows()) {
-          return 'C:\\Program Files\\Oracle\\VirtualBox\\VBoxManage.exe';
-      } else {
-          return '/usr/bin/VBoxManage';
-      }
+    if(util.isWindows()) {
+      return 'C:\\Program Files\\Oracle\\VirtualBox\\VBoxManage.exe';
+    } else {
+      return '/usr/bin/VBoxManage';
+    }
+  },
+  filename: function () {
+    return util.isWindows() ? util.packagejson()['virtualbox-filename-win'] : util.packagejson()['virtualbox-filename'];
+  },
+  checksum: function () {
+    return util.isWindows() ? util.packagejson()['virtualbox-checksum-win'] : util.packagejson()['virtualbox-checksum'];
+  },
+  url: function () {
+    if(util.isWindows()) {
+      return 'http://download.virtualbox.org/virtualbox/4.3.26/VirtualBox-4.3.26-98988-Win.exe';
+    } else {
+      return `https://github.com/kitematic/virtualbox/releases/download/${util.packagejson()['virtualbox-version']}/${this.virtualBoxFileName()}`;
+    }
   },
   installed: function () {
     if(util.isWindows()) {
-        return fs.existsSync('C:\\Program Files\\Oracle\\VirtualBox\\VBoxManage.exe') && fs.existsSync('C:\\Program Files\\Oracle\\VirtualBox\\VirtualBox.exe');
+      return fs.existsSync('C:\\Program Files\\Oracle\\VirtualBox\\VBoxManage.exe') && fs.existsSync('C:\\Program Files\\Oracle\\VirtualBox\\VirtualBox.exe');
     } else {
-        return fs.existsSync('/usr/bin/VBoxManage') && fs.existsSync('/Applications/VirtualBox.app');
+      return fs.existsSync('/usr/bin/VBoxManage') && fs.existsSync('/Applications/VirtualBox.app');
     }
   },
   version: function () {
     return new Promise((resolve, reject) => {
-        util.exec([this.command(), '-v']).then(stdout => {
+      util.exec([this.command(), '-v']).then(stdout => {
         var match = stdout.match(/(\d+\.\d+\.\d+).*/);
         if (!match || match.length < 2) {
           reject('VBoxManage -v output format not recognized.');
@@ -38,28 +51,23 @@ var VirtualBox = {
     if (!this.installed()) {
       return Promise.reject('VirtualBox not installed.');
     }
-    
+
     return util.exec([this.command(), 'sharedfolder', 'add', vmName, '--name', pathName, '--hostpath', hostPath, '--automount']);
   },
   killall: function () {
-      if(util.isWindows()) {
-          return this.poweroffall().then(() => {
-              return util.exec(['powershell.exe', '\"get-process VBox* | stop-process\"']);
-            }).catch(() => {
+    if(util.isWindows()) {
+      return this.poweroffall().then(() => {
+        return util.exec(['powershell.exe', '\"get-process VBox* | stop-process\"']);
+      }).catch(() => {});
+    } else {
+      return this.poweroffall().then(() => {
+        return util.exec(['pkill', 'VirtualBox']);
+      }).then(() => {
+        return util.exec(['pkill', 'VBox']);
+      }).catch(() => {
 
-            });
-      } else {
-          return this.poweroffall().then(() => {
-              return util.exec(['pkill', 'VirtualBox']);
-            }).then(() => {
-              return util.exec(['pkill', 'VBox']);
-            }).catch(() => {
-
-            });
-      }
-  },
-  wake: function (name) {
-    return util.exec([this.command(), 'startvm', name, '--type', 'headless']);
+      });
+    }
   },
   vmstate: function (name) {
     return new Promise((resolve, reject) => {
@@ -71,17 +79,6 @@ var VirtualBox = {
         resolve(match[1]);
       }).catch(reject);
     });
-  },
-  vmdestroy: function (name) {
-    return Promise.coroutine(function* () {
-      try {
-        var state = yield this.vmstate(name);
-        if (state === 'running') {
-          yield util.exec([this.command(), 'controlvm', name, 'poweroff']);
-        }
-        yield util.exec([this.command(), 'unregistervm', name, '--delete']);
-      } catch (err) {}
-    }.bind(this))();
   }
 };
 
