@@ -132,8 +132,12 @@ var ContainerDetailsSubheader = React.createClass({
     if (!this.disableTerminal()) {
       metrics.track('Terminaled Into Container');
       var container = this.props.container;
+      var shell = ContainerUtil.env(container).SHELL;
+      if(typeof shell === 'undefined') {
+        shell = 'sh';
+      }
       machine.ip().then(ip => {
-        var cmd = [resources.terminal(), 'ssh', '-p', '22', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=quiet', '-o', 'StrictHostKeyChecking=no', '-i', '~/.docker/machine/machines/' + machine.name() + '/id_rsa', 'docker@' + ip, '-t', 'docker', 'exec', '-i', '-t', container.Name, 'sh'];
+        var cmd = [resources.terminal(), 'ssh', '-p', '22', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=quiet', '-o', 'StrictHostKeyChecking=no', '-i', '~/.docker/machine/machines/' + machine.name() + '/id_rsa', 'docker@' + ip, '-t', 'docker', 'exec', '-i', '-t', container.Name, shell];
         exec(cmd, function (stderr, stdout, code) {
           if (code) {
             console.log(stderr);
