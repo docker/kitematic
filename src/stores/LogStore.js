@@ -68,11 +68,15 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
         }
         this.emit(this.SERVER_LOGS_EVENT);
       });
+      logStream.on('end', () => {
+        this.detach(name);
+      });
     });
   },
   detach: function (name) {
     if (_streams[name]) {
       _streams[name].destroy();
+      delete _streams[name];
     }
   },
   logs: function (name) {

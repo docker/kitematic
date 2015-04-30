@@ -5,7 +5,7 @@ var assign = require('object-assign');
 var docker = require('../utils/DockerUtil');
 var metrics = require('../utils/MetricsUtil');
 var registry = require('../utils/RegistryUtil');
-var logstore = require('../stores/LogStore');
+var logStore = require('../stores/LogStore');
 var bugsnag = require('bugsnag-js');
 
 var _placeholders = {};
@@ -118,6 +118,7 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
         return;
       }
       self.fetchContainer(name, callback);
+      logStore.fetch(name);
     });
   },
   _createContainer: function (name, containerData, callback) {
@@ -363,9 +364,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     if (!data.name) {
       data.name = data.Name;
     }
-    if (name !== data.name) {
-      logstore.rename(name, data.name);
-    }
     var fullData = assign(_containers[name], data);
     this._createContainer(name, fullData, function () {
       _muted[name] = false;
@@ -374,7 +372,6 @@ var ContainerStore = assign(Object.create(EventEmitter.prototype), {
     }.bind(this));
   },
   rename: function (name, newName, callback) {
-    logstore.rename(name, newName);
     docker.client().getContainer(name).rename({name: newName}, err => {
       if (err && err.statusCode !== 204) {
         callback(err);
