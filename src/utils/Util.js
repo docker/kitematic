@@ -1,6 +1,6 @@
 var exec = require('exec');
 var Promise = require('bluebird');
-var fs = require('fs-promise');
+var fs = require('fs');
 var path = require('path');
 
 module.exports = {
@@ -39,9 +39,14 @@ module.exports = {
     return process.env[this.isWindows() ? 'USERPROFILE' : 'HOME'];
   },
   supportDir: function () {
-    var acc = path.join(this.home(), 'Library', 'Application\ Support', 'Kitematic');
-    fs.mkdirsSync(acc);
-    return acc;
+    var dirs = ['Library', 'Application\ Support', 'Kitematic'];
+    var acc = process.env.HOME;
+    dirs.forEach(function (d) {
+      acc = path.join(acc, d);
+      if (!fs.existsSync(acc)) {
+        fs.mkdirSync(acc);
+      }
+    });
   },
   CommandOrCtrl: function () {
     return this.isWindows() ? 'Ctrl' : 'Command';

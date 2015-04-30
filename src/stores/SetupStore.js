@@ -38,7 +38,6 @@ var _steps = [{
   seconds: 5,
   run: Promise.coroutine(function* (progressCallback) {
     var cmd = setupUtil.copyBinariesCmd() + ' && ' + setupUtil.fixBinariesCmd();
-
     if (!virtualBox.installed()) {
       yield virtualBox.killall();
       cmd += ' && ' + setupUtil.installVirtualBoxCmd();
@@ -241,8 +240,6 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
         metrics.track('Setup Failed', {
           step: _currentStep,
         });
-        console.log(err);
-        console.log(err.message);
         bugsnag.notify('SetupError', err.message, {
           error: err,
           output: err.message
