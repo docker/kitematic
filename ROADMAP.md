@@ -18,10 +18,14 @@
 
 **April 2015**
 
+* Custom URL protocol
+
+**May 2015**
+
 * Docker Hub - sign-up/sign-in
-	* Allow users to sign-up / sign-in to Docker Hub from Kitematic.
+  * Allow users to sign-up / sign-in to Docker Hub from Kitematic.
 * Docker Hub - private repo view if user is logged-in to Docker Hub account
 
-**May / June 2015**
+**June 2015**
 
 * Microsoft Windows port
