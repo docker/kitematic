@@ -36,7 +36,7 @@ To run the app in development:
 
 **Note: This architecture is work in progress and doesn't reflect the current state of the app, yet!**
 
-Kitematic is an application built using [electron](https://github.com/atom/electron) and is powered by the [Docker Engine](https://github.com/docker/docker). While it's work in progress, the goal is to make Kitematic a high-performance, portable Javascript ES6 application built with React and Reflux. It adopts a single data flow pattern:
+Kitematic is an application built using [electron](https://github.com/atom/electron) and is powered by the [Docker Engine](https://github.com/docker/docker). While it's work in progress, the goal is to make Kitematic a high-performance, portable Javascript ES6 application built with React and Flux (using [alt](https://github.com/goatslacker/alt). It adopts a single data flow pattern:
 
 ```
 ╔═════════╗       ╔════════╗       ╔═════════════════╗
@@ -46,14 +46,17 @@ Kitematic is an application built using [electron](https://github.com/atom/elect
      └──────────────────────────────────────┘
 ```
 
-As explained in the [Reflux docs](https://github.com/spoike/refluxjs), there are three primary types of objects:
-- **Actions**: The main logic workhorses of the application. These objects interact with the Docker API and other endpoints to fetch new data and flowing it into the stores, which in turn create events that cause views to update.
+There are three primary types of objects:
+- **Actions**: Interact with the system (Docker Engine, Docker Machine, Registries, Hub, etc)
 - **Views**: Views make up the UI, and trigger available actions.
 - **Stores**: Stores store the state of the application.
 
+and since Kitematic has a large amount of interaction with outside systems, we've added utils:
+- **Utils**: Utils interact with APIs, outside systems, CLI tools and generate. They are called by user-generated actions and in return, also create actions based on API return values, CLI output etc.
+
 ### Guidelines
 
-- Avoid asynchronous code in Stores or Views. Instead, put code involving callbacks, promises or generators in actions.
+- Avoid asynchronous code in Actions, Stores or Views. Instead, put code involving callbacks, promises or generators in utils or actions.
 
 ## GitHub Issues
 
