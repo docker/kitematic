@@ -64,7 +64,7 @@ var _steps = [{
     setupUtil.simulateProgress(this.seconds, progressCallback);
     var exists = yield machine.exists();
     if (!exists || (yield machine.state()) === 'Error') {
-      if ((yield machine.state()) === 'Error') {
+      if (exists && (yield machine.state()) === 'Error') {
         yield machine.rm();
       }
       yield machine.create();
