@@ -71,8 +71,6 @@ var Containers = React.createClass({
       this.context.router.transitionTo('containerHome', {name: name});
     } else if (status === 'pending' && ContainerStore.pending()) {
       this.context.router.transitionTo('pull');
-    } else if (status === 'destroy') {
-      this.onDestroy();
     }
   },
   handleScroll: function (e) {

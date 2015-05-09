@@ -1,6 +1,6 @@
 {
   "name": "Kitematic",
-  "version": "0.5.23",
+  "version": "0.5.24",
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X.",
   "homepage": "https://kitematic.com/",
@@ -47,7 +47,7 @@
       "<rootDir>/node_modules/source-map-support"
     ]
   },
-  "docker-version": "1.6.0",
+  "docker-version": "1.6.1",
   "docker-machine-version": "0.2.0",
   "electron-version": "0.24.0",
   "virtualbox-version": "4.3.26",
