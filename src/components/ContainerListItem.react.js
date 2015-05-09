@@ -4,9 +4,9 @@ var Router = require('react-router');
 var remote = require('remote');
 var dialog = remote.require('dialog');
 var metrics = require('../utils/MetricsUtil');
-var ContainerStore = require('../stores/ContainerStore');
 var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
 var Tooltip = require('react-bootstrap').Tooltip;
+var containerActions = require('../actions/ContainerActions');
 
 var ContainerListItem = React.createClass({
   handleItemMouseEnter: function () {
@@ -29,12 +29,7 @@ var ContainerListItem = React.createClass({
           from: 'list',
           type: 'existing'
         });
-        ContainerStore.remove(this.props.container.Name, () => {
-          var containers = ContainerStore.sorted();
-          if (containers.length === 0) {
-            $(document.body).find('.new-container-item').parent().fadeIn();
-          }
-        });
+        containerActions.destroy(this.props.container.Name);
       }
     }.bind(this));
   },
@@ -56,7 +51,7 @@ var ContainerListItem = React.createClass({
 
     // Synchronize all animations
     var style = {
-      WebkitAnimationDelay: (self.props.start - Date.now()) + 'ms'
+      WebkitAnimationDelay: 0 + 'ms'
     };
 
     var state;
@@ -101,7 +96,7 @@ var ContainerListItem = React.createClass({
     }
 
     return (
-      <Router.Link data-container={name} to="containerDetails" params={{name: container.Name}}>
+      <Router.Link to="container" params={{name: container.Name}}>
         <li onMouseEnter={self.handleItemMouseEnter} onMouseLeave={self.handleItemMouseLeave}>
           {state}
           <div className="info">

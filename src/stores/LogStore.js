@@ -19,10 +19,10 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
     return div.innerHTML;
   },
   fetch: function (name) {
-    if (!name || !docker.client()) {
+    if (!name || !docker.client) {
       return;
     }
-    docker.client().getContainer(name).logs({
+    docker.client.getContainer(name).logs({
       stdout: true,
       stderr: true,
       timestamps: false,
@@ -34,7 +34,7 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
       }
       var logs = [];
       var outstream = new stream.PassThrough();
-      docker.client().modem.demuxStream(logStream, outstream, outstream);
+      docker.client.modem.demuxStream(logStream, outstream, outstream);
       outstream.on('data', (chunk) => {
         logs.push(_convert.toHtml(this._escape(chunk)));
       });
@@ -46,10 +46,10 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
     });
   },
   attach: function (name) {
-    if (!name || !docker.client() || _streams[name]) {
+    if (!name || !docker.client || _streams[name]) {
       return;
     }
-    docker.client().getContainer(name).attach({
+    docker.client.getContainer(name).attach({
       stdout: true,
       stderr: true,
       logs: false,
@@ -60,7 +60,7 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
       }
       _streams[name] = logStream;
       var outstream = new stream.PassThrough();
-      docker.client().modem.demuxStream(logStream, outstream, outstream);
+      docker.client.modem.demuxStream(logStream, outstream, outstream);
       outstream.on('data', (chunk) => {
         _logs[name].push(_convert.toHtml(this._escape(chunk)));
         if (_logs[name].length > MAX_LOG_SIZE) {

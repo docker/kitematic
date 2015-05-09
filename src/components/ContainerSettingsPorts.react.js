@@ -1,7 +1,6 @@
 var _ = require('underscore');
 var React = require('react/addons');
 var shell = require('shell');
-var ContainerStore = require('../stores/ContainerStore');
 var ContainerUtil = require('../utils/ContainerUtil');
 var metrics = require('../utils/MetricsUtil');
 var webPorts = require('../utils/Util').webPorts;
@@ -16,18 +15,11 @@ var ContainerSettingsPorts = React.createClass({
       defaultPort: null
     };
   },
-  componentWillReceiveProps: function () {
-    this.init();
-  },
   componentDidMount: function() {
-    this.init();
-  },
-  init: function () {
-    var container = ContainerStore.container(this.context.router.getCurrentParams().name);
-    if (!container) {
+    if (!this.props.container) {
       return;
     }
-    var ports = ContainerUtil.ports(container);
+    var ports = ContainerUtil.ports(this.props.container);
     this.setState({
       ports: ports,
       defaultPort: _.find(_.keys(ports), function (port) {

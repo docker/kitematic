@@ -1,39 +1,29 @@
-var _ = require('underscore');
 var React = require('react/addons');
+var Router = require('react-router');
 var ContainerDetailsHeader = require('./ContainerDetailsHeader.react');
 var ContainerDetailsSubheader = require('./ContainerDetailsSubheader.react');
-var Router = require('react-router');
+var containerUtil = require('../utils/ContainerUtil');
+var util = require('../utils/Util');
+var _ = require('underscore');
 
-var ContainerDetail = React.createClass({
+var ContainerDetails = React.createClass({
   contextTypes: {
     router: React.PropTypes.func
   },
-  getInitialState: function () {
-    return {
-      currentRoute: null
-    };
-  },
-  componentWillReceiveProps: function () {
-    this.init();
-  },
-  componentDidMount: function () {
-    this.init();
-  },
-  init: function () {
-    var currentRoute = _.last(this.context.router.getCurrentRoutes()).name;
-    if (currentRoute === 'containerDetails') {
-      this.context.router.transitionTo('containerHome', {name: this.context.router.getCurrentParams().name});
-    }
-  },
+
   render: function () {
+    let ports = containerUtil.ports(this.props.container);
+    let defaultPort = _.find(_.keys(ports), port => {
+      return util.webPorts.indexOf(port) !== -1;
+    });
     return (
       <div className="details">
-        <ContainerDetailsHeader container={this.props.container}/>
-        <ContainerDetailsSubheader container={this.props.container} />
-        <Router.RouteHandler container={this.props.container} error={this.props.error}/>
+        <ContainerDetailsHeader {...this.props} defaultPort={defaultPort} ports={ports}/>
+        <ContainerDetailsSubheader {...this.props}/>
+        <Router.RouteHandler {...this.props} defaultPort={defaultPort} ports={ports}/>
       </div>
     );
   }
 });
 
-module.exports = ContainerDetail;
+module.exports = ContainerDetails;

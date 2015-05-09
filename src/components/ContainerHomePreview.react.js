@@ -1,28 +1,14 @@
 var _ = require('underscore');
 var React = require('react/addons');
-var ContainerStore = require('../stores/ContainerStore');
-var ContainerUtil = require('../utils/ContainerUtil');
 var request = require('request');
 var shell = require('shell');
 var metrics = require('../utils/MetricsUtil');
-var webPorts = require('../utils/Util').webPorts;
 
 var ContainerHomePreview = React.createClass({
   contextTypes: {
     router: React.PropTypes.func
   },
-  getInitialState: function () {
-    return {
-      ports: {},
-      defaultPort: null
-    };
-  },
-  componentWillReceiveProps: function () {
-    this.init();
-  },
-  componentDidMount: function() {
-    this.init();
-  },
+
   reload: function () {
     var webview = document.getElementById('webview');
     if (webview) {
@@ -38,40 +24,31 @@ var ContainerHomePreview = React.createClass({
       });
     }
   },
+
   componentWillUnmount: function() {
     clearInterval(this.timer);
   },
-  init: function () {
-    var container = ContainerStore.container(this.context.router.getCurrentParams().name);
-    if (!container) {
-      return;
-    }
-    var ports = ContainerUtil.ports(container);
-    this.setState({
-      ports: ports,
-      defaultPort: _.find(_.keys(ports), function (port) {
-        return webPorts.indexOf(port) !== -1;
-      })
-    });
-  },
+
   handleClickPreview: function () {
-    if (this.state.defaultPort) {
+    if (this.props.defaultPort) {
       metrics.track('Opened In Browser', {
         from: 'preview'
       });
-      shell.openExternal(this.state.ports[this.state.defaultPort].url);
+      shell.openExternal(this.props.ports[this.props.defaultPort].url);
     }
   },
+
   handleClickNotShowingCorrectly: function () {
     metrics.track('Viewed Port Settings', {
       from: 'preview'
     });
     this.context.router.transitionTo('containerSettingsPorts', {name: this.context.router.getCurrentParams().name});
   },
+
   render: function () {
     var preview;
-    if (this.state.defaultPort) {
-      var frame = React.createElement('webview', {className: 'frame', id: 'webview', src: this.state.ports[this.state.defaultPort].url, autosize: 'on'});
+    if (this.props.defaultPort) {
+      var frame = React.createElement('webview', {className: 'frame', id: 'webview', src: this.props.ports[this.props.defaultPort].url, autosize: 'on'});
       preview = (
         <div className="web-preview wrapper">
           <h4>Web Preview</h4>
@@ -83,7 +60,7 @@ var ContainerHomePreview = React.createClass({
         </div>
       );
     } else {
-      var ports = _.map(_.pairs(this.state.ports), function (pair) {
+      var ports = _.map(_.pairs(this.props.ports), function (pair) {
         var key = pair[0];
         var val = pair[1];
         return (

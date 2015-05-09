@@ -56,6 +56,7 @@
   "virtualbox-checksum": "668f61c95efe37f8fc65cafe95b866fba64e37f2492dfc1e2b44a7ac3dcafa3b",
   "virtualbox-checksum-win": "9cb265babf307d825f5178693af95ffca077f80ae22cf43868c3538c159123ff",
   "dependencies": {
+    "alt": "^0.16.2",
     "ansi-to-html": "0.3.0",
     "any-promise": "^0.1.0",
     "async": "^0.9.0",
@@ -67,6 +68,7 @@
     "exec": "0.2.0",
     "jquery": "^2.1.3",
     "mixpanel": "0.2.0",
+    "mkdirp": "^0.5.0",
     "node-uuid": "^1.4.3",
     "object-assign": "^2.0.0",
     "parseUri": "^1.2.3-2",

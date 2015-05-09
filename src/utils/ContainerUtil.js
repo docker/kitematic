@@ -12,13 +12,14 @@ var ContainerUtil = {
       return splits;
     }));
   },
-  // TODO (jeffdm): inject host here instead of requiring Docker
+
+  // TODO: inject host here instead of requiring Docker
   ports: function (container) {
-    if (!container.NetworkSettings) {
+    if (!container || !container.NetworkSettings) {
       return {};
     }
     var res = {};
-    var ip = docker.host();
+    var ip = docker.host;
     _.each(container.NetworkSettings.Ports, function (value, key) {
       var dockerPort = key.split('/')[0];
       var localUrl = null;
