@@ -32,7 +32,7 @@ var ContainerDetailsSubheader = React.createClass({
     if (!this.props.container) {
       return false;
     }
-    return (this.props.container.State.Downloading || this.props.container.State.ExitCode);
+    return (this.props.container.State.Downloading || this.props.container.State.ExitCode || !this.props.container.State.Running);
   },
   disableStart: function () {
     if (!this.props.container) {

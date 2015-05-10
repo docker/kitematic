@@ -63,7 +63,10 @@ var _steps = [{
   run: Promise.coroutine(function* (progressCallback) {
     setupUtil.simulateProgress(this.seconds, progressCallback);
     var exists = yield machine.exists();
-    if (!exists) {
+    if (!exists || (yield machine.state()) === 'Error') {
+      if (exists && (yield machine.state()) === 'Error') {
+        yield machine.rm();
+      }
       yield machine.create();
       if(util.isWindows()) {
         let home = util.home();
