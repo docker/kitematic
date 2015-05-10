@@ -18,7 +18,7 @@ module.exports = React.createClass({
   handleCancelClick: function () {
     metrics.track('Canceled Click-To-Pull');
     containerActions.clearPending();
-    this.context.router.transitionTo('new');
+    this.transitionTo('new');
   },
   handleConfirmClick: function () {
     metrics.track('Created Container', {
@@ -27,6 +27,7 @@ module.exports = React.createClass({
     containerActions.clearPending();
     let name = containerStore.generateName(this.props.pending.repo);
     containerActions.run(name, this.props.pending.repo, this.props.pending.tag);
+    this.transitionTo('containerHome', {name});
   },
   render: function () {
     if (!this.props.pending) {
