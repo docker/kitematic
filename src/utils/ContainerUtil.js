@@ -4,13 +4,13 @@ var docker = require('../utils/DockerUtil');
 var ContainerUtil = {
   env: function (container) {
     if (!container || !container.Config || !container.Config.Env) {
-      return {};
+      return [];
     }
-    return _.object(container.Config.Env.map(function (env) {
+    return _.map(container.Config.Env, env => {
       var i = env.indexOf('=');
       var splits = [env.slice(0, i), env.slice(i + 1)];
       return splits;
-    }));
+    });
   },
 
   // TODO: inject host here instead of requiring Docker

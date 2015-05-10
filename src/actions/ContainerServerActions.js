@@ -10,6 +10,7 @@ class ContainerServerActions {
       'muted',
       'unmuted',
       'progress',
+      'pending',
       'updated',
       'waiting'
     );

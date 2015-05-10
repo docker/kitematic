@@ -1,6 +1,6 @@
 var util = require('./Util');
 var parseUri = require('parseUri');
-var containerStore = require('../stores/ContainerStore');
+var containerServerActions = require('../actions/ContainerServerActions');
 
 module.exports = {
   TYPE_WHITELIST: ['repository'],
@@ -52,7 +52,7 @@ module.exports = {
     }
 
     if (type === 'repository' && method === 'run') {
-      containerStore.setPending(repo, 'latest');
+      containerServerActions.pending({repo, tag: 'latest'});
       return true;
     }
     return false;

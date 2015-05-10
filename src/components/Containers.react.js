@@ -1,6 +1,6 @@
 var $ = require('jquery');
 var _ = require('underscore');
-var React = require('react/addons');
+var React = require('react');
 var Router = require('react-router');
 var containerStore = require('../stores/ContainerStore');
 var ContainerList = require('./ContainerList.react');
@@ -62,7 +62,9 @@ var Containers = React.createClass({
     });
 
     let name = this.context.router.getCurrentParams().name;
-    if (name && !containers[name]) {
+    if (containerStore.getState().pending) {
+      this.context.router.transitionTo('pull');
+    } else if (name && !containers[name]) {
       if (sorted.length) {
         this.context.router.transitionTo('containerHome', {name: sorted[0].Name});
       } else {
@@ -72,7 +74,8 @@ var Containers = React.createClass({
 
     this.setState({
       containers: containers,
-      sorted: sorted
+      sorted: sorted,
+      pending: containerStore.getState().pending
     });
   },
 

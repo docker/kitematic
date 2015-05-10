@@ -1,14 +1,16 @@
 var $ = require('jquery');
 var React = require('react/addons');
+var Router = require('react-router');
 var RetinaImage = require('react-retina-image');
 var metrics = require('../utils/MetricsUtil');
 var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
 var Tooltip = require('react-bootstrap').Tooltip;
 var util = require('../utils/Util');
-var dockerUtil = require('../utils/DockerUtil');
+var containerActions = require('../actions/ContainerActions');
 var containerStore = require('../stores/ContainerStore');
 
 var ImageCard = React.createClass({
+  mixins: [Router.Navigation],
   getInitialState: function () {
     return {
       tags: [],
@@ -28,7 +30,8 @@ var ImageCard = React.createClass({
       from: 'search'
     });
     let name = containerStore.generateName(repository);
-    dockerUtil.run(name, repository, this.state.chosenTag);
+    containerActions.run(name, repository, this.state.chosenTag);
+    this.transitionTo('containerHome', {name});
   },
   handleTagOverlayClick: function (name) {
     var $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');

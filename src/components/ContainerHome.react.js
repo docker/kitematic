@@ -5,8 +5,6 @@ var Radial = require('./Radial.react');
 var ContainerHomePreview = require('./ContainerHomePreview.react');
 var ContainerHomeLogs = require('./ContainerHomeLogs.react');
 var ContainerHomeFolders = require('./ContainerHomeFolders.react');
-var containerUtil = require('../utils/ContainerUtil');
-var util = require ('../utils/Util');
 var shell = require('shell');
 
 var ContainerHome = React.createClass({
@@ -100,7 +98,7 @@ var ContainerHome = React.createClass({
         if (_.keys(this.props.ports) > 0) {
           right = (
             <div className="right">
-              <ContainerHomePreview />
+              <ContainerHomePreview  ports={this.props.ports} defaultPort={this.props.defaultPort} />
               <ContainerHomeFolders container={this.props.container} />
             </div>
           );

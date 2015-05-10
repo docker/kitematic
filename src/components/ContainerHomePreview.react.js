@@ -70,6 +70,7 @@ var ContainerHomePreview = React.createClass({
           </div>
         );
       });
+
       preview = (
         <div className="web-preview wrapper">
           <h4>IP &amp; Ports</h4>

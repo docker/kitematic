@@ -24,9 +24,16 @@ class ContainerServerActions {
   }
 
   update (name, container) {
-    console.log(container);
     this.dispatch({container});
     dockerUtil.updateContainer(name, container);
+  }
+
+  clearPending () {
+    this.dispatch();
+  }
+
+  run (name, repo, tag) {
+    dockerUtil.run(name, repo, tag);
   }
 }
 

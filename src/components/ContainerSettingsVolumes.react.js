@@ -4,12 +4,12 @@ var remote = require('remote');
 var dialog = remote.require('dialog');
 var shell = require('shell');
 var metrics = require('../utils/MetricsUtil');
-var ContainerStore = require('../stores/ContainerStore');
+var containerActions = require('../actions/ContainerActions');
 
 var ContainerSettingsVolumes = React.createClass({
   handleChooseVolumeClick: function (dockerVol) {
     var self = this;
-    dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']}, function (filenames) {
+    dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']}, (filenames) => {
       if (!filenames) {
         return;
       }
@@ -21,11 +21,8 @@ var ContainerSettingsVolumes = React.createClass({
         var binds = _.pairs(volumes).map(function (pair) {
           return pair[1] + ':' + pair[0];
         });
-        ContainerStore.updateContainer(self.props.container.Name, {
-          Binds: binds
-        }, function (err) {
-          if (err) { console.log(err); }
-        });
+
+        containerActions.update(this.props.container.Name, {Binds: binds});
       }
     });
   },
@@ -38,11 +35,7 @@ var ContainerSettingsVolumes = React.createClass({
     var binds = _.pairs(volumes).map(function (pair) {
       return pair[1] + ':' + pair[0];
     });
-    ContainerStore.updateContainer(this.props.container.Name, {
-      Binds: binds
-    }, function (err) {
-      if (err) { console.log(err); }
-    });
+    containerActions.update(this.props.container.Name, {Binds: binds});
   },
   handleOpenVolumeClick: function (path) {
     metrics.track('Opened Volume Directory', {

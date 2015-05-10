@@ -1,5 +1,4 @@
 var _ = require('underscore');
-var $ = require('jquery');
 var React = require('react/addons');
 var remote = require('remote');
 var metrics = require('../utils/MetricsUtil');
@@ -8,22 +7,31 @@ var ContainerUtil = require('../utils/ContainerUtil');
 var containerActions = require('../actions/ContainerActions');
 
 var ContainerSettingsGeneral = React.createClass({
+  mixins: [React.addons.LinkedStateMixin],
+
   contextTypes: {
     router: React.PropTypes.func
   },
 
   getInitialState: function () {
+    let env = ContainerUtil.env(this.props.container) || [];
+    env.push(['', '']);
+    console.log(env);
     return {
       slugName: null,
       nameError: null,
-      pendingEnv: ContainerUtil.env(this.props.container) || {}
+      env: env
     };
   },
 
-  willReceiveProps: function () {
-    this.setState({
-      pendingEnv: ContainerUtil.env(this.props.container) || {}
-    });
+  shouldComponentUpdate: function (nextProps, nextState) {
+    if (nextState.slugName !== this.state.slugName || nextState.nameError !== this.state.nameError) {
+      return true;
+    }
+    if (nextState.env.length === this.state.env.length) {
+      return false;
+    }
+    return true;
   },
 
   handleNameChange: function (e) {
@@ -78,39 +86,54 @@ var ContainerSettingsGeneral = React.createClass({
     metrics.track('Changed Container Name');
   },
 
-  handleSaveEnvVar: function () {
-    var $rows = $('.env-vars .keyval-row');
-    var envVarList = [];
-    $rows.each(function () {
-      var key = $(this).find('.key').val();
-      var val = $(this).find('.val').val();
-      if (!key.length || !val.length) {
-        return;
-      }
-      envVarList.push(key + '=' + val);
-    });
+  handleSaveEnvVars: function () {
     metrics.track('Saved Environment Variables');
-    containerActions.update(this.props.container.Name, {Env: envVarList});
+    let list = [];
+    _.each(this.state.env, kvp => {
+      let [key, value] = kvp;
+      if ((key && key.length) || (value && value.length)) {
+        list.push(key + '=' + value);
+      }
+    });
+    containerActions.update(this.props.container.Name, {Env: list});
   },
 
-  handleAddPendingEnvVar: function () {
-    var newKey = $('#new-env-key').val();
-    var newVal = $('#new-env-val').val();
-    var newEnv = {};
-    newEnv[newKey] = newVal;
+  handleChangeEnvKey: function (index, event) {
+    let env = _.map(this.state.env, _.clone);
+    env[index][0] = event.target.value;
     this.setState({
-      pendingEnv: _.extend(this.state.pendingEnv, newEnv)
+      env: env
     });
-    $('#new-env-key').val('');
-    $('#new-env-val').val('');
+  },
+
+  handleChangeEnvVal: function (index, event) {
+    let env = _.map(this.state.env, _.clone);
+    env[index][1] = event.target.value;
+    this.setState({
+      env: env
+    });
+  },
+
+  handleAddEnvVar: function () {
+    let env = _.map(this.state.env, _.clone);
+    env.push(['', '']);
+    this.setState({
+      env: env
+    });
     metrics.track('Added Pending Environment Variable');
   },
 
-  handleRemovePendingEnvVar: function (key) {
-    var newEnv = _.omit(this.state.env, key);
+  handleRemoveEnvVar: function (index) {
+    let env = _.map(this.state.env, _.clone);
+    env.splice(index, 1);
+    if (env.length === 0) {
+      env.push(['', '']);
+    }
+
     this.setState({
-      env: newEnv
+      env: env
     });
+
     metrics.track('Removed Environment Variable');
   },
 
@@ -131,8 +154,9 @@ var ContainerSettingsGeneral = React.createClass({
 
   render: function () {
     if (!this.props.container) {
-      return (<div></div>);
+      return false;
     }
+
     var willBeRenamedAs;
     var btnSaveName = (
       <a className="btn btn-action" onClick={this.handleSaveContainerName} disabled="disabled">Save</a>
@@ -149,7 +173,8 @@ var ContainerSettingsGeneral = React.createClass({
         <p><strong>{this.state.nameError}</strong></p>
       );
     }
-    var rename = (
+
+    let rename = (
       <div className="settings-section">
         <h3>Container Name</h3>
         <div className="container-name">
@@ -159,15 +184,25 @@ var ContainerSettingsGeneral = React.createClass({
         {btnSaveName}
       </div>
     );
-    var pendingEnvVars = _.map(this.state.pendingEnv, (val, key) => {
+
+    let vars = _.map(this.state.env, (kvp, index) => {
+      let [key, val] = kvp;
+      let icon;
+      if (index === this.state.env.length - 1) {
+        icon = <a onClick={this.handleAddEnvVar} className="only-icon btn btn-positive small"><span className="icon icon-add-1"></span></a>;
+      } else {
+        icon = <a onClick={this.handleRemoveEnvVar.bind(this, index)} className="only-icon btn btn-action small"><span className="icon icon-cross"></span></a>;
+      }
+
       return (
-        <div key={key} className="keyval-row">
-          <input type="text" className="key line" defaultValue={key}></input>
-          <input type="text" className="val line" defaultValue={val}></input>
-          <a onClick={this.handleRemovePendingEnvVar.bind(this, key)} className="only-icon btn btn-action small"><span className="icon icon-cross"></span></a>
+        <div key={index + ':' + key + '=' + val} className="keyval-row">
+          <input type="text" className="key line" defaultValue={key} onChange={this.handleChangeEnvKey.bind(this, index)}></input>
+          <input type="text" className="val line" defaultValue={val} onChange={this.handleChangeEnvVal.bind(this, index)}></input>
+          {icon}
         </div>
       );
     });
+
     return (
       <div className="settings-panel">
         {rename}
@@ -178,14 +213,9 @@ var ContainerSettingsGeneral = React.createClass({
             <div className="label-val">VALUE</div>
           </div>
           <div className="env-vars">
-            {pendingEnvVars}
-            <div className="keyval-row">
-              <input id="new-env-key" type="text" className="key line"></input>
-              <input id="new-env-val" type="text" className="val line"></input>
-              <a onClick={this.handleAddPendingEnvVar} className="only-icon btn btn-positive small"><span className="icon icon-add-1"></span></a>
-            </div>
+            {vars}
           </div>
-          <a className="btn btn-action" onClick={this.handleSaveEnvVar}>Save</a>
+          <a className="btn btn-action" onClick={this.handleSaveEnvVars}>Save</a>
         </div>
         <div className="settings-section">
           <h3>Delete Container</h3>

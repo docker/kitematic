@@ -11,6 +11,9 @@ class ContainerStore {
 
     // Blacklist of containers to avoid updating
     this.muted = {};
+
+    // Pending container to create
+    this.pending = null;
   }
 
   start ({name}) {
@@ -106,12 +109,21 @@ class ContainerStore {
     this.setState({containers});
   }
 
-  error ({ name, error }) {
+  error ({name, error}) {
     let containers = this.containers;
     if (containers[name]) {
       containers[name].Error = error;
     }
     this.setState({containers});
+  }
+
+  pending ({repo, tag}) {
+    let pending = {repo, tag};
+    this.setState({pending});
+  }
+
+  clearPending () {
+    this.setState({pending: null});
   }
 
   static generateName (repo) {
