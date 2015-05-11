@@ -35,6 +35,7 @@
       "^((?!-test).)*$"
     ],
     "unmockedModulePathPatterns": [
+      "alt",
       "stream",
       "tty",
       "net",
