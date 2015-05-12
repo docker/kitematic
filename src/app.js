@@ -1,10 +1,8 @@
 require.main.paths.splice(0, 0, process.env.NODE_PATH);
 var remote = require('remote');
-var ContainerStore = require('./stores/ContainerStore');
 var Menu = remote.require('menu');
 var React = require('react');
 var SetupStore = require('./stores/SetupStore');
-var bugsnag = require('bugsnag-js');
 var ipc = require('ipc');
 var machine = require('./utils/DockerMachineUtil');
 var metrics = require('./utils/MetricsUtil');
@@ -14,6 +12,7 @@ var webUtil = require('./utils/WebUtil');
 var urlUtil = require ('./utils/URLUtil');
 var app = remote.require('app');
 var request = require('request');
+var docker = require('./utils/DockerUtil');
 
 webUtil.addWindowSizeSaving();
 webUtil.addLiveReload();
@@ -31,23 +30,15 @@ setInterval(function () {
 router.run(Handler => React.render(<Handler/>, document.body));
 
 SetupStore.setup().then(() => {
-  if (ContainerStore.pending()) {
-    router.transitionTo('pull');
-  } else {
-    router.transitionTo('new');
-  }
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
-  ContainerStore.on(ContainerStore.SERVER_ERROR_EVENT, (err) => {
-    bugsnag.notify(err);
-  });
-  ContainerStore.init(function () {});
+  docker.init();
+  router.transitionTo('search');
 }).catch(err => {
   metrics.track('Setup Failed', {
     step: 'catch',
     message: err.message
   });
-  console.log(err);
-  bugsnag.notify(err);
+  throw err;
 });
 
 ipc.on('application:quitting', () => {

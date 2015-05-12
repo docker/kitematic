@@ -5,8 +5,9 @@ var path = require('path');
 var shell = require('shell');
 var util = require('../utils/Util');
 var metrics = require('../utils/MetricsUtil');
-var ContainerStore = require('../stores/ContainerStore');
+var containerActions = require('../actions/ContainerActions');
 var dialog = require('remote').require('dialog');
+var mkdirp = require('mkdirp');
 
 var ContainerHomeFolder = React.createClass({
   contextTypes: {
@@ -37,15 +38,14 @@ var ContainerHomeFolder = React.createClass({
             }
             return pair[1] + ':' + pair[0];
           });
-          ContainerStore.updateContainer(this.props.container.Name, {
-            Binds: binds
-          }, (err) => {
-            if (err) {
-              console.log(err);
-              return;
+          mkdirp(newHostVolume, function (err) {
+            console.log(err);
+            if (!err) {
+              shell.showItemInFolder(newHostVolume);
             }
-            shell.showItemInFolder(newHostVolume);
           });
+
+          containerActions.update(this.props.container.Name, {Binds: binds});
         }
       });
     } else {

@@ -29,8 +29,8 @@ var App = React.createClass({
 var routes = (
   <Route name="app" path="/" handler={App}>
     <Route name="containers" handler={Containers}>
-      <Route name="containerDetails" path="containers/details/:name" handler={ContainerDetails}>
-        <Route name="containerHome" path="containers/details/:name/home" handler={ContainerHome} />
+      <Route name="container" path="containers/details/:name" handler={ContainerDetails}>
+        <DefaultRoute name="containerHome" handler={ContainerHome} />
         <Route name="containerLogs" path="containers/details/:name/logs" handler={ContainerLogs}/>
         <Route name="containerSettings" path="containers/details/:name/settings" handler={ContainerSettings}>
           <Route name="containerSettingsGeneral" path="containers/details/:name/settings/general" handler={ContainerSettingsGeneral}/>
@@ -43,9 +43,9 @@ var routes = (
         <Route name="pull" path="containers/new/pull" handler={NewContainerPull}></Route>
       </Route>
       <Route name="preferences" path="/preferences" handler={Preferences}/>
-      <Redirect to="new"/>
     </Route>
     <DefaultRoute name="setup" handler={Setup}/>
+    <Redirect from="containers/details/:name" to="containerHome"/>
   </Route>
 );
 

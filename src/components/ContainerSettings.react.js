@@ -45,7 +45,7 @@ var ContainerSettings = React.createClass({
               </Router.Link>
             </ul>
           </div>
-          <Router.RouteHandler container={container}/>
+          <Router.RouteHandler {...this.props}/>
         </div>
       </div>
     );

@@ -1,7 +1,8 @@
 var $ = require('jquery');
-var React = require('react/addons');
+var _ = require('underscore');
+var React = require('react');
 var Router = require('react-router');
-var ContainerStore = require('../stores/ContainerStore');
+var containerStore = require('../stores/ContainerStore');
 var ContainerList = require('./ContainerList.react');
 var Header = require('./Header.react');
 var ipc = require('ipc');
@@ -16,22 +17,19 @@ var Containers = React.createClass({
   contextTypes: {
     router: React.PropTypes.func
   },
+
   getInitialState: function () {
     return {
       sidebarOffset: 0,
-      containers: ContainerStore.containers(),
-      sorted: ContainerStore.sorted(),
+      containers: {},
+      sorted: [],
       updateAvailable: false,
-      currentButtonLabel: '',
-      error: ContainerStore.error(),
-      downloading: ContainerStore.downloading()
+      currentButtonLabel: ''
     };
   },
+
   componentDidMount: function () {
-    this.update();
-    ContainerStore.on(ContainerStore.SERVER_ERROR_EVENT, this.updateError);
-    ContainerStore.on(ContainerStore.SERVER_CONTAINER_EVENT, this.update);
-    ContainerStore.on(ContainerStore.CLIENT_CONTAINER_EVENT, this.updateFromClient);
+    containerStore.listen(this.update);
 
     ipc.on('application:update-available', () => {
       this.setState({
@@ -40,39 +38,47 @@ var Containers = React.createClass({
     });
     autoUpdater.checkForUpdates();
   },
+
   componentDidUnmount: function () {
-    ContainerStore.removeListener(ContainerStore.SERVER_CONTAINER_EVENT, this.update);
-    ContainerStore.removeListener(ContainerStore.CLIENT_CONTAINER_EVENT, this.updateFromClient);
+    containerStore.unlisten(this.update);
   },
-  updateError: function (err) {
-    this.setState({
-      error: err
+
+  update: function () {
+    let containers = containerStore.getState().containers;
+    let sorted =  _.values(containers).sort(function (a, b) {
+      if (a.State.Downloading && !b.State.Downloading) {
+        return -1;
+      } else if (!a.State.Downloading && b.State.Downloading) {
+        return 1;
+      } else {
+        if (a.State.Running && !b.State.Running) {
+          return -1;
+        } else if (!a.State.Running && b.State.Running) {
+          return 1;
+        } else {
+          return a.Name.localeCompare(b.Name);
+        }
+      }
     });
-  },
-  update: function (name, status) {
-    var sorted = ContainerStore.sorted();
-    this.setState({
-      containers: ContainerStore.containers(),
-      sorted: sorted,
-      pending: ContainerStore.pending(),
-      downloading: ContainerStore.downloading()
-    });
-    if (status === 'destroy') {
+
+    let name = this.context.router.getCurrentParams().name;
+    if (containerStore.getState().pending) {
+      this.context.router.transitionTo('pull');
+    } else if (name && !containers[name]) {
       if (sorted.length) {
         this.context.router.transitionTo('containerHome', {name: sorted[0].Name});
       } else {
-        this.context.router.transitionTo('containers');
+        this.context.router.transitionTo('search');
       }
     }
+
+    this.setState({
+      containers: containers,
+      sorted: sorted,
+      pending: containerStore.getState().pending
+    });
   },
-  updateFromClient: function (name, status) {
-    this.update(name, status);
-    if (status === 'create') {
-      this.context.router.transitionTo('containerHome', {name: name});
-    } else if (status === 'pending' && ContainerStore.pending()) {
-      this.context.router.transitionTo('pull');
-    }
-  },
+
   handleScroll: function (e) {
     if (e.target.scrollTop > 0 && !this.state.sidebarOffset) {
       this.setState({
@@ -84,63 +90,75 @@ var Containers = React.createClass({
       });
     }
   },
+
   handleNewContainer: function () {
     $(this.getDOMNode()).find('.new-container-item').parent().fadeIn();
     this.context.router.transitionTo('new');
     metrics.track('Pressed New Container');
   },
+
   handleAutoUpdateClick: function () {
     metrics.track('Restarted to Update');
     ipc.send('application:quit-install');
   },
+
   handleClickPreferences: function () {
     metrics.track('Opened Preferences', {
       from: 'app'
     });
     this.context.router.transitionTo('preferences');
   },
+
   handleClickDockerTerminal: function () {
     metrics.track('Opened Docker Terminal', {
       from: 'app'
     });
     machine.dockerTerminal();
   },
+
   handleClickReportIssue: function () {
     metrics.track('Opened Issue Reporter', {
       from: 'app'
     });
     shell.openExternal('https://github.com/kitematic/kitematic/issues/new');
   },
+
   handleMouseEnterDockerTerminal: function () {
     this.setState({
       currentButtonLabel: 'Open terminal to use Docker command line.'
     });
   },
+
   handleMouseLeaveDockerTerminal: function () {
     this.setState({
       currentButtonLabel: ''
     });
   },
+
   handleMouseEnterReportIssue: function () {
     this.setState({
       currentButtonLabel: 'Report an issue or suggest feedback.'
     });
   },
+
   handleMouseLeaveReportIssue: function () {
     this.setState({
       currentButtonLabel: ''
     });
   },
+
   handleMouseEnterPreferences: function () {
     this.setState({
       currentButtonLabel: 'Change app preferences.'
     });
   },
+
   handleMouseLeavePreferences: function () {
     this.setState({
       currentButtonLabel: ''
     });
   },
+
   render: function () {
     var sidebarHeaderClass = 'sidebar-header';
     if (this.state.sidebarOffset) {
@@ -166,7 +184,7 @@ var Containers = React.createClass({
               </div>
             </section>
             <section className="sidebar-containers" onScroll={this.handleScroll}>
-              <ContainerList downloading={this.state.downloading} containers={this.state.sorted} newContainer={this.state.newContainer} />
+              <ContainerList containers={this.state.sorted} newContainer={this.state.newContainer} />
               <div className="sidebar-buttons">
                 <div className="btn-label">{this.state.currentButtonLabel}</div>
                 <span className="btn-sidebar" onClick={this.handleClickDockerTerminal} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><RetinaImage src="docker-terminal.png"/></span>
@@ -177,7 +195,7 @@ var Containers = React.createClass({
               <div className="sidebar-buttons-padding"></div>
             </section>
           </div>
-          <Router.RouteHandler pending={this.state.pending} container={container} error={this.state.error}/>
+          <Router.RouteHandler pending={this.state.pending} containers={this.state.containers} container={container}/>
         </div>
       </div>
     );

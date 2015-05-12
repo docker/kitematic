@@ -1,13 +1,10 @@
 var $ = require('jquery');
-var React = require('react/addons');
+var React = require('react');
 var Router = require('react-router');
-var ContainerStore = require('../stores/ContainerStore');
 var metrics = require('../utils/MetricsUtil');
 
 var ContainerListNewItem = React.createClass({
-  contextTypes: {
-    router: React.PropTypes.func
-  },
+  mixins: [Router.Navigation, Router.State],
   handleItemMouseEnter: function () {
     var $action = $(this.getDOMNode()).find('.action');
     $action.show();
@@ -16,22 +13,20 @@ var ContainerListNewItem = React.createClass({
     var $action = $(this.getDOMNode()).find('.action');
     $action.hide();
   },
-  handleDelete: function () {
-    var self = this;
+  handleDelete: function (event) {
     metrics.track('Deleted Container', {
       from: 'list',
       type: 'new'
     });
-    var containers = ContainerStore.sorted();
-    $(self.getDOMNode()).fadeOut(300, () => {
-      if (containers.length > 0) {
-        var name = containers[0].Name;
-        this.context.router.transitionTo('containerHome', {name: name});
-      }
-    });
+
+    if (this.props.containers.length > 0 && this.getRoutes()[this.getRoutes().length - 2].name === 'new') {
+      var name = this.props.containers[0].Name;
+      this.transitionTo('containerHome', {name});
+    }
+    $(this.getDOMNode()).fadeOut(300);
+    event.preventDefault();
   },
   render: function () {
-    var self = this;
     var action;
     if (this.props.containers.length > 0) {
       action = (
@@ -42,7 +37,7 @@ var ContainerListNewItem = React.createClass({
     }
     return (
       <Router.Link to="new">
-        <li className="new-container-item" onMouseEnter={self.handleItemMouseEnter} onMouseLeave={self.handleItemMouseLeave}>
+        <li className="new-container-item" onMouseEnter={this.handleItemMouseEnter} onMouseLeave={this.handleItemMouseLeave}>
           <div className="state state-new"></div>
           <div className="info">
             <div className="name">

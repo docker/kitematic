@@ -1,77 +1,50 @@
-var _ = require('underscore');
 var $ = require('jquery');
+var _ = require('underscore');
 var React = require('react');
 var exec = require('exec');
 var shell = require('shell');
 var metrics = require('../utils/MetricsUtil');
-var ContainerStore = require('../stores/ContainerStore');
 var ContainerUtil = require('../utils/ContainerUtil');
 var machine = require('../utils/DockerMachineUtil');
 var RetinaImage = require('react-retina-image');
-var webPorts = require('../utils/Util').webPorts;
 var classNames = require('classnames');
 var resources = require('../utils/ResourcesUtil');
+var dockerUtil = require('../utils/DockerUtil');
+var containerActions = require('../actions/ContainerActions');
 
 var ContainerDetailsSubheader = React.createClass({
   contextTypes: {
     router: React.PropTypes.func
   },
-  getInitialState: function () {
-    return {
-      defaultPort: null
-    };
-  },
-  componentWillReceiveProps: function () {
-    this.init();
-  },
-  componentDidMount: function () {
-    this.init();
-  },
-  init: function () {
-    this.setState({
-      currentRoute: _.last(this.context.router.getCurrentRoutes()).name
-    });
-    var container = ContainerStore.container(this.context.router.getCurrentParams().name);
-    if (!container) {
-      return;
-    }
-    var ports = ContainerUtil.ports(container);
-    this.setState({
-      ports: ports,
-      defaultPort: _.find(_.keys(ports), function (port) {
-        return webPorts.indexOf(port) !== -1;
-      })
-    });
-  },
   disableRun: function () {
     if (!this.props.container) {
       return false;
     }
-    return (!this.props.container.State.Running || !this.state.defaultPort);
+    return (!this.props.container.State.Running || !this.props.defaultPort || this.props.container.State.Updating);
   },
   disableRestart: function () {
     if (!this.props.container) {
       return false;
     }
-    return (this.props.container.State.Downloading || this.props.container.State.Restarting);
+    return (this.props.container.State.Downloading || this.props.container.State.Restarting || this.props.container.State.Updating);
   },
   disableStop: function () {
     if (!this.props.container) {
       return false;
     }
-    return (this.props.container.State.Downloading || this.props.container.State.ExitCode || !this.props.container.State.Running);
+    return (this.props.container.State.Downloading || this.props.container.State.ExitCode || !this.props.container.State.Running || this.props.container.State.Updating);
   },
   disableStart: function () {
     if (!this.props.container) {
       return false;
     }
-    return (this.props.container.State.Downloading || this.props.container.State.Running);
+    return (this.props.container.State.Downloading || this.props.container.State.Running || this.props.container.State.Updating);
   },
   disableTerminal: function () {
     if (!this.props.container) {
       return false;
     }
-    return (!this.props.container.State.Running);
+    return (!this.props.container.State.Running || this.props.container.State.Updating);
   },
   disableTab: function () {
     if (!this.props.container) {
@@ -100,32 +73,29 @@ var ContainerDetailsSubheader = React.createClass({
     }
   },
   handleRun: function () {
-    if (this.state.defaultPort && !this.disableRun()) {
+    if (this.props.defaultPort && !this.disableRun()) {
       metrics.track('Opened In Browser', {
         from: 'header'
       });
-      shell.openExternal(this.state.ports[this.state.defaultPort].url);
+      shell.openExternal(this.props.ports[this.props.defaultPort].url);
     }
   },
   handleRestart: function () {
     if (!this.disableRestart()) {
       metrics.track('Restarted Container');
-      ContainerStore.restart(this.props.container.Name, function () {
-      });
+      dockerUtil.restart(this.props.container.Name);
     }
   },
   handleStop: function () {
     if (!this.disableStop()) {
       metrics.track('Stopped Container');
-      ContainerStore.stop(this.props.container.Name, function () {
-      });
+      containerActions.stop(this.props.container.Name);
     }
   },
   handleStart: function () {
     if (!this.disableStart()) {
       metrics.track('Started Container');
-      ContainerStore.start(this.props.container.Name, function () {
-      });
+      containerActions.start(this.props.container.Name);
     }
   },
   handleTerminal: function () {
@@ -207,19 +177,23 @@ var ContainerDetailsSubheader = React.createClass({
       action: true,
       disabled: this.disableTerminal()
     });
+
+    var currentRoutes = _.map(this.context.router.getCurrentRoutes(), r => r.name);
+    var currentRoute = _.last(currentRoutes);
+
     var tabHomeClasses = classNames({
       'tab': true,
-      'active': this.state.currentRoute === 'containerHome',
+      'active': currentRoute === 'containerHome',
       disabled: this.disableTab()
     });
     var tabLogsClasses = classNames({
       'tab': true,
-      'active': this.state.currentRoute === 'containerLogs',
+      'active': currentRoute === 'containerLogs',
       disabled: this.disableTab()
     });
     var tabSettingsClasses = classNames({
       'tab': true,
-      'active': this.state.currentRoute && (this.state.currentRoute.indexOf('containerSettings') >= 0),
+      'active': currentRoutes && (currentRoutes.indexOf('containerSettings') >= 0),
       disabled: this.disableTab()
     });
     var startStopToggle;

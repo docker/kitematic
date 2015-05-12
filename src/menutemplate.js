@@ -5,7 +5,7 @@ var router = require('./router');
 var util = require('./utils/Util');
 var metrics = require('./utils/MetricsUtil');
 var machine = require('./utils/DockerMachineUtil');
-var docker = require('./utils/DockerUtil');
+import docker from './utils/DockerUtil';
 
 // main.js
 var MenuTemplate = function () {
@@ -23,7 +23,7 @@ var MenuTemplate = function () {
       {
         label: 'Preferences',
         accelerator: util.CommandOrCtrl() + '+,',
-        enabled: !!docker.host(),
+        enabled: !!docker.host,
         click: function () {
           metrics.track('Opened Preferences', {
             from: 'menu'
@@ -76,7 +76,7 @@ var MenuTemplate = function () {
       {
         label: 'Open Docker Command Line Terminal',
         accelerator: util.CommandOrCtrl() + '+Shift+T',
-        enabled: !!docker.host(),
+        enabled: !!docker.host,
         click: function() {
           metrics.track('Opened Docker Terminal', {
             from: 'menu'

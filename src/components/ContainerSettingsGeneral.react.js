@@ -1,80 +1,66 @@
 var _ = require('underscore');
-var $ = require('jquery');
 var React = require('react/addons');
-var path =  require('path');
 var remote = require('remote');
-var rimraf = require('rimraf');
-var fs = require('fs');
 var metrics = require('../utils/MetricsUtil');
 var dialog = remote.require('dialog');
-var ContainerStore = require('../stores/ContainerStore');
 var ContainerUtil = require('../utils/ContainerUtil');
-
-var containerNameSlugify = function (text) {
-  text = text.replace(/^\s+|\s+$/g, ''); // Trim
-  text = text.toLowerCase();
-  // Remove Accents
-  var from = "àáäâèéëêìíïîòóöôùúüûñç·/,:;";
-  var to   = "aaaaeeeeiiiioooouuuunc-----";
-  for (var i=0, l=from.length ; i<l ; i++) {
-    text = text.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
-  }
-  text = text.replace(/[^a-z0-9-_.\s]/g, '') // Remove invalid chars
-    .replace(/\s+/g, '-') // Collapse whitespace and replace by -
-    .replace(/-+/g, '-')  // Collapse dashes
-    .replace(/_+/g, '_'); // Collapse underscores
-  return text;
-};
+var containerActions = require('../actions/ContainerActions');
 
 var ContainerSettingsGeneral = React.createClass({
+  mixins: [React.addons.LinkedStateMixin],
+
   contextTypes: {
     router: React.PropTypes.func
   },
+
   getInitialState: function () {
+    let env = ContainerUtil.env(this.props.container) || [];
+    env.push(['', '']);
     return {
       slugName: null,
       nameError: null,
-      env: {},
-      pendingEnv: {}
+      env: env
     };
   },
-  componentWillReceiveProps: function () {
-    this.init();
+
+  shouldComponentUpdate: function (nextProps, nextState) {
+    if (nextState.slugName !== this.state.slugName || nextState.nameError !== this.state.nameError) {
+      return true;
+    }
+
+    return true;
   },
-  componentDidMount: function() {
-    this.init();
-  },
-  init: function () {
-    var container = ContainerStore.container(this.context.router.getCurrentParams().name);
-    if (!container) {
+
+  handleNameChange: function (e) {
+    let name = e.target.value;
+    if (name === this.state.slugName) {
       return;
     }
+
+    name = name.replace(/^\s+|\s+$/g, ''); // Trim
+    name = name.toLowerCase();
+    // Remove Accents
+    let from = "àáäâèéëêìíïîòóöôùúüûñç·/,:;";
+    let to   = "aaaaeeeeiiiioooouuuunc-----";
+    for (var i=0, l=from.length ; i<l ; i++) {
+      name = name.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+    }
+    name = name.replace(/[^a-z0-9-_.\s]/g, '') // Remove invalid chars
+      .replace(/\s+/g, '-') // Collapse whitespace and replace by -
+      .replace(/-+/g, '-')  // Collapse dashes
+      .replace(/_+/g, '_'); // Collapse underscores
+
     this.setState({
-      env: ContainerUtil.env(container),
-      nameError: null
+      slugName: name
     });
   },
-  handleNameChange: function (e) {
-    var newName = e.target.value;
-    if (newName === this.state.slugName) {
-      return;
-    }
-    if (!newName.length) {
-      this.setState({
-        slugName: null
-      });
-    } else {
-      this.setState({
-        slugName: containerNameSlugify(newName),
-        nameError: null
-      });
-    }
-  },
+
   handleNameOnKeyUp: function (e) {
     if (e.keyCode === 13 && this.state.slugName) {
       this.handleSaveContainerName();
     }
   },
+
   handleSaveContainerName: function () {
     var newName = this.state.slugName;
     if (newName === this.props.container.Name) {
@@ -84,122 +70,90 @@ var ContainerSettingsGeneral = React.createClass({
     this.setState({
       slugName: null
     });
-    var oldName = this.props.container.Name;
-    if (ContainerStore.container(newName)) {
+
+    if (this.props.containers[newName]) {
       this.setState({
         nameError: 'A container already exists with this name.'
       });
       return;
     }
-    ContainerStore.rename(oldName, newName, err => {
-      if (err) {
-        this.setState({
-          nameError: err.message
-        });
-        return;
-      }
-      metrics.track('Changed Container Name');
-      this.context.router.transitionTo('containerSettingsGeneral', {name: newName});
-      var oldPath = path.join(process.env.HOME, 'Kitematic', oldName);
-      var newPath = path.join(process.env.HOME, 'Kitematic', newName);
-      rimraf(newPath, () => {
-        if (fs.existsSync(oldPath)) {
-          fs.renameSync(oldPath, newPath);
-        }
-        var binds = _.pairs(this.props.container.Volumes).map(function (pair) {
-          return pair[1] + ':' + pair[0];
-        });
-        var newBinds = binds.map(b => {
-          return b.replace(path.join(process.env.HOME, 'Kitematic', oldName), path.join(process.env.HOME, 'Kitematic', newName));
-        });
-        ContainerStore.updateContainer(newName, {Binds: newBinds}, err => {
-          rimraf(oldPath, () => {});
-          if (err) {
-            console.log(err);
-          }
-        });
-      });
-    });
+
+    containerActions.rename(this.props.container.Name, newName);
+    this.context.router.transitionTo('containerSettingsGeneral', {name: newName});
+    metrics.track('Changed Container Name');
   },
-  handleSaveEnvVar: function () {
-    var $rows = $('.env-vars .keyval-row');
-    var envVarList = [];
-    $rows.each(function () {
-      var key = $(this).find('.key').val();
-      var val = $(this).find('.val').val();
-      if (!key.length || !val.length) {
-        return;
-      }
-      envVarList.push(key + '=' + val);
-    });
-    var self = this;
+
+  handleSaveEnvVars: function () {
     metrics.track('Saved Environment Variables');
-    ContainerStore.updateContainer(self.props.container.Name, {
-      Env: envVarList
-    }, function (err) {
-      if (err) {
-        console.error(err);
-      } else {
-        self.setState({
-          pendingEnv: {}
-        });
-        $('#new-env-key').val('');
-        $('#new-env-val').val('');
+    let list = [];
+    _.each(this.state.env, kvp => {
+      let [key, value] = kvp;
+      if ((key && key.length) || (value && value.length)) {
+        list.push(key + '=' + value);
       }
     });
+    containerActions.update(this.props.container.Name, {Env: list});
   },
-  handleAddPendingEnvVar: function () {
-    var newKey = $('#new-env-key').val();
-    var newVal = $('#new-env-val').val();
-    var newEnv = {};
-    newEnv[newKey] = newVal;
+
+  handleChangeEnvKey: function (index, event) {
+    let env = _.map(this.state.env, _.clone);
+    env[index][0] = event.target.value;
     this.setState({
-      pendingEnv: _.extend(this.state.pendingEnv, newEnv)
+      env: env
     });
-    $('#new-env-key').val('');
-    $('#new-env-val').val('');
+  },
+
+  handleChangeEnvVal: function (index, event) {
+    let env = _.map(this.state.env, _.clone);
+    env[index][1] = event.target.value;
+    this.setState({
+      env: env
+    });
+  },
+
+  handleAddEnvVar: function () {
+    let env = _.map(this.state.env, _.clone);
+    env.push(['', '']);
+    this.setState({
+      env: env
+    });
     metrics.track('Added Pending Environment Variable');
   },
-  handleRemoveEnvVar: function (key) {
-    var newEnv = _.omit(this.state.env, key);
+
+  handleRemoveEnvVar: function (index) {
+    let env = _.map(this.state.env, _.clone);
+    env.splice(index, 1);
+    if (env.length === 0) {
+      env.push(['', '']);
+    }
+
     this.setState({
-      env: newEnv
+      env: env
     });
+
     metrics.track('Removed Environment Variable');
   },
-  handleRemovePendingEnvVar: function (key) {
-    var newEnv = _.omit(this.state.pendingEnv, key);
-    this.setState({
-      pendingEnv: newEnv
-    });
-    metrics.track('Removed Pending Environment Variable');
-  },
+
   handleDeleteContainer: function () {
     dialog.showMessageBox({
       message: 'Are you sure you want to delete this container?',
       buttons: ['Delete', 'Cancel']
-    }, function (index) {
-      var volumePath = path.join(process.env.HOME, 'Kitematic', this.props.container.Name);
-      if (fs.existsSync(volumePath)) {
-        rimraf(volumePath, function (err) {
-          console.log(err);
-        });
-      }
+    }, index => {
       if (index === 0) {
         metrics.track('Deleted Container', {
           from: 'settings',
           type: 'existing'
         });
-        ContainerStore.remove(this.props.container.Name, function (err) {
-          console.error(err);
-        });
+        containerActions.destroy(this.props.container.Name);
       }
-    }.bind(this));
+    });
   },
+
   render: function () {
     if (!this.props.container) {
-      return (<div></div>);
+      return false;
     }
+
     var willBeRenamedAs;
     var btnSaveName = (
       <a className="btn btn-action" onClick={this.handleSaveContainerName} disabled="disabled">Save</a>
@@ -216,7 +170,8 @@ var ContainerSettingsGeneral = React.createClass({
         <p><strong>{this.state.nameError}</strong></p>
       );
     }
-    var rename = (
+
+    let rename = (
       <div className="settings-section">
         <h3>Container Name</h3>
         <div className="container-name">
@@ -226,25 +181,25 @@ var ContainerSettingsGeneral = React.createClass({
         {btnSaveName}
       </div>
     );
-    var self = this;
-    var envVars = _.map(this.state.env, function (val, key) {
+
+    let vars = _.map(this.state.env, (kvp, index) => {
+      let [key, val] = kvp;
+      let icon;
+      if (index === this.state.env.length - 1) {
+        icon = <a onClick={this.handleAddEnvVar} className="only-icon btn btn-positive small"><span className="icon icon-add-1"></span></a>;
+      } else {
+        icon = <a onClick={this.handleRemoveEnvVar.bind(this, index)} className="only-icon btn btn-action small"><span className="icon icon-cross"></span></a>;
+      }
+
       return (
-        <div key={key} className="keyval-row">
-          <input type="text" className="key line" defaultValue={key}></input>
-          <input type="text" className="val line" defaultValue={val}></input>
-          <a onClick={self.handleRemoveEnvVar.bind(self, key)} className="only-icon btn btn-action small"><span className="icon icon-cross"></span></a>
+        <div className="keyval-row">
+          <input type="text" className="key line" defaultValue={key} onChange={this.handleChangeEnvKey.bind(this, index)}></input>
+          <input type="text" className="val line" defaultValue={val} onChange={this.handleChangeEnvVal.bind(this, index)}></input>
+          {icon}
         </div>
       );
     });
-    var pendingEnvVars = _.map(this.state.pendingEnv, function (val, key) {
-      return (
-        <div key={key} className="keyval-row">
-          <input type="text" className="key line" defaultValue={key}></input>
-          <input type="text" className="val line" defaultValue={val}></input>
-          <a onClick={self.handleRemovePendingEnvVar.bind(self, key)} className="only-icon btn btn-action small"><span className="icon icon-arrow-undo"></span></a>
-        </div>
-      );
-    });
+
     return (
       <div className="settings-panel">
         {rename}
@@ -255,15 +210,9 @@ var ContainerSettingsGeneral = React.createClass({
             <div className="label-val">VALUE</div>
           </div>
           <div className="env-vars">
-            {envVars}
-            {pendingEnvVars}
-            <div className="keyval-row">
-              <input id="new-env-key" type="text" className="key line"></input>
-              <input id="new-env-val" type="text" className="val line"></input>
-              <a onClick={this.handleAddPendingEnvVar} className="only-icon btn btn-positive small"><span className="icon icon-add-1"></span></a>
-            </div>
+            {vars}
           </div>
-          <a className="btn btn-action" onClick={this.handleSaveEnvVar}>Save</a>
+          <a className="btn btn-action" disabled={this.props.container.State.Updating} onClick={this.handleSaveEnvVars}>Save</a>
         </div>
         <div className="settings-section">
           <h3>Delete Container</h3>
