@@ -22,11 +22,11 @@ You install Kitematic much the same way you install any application on a Mac or 
 
 Opening Kitematic for the first time sets up everything you need to run Docker containers. If you don't already have VirtualBox installed, Kitematic will download and install the latest version.
 
-![Installing](/assets/installing.png)
+![Installing](assets/installing.png)
 
 All Done! Within a minute you should be ready to start running your first container!
 
-![containers](/assets/containers.png)
+![containers](assets/containers.png)
 
 ### Technical Details
 
