@@ -22,7 +22,7 @@ var ContainerSettingsVolumes = React.createClass({
           return pair[1] + ':' + pair[0];
         });
 
-        containerActions.update(this.props.container.Name, {Binds: binds});
+        containerActions.update(this.props.container.Name, {Binds: binds, Volumes: volumes});
       }
     });
   },
@@ -35,7 +35,7 @@ var ContainerSettingsVolumes = React.createClass({
     var binds = _.pairs(volumes).map(function (pair) {
       return pair[1] + ':' + pair[0];
     });
-    containerActions.update(this.props.container.Name, {Binds: binds});
+    containerActions.update(this.props.container.Name, {Binds: binds, Volumes: volumes});
   },
   handleOpenVolumeClick: function (path) {
     metrics.track('Opened Volume Directory', {
@@ -45,24 +45,24 @@ var ContainerSettingsVolumes = React.createClass({
   },
   render: function () {
     if (!this.props.container) {
-      return (<div></div>);
+      return false;
     }
-    var self = this;
-    var volumes = _.map(self.props.container.Volumes, function (val, key) {
+
+    var volumes = _.map(this.props.container.Volumes, (val, key) => {
       if (!val || val.indexOf(process.env.HOME) === -1) {
         val = (
           <span>
             <a className="value-right">No Folder</a>
-            <a className="btn btn-action small" onClick={self.handleChooseVolumeClick.bind(self, key)}>Change</a>
-            <a className="btn btn-action small" onClick={self.handleRemoveVolumeClick.bind(self, key)}>Remove</a>
+            <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleChooseVolumeClick.bind(this, key)}>Change</a>
+            <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleRemoveVolumeClick.bind(this, key)}>Remove</a>
           </span>
         );
       } else {
         val = (
           <span>
-            <a className="value-right" onClick={self.handleOpenVolumeClick.bind(self, val)}>{val.replace(process.env.HOME, '~')}</a>
-            <a className="btn btn-action small" onClick={self.handleChooseVolumeClick.bind(self, key)}>Change</a>
-            <a className="btn btn-action small" onClick={self.handleRemoveVolumeClick.bind(self, key)}>Remove</a>
+            <a className="value-right" onClick={this.handleOpenVolumeClick.bind(this, val)}>{val.replace(process.env.HOME, '~')}</a>
+            <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleChooseVolumeClick.bind(this, key)}>Change</a>
+            <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleRemoveVolumeClick.bind(this, key)}>Remove</a>
           </span>
         );
       }

@@ -16,7 +16,6 @@ var ContainerSettingsGeneral = React.createClass({
   getInitialState: function () {
     let env = ContainerUtil.env(this.props.container) || [];
     env.push(['', '']);
-    console.log(env);
     return {
       slugName: null,
       nameError: null,
@@ -28,9 +27,7 @@ var ContainerSettingsGeneral = React.createClass({
     if (nextState.slugName !== this.state.slugName || nextState.nameError !== this.state.nameError) {
       return true;
     }
-    if (nextState.env.length === this.state.env.length) {
-      return false;
-    }
+
     return true;
   },
 
@@ -195,7 +192,7 @@ var ContainerSettingsGeneral = React.createClass({
       }
 
       return (
-        <div key={index + ':' + key + '=' + val} className="keyval-row">
+        <div className="keyval-row">
           <input type="text" className="key line" defaultValue={key} onChange={this.handleChangeEnvKey.bind(this, index)}></input>
           <input type="text" className="val line" defaultValue={val} onChange={this.handleChangeEnvVal.bind(this, index)}></input>
           {icon}
@@ -215,7 +212,7 @@ var ContainerSettingsGeneral = React.createClass({
           <div className="env-vars">
             {vars}
           </div>
-          <a className="btn btn-action" onClick={this.handleSaveEnvVars}>Save</a>
+          <a className="btn btn-action" disabled={this.props.container.State.Updating} onClick={this.handleSaveEnvVars}>Save</a>
         </div>
         <div className="settings-section">
           <h3>Delete Container</h3>

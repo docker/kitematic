@@ -195,7 +195,7 @@ var Containers = React.createClass({
               <div className="sidebar-buttons-padding"></div>
             </section>
           </div>
-          <Router.RouteHandler pending={this.state.pending} containers={this.state.containers} container={container} error={this.state.error}/>
+          <Router.RouteHandler pending={this.state.pending} containers={this.state.containers} container={container}/>
         </div>
       </div>
     );

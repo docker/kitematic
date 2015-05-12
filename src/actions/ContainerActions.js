@@ -1,7 +1,7 @@
 import alt from '../alt';
 import dockerUtil from '../utils/DockerUtil';
 
-class ContainerServerActions {
+class ContainerActions {
   start (name) {
     this.dispatch({name});
     dockerUtil.start(name);
@@ -12,7 +12,6 @@ class ContainerServerActions {
     dockerUtil.destroy(name);
   }
 
-  // TODO: don't require all container data for this method
   rename (name, newName) {
     this.dispatch({name, newName});
     dockerUtil.rename(name, newName);
@@ -24,7 +23,7 @@ class ContainerServerActions {
   }
 
   update (name, container) {
-    this.dispatch({container});
+    this.dispatch({name, container});
     dockerUtil.updateContainer(name, container);
   }
 
@@ -37,4 +36,4 @@ class ContainerServerActions {
   }
 }
 
-export default alt.createActions(ContainerServerActions);
+export default alt.createActions(ContainerActions);

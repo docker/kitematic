@@ -8,9 +8,10 @@ class ContainerServerActions {
       'destroyed',
       'error',
       'muted',
-      'unmuted',
-      'progress',
       'pending',
+      'progress',
+      'started',
+      'unmuted',
       'updated',
       'waiting'
     );

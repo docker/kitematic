@@ -79,7 +79,7 @@ export default {
         containerServerActions.error({name, error});
         return;
       }
-      containerServerActions.unmuted({name});
+      containerServerActions.started({name, error});
       this.fetchContainer(name);
     });
   },
@@ -185,9 +185,6 @@ export default {
     let existing = this.client.getContainer(name);
     existing.inspect((error, existingData) => {
       if (error) {
-        return;
-      }
-      if (error) {
         containerServerActions.error({name, error});
         return;
       }
@@ -202,7 +199,6 @@ export default {
       }
 
       var fullData = _.extend(existingData, data);
-      containerServerActions.muted({name});
       this.createContainer(name, fullData);
     });
   },
@@ -213,7 +209,6 @@ export default {
         containerServerActions.error({name, error});
         return;
       }
-      this.fetchAllContainers();
       var oldPath = path.join(util.home(), 'Kitematic', name);
       var newPath = path.join(util.home(), 'Kitematic', newName);
 
@@ -223,7 +218,6 @@ export default {
           containerServerActions.error({newName, error});
         }
         rimraf(newPath, () => {
-          console.log('removed');
           if (fs.existsSync(oldPath)) {
             fs.renameSync(oldPath, newPath);
           }
@@ -295,9 +289,7 @@ export default {
           containerServerActions.destroyed({id: name});
           var volumePath = path.join(util.home(), 'Kitematic', name);
           if (fs.existsSync(volumePath)) {
-            rimraf(volumePath, function (err) {
-              console.log(err);
-            });
+            rimraf(volumePath, () => {});
           }
         });
       });

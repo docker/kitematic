@@ -7,7 +7,9 @@ var ContainerDetailsHeader = React.createClass({
       return false;
     }
 
-    if (this.props.container.State.Running && !this.props.container.State.Paused && !this.props.container.State.ExitCode && !this.props.container.State.Restarting) {
+    if (this.props.container.State.Updating) {
+      state = <span className="status downloading">UPDATING</span>;
+    } else if (this.props.container.State.Running && !this.props.container.State.Paused && !this.props.container.State.ExitCode && !this.props.container.State.Restarting) {
       state = <span className="status running">RUNNING</span>;
     } else if (this.props.container.State.Restarting) {
       state = <span className="status restarting">RESTARTING</span>;

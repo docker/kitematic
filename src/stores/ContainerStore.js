@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import deepExtend from 'deep-extend';
 import alt from '../alt';
 import containerServerActions from '../actions/ContainerServerActions';
 import containerActions from '../actions/ContainerActions';
@@ -9,17 +10,31 @@ class ContainerStore {
     this.bindActions(containerServerActions);
     this.containers = {};
 
-    // Blacklist of containers to avoid updating
-    this.muted = {};
-
     // Pending container to create
     this.pending = null;
+  }
+
+  error ({name, error}) {
+    let containers = this.containers;
+    if (containers[name]) {
+      containers[name].Error = error;
+    }
+    this.setState({containers});
   }
 
   start ({name}) {
     let containers = this.containers;
     if (containers[name]) {
       containers[name].State.Starting = true;
+      this.setState({containers});
+    }
+  }
+
+  started ({name}) {
+    let containers = this.containers;
+    if (containers[name]) {
+      containers[name].State.Starting = false;
+      containers[name].State.Updating = false;
       this.setState({containers});
     }
   }
@@ -36,6 +51,11 @@ class ContainerStore {
     let containers = this.containers;
     let data = containers[name];
     data.Name = newName;
+
+    if (data.State) {
+      data.State.Updating = true;
+    }
+
     containers[newName] = data;
     delete containers[name];
     this.setState({containers});
@@ -44,23 +64,32 @@ class ContainerStore {
   added ({container}) {
     let containers = this.containers;
     containers[container.Name] = container;
-    delete this.muted[container.Name];
+    this.setState({containers});
+  }
+
+  update ({name, container}) {
+    let containers = this.containers;
+    if (containers[name] && containers[name].State && containers[name].State.Updating) {
+      return;
+    }
+
+    deepExtend(containers[name], container);
+
+    if (containers[name].State) {
+      containers[name].State.Updating = true;
+    }
+
     this.setState({containers});
   }
 
   updated ({container}) {
-    if (this.muted[container.Name]) {
+    let containers = this.containers;
+    if (!containers[container.Name] || containers[container.Name].State.Updating) {
       return;
     }
 
-    let containers = this.containers;
-    if (!containers[container.Name]) {
-      return;
-    }
     containers[container.Name] = container;
-    if (container.State.Running) {
-      delete container.State.Starting;
-    }
+
     this.setState({containers});
   }
 
@@ -87,32 +116,21 @@ class ContainerStore {
     let container = _.find(_.values(this.containers), container => {
       return container.Id === name || container.Name === name;
     });
-    if (container && !this.muted[container.Name]) {
+
+    if (container && container.State && container.State.Updating) {
+      return;
+    }
+
+    if (container) {
       delete containers[container.Name];
       this.setState({containers});
     }
-  }
-
-  muted ({name}) {
-    this.muted[name] = true;
-  }
-
-  unmuted ({name}) {
-    this.muted[name] = false;
   }
 
   waiting({name, waiting}) {
     let containers = this.containers;
     if (containers[name]) {
       containers[name].State.Waiting = waiting;
-    }
-    this.setState({containers});
-  }
-
-  error ({name, error}) {
-    let containers = this.containers;
-    if (containers[name]) {
-      containers[name].Error = error;
     }
     this.setState({containers});
   }
@@ -127,10 +145,10 @@ class ContainerStore {
   }
 
   static generateName (repo) {
-    let base = _.last(repo.split('/'));
-    let count = 1;
-    let name = base;
-    let names = _.keys(this.getState().containers);
+    const base = _.last(repo.split('/'));
+    const names = _.keys(this.getState().containers);
+    var count = 1;
+    var name = base;
     while (true) {
       if (names.indexOf(name) === -1) {
         return name;

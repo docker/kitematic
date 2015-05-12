@@ -22,6 +22,14 @@ module.exports = React.createClass({
     LogStore.on(LogStore.SERVER_LOGS_EVENT, this.update);
     LogStore.fetch(this.props.container.Name);
   },
+
+  componentWillReceiveProps: function (nextProps) {
+    if (this.props.container && nextProps.container && this.props.container.Name !== nextProps.container.Name) {
+      LogStore.detach(this.props.container.Name);
+      LogStore.fetch(nextProps.container.Name);
+    }
+  },
+
   componentWillUnmount: function() {
     if (!this.props.container) {
       return;
