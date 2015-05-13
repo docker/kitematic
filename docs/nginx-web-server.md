@@ -10,45 +10,66 @@ In this tutorial, you will:
 - Explore the container's website data natively on your Mac
 - Use volumes to modify the website data
 
-In this example website we'll be serving the popular 2048 game, as shown below. Let's get to it!
+In this example website we'll be serving the popular 2048 game, as shown below.
+Let's get to it!
 
-![2048 game](assets/nginx-2048.png)
+![2048 game](../assets/nginx-2048.png)
 
 #### Running the Nginx Web Server Container
 
-First, if you haven't yet done so, [download and start Kitematic](https://kitematic.com/download) . Once installed and running, the app should look like this:
+First, if you haven't yet done so, [download and start
+Kitematic](https://kitematic.com/download) . Once installed and running, the app
+should look like this:
 
-![Nginx create](assets/nginx-create.png)
+![Nginx create](../assets/nginx-create.png)
 
-Click on the _Create_ button of the `hello-world-nginx` listing as shown above. This will download and run a tiny Nginx web server in a container via Kitematic, allowing you to serve website data on your Mac.
+Click on the _Create_ button of the `hello-world-nginx` listing as shown above.
+This will download and run a tiny Nginx web server in a container via Kitematic,
+allowing you to serve website data on your Mac.
 
-![download Nginx hello world](assets/nginx-hello-world.png)
+![download Nginx hello world](../assets/nginx-hello-world.png)
 
-Once it's done downloading you should see a quick preview of the example website that comes with the container, as shown below. Click on the preview to see the result in your own browser.
+Once it's done downloading you should see a quick preview of the example website
+that comes with the container, as shown below. Click on the preview to see the
+result in your own browser.
 
-![Nginx preview](assets/nginx-preview.png)
+![Nginx preview](../assets/nginx-preview.png)
 
-**What just happened?** Kitematic downloaded the `kitematic/hello-world-nginx` image from the Docker Hub and then created and ran a Docker Nginx container from this image.
+**What just happened?** Kitematic downloaded the `kitematic/hello-world-nginx`
+image from the Docker Hub and then created and ran a Docker Nginx container from
+this image.
 
 #### Viewing the Website Data in Finder
 
-This container exposes website data via a _Docker volume_. Kitematic makes managing Docker volumes easy - you can edit the data in Finder or with your favorite text editor. By default, Kitematic places volumes under `~/Kitematic` but you can change this in the container settings. To access the files via finder, click on the in-app folder icon for a container:
+This container exposes website data via a _Docker volume_. Kitematic makes
+managing Docker volumes easy - you can edit the data in Finder or with your
+favorite text editor. By default, Kitematic places volumes under `~/Kitematic`
+but you can change this in the container settings. To access the files via
+finder, click on the in-app folder icon for a container:
 
-![Nginx data volume](assets/nginx-data-volume.png)
+![Nginx data volume](../assets/nginx-data-volume.png)
 
-A Finder window of the folder should open containing the index.html file we see being served by the container.
+A Finder window of the folder should open containing the index.html file we see
+being served by the container.
 
-![Nginx data folder](assets/nginx-data-folder.png)
+![Nginx data folder](../assets/nginx-data-folder.png)
 
 #### Serving Your Own Website Data
 
-Now let's try serving a more interesting website. [Download the zipped files](https://github.com/gabrielecirulli/2048/archive/master.zip) for 2048, a popular (and addictive) web-based tile game. Extract this zip file into the folder you just opened:
+Now let's try serving a more interesting website. [Download the zipped
+files](https://github.com/gabrielecirulli/2048/archive/master.zip) for 2048, a
+popular (and addictive) web-based tile game. Extract this zip file into the
+folder you just opened:
 
-![Website files for 2048](assets/nginx-2048-files.png)
+![Website files for 2048](../assets/nginx-2048-files.png)
 
-Switch back to Kitematic and restart the container by clicking the "Restart" button as shown below. Your Nginx container should now be serving 2048.
+Switch back to Kitematic and restart the container by clicking the "Restart"
+button as shown below. Your Nginx container should now be serving 2048.
 
-![Nginx running 2048](assets/nginx-serving-2048.png)
+![Nginx running 2048](../assets/nginx-serving-2048.png)
 
 **What just happened?**
-Kitematic automatically reveals Docker container volumes via directories on your Mac. In this case you changed the container's volume data via the Finder to serve a website we downloaded.
+
+Kitematic automatically reveals Docker container volumes via directories on your
+Mac. In this case you changed the container's volume data via the Finder to
+serve a website we downloaded.
