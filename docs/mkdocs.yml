@@ -1,8 +1,8 @@
 
 # Kitematic
-- ['kitematic/index.md', 'User Guide', 'Kitematic']
-- ['kitematic/managing-volumes.md', 'User Guide', '&nbsp;&nbsp;Managing Volumes']
-- ['kitematic/using-docker-cli.md', 'User Guide', '&nbsp;&nbsp;Using the Docker commandline']
+- ['kitematic/index.md', 'Installation', 'Kitematic on OS X']
+
+- ['kitematic/userguide.md', 'User Guide', 'Kitematic']
 
 - ['kitematic/minecraft-server.md', 'Examples', 'Kitematic: Minecraft server']
 - ['kitematic/nginx-web-server.md', 'Examples', 'Kitematic: Ngnix web server']

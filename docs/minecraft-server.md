@@ -61,3 +61,7 @@ Restart your container by clicking the "Restart" button.
 Go back to your Minecraft client and join your server. The new map should load.
 
 
+## Next Steps
+
+For an example using Kitematic to run Nginx, take a look at the [Nginx web
+server](./nginx-web-server.md) page.

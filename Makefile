@@ -1,4 +1,9 @@
-.PHONY: docs docs-shell docs-build
+.PHONY: docs docs-shell docs-build run
+
+# TODO: clearly need to note pre-req's - OSX and node installed? - see contributing docs
+run:
+	npm install
+	npm run
 
 # import the existing docs build cmds from docker/docker
 DOCS_MOUNT := $(if $(DOCSDIR),-v $(CURDIR)/$(DOCSDIR):/$(DOCSDIR))

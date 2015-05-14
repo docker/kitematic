@@ -18,7 +18,7 @@ Let's get to it!
 #### Running the Nginx Web Server Container
 
 First, if you haven't yet done so, [download and start
-Kitematic](https://kitematic.com/download) . Once installed and running, the app
+Kitematic](./index.md). Once installed and running, the app
 should look like this:
 
 ![Nginx create](../assets/nginx-create.png)
@@ -73,3 +73,8 @@ button as shown below. Your Nginx container should now be serving 2048.
 Kitematic automatically reveals Docker container volumes via directories on your
 Mac. In this case you changed the container's volume data via the Finder to
 serve a website we downloaded.
+
+## Next Steps
+
+For an example using Kitematic to run a Local RethinkDB database, take a look at
+the [RethinkDB development Database](./rethinkdb-dev-database.md) example.

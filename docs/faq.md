@@ -58,3 +58,8 @@ You can opt-out of this anytime via the in-app preferences.
 
 We'd love to answer any more questions about this. Feel free to reach us at
 kitematic@docker.com or to open an issue on GitHub.
+
+## Next Steps
+
+For information about known issues in the current release of Kitematic, take a
+look at the [Known issues](./known-issues.md).
