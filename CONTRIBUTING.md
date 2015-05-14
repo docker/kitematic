@@ -21,7 +21,8 @@ Most of the time, you'll have installed Kitematic before contibuting, but for th
 sake of completeness, you can also install [Node.js](https://nodejs.org/) and then
 run from your Git clone.
 
-Running `npm start` will download and install [Docker machine](https://github.com/docker/machine),
+Running `npm start` will download and install the OS X Docker client,
+[Docker machine](https://github.com/docker/machine),
 the [Boot2Docker iso](https://github.com/boot2docker/boot2docker),
 [Electron](http://electron.atom.io/), and [VirtualBox](https://www.virtualbox.org/)
 if needed.
