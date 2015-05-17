@@ -1,5 +1,8 @@
 var React = require('react/addons');
 var Setup = require('./components/Setup.react');
+var Account = require('./components/Account.react');
+var AccountSignup = require('./components/AccountSignup.react');
+var AccountLogin = require('./components/AccountLogin.react');
 var Containers = require('./components/Containers.react');
 var ContainerDetails = require('./components/ContainerDetails.react');
 var ContainerHome = require('./components/ContainerHome.react');
@@ -28,6 +31,10 @@ var App = React.createClass({
 
 var routes = (
   <Route name="app" path="/" handler={App}>
+    <Route name="account" path="/account" handler={Account}>
+      <Route name="signup" path="/account/signup" handler={AccountSignup}/>
+      <Route name="login" path="/account/login" handler={AccountLogin}/>
+    </Route>
     <Route name="containers" handler={Containers}>
       <Route name="container" path="containers/details/:name" handler={ContainerDetails}>
         <DefaultRoute name="containerHome" handler={ContainerHome} />

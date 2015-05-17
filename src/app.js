@@ -13,6 +13,11 @@ var urlUtil = require ('./utils/URLUtil');
 var app = remote.require('app');
 var request = require('request');
 var docker = require('./utils/DockerUtil');
+var hub = require('./utils/HubUtil');
+var Router = require('react-router');
+var routes = require('./routes');
+var routerContainer = require('./router');
+
 
 webUtil.addWindowSizeSaving();
 webUtil.addLiveReload();
@@ -27,12 +32,25 @@ setInterval(function () {
   metrics.track('app heartbeat');
 }, 14400000);
 
+var router = Router.create({
+  routes: routes
+});
 router.run(Handler => React.render(<Handler/>, document.body));
+routerContainer.set(router);
 
 SetupStore.setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   docker.init();
-  router.transitionTo('search');
+  //if (!localStorage.getItem('account.prompted')) {
+  if (true) {
+    if (!hub.loggedin()) {
+      router.transitionTo('signup');
+    } else {
+      router.transitionTo('search');
+    }
+  } else {
+    router.transitionTo('search');
+  }
 }).catch(err => {
   metrics.track('Setup Failed', {
     step: 'catch',
@@ -63,3 +81,7 @@ ipc.on('application:open-url', opts => {
     urlUtil.openUrl(opts.url, flags, app.getVersion());
   });
 });
+
+module.exports = {
+  router: router
+};

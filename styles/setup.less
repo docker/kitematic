@@ -30,6 +30,135 @@
     }
   }
 
+  .form-section {
+    display: flex;
+    width: 50%;
+    flex: 0 auto;
+    align-items: flex-end;
+    justify-content: center;
+    padding-right: 60px;
+    padding-left: 80px;
+    flex-direction: column;
+
+    img {
+      width: 323px;
+      height: 64px;
+    }
+
+    form {
+      margin-top: 40px;
+      text-align: right;
+      input[type="text"], input[type="password"] {
+        display: block;
+        border: 0;
+        border-bottom: 1px solid @gray-lightest;
+        color: @gray-normal;
+        font-weight: 300;
+        padding: 10px 5px;
+        transition: all 0.25s;
+        font-size: 18px;
+        width: 340px;
+        &.error {
+          border-bottom: 1px solid @brand-negative;
+          &:focus {
+            border-bottom: 1px solid @brand-negative;
+          }
+        }
+        &:focus {
+          outline: 0;
+          border-bottom: 1px solid @brand-action;
+        }
+        &::-webkit-input-placeholder {
+          color: @gray-lighter;
+          font-weight: 400;
+        }
+      }
+
+      div.checkbox {
+        text-align: left;
+        color: @gray-normal;
+      }
+
+      div.submit {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-end;
+        align-items: center;
+
+        .spinner {
+          margin-right: 10px;
+          flex: 0 auto;
+        }
+
+        button[type="submit"] {
+          flex: 0 auto;
+          display: block;
+          font-size: 18px;
+          padding: 10px 20px;
+          color: white;
+          background-color: @brand-action;
+          border: 0;
+          &:hover {
+            background-color: darken(@brand-action, 5%);
+          }
+        }
+      }
+
+      hr {
+        border-top: 1px solid #D7DFEA;
+      }
+
+      .extra {
+        text-align: center;
+        font-size: 14px;
+        color: @gray-normal;
+        margin-top: 16px;
+        .btn {
+          margin-left: 6px;
+          position: relative;
+          top: -3px;
+        }
+
+        a {
+          color: @brand-primary;
+        }
+      }
+      .link {
+        display: block;
+        font-size: 10px;
+        text-align: left;
+        position: relative;
+        top: -15px;
+        left: 5px;
+      }
+      .error-message {
+        font-size: 12px;
+        margin-top: 5px;
+        margin-bottom: 0;
+        min-height: 17px;
+        color: @brand-negative;
+      }
+      div.error {
+        font-size: 13px;
+        color: @gray-normal;
+        color: @brand-negative;
+        background-color: lighten(@brand-negative, 32%);
+        padding: 10px;
+        border-radius: 4px;
+        width: 340px;
+        display: none;
+      }
+    }
+  }
+
+  .btn-skip {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    font-size: 14px;
+  }
+
   .desc {
     display: flex;
     width: 50%;

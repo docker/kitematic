@@ -21,8 +21,8 @@ var Containers = React.createClass({
   getInitialState: function () {
     return {
       sidebarOffset: 0,
-      containers: {},
-      sorted: [],
+      containers: containerStore.getState().containers,
+      sorted: this.sorted(containerStore.getState().containers),
       updateAvailable: false,
       currentButtonLabel: ''
     };
@@ -43,9 +43,8 @@ var Containers = React.createClass({
     containerStore.unlisten(this.update);
   },
 
-  update: function () {
-    let containers = containerStore.getState().containers;
-    let sorted =  _.values(containers).sort(function (a, b) {
+  sorted: function (containers) {
+    return _.values(containers).sort(function (a, b) {
       if (a.State.Downloading && !b.State.Downloading) {
         return -1;
       } else if (!a.State.Downloading && b.State.Downloading) {
@@ -60,6 +59,11 @@ var Containers = React.createClass({
         }
       }
     });
+  },
+
+  update: function () {
+    let containers = containerStore.getState().containers;
+    let sorted = this.sorted(containerStore.getState().containers);
 
     let name = this.context.router.getCurrentParams().name;
     if (containerStore.getState().pending) {

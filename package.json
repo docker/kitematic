@@ -83,7 +83,8 @@
     "request": "^2.55.0",
     "request-progress": "^0.3.1",
     "rimraf": "^2.3.2",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "validator": "^3.39.0"
   },
   "devDependencies": {
     "babel": "^5.1.10",
