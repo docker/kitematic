@@ -146,7 +146,7 @@ export default {
     let imageName = repository + ':' + tag;
 
     let placeholderData = {
-      Id: require('crypto').randomBytes(32).toString('hex'),
+      Id: util.randomId(),
       Name: name,
       Image: imageName,
       Config: {

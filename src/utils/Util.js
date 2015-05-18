@@ -2,6 +2,7 @@ var exec = require('exec');
 var Promise = require('bluebird');
 var fs = require('fs');
 var path = require('path');
+var crypto = require('crypto');
 
 module.exports = {
   exec: function (args, options) {
@@ -130,6 +131,9 @@ module.exports = {
     }
 
     return 0;
+  },
+  randomId: function () {
+    return crypto.randomBytes(32).toString('hex');
   },
   webPorts: ['80', '8000', '8080', '3000', '5000', '2368', '9200', '8983']
 };
