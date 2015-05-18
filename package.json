@@ -1,6 +1,6 @@
 {
   "name": "Kitematic",
-  "version": "0.5.25",
+  "version": "0.5.26",
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X.",
   "homepage": "https://kitematic.com/",
@@ -48,14 +48,14 @@
       "<rootDir>/node_modules/source-map-support"
     ]
   },
-  "docker-version": "1.6.1",
+  "docker-version": "1.6.2",
   "docker-machine-version": "0.2.0",
-  "electron-version": "0.24.0",
-  "virtualbox-version": "4.3.26",
-  "virtualbox-filename": "VirtualBox-4.3.26.pkg",
-  "virtualbox-filename-win": "VirtualBox-4.3.26.exe",
-  "virtualbox-checksum": "668f61c95efe37f8fc65cafe95b866fba64e37f2492dfc1e2b44a7ac3dcafa3b",
-  "virtualbox-checksum-win": "9cb265babf307d825f5178693af95ffca077f80ae22cf43868c3538c159123ff",
+  "electron-version": "0.26.0",
+  "virtualbox-version": "4.3.28",
+  "virtualbox-filename": "VirtualBox-4.3.28.pkg",
+  "virtualbox-filename-win": "VirtualBox-4.3.28.exe",
+  "virtualbox-checksum": "60521caff652fc32ad733eee2eea27f03d0b4f7239af3bf4b21dc6f0251cf47a",
+  "virtualbox-checksum-win": "82039b615bf18dfff92ac1d9a15b2cbd5c59c608631ccf77e2371d0fd67a6cf7",
   "dependencies": {
     "alt": "^0.16.2",
     "ansi-to-html": "0.3.0",

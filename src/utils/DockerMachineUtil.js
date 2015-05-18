@@ -42,9 +42,9 @@ var DockerMachine = {
         machines[machine.name] = machine;
       });
       if (machines[NAME]) {
-        return machines[NAME];
+        return Promise.resolve(machines[NAME]);
       } else {
-        throw new Error('Machine does not exist.');
+        return Promise.reject(new Error('Machine does not exist.'));
       }
     });
   },
