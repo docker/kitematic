@@ -27,7 +27,7 @@ Let's start using it to develop a node.js app. For now, let's figure out which
 IP address and port RethinkDB is listening on. To find out, click the `Settings`
 tab and then the `Ports` section:
 
-![Rethink create button](../assets/rethink-create.png)
+![Rethink create button](../assets/rethink-ports.png)
 
 You can see there that for RethinkDB port `28015`, the container is listening on
 host `192.168.99.100` and port `49154` (in this example - ports may be different
@@ -39,7 +39,11 @@ for you). This means you can now reach RethinkDB via a client driver at
 First, if you don't have it yet, [download and install
 Node.js](http://nodejs.org/).
 
-Now, you'll create the RethinkDB example chat to test drive your new database.
+> **Note**: this example needs Xcode installed. We'll replace it with something
+> with fewer dependencies soon.
+
+Now, you'll create the RethinkDB example chat application running on your local
+OS X system to test drive your new containerized database.
 In your terminal, type:
 
      $ export RDB_HOST=192.168.99.100 # replace with IP from above step

@@ -18,14 +18,13 @@ Let's get to it!
 #### Running the Nginx Web Server Container
 
 First, if you haven't yet done so, [download and start
-Kitematic](./index.md). Once installed and running, the app
-should look like this:
+Kitematic](./index.md). Once installed and running, the app should look like this:
 
 ![Nginx create](../assets/nginx-create.png)
 
 Click on the _Create_ button of the `hello-world-nginx` listing as shown above.
-This will download and run a tiny Nginx web server in a container via Kitematic,
-allowing you to serve website data on your Mac.
+Kitematic will download (also known as pull the image) and then run a tiny Nginx web server
+in a Docker container, allowing it to serve website data to your Mac.
 
 ![download Nginx hello world](../assets/nginx-hello-world.png)
 
@@ -45,7 +44,8 @@ This container exposes website data via a _Docker volume_. Kitematic makes
 managing Docker volumes easy - you can edit the data in Finder or with your
 favorite text editor. By default, Kitematic places volumes under `~/Kitematic`
 but you can change this in the container settings. To access the files via
-finder, click on the in-app folder icon for a container:
+finder, click on the in-app folder icon for a container and "Enable all volumes
+to edit via Finder":
 
 ![Nginx data volume](../assets/nginx-data-volume.png)
 
@@ -70,7 +70,7 @@ button as shown below. Your Nginx container should now be serving 2048.
 
 **What just happened?**
 
-Kitematic automatically reveals Docker container volumes via directories on your
+Kitematic can map Docker container volumes to directories on your
 Mac. In this case you changed the container's volume data via the Finder to
 serve a website we downloaded.
 

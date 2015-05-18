@@ -9,6 +9,9 @@ using Kitematic and Docker.
 
 ### Create Minecraft Server Container
 
+First, if you haven't yet done so, [download and start
+Kitematic](./index.md). Once installed and running, the app should look like this:
+
 Create a container from the recommended Minecraft image by clicking the "Create"
 button.
 
@@ -44,8 +47,9 @@ Click on the play button to connect to your Minecraft server and enjoy!
 
 ### Change map using Docker volume
 
-Open the "data" folder from Kitematic. We use Docker Volume to map the folder
-from the Minecraft Docker container onto your computer.
+Open the "data" folder from Kitematic (You'll need to "Enable all volumes to edit
+files via Finder"). We use Docker Volume to map the folder from the Minecraft
+Docker container onto your computer.
 
 ![Minecraft data volume](../assets/minecraft-data-volume.png)
 
