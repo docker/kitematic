@@ -41,11 +41,17 @@
       display: flex;
       align-items: center;
       .loader {
+        flex: 1 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
         margin: 0 auto;
         margin-top: -20%;
         text-align: center;
         width: 300px;
         h2 {
+          color: @gray-normal;
           margin-bottom: 20px;
         }
       }
@@ -75,14 +81,8 @@
         position: relative;
         .loading {
           position: absolute;
-          left: 10px;
           top: 7px;
-          width: 16px;
-          height: 16px;
-          -webkit-animation-name: spin;
-          -webkit-animation-duration: 1.8s;
-          -webkit-animation-iteration-count: infinite;
-          -webkit-animation-timing-function: linear;
+          left: 10px;
         }
         .search-icon {
           font-size: 18px;

@@ -41,13 +41,8 @@ routerContainer.set(router);
 SetupStore.setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   docker.init();
-  //if (!localStorage.getItem('account.prompted')) {
-  if (true) {
-    if (!hub.loggedin()) {
-      router.transitionTo('signup');
-    } else {
-      router.transitionTo('search');
-    }
+  if (!localStorage.getItem('account.prompted') && !hub.loggedin()) {
+    router.transitionTo('signup');
   } else {
     router.transitionTo('search');
   }

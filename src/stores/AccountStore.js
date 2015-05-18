@@ -49,7 +49,6 @@ class AccountStore {
   }
 
   errors ({errors}) {
-    console.log(errors);
     this.setState({errors, loading: false});
   }
 }

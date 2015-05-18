@@ -2,7 +2,6 @@ var _ = require('underscore');
 var $ = require('jquery');
 var React = require('react/addons');
 var RetinaImage = require('react-retina-image');
-var Radial = require('./Radial.react');
 var ImageCard = require('./ImageCard.react');
 var Promise = require('bluebird');
 var metrics = require('../utils/MetricsUtil');
@@ -121,7 +120,7 @@ module.exports = React.createClass({
           <div className="no-results">
             <div className="loader">
               <h2>Loading Images</h2>
-              <Radial spin="true" progress={90} thick={true} transparent={true} />
+              <div className="spinner la-ball-clip-rotate la-dark la-lg"><div></div></div>
             </div>
           </div>
         );
@@ -135,7 +134,11 @@ module.exports = React.createClass({
     }
     var loadingClasses = classNames({
       hidden: !this.state.loading,
-      loading: true
+      spinner: true,
+      loading: true,
+      'la-ball-clip-rotate': true,
+      'la-dark': true,
+      'la-sm': true
     });
     var magnifierClasses = classNames({
       hidden: this.state.loading,
@@ -154,7 +157,7 @@ module.exports = React.createClass({
               <div className="search-bar">
                 <input type="search" ref="searchInput" className="form-control" placeholder="Search Docker Hub for an image" onChange={this.handleChange}/>
                 <div className={magnifierClasses}></div>
-                <RetinaImage className={loadingClasses} src="loading.png"/>
+                <div className={loadingClasses}><div></div></div>
               </div>
             </div>
           </div>
