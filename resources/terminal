@@ -9,37 +9,42 @@ end try
 return doesExist
 EOF`
 
-if [ $ITERM_EXISTS == "true" ]; then
+function open_iterm () {
   osascript > /dev/null <<EOF
-tell application "iTerm"
-  activate
-  try
-    tell the first terminal
-      launch session "Default Session"
-      tell the last session
-        write text "bash -c \"clear && $*\""
+  tell application "iTerm"
+    activate
+    try
+      tell the first terminal
+        launch session "Default Session"
+        tell the last session
+          write text "bash -c \"clear && $*\""
+        end tell
       end tell
-    end tell
-  on error
-    tell (make new terminal)
-      launch session "Default Session"
-      tell the last session
-        write text "bash -c \"clear && $*\""
+    on error
+      tell (make new terminal)
+        launch session "Default Session"
+        tell the last session
+          write text "bash -c \"clear && $*\""
+        end tell
       end tell
-    end tell
-  end try
-end tell
+    end try
+  end tell
 EOF
+}
 
+function open_terminal () {
+  osascript > /dev/null <<EOF
+  tell application "Terminal" to activate
+  delay 0.4
+  tell application "System Events" to keystroke "t" using command down
+  tell application "Terminal"
+    do script "bash -c \"clear && $*\"" in window 1
+  end tell
+EOF
+}
+
+if [ $ITERM_EXISTS == "true" ]; then
+  open_iterm $* || open_terminal $*
 else
-osascript > /dev/null <<EOF
-tell application "Terminal" to activate
-delay 0.4
-tell application "System Events" to keystroke "t" using command down
-tell application "Terminal"
-  do script "bash -c \"clear && $*\"" in window 1
-end tell
-
-EOF
-
+  open_terminal $*
 fi
