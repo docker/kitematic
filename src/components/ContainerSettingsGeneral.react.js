@@ -5,6 +5,7 @@ var metrics = require('../utils/MetricsUtil');
 var dialog = remote.require('dialog');
 var ContainerUtil = require('../utils/ContainerUtil');
 var containerActions = require('../actions/ContainerActions');
+var util = require('../utils/Util');
 
 var ContainerSettingsGeneral = React.createClass({
   mixins: [React.addons.LinkedStateMixin],
@@ -16,19 +17,16 @@ var ContainerSettingsGeneral = React.createClass({
   getInitialState: function () {
     let env = ContainerUtil.env(this.props.container) || [];
     env.push(['', '']);
+
+    env = _.map(env, e => {
+      return [util.randomId(), e[0], e[1]];
+    });
+
     return {
       slugName: null,
       nameError: null,
       env: env
     };
-  },
-
-  shouldComponentUpdate: function (nextProps, nextState) {
-    if (nextState.slugName !== this.state.slugName || nextState.nameError !== this.state.nameError) {
-      return true;
-    }
-
-    return true;
   },
 
   handleNameChange: function (e) {
@@ -87,7 +85,7 @@ var ContainerSettingsGeneral = React.createClass({
     metrics.track('Saved Environment Variables');
     let list = [];
     _.each(this.state.env, kvp => {
-      let [key, value] = kvp;
+      let [, key, value] = kvp;
       if ((key && key.length) || (value && value.length)) {
         list.push(key + '=' + value);
       }
@@ -97,7 +95,7 @@ var ContainerSettingsGeneral = React.createClass({
 
   handleChangeEnvKey: function (index, event) {
     let env = _.map(this.state.env, _.clone);
-    env[index][0] = event.target.value;
+    env[index][1] = event.target.value;
     this.setState({
       env: env
     });
@@ -105,7 +103,7 @@ var ContainerSettingsGeneral = React.createClass({
 
   handleChangeEnvVal: function (index, event) {
     let env = _.map(this.state.env, _.clone);
-    env[index][1] = event.target.value;
+    env[index][2] = event.target.value;
     this.setState({
       env: env
     });
@@ -113,7 +111,7 @@ var ContainerSettingsGeneral = React.createClass({
 
   handleAddEnvVar: function () {
     let env = _.map(this.state.env, _.clone);
-    env.push(['', '']);
+    env.push([util.randomId(), '', '']);
     this.setState({
       env: env
     });
@@ -123,8 +121,9 @@ var ContainerSettingsGeneral = React.createClass({
   handleRemoveEnvVar: function (index) {
     let env = _.map(this.state.env, _.clone);
     env.splice(index, 1);
+
     if (env.length === 0) {
-      env.push(['', '']);
+      env.push([util.randomId(), '', '']);
     }
 
     this.setState({
@@ -183,7 +182,7 @@ var ContainerSettingsGeneral = React.createClass({
     );
 
     let vars = _.map(this.state.env, (kvp, index) => {
-      let [key, val] = kvp;
+      let [id, key, val] = kvp;
       let icon;
       if (index === this.state.env.length - 1) {
         icon = <a onClick={this.handleAddEnvVar} className="only-icon btn btn-positive small"><span className="icon icon-add-1"></span></a>;
@@ -192,7 +191,7 @@ var ContainerSettingsGeneral = React.createClass({
       }
 
       return (
-        <div className="keyval-row">
+        <div key={id} className="keyval-row">
           <input type="text" className="key line" defaultValue={key} onChange={this.handleChangeEnvKey.bind(this, index)}></input>
           <input type="text" className="val line" defaultValue={val} onChange={this.handleChangeEnvVal.bind(this, index)}></input>
           {icon}

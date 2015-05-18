@@ -54,6 +54,10 @@ export default {
         stream.setEncoding('utf8');
         stream.on('data', function () {});
         stream.on('end', () => {
+          if (!this.placeholders[container.Name]) {
+            return;
+          }
+
           delete this.placeholders[container.Name];
           localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
           this.createContainer(container.Name, {Image: container.Config.Image});
@@ -146,7 +150,7 @@ export default {
     let imageName = repository + ':' + tag;
 
     let placeholderData = {
-      Id: require('crypto').randomBytes(32).toString('hex'),
+      Id: util.randomId(),
       Name: name,
       Image: imageName,
       Config: {
