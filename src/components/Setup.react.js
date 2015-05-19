@@ -113,23 +113,25 @@ var Setup = React.createClass({
     return (
       <div className="setup">
         <Header />
-        <div className="image">
-          <div className="contents">
-            <RetinaImage src="install-error.png" checkIfRetinaImgExists={false}/>
-            <div className="detail">
+        <div className="setup-content">
+          <div className="image">
+            <div className="contents">
+              <RetinaImage src="install-error.png" checkIfRetinaImgExists={false}/>
+              <div className="detail">
+              </div>
             </div>
           </div>
-        </div>
-        <div className="desc">
-          <div className="content">
-            <h4>Setup Error</h4>
-            <h1>We&#39;re Sorry!</h1>
-            <p>There seems to have been an unexpected error with Kitematic:</p>
-            <p className="error">{this.state.error.message || this.state.error}</p>
-            <p className="setup-actions">
-              <button className="btn btn-action" onClick={this.handleErrorRetry}>Retry Setup</button>
-              <button className="btn btn-action" onClick={this.handleErrorRemoveRetry}>Delete VM and Retry Setup</button>
-            </p>
+          <div className="desc">
+            <div className="content">
+              <h4>Setup Error</h4>
+              <h1>We&#39;re Sorry!</h1>
+              <p>There seems to have been an unexpected error with Kitematic:</p>
+              <p className="error">{this.state.error.message || this.state.error}</p>
+              <p className="setup-actions">
+                <button className="btn btn-action" onClick={this.handleErrorRetry}>Retry Setup</button>
+                <button className="btn btn-action" onClick={this.handleErrorRemoveRetry}>Delete VM and Retry Setup</button>
+              </p>
+            </div>
           </div>
         </div>
       </div>

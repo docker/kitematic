@@ -29,11 +29,11 @@ module.exports = {
     request.post('https://hub.docker.com/v2/users/login/', {form: {username, password}}, (err, response, body) => {
       let data = JSON.parse(body);
       if (response.statusCode === 200) {
-        accountServerActions.loggedin({username, verified: true});
         // TODO: save username to localstorage
         if (data.token) {
           localStorage.setItem('auth.jwt', data.token);
         }
+        accountServerActions.loggedin({username, verified: true});
       } else if (response.statusCode === 401) {
         if (data && data.detail && data.detail.indexOf('Account not active yet') !== -1) {
           accountServerActions.loggedin({username, verified: false});
@@ -56,7 +56,7 @@ module.exports = {
     }, (err, response, body) => {
       // TODO: save username to localstorage
       if (response.statusCode === 204) {
-        accountServerActions.signedup({username, verified: false});
+        accountServerActions.signedup({username});
       } else {
         let data = JSON.parse(body);
         let errors = {};

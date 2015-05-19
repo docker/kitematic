@@ -39,16 +39,18 @@ module.exports = React.createClass({
 
     return (
       <div className="setup">
-        <Header />
-        <div className="form-section">
-          <RetinaImage src={'connect-to-hub.png'} checkIfRetinaImgExists={false}/>
-          <Router.RouteHandler errors={this.state.errors} loading={this.state.loading} {...this.props}/>
-        </div>
-        <div className="desc">
-          <div className="content">
-            <h1>Connect to Docker Hub</h1>
-            <p>Pull and run private Docker Hub images by connecting your Docker Hub account to Kitematic.</p>
-            {close}
+        <Header hideLogin={true}/>
+        <div className="setup-content">
+          <div className="form-section">
+            <RetinaImage src={'connect-to-hub.png'} checkIfRetinaImgExists={false}/>
+            <Router.RouteHandler errors={this.state.errors} loading={this.state.loading} {...this.props}/>
+          </div>
+          <div className="desc">
+            <div className="content">
+              <h1>Connect to Docker Hub</h1>
+              <p>Pull and run private Docker Hub images by connecting your Docker Hub account to Kitematic.</p>
+              {close}
+            </div>
           </div>
         </div>
       </div>

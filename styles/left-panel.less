@@ -1,7 +1,7 @@
 /* Sidebar */
 
 .sidebar {
-  padding-top: 28px;
+  padding-top: 10px;
   background-color: white;
   margin: 0;
   border-right: 1px solid @color-divider;
@@ -9,6 +9,7 @@
   flex-direction: column;
   min-width: 260px;
   box-sizing: border-box;
+  position: relative;
   .sidebar-header {
     flex: 0 auto;
     min-width: 240px;
@@ -44,12 +45,15 @@
   }
   .sidebar-containers {
     position: relative;
+    display: flex;
+    flex-direction: column;
     flex: 1 auto;
     overflow-y: auto;
     overflow-x: hidden;
     box-sizing: border-box;
     max-width: 260px;
     ul {
+      flex: 1 auto;
       margin: 0;
       padding: 0;
       display: flex;
@@ -225,13 +229,13 @@
 /* Sidebar Buttons */
 
 .sidebar-buttons {
+  border-top: 1px solid #F0F4F8;
+  min-height: 32px;
+  flex: 0 auto;
+  display: flex;
+  flex-direction: row;
   background-color: white;
-  width: 259px;
   opacity: 0.9;
-  position: fixed;
-  bottom: 0;
-  padding: 15px;
-  padding-top: 5px;
   z-index: 10000;
   .btn-label {
     color: @gray-lighter;
@@ -239,8 +243,35 @@
     height: 18px;
   }
   .btn-sidebar {
-    display: inline-block;
-    margin-right: 7px;
+    font-size: 11px;
+    font-weight: 500;
+    color: @brand-primary;
+
+    flex: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+
+    &:active {
+      img, .text {
+        -webkit-filter: brightness(0.8);
+      }
+    }
+  }
+
+  .btn-terminal {
+    flex: 1 auto;
+    border-right: 1px solid #F0F4F8;
+    img {
+      margin: 0 10px 0 0;
+      height: 21px;
+      width: 25px;
+    }
+  }
+
+  .btn-feedback {
+    border-right: 1px solid #F0F4F8;
   }
   .btn {
     position: relative;

@@ -5,14 +5,19 @@ import router from '../router';
 class AccountServerActions {
   constructor () {
     this.generateActions(
-      'loggedin',
       'errors'
     );
   }
 
-  signedup ({username, verified}) {
+  loggedin ({username, verified}) {
+    console.log(username, verified);
     router.get().transitionTo('search');
     this.dispatch({username, verified});
+  }
+
+  signedup ({username}) {
+    router.get().transitionTo('search');
+    this.dispatch({username});
   }
 }
 
