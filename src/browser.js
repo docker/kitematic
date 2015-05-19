@@ -31,9 +31,10 @@ app.on('ready', function () {
     height: size.height || 700,
     'min-width': 1000,
     'min-height': 700,
+    'standard-window': false,
     resizable: true,
     frame: false,
-    show: true
+    show: true,
   });
 
   mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/index.html')));
