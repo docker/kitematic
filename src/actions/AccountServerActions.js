@@ -11,7 +11,7 @@ class AccountServerActions {
 
   loggedin ({username, verified}) {
     console.log(username, verified);
-    router.get().transitionTo('search');
+    router.get().goBack();
     this.dispatch({username, verified});
   }
 

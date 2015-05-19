@@ -20,7 +20,7 @@ module.exports = React.createClass({
   },
 
   handleClose: function () {
-    this.transitionTo('search');
+    this.goBack();
     metrics.track('Closed Signup');
   },
 
