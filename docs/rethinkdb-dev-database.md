@@ -36,14 +36,15 @@ for you). This means you can now reach RethinkDB via a client driver at
 
 ### (Advanced) Saving Data into RethinkDB with a local Node.js App
 
+Now, you'll create the RethinkDB example chat application running on your local
+OS X system to test drive your new containerized database.
+
 First, if you don't have it yet, [download and install
 Node.js](http://nodejs.org/).
 
 > **Note**: this example needs Xcode installed. We'll replace it with something
 > with fewer dependencies soon.
 
-Now, you'll create the RethinkDB example chat application running on your local
-OS X system to test drive your new containerized database.
 In your terminal, type:
 
      $ export RDB_HOST=192.168.99.100 # replace with IP from above step

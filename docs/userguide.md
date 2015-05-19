@@ -34,8 +34,8 @@ the "New Container" link.
 The container list includes all containers, even those not started by Kitematic,
 giving you a quick over-view of the state of your Docker daemon.
 
-You can click on any container to view its logs (the output of the PID-0 process),
-restart, stop or exec `sh` in that container. See [Working with a
+You can click on any container to view its logs (the output of the main container
+process), restart, stop or exec `sh` in that container. See [Working with a
 container](#working-with-a-container) for more details.
 
 ## Creating a new container
@@ -48,26 +48,31 @@ and run the container.
 
 ## Working with a container
 
-If you select a non-running container, either stopped, or paused, you will be able to
-"Restart" or "Stop" the container using the icons. You can also view the entire PID-0
-output logs, and in the Settings section you can make changes which will be used if you
-"Restart" this container.
+If you select a non-running container, either stopped, or paused, you will be able
+to "Restart" or "Stop" the container using the icons. You can also view the entire
+main container process' output logs, and in the Settings section you can make
+changes which will be used if you "Restart" this container.
 
 By selecting a running container from the left list, you can see some state information
 for your container - either a preview of the HTML output for a container that has a web
-server, the PID-0 logs, and any container volumes that have been configured.
+server, the main container process' logs, and any container volumes that have been
+configured.
 
 ![Redis container in Kitematic](../assets/cli-redis-container.png)
 
 The summary page will show different things depending on the image metadata. If
-port 80 is `EXPOSED`, then Kitematic assumes its a web page, and will show a preview
-of the site at `/`. If other ports are exposed, then it will show a list of those
-ports, and the Docker daemon IP and port they are mapped to. If there are any `VOLUMES`,
-then these will be shown. At minimum, the summary screen will show the PID-0 log output.
+a known "web" port (see below) is `EXPOSED`, then Kitematic assumes its a web page,
+and will show a preview of the site at `/`. If other ports are exposed, then it
+will show a list of those ports, and the Docker daemon IP and port they are mapped
+to. If there are any `VOLUMES`, then these will be shown. At minimum, the summary
+screen will show the main container process' log output.
+
+The currently detected "web" ports are, `80`, `8000`, `8080`, `3000`, `5000`,
+`2368`, `9200`, and `8983`.
 
 ### Viewing container logs
 
-You can view the entire PID-0 container log output either by cicking on the "Logs"
+You can view the entire main container process' log output either by cicking on the "Logs"
 preview image, or by clicking on the "Logs" tab.
 
 You can then scroll through the logs from the current running container. Note that
@@ -79,8 +84,8 @@ so will reset this log view.
 The "Terminal" icon at the top of the container summary will `docker exec sh <your container>`.
 This will allow you to make quick changes, or to debug a problem. 
 
-> **Note**: Your execed `sh` process will not have the same environment settings
-> as the main PID-0 process and its children.
+> **Note**: Your exec'ed `sh` process will not have the same environment settings
+> as the main container process and its children.
 
 ### Managing Volumes
 
