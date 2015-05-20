@@ -192,7 +192,7 @@ var ContainerSettingsGeneral = React.createClass({
       }
 
       return (
-        <div className="keyval-row">
+        <div className="keyval-row" key={key}>
           <input type="text" className="key line" defaultValue={key} onChange={this.handleChangeEnvKey.bind(this, index)}></input>
           <input type="text" className="val line" defaultValue={val} onChange={this.handleChangeEnvVal.bind(this, index)}></input>
           {icon}
