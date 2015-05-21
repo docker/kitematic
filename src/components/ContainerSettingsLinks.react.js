@@ -32,7 +32,6 @@ var ContainerSettingsLinks = React.createClass({
   },
 
   handleSaveLinksVars: function () {
-    console.log("Saving links");
     metrics.track('Saved Linked Containers');
     let list = [];
     let keys = [];
@@ -50,8 +49,8 @@ var ContainerSettingsLinks = React.createClass({
         }
       }
     });
-    console.log("Saved links: %o", list);
-    containerActions.update(this.props.container.Name, {HostConfig: {Links: list}});
+    let runtimeConfig = _.extend(this.props.container.HostConfig, {Links: list});
+    containerActions.update(this.props.container.Name, {HostConfig: runtimeConfig});
   },
 
   handleChangeLinksKey: function (index, value) {
@@ -139,11 +138,11 @@ var ContainerSettingsLinks = React.createClass({
       <div className="settings-panel">
         <div className="settings-section">
           <h3>Configure Linked Containers</h3>
-          <div className="links-labels">
+          <div className="links-vars-labels">
             <div className="label-key">DOCKER CONTAINER</div>
             <div className="label-val">DOCKER ALIAS</div>
           </div>
-          <div className="links">
+          <div className="links-vars">
             {vars}
           </div>
           <a className="btn btn-action" disabled={this.props.container.State.Updating} onClick={this.handleSaveLinksVars}>Save</a>
