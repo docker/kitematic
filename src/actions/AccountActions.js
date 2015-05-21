@@ -2,7 +2,7 @@ import alt from '../alt';
 import hub from '../utils/HubUtil';
 
 class AccountActions {
-  login(username, password) {
+  login (username, password) {
     this.dispatch({});
     hub.login(username, password);
   }
@@ -12,8 +12,14 @@ class AccountActions {
     hub.signup(username, password, email, subscribe);
   }
 
+  logout () {
+    this.dispatch({});
+    hub.logout();
+  }
+
   skip () {
     this.dispatch({});
+    hub.prompted(true);
   }
 }
 

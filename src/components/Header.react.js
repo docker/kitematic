@@ -8,7 +8,9 @@ var metrics = require('../utils/MetricsUtil');
 var Menu = remote.require('menu');
 var MenuItem = remote.require('menu-item');
 var accountStore = require('../stores/AccountStore');
+var accountActions = require('../actions/AccountActions');
 var Router = require('react-router');
+var classNames = require('classNames');
 
 var Header = React.createClass({
   mixins: [Router.Navigation],
@@ -23,6 +25,8 @@ var Header = React.createClass({
   componentDidMount: function () {
     document.addEventListener('keyup', this.handleDocumentKeyUp, false);
 
+    accountStore.listen(this.update);
+
     ipc.on('application:update-available', () => {
       this.setState({
         updateAvailable: true
@@ -32,6 +36,14 @@ var Header = React.createClass({
   },
   componentWillUnmount: function () {
     document.removeEventListener('keyup', this.handleDocumentKeyUp, false);
+    accountStore.unlisten(this.update);
+  },
+  update: function () {
+    let accountState = accountStore.getState();
+    this.setState({
+      username: accountState.username,
+      verified: accountState.verified
+    });
   },
   handleDocumentKeyUp: function (e) {
     if (e.keyCode === 27 && remote.getCurrentWindow().isFullScreen()) {
@@ -60,11 +72,14 @@ var Header = React.createClass({
   },
   handleUserClick: function (e) {
     let menu = new Menu();
-    menu.append(new MenuItem({ label: 'Sign Out', click: function() { console.log('item 1 clicked'); } }));
+    menu.append(new MenuItem({ label: 'Sign Out', click: this.handleLogoutClick.bind(this)}));
     menu.popup(remote.getCurrentWindow(), e.currentTarget.offsetLeft, e.currentTarget.offsetTop + e.currentTarget.clientHeight + 10);
   },
   handleLoginClick: function () {
     this.transitionTo('login');
+  },
+  handleLogoutClick: function () {
+    accountActions.logout();
   },
   render: function () {
     let updateWidget = this.state.updateAvailable ? <a className="btn btn-action small no-drag" onClick={this.handleAutoUpdateClick}>UPDATE NOW</a> : null;
@@ -91,7 +106,11 @@ var Header = React.createClass({
     if (this.props.hideLogin) {
       username = null;
     } else if (this.state.username) {
-      username = <span>{this.state.username}</span>;
+      username = (
+        <span className="no-drag" onClick={this.handleUserClick}>
+          <RetinaImage src="user.png"/> {this.state.username} <RetinaImage src="userdropdown.png"/>
+        </span>
+      );
     } else {
       username = (
         <span className="no-drag" onClick={this.handleLoginClick}>
@@ -100,8 +119,14 @@ var Header = React.createClass({
       );
     }
 
+    let headerClasses = classNames({
+      bordered: !this.props.hideLogin,
+      header: true,
+      'no-drag': true
+    });
+
     return (
-      <div className="header no-drag">
+      <div className={headerClasses}>
         {buttons}
         <div className="updates">
           {updateWidget}

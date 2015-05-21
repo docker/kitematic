@@ -1,7 +1,4 @@
-var _ = require('underscore');
-var $ = require('jquery');
 var React = require('react/addons');
-var RetinaImage = require('react-retina-image');
 var ImageCard = require('./ImageCard.react');
 var Promise = require('bluebird');
 var metrics = require('../utils/MetricsUtil');
@@ -15,12 +12,19 @@ module.exports = React.createClass({
     return {
       query: '',
       loading: false,
-      results: _recommended
+      category: 'recommended',
+      recommendedrepos: [],
+      publicrepos: [],
+      userrepos: [],
+      results: [],
+      tab: 'all'
     };
   },
   componentDidMount: function () {
+    // fetch recommended
+    // fetch public repos
+    // if logged in: my repos
     this.refs.searchInput.getDOMNode().focus();
-    this.recommended();
   },
   componentWillUnmount: function () {
     if (_searchPromise) {
@@ -47,49 +51,11 @@ module.exports = React.createClass({
       loading: true
     });
 
-    _searchPromise = Promise.delay(200).cancellable().then(() => Promise.resolve($.get('https://registry.hub.docker.com/v1/search?q=' + query))).then(data => {
+    _searchPromise = Promise.delay(200).cancellable().then(() => {
       metrics.track('Searched for Images');
-      this.setState({
-        results: data.results,
-        query: query,
-        loading: false
-      });
       _searchPromise = null;
-    }).catch(Promise.CancellationError, () => {
-    });
-  },
-  recommended: function () {
-    if (_recommended.length) {
-      return;
-    }
-    Promise.resolve($.ajax({
-      url: 'https://kitematic.com/recommended.json',
-      cache: false,
-      dataType: 'json',
-    })).then(res => res.repos).map(repo => {
-      var query = repo.repo;
-      var vals = query.split('/');
-      if (vals.length === 1) {
-        query = 'library/' + vals[0];
-      }
-      return $.get('https://registry.hub.docker.com/v1/repositories_info/' + query).then(data => {
-        var res = _.extend(data, repo);
-        res.description = data.short_description;
-        res.is_official = data.namespace === 'library';
-        res.name = data.repo;
-        res.star_count = data.stars;
-        return res;
-      });
-    }).then(results => {
-      _recommended = results.filter(r => !!r);
-      if (!this.state.query.length && this.isMounted()) {
-        this.setState({
-          results: _recommended
-        });
-      }
-    }).catch(err => {
-      console.log(err);
-    });
+      // TODO: call search action
+    }).catch(Promise.CancellationError, () => {});
   },
   handleChange: function (e) {
     var query = e.target.value;
@@ -99,8 +65,7 @@ module.exports = React.createClass({
     this.search(query);
   },
   render: function () {
-    var title = this.state.query ? 'Results' : 'Recommended';
-    var data = this.state.results;
+    var data = this.state.recommendedrepos;
     var results;
     if (data.length) {
       var items = data.map(function (image) {
@@ -132,7 +97,8 @@ module.exports = React.createClass({
         );
       }
     }
-    var loadingClasses = classNames({
+
+    let loadingClasses = classNames({
       hidden: !this.state.loading,
       spinner: true,
       loading: true,
@@ -140,12 +106,18 @@ module.exports = React.createClass({
       'la-dark': true,
       'la-sm': true
     });
-    var magnifierClasses = classNames({
+
+    let magnifierClasses = classNames({
       hidden: this.state.loading,
       icon: true,
       'icon-magnifier': true,
       'search-icon': true
     });
+
+    let allTabClasses = classNames({
+      'results-filter': 
+    });
+
     return (
       <div className="details">
         <div className="new-container">
@@ -162,7 +134,12 @@ module.exports = React.createClass({
             </div>
           </div>
           <div className="results">
-            <h4>{title}</h4>
+            <div className="results-filters">
+              <span className="results-filter results-filter-title">FILTER BY</span>
+              <span className="results-filter results-all tab">All</span>
+              <span className="results-filter results-recommended tab">Recommended</span>
+              <span className="results-filter results-userrepos tab">My Repositories</span>
+            </div>
             {results}
           </div>
         </div>

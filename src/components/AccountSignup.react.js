@@ -18,6 +18,10 @@ module.exports = React.createClass({
     };
   },
 
+  componentDidMount: function () {
+    React.findDOMNode(this.refs.usernameInput).focus();
+  },
+
   componentWillReceiveProps: function (nextProps) {
     this.setState({errors: nextProps.errors});
   },
@@ -54,7 +58,7 @@ module.exports = React.createClass({
 
   handleClickLogin: function () {
     if (!this.props.loading) {
-      this.transitionTo('login');
+      this.replaceWith('login');
     }
   },
 

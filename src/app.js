@@ -9,6 +9,7 @@ var metrics = require('./utils/MetricsUtil');
 var router = require('./router');
 var template = require('./menutemplate');
 var webUtil = require('./utils/WebUtil');
+var hubUtil = require('./utils/HubUtil');
 var urlUtil = require ('./utils/URLUtil');
 var app = remote.require('app');
 var request = require('request');
@@ -23,6 +24,8 @@ webUtil.addWindowSizeSaving();
 webUtil.addLiveReload();
 webUtil.addBugReporting();
 webUtil.disableGlobalBackspace();
+
+hubUtil.init();
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
 

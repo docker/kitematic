@@ -27,10 +27,10 @@ app.on('open-url', function (event, url) {
 
 app.on('ready', function () {
   var mainWindow = new BrowserWindow({
-    width: size.width || 1000,
-    height: size.height || 700,
-    'min-width': 1000,
-    'min-height': 700,
+    width: size.width || 800,
+    height: size.height || 600,
+    'min-width': 800,
+    'min-height': 600,
     'standard-window': false,
     resizable: true,
     frame: false,

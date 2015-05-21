@@ -13,6 +13,16 @@ module.exports = React.createClass({
     return accountStore.getState();
   },
 
+  componentDidMount: function () {
+    document.addEventListener('keyup', this.handleDocumentKeyUp, false);
+    accountStore.listen(this.update);
+  },
+
+  componentWillUnmount: function () {
+    document.removeEventListener('keyup', this.handleDocumentKeyUp, false);
+    accountStore.unlisten(this.update);
+  },
+
   handleSkip: function () {
     accountActions.skip();
     this.transitionTo('search');
@@ -24,17 +34,13 @@ module.exports = React.createClass({
     metrics.track('Closed Signup');
   },
 
-  componentDidMount: function () {
-    accountStore.listen(this.update);
-  },
-
   update: function () {
     this.setState(accountStore.getState());
   },
 
   render: function () {
     let close = this.state.prompted ?
-        <a className="btn btn-action btn-skip" onClick={this.handleClose}>Close</a> :
+        <a className="btn btn-action btn-close" onClick={this.handleClose}>Close</a> :
         <a className="btn btn-action btn-skip" onClick={this.handleSkip}>Skip For Now</a>;
 
     return (

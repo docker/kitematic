@@ -5,6 +5,8 @@ class RepositoryStore {
   constructor () {
     this.bindActions(repositoryServerActions);
     this.repos = [];
+    this.recommended = [];
+    this.userrepos = [];
     this.loading = false;
     this.error = null;
   }

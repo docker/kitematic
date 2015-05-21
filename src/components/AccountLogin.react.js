@@ -16,7 +16,9 @@ module.exports = React.createClass({
       errors: {}
     };
   },
-
+  componentDidMount: function () {
+    React.findDOMNode(this.refs.usernameInput).focus();
+  },
   componentWillReceiveProps: function (nextProps) {
     this.setState({errors: nextProps.errors});
   },
@@ -50,7 +52,7 @@ module.exports = React.createClass({
 
   handleClickSignup: function () {
     if (!this.props.loading) {
-      this.transitionTo('signup');
+      this.replaceWith('signup');
     }
   },
 
@@ -59,11 +61,10 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    console.log(this.state.errors);
     let loading = this.props.loading ? <div className="spinner la-ball-clip-rotate la-dark"><div></div></div> : null;
     return (
       <form className="form-connect">
-        <input ref="usernameInput"maxLength="30"  name="username" placeholder="username" type="text" disabled={this.props.loading} valueLink={this.linkState('username')} onBlur={this.handleBlur}/>
+        <input ref="usernameInput"maxLength="30" name="username" placeholder="username" type="text" disabled={this.props.loading} valueLink={this.linkState('username')} onBlur={this.handleBlur}/>
         <p className="error-message">{this.state.errors.username}</p>
         <input ref="passwordInput" name="password" placeholder="password" type="password" disabled={this.props.loading} valueLink={this.linkState('password')} onBlur={this.handleBlur}/>
         <p className="error-message">{this.state.errors.password}</p>

@@ -7,7 +7,7 @@ class AccountStore {
     this.bindActions(accountServerActions);
     this.bindActions(accountActions);
 
-    this.prompted = localStorage.getItem('account.prompted') || false;
+    this.prompted = false;
     this.loading = false;
     this.errors = {};
 
@@ -19,13 +19,21 @@ class AccountStore {
     this.setState({
       prompted: true
     });
-    localStorage.setItem('account.prompted', true);
   }
 
   login () {
     this.setState({
       loading: true,
       errors: {}
+    });
+  }
+
+  logout () {
+    this.setState({
+      loading: false,
+      errors: {},
+      username: null,
+      verified: false
     });
   }
 
@@ -46,6 +54,10 @@ class AccountStore {
 
   verified ({verified}) {
     this.setState({verified});
+  }
+
+  prompted ({prompted}) {
+    this.setState({prompted});
   }
 
   errors ({errors}) {

@@ -2,6 +2,16 @@ var request = require('request');
 var accountServerActions = require('../actions/AccountServerActions');
 
 module.exports = {
+
+  init: function () {
+    accountServerActions.prompted({prompted: localStorage.getItem('auth.prompted')});
+    if (this.jwt()) { // TODO: check for config too
+      let username = localStorage.getItem('auth.username');
+      let verified = localStorage.getItem('auth.verified');
+      accountServerActions.loggedin({username, verified});
+    }
+  },
+
   // Returns the base64 encoded index token or null if no token exists
   config: function () {
     let config = localStorage.getItem('auth.config');
@@ -9,6 +19,11 @@ module.exports = {
       return null;
     }
     return config;
+  },
+
+  prompted: function (prompted) {
+    localStorage.setItem('auth.prompted', true);
+    accountServerActions.prompted({prompted});
   },
 
   // Retrives the current jwt hub token or null if no token exists
@@ -20,8 +35,16 @@ module.exports = {
     return jwt;
   },
 
-  loggedin: function () {
-    return this.jwt() && this.config();
+  refresh: function () {
+    // TODO: implement me
+  },
+
+  logout: function () {
+    localStorage.removeItem('auth.jwt');
+    localStorage.removeItem('auth.username');
+    localStorage.removeItem('auth.verified');
+    localStorage.removeItem('auth.config');
+    accountServerActions.loggedout();
   },
 
   // Places a token under ~/.dockercfg and saves a jwt to localstore
@@ -30,8 +53,10 @@ module.exports = {
       let data = JSON.parse(body);
       if (response.statusCode === 200) {
         // TODO: save username to localstorage
+        // TODO: handle case where token does not exist
         if (data.token) {
           localStorage.setItem('auth.jwt', data.token);
+          localStorage.setItem('auth.username', username);
         }
         accountServerActions.loggedin({username, verified: true});
       } else if (response.statusCode === 401) {
@@ -56,7 +81,7 @@ module.exports = {
     }, (err, response, body) => {
       // TODO: save username to localstorage
       if (response.statusCode === 204) {
-        accountServerActions.signedup({username});
+        accountServerActions.signedup({username, verified: false});
       } else {
         let data = JSON.parse(body);
         let errors = {};

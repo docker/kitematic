@@ -19,7 +19,6 @@ var Router = require('react-router');
 var Route = Router.Route;
 var DefaultRoute = Router.DefaultRoute;
 var RouteHandler = Router.RouteHandler;
-var Redirect = Router.Redirect;
 
 var App = React.createClass({
   render: function () {
@@ -52,7 +51,6 @@ var routes = (
       <Route name="preferences" path="/preferences" handler={Preferences}/>
     </Route>
     <DefaultRoute name="setup" handler={Setup}/>
-    <Redirect from="containers/details/:name" to="containerHome"/>
   </Route>
 );
 

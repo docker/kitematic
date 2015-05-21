@@ -5,13 +5,16 @@ import router from '../router';
 class AccountServerActions {
   constructor () {
     this.generateActions(
+      'loggedout',
+      'prompted',
       'errors'
     );
   }
 
   loggedin ({username, verified}) {
-    console.log(username, verified);
-    router.get().goBack();
+    if (router.get()) {
+      router.get().goBack();
+    }
     this.dispatch({username, verified});
   }
 

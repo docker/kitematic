@@ -65,28 +65,6 @@
       text-align: right;
       margin-right: 3px;
       margin-top: 3px;
-      .tab {
-        margin-left: 16px;
-        padding: 6px 10px;
-        font-weight: 400;
-        display: inline-block;
-        &:hover {
-          border-radius: 40px;
-          background-color: darken(@color-background, 2%);
-        }
-        &.active {
-          border-radius: 40px;
-          color: white;
-          .brand-gradient();
-        }
-        &.disabled {
-          opacity: 0.5;
-          &:hover {
-            border-radius: 40px;
-            background-color: transparent;
-          }
-        }
-      }
     }
   }
   .details-header {
@@ -123,6 +101,26 @@
       }
     }
   }
+
+  .tab {
+    margin-left: 16px;
+    padding: 6px 10px;
+    font-weight: 400;
+    display: inline-block;
+    &.active {
+      border-radius: 40px;
+      color: white;
+      .brand-gradient();
+    }
+    &.disabled {
+      opacity: 0.5;
+      &:hover {
+        border-radius: 40px;
+        background-color: transparent;
+      }
+    }
+  }
+
   .details-progress {
     margin: 20% auto 0;
     text-align: center;
