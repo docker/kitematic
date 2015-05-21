@@ -13,6 +13,28 @@ var ContainerUtil = {
     });
   },
 
+  links: function (container) {
+    if (!container || !container.HostConfig || !container.HostConfig.Links) {
+      return [];
+    }
+    return _.map(container.HostConfig.Links, link => {
+      var i = link.indexOf(':');
+      // Account for the slashes
+      if(link.indexOf('/') != -1 && link.indexOf('/') < i) {
+        var keyStart = link.indexOf('/') + 1;
+      } else {
+        var keyStart = 0;
+      }
+      if(link.lastIndexOf('/') != -1 && link.lastIndexOf('/') > i) {
+        var valStart = link.lastIndexOf('/') + 1;
+      } else {
+        var valStart = i + 1;
+      }
+      var splits = [link.slice(keyStart, i), link.slice(valStart)];
+      return splits;
+    });
+  },
+
   // TODO: inject host here instead of requiring Docker
   ports: function (container) {
     if (!container || !container.NetworkSettings) {
