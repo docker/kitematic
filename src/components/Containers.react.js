@@ -180,7 +180,9 @@ var Containers = React.createClass({
             <section className={sidebarHeaderClass}>
               <h4>Containers</h4>
               <div className="create">
-                <a className="btn-new icon icon-add-3" onClick={this.handleNewContainer}></a>
+                <Router.Link to="new">
+                  <span className="btn-new icon icon-add-3"></span>
+                </Router.Link>
               </div>
             </section>
             <section className="sidebar-containers" onScroll={this.handleScroll}>

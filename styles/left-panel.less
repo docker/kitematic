@@ -28,16 +28,31 @@
       position: relative;
     }
     .create {
+      display: flex;
       flex: 1 auto;
-      text-align: right;
+      justify-content: flex-end;
       margin-right: 20px;
       margin-top: 3px;
-      .btn-new {
-        font-size: 24px;
-        color: @brand-action;
-        transition: all 0.25s;
-        &:hover {
-          color: darken(@brand-action, 15%);
+      a {
+        display: block;
+        text-decoration: none;
+        cursor: default;
+        &.active {
+          .btn-new {
+            opacity: 0.3;
+            &:hover {
+              color: @brand-action;
+            }
+          }
+        }
+        .btn-new {
+          display: block;
+          font-size: 24px;
+          color: @brand-action;
+          transition: all 0.25s;
+          &:hover {
+            color: darken(@brand-action, 15%);
+          }
         }
       }
     }
