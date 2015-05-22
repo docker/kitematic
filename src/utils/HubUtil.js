@@ -1,13 +1,13 @@
 var request = require('request');
 var accountServerActions = require('../actions/AccountServerActions');
+var regHubUtil = require('./RegHubUtil');
 
 module.exports = {
-
   init: function () {
     accountServerActions.prompted({prompted: localStorage.getItem('auth.prompted')});
-    if (this.jwt()) { // TODO: check for config too
-      let username = localStorage.getItem('auth.username');
-      let verified = localStorage.getItem('auth.verified');
+    let username = localStorage.getItem('auth.username');
+    let verified = localStorage.getItem('auth.verified') === 'true';
+    if (username) { // TODO: check for config too
       accountServerActions.loggedin({username, verified});
     }
   },
@@ -36,19 +36,23 @@ module.exports = {
   },
 
   refresh: function () {
-    // TODO: implement me
+    // TODO: implement me and wrap all jwt calls
+  },
+
+  loggedin: function () {
+    return this.jwt() && this.config();
   },
 
   logout: function () {
+    accountServerActions.loggedout();
     localStorage.removeItem('auth.jwt');
     localStorage.removeItem('auth.username');
     localStorage.removeItem('auth.verified');
     localStorage.removeItem('auth.config');
-    accountServerActions.loggedout();
   },
 
   // Places a token under ~/.dockercfg and saves a jwt to localstore
-  login: function (username, password) {
+  login: function (username, password, verifying) {
     request.post('https://hub.docker.com/v2/users/login/', {form: {username, password}}, (err, response, body) => {
       let data = JSON.parse(body);
       if (response.statusCode === 200) {
@@ -57,8 +61,15 @@ module.exports = {
         if (data.token) {
           localStorage.setItem('auth.jwt', data.token);
           localStorage.setItem('auth.username', username);
+          localStorage.setItem('auth.verified', true);
+          localStorage.setItem('auth.config', new Buffer(username + ':' + password).toString('base64'));
         }
-        accountServerActions.loggedin({username, verified: true});
+        if (verifying) {
+          accountServerActions.verified({username});
+        } else {
+          accountServerActions.loggedin({username, verified: true});
+        }
+        regHubUtil.repos(data.token);
       } else if (response.statusCode === 401) {
         if (data && data.detail && data.detail.indexOf('Account not active yet') !== -1) {
           accountServerActions.loggedin({username, verified: false});
@@ -67,6 +78,17 @@ module.exports = {
         }
       }
     });
+  },
+
+  verify: function () {
+    let config = this.config();
+    if (!config) {
+      this.logout();
+      return;
+    }
+
+    let [username, password] = new Buffer(config, 'base64').toString().split(/:(.+)?/).slice(0, 2);
+    this.login(username, password, true);
   },
 
   // Signs up and places a token under ~/.dockercfg and saves a jwt to localstore
@@ -82,6 +104,9 @@ module.exports = {
       // TODO: save username to localstorage
       if (response.statusCode === 204) {
         accountServerActions.signedup({username, verified: false});
+        localStorage.setItem('auth.username', username);
+        localStorage.setItem('auth.verified', false);
+        localStorage.setItem('auth.config', new Buffer(username + ':' + password).toString('base64'));
       } else {
         let data = JSON.parse(body);
         let errors = {};

@@ -1,5 +1,6 @@
 import alt from '../alt';
 import dockerUtil from '../utils/DockerUtil';
+import hubUtil from '../utils/HubUtil';
 
 class ContainerActions {
   start (name) {
@@ -32,7 +33,7 @@ class ContainerActions {
   }
 
   run (name, repo, tag) {
-    dockerUtil.run(name, repo, tag);
+    dockerUtil.run(hubUtil.config(), name, repo, tag);
   }
 }
 

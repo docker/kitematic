@@ -5,7 +5,6 @@ var Router = require('react-router');
 var containerStore = require('../stores/ContainerStore');
 var ContainerList = require('./ContainerList.react');
 var Header = require('./Header.react');
-var ipc = require('ipc');
 var metrics = require('../utils/MetricsUtil');
 var RetinaImage = require('react-retina-image');
 var shell = require('shell');

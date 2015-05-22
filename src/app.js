@@ -18,14 +18,16 @@ var hub = require('./utils/HubUtil');
 var Router = require('react-router');
 var routes = require('./routes');
 var routerContainer = require('./router');
+var repositoryActions = require('./actions/RepositoryActions');
 
+hubUtil.init();
+repositoryActions.recommended();
+repositoryActions.repos();
 
 webUtil.addWindowSizeSaving();
 webUtil.addLiveReload();
 webUtil.addBugReporting();
 webUtil.disableGlobalBackspace();
-
-hubUtil.init();
 
 Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
 

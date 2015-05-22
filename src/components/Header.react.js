@@ -72,7 +72,12 @@ var Header = React.createClass({
   },
   handleUserClick: function (e) {
     let menu = new Menu();
-    menu.append(new MenuItem({ label: 'Sign Out', click: this.handleLogoutClick.bind(this)}));
+
+    if (!this.state.verified) {
+      menu.append(new MenuItem({ label: 'I\'ve Verified My Email Address', click: this.handleVerifyClick}));
+    }
+
+    menu.append(new MenuItem({ label: 'Sign Out', click: this.handleLogoutClick}));
     menu.popup(remote.getCurrentWindow(), e.currentTarget.offsetLeft, e.currentTarget.offsetTop + e.currentTarget.clientHeight + 10);
   },
   handleLoginClick: function () {
@@ -80,6 +85,9 @@ var Header = React.createClass({
   },
   handleLogoutClick: function () {
     accountActions.logout();
+  },
+  handleVerifyClick: function () {
+    accountActions.verify();
   },
   render: function () {
     let updateWidget = this.state.updateAvailable ? <a className="btn btn-action small no-drag" onClick={this.handleAutoUpdateClick}>UPDATE NOW</a> : null;
@@ -108,7 +116,7 @@ var Header = React.createClass({
     } else if (this.state.username) {
       username = (
         <span className="no-drag" onClick={this.handleUserClick}>
-          <RetinaImage src="user.png"/> {this.state.username} <RetinaImage src="userdropdown.png"/>
+          <RetinaImage src="user.png"/> {this.state.username} {this.state.verified ? null : '(Unverified)'} <RetinaImage src="userdropdown.png"/>
         </span>
       );
     } else {

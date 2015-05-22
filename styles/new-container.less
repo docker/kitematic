@@ -32,6 +32,11 @@
   flex: 1 auto;
   flex-direction: column;
   padding: 25px 20px 0 25px;
+
+  .spinner {
+    display: inline-block;
+  }
+
   .results {
     display: flex;
     flex-direction: column;
@@ -39,10 +44,13 @@
     color: @gray-normal;
 
     .results-filters {
+      flex: 0 auto;
+      flex-shrink: 0;
       display: flex;
       flex-direction: row;
       justify-content: flex-end;
       font-size: 13px;
+      margin-bottom: 10px;
 
       .results-filter {
         text-align: center;
@@ -60,27 +68,38 @@
     .no-results {
       flex: 1 auto;
       display: flex;
+      flex-direction: column;
       align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+
+      .verify {
+        margin: 15px 0;
+        position: relative;
+
+        .spinner {
+          position: absolute;
+          top: 0;
+          right: -50px;
+        }
+      }
+
       .loader {
-        flex: 1 auto;
         display: flex;
         flex-direction: column;
         align-items: center;
-
-        margin: 0 auto;
-        margin-top: -20%;
         text-align: center;
         width: 300px;
+        margin-top: -10%;
         h2 {
           color: @gray-normal;
           margin-bottom: 20px;
         }
       }
       h1 {
-        color: @gray-lightest;
+        color: @gray-lighter;
         font-size: 24px;
         margin: 0 auto;
-        margin-top: -20%;
       }
     }
   }
@@ -88,6 +107,7 @@
     margin-bottom: 8px;
     display: flex;
     flex: 0 auto;
+    flex-shrink: 0;
     .text {
       flex: 1 auto;
       width: 50%;
@@ -134,183 +154,186 @@
   }
 }
 
-.result-grid {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: flex-start;
-  margin-top: 10px;
+.result-grids {
+
   overflow: auto;
-  .image-item {
+  .result-grid {
     display: flex;
-    position: relative;
-    width: 320px;
-    height: 166px;
-    border-radius: 4px;
-    background-color: white;
-    margin-right: 20px;
-    margin-bottom: 20px;
-    .tag-overlay {
-      z-index: 999;
-      background-color: rgba(0,0,0,0.8);
-      border-radius: 4px;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    margin-top: 10px;
+    .image-item {
+      display: flex;
+      position: relative;
       width: 320px;
       height: 166px;
-      position: absolute;
-      color: white;
-      font-size: 13px;
-      display: none;
-      padding: 10px;
-      .tag-list {
-        display: flex;
-        flex-direction: row;
-        align-items: flex-start;
-        align-content: flex-start;
-        flex-flow: row wrap;
-        height: 140px;
-        overflow: auto;
-        .tag {
-          display: inline-block;
-          flex: 0 auto;
-          margin-right: 2px;
-          padding: 3px 5px;
-          &.active {
-            background-color: rgba(255,255,255,0.2);
-            border-radius: 20px;
-          }
-          &:hover {
-            background-color: rgba(255,255,255,0.2);
-            border-radius: 20px;
-          }
-        }
-      }
-      .tags-loading {
-        position: relative;
-        left: 42%;
-        top: 20%;
-        text-align: center;
-        margin: 14px auto;
-        -webkit-animation-name: spin;
-        -webkit-animation-duration: 1.8s;
-        -webkit-animation-iteration-count: infinite;
-        -webkit-animation-timing-function: linear;
-      }
-    }
-    .logo {
-      flex: 1 auto;
-      min-width: 90px;
-      background-color: @brand-action;
-      border-top-left-radius: 4px;
-      border-bottom-left-radius: 4px;
-      justify-content: center;
-      text-align: center;
-      box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,0.2);
-      img {
-        margin-top: 15px;
-      }
-    }
-    .card {
-      padding: 10px 20px 10px 20px;
-      position: relative;
-      border: 1px solid @gray-lighter;
-      border-left: 0;
-      border-top-right-radius: 4px;
-      border-bottom-right-radius: 4px;
-      .badges {
+      border-radius: 4px;
+      background-color: white;
+      margin-right: 20px;
+      margin-bottom: 20px;
+      .tag-overlay {
+        z-index: 999;
+        background-color: rgba(0,0,0,0.8);
+        border-radius: 4px;
+        width: 320px;
+        height: 166px;
         position: absolute;
-        right: 15px;
-        top: 8px;
-      }
-      .name {
-        font-size: 18px;
-        color: @gray-darkest;
-        margin-bottom: 0px;
-        position: relative;
-        width: 190px;
-        .namespace {
-          font-size: 11px;
-          color: @gray-lighter;
-          margin-bottom: -3px;
-          &.official {
-            color: @brand-action;
-          }
-        }
-        .repo {
-          display: inline-block;
-          max-width: 190px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-      }
-      .description {
-        font-size: 12px;
-        color: @gray-normal;
-        height: 50px;
-        width: 190px;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 3;
-        display: -webkit-box;
-        word-wrap: break-word;
-      }
-      .actions {
-        width: 190px;
-        position: absolute;
-        bottom: 8px;
-        .stars {
-          height: 15px;
-          font-size: 10px;
-          color: @gray-darker;
-          border-right: 1px solid @gray-lightest;
-          padding-right: 10px;
-          .icon {
-            position: relative;
-            font-size: 16px;
-            margin-right: 3px;
-            top: -1px;
-            color: @gray-darkest;
-          }
-          .text {
-            position: relative;
-            top: -6px;
-          }
-        }
-        .tags {
-          height: 15px;
-          font-size: 10px;
-          color: @gray-darker;
-          padding-left: 10px;
-          .icon {
-            position: relative;
-            font-size: 12px;
+        color: white;
+        font-size: 13px;
+        display: none;
+        padding: 10px;
+        .tag-list {
+          display: flex;
+          flex-direction: row;
+          align-items: flex-start;
+          align-content: flex-start;
+          flex-flow: row wrap;
+          height: 140px;
+          overflow: auto;
+          .tag {
+            display: inline-block;
+            flex: 0 auto;
             margin-right: 2px;
-            top: 2px;
-            color: @gray-darkest;
-          }
-          .text {
-            position: relative;
-            top: -2px;
             padding: 3px 5px;
-            text-decoration: underline;
+            &.active {
+              background-color: rgba(255,255,255,0.2);
+              border-radius: 20px;
+            }
             &:hover {
-              background-color: @brand-action;
-              color: white;
+              background-color: rgba(255,255,255,0.2);
               border-radius: 20px;
             }
           }
         }
-        .action {
-          flex: 1 auto;
-          .btn {
-            text-align: right;
-            position: relative;
-            float: right;
-            top: -7px;
+        .tags-loading {
+          position: relative;
+          left: 42%;
+          top: 20%;
+          text-align: center;
+          margin: 14px auto;
+          -webkit-animation-name: spin;
+          -webkit-animation-duration: 1.8s;
+          -webkit-animation-iteration-count: infinite;
+          -webkit-animation-timing-function: linear;
+        }
+      }
+      .logo {
+        flex: 1 auto;
+        min-width: 90px;
+        background-color: @brand-action;
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+        justify-content: center;
+        text-align: center;
+        box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,0.2);
+        img {
+          margin-top: 15px;
+        }
+      }
+      .card {
+        padding: 10px 20px 10px 20px;
+        position: relative;
+        border: 1px solid @gray-lighter;
+        border-left: 0;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        .badges {
+          position: absolute;
+          right: 15px;
+          top: 8px;
+        }
+        .name {
+          font-size: 18px;
+          color: @gray-darkest;
+          margin-bottom: 0px;
+          position: relative;
+          width: 190px;
+          .namespace {
+            font-size: 11px;
+            color: @gray-lighter;
+            margin-bottom: -3px;
+            &.official {
+              color: @brand-action;
+            }
+          }
+          .repo {
+            display: inline-block;
+            max-width: 190px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
           }
         }
-        display: flex;
-        flex-direaction: row;
+        .description {
+          font-size: 12px;
+          color: @gray-normal;
+          height: 50px;
+          width: 190px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          -webkit-box-orient: vertical;
+          -webkit-line-clamp: 3;
+          display: -webkit-box;
+          word-wrap: break-word;
+        }
+        .actions {
+          width: 190px;
+          position: absolute;
+          bottom: 8px;
+          .stars {
+            height: 15px;
+            font-size: 10px;
+            color: @gray-darker;
+            border-right: 1px solid @gray-lightest;
+            padding-right: 10px;
+            .icon {
+              position: relative;
+              font-size: 16px;
+              margin-right: 3px;
+              top: -1px;
+              color: @gray-darkest;
+            }
+            .text {
+              position: relative;
+              top: -6px;
+            }
+          }
+          .tags {
+            height: 15px;
+            font-size: 10px;
+            color: @gray-darker;
+            padding-left: 10px;
+            .icon {
+              position: relative;
+              font-size: 12px;
+              margin-right: 2px;
+              top: 2px;
+              color: @gray-darkest;
+            }
+            .text {
+              position: relative;
+              top: -2px;
+              padding: 3px 5px;
+              text-decoration: underline;
+              &:hover {
+                background-color: @brand-action;
+                color: white;
+                border-radius: 20px;
+              }
+            }
+          }
+          .action {
+            flex: 1 auto;
+            .btn {
+              text-align: right;
+              position: relative;
+              float: right;
+              top: -7px;
+            }
+          }
+          display: flex;
+          flex-direaction: row;
+        }
       }
     }
   }

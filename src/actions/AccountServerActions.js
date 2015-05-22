@@ -1,13 +1,13 @@
 import alt from '../alt';
 import router from '../router';
 
-
 class AccountServerActions {
   constructor () {
     this.generateActions(
       'loggedout',
       'prompted',
-      'errors'
+      'errors',
+      'verified'
     );
   }
 
@@ -19,7 +19,9 @@ class AccountServerActions {
   }
 
   signedup ({username}) {
-    router.get().transitionTo('search');
+    if (router.get()) {
+      router.get().goBack();
+    }
     this.dispatch({username});
   }
 }

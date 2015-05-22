@@ -18,7 +18,6 @@ try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
 } catch (err) {}
 
-
 var openURL = null;
 app.on('open-url', function (event, url) {
   event.preventDefault();
@@ -27,9 +26,9 @@ app.on('open-url', function (event, url) {
 
 app.on('ready', function () {
   var mainWindow = new BrowserWindow({
-    width: size.width || 800,
+    width: size.width || 1000,
     height: size.height || 600,
-    'min-width': 800,
+    'min-width': 1000,
     'min-height': 600,
     'standard-window': false,
     resizable: true,

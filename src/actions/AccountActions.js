@@ -21,6 +21,11 @@ class AccountActions {
     this.dispatch({});
     hub.prompted(true);
   }
+
+  verify () {
+    this.dispatch({});
+    hub.verify();
+  }
 }
 
 export default alt.createActions(AccountActions);

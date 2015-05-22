@@ -36,7 +36,7 @@ var ContainerListNewItem = React.createClass({
       );
     }
     return (
-      <Router.Link to="new">
+      <Router.Link to="search">
         <li className="new-container-item" onMouseEnter={this.handleItemMouseEnter} onMouseLeave={this.handleItemMouseLeave}>
           <div className="state state-new"></div>
           <div className="info">

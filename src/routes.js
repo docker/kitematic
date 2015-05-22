@@ -45,7 +45,7 @@ var routes = (
         </Route>
       </Route>
       <Route name="new" path="containers/new">
-        <DefaultRoute name="search" handler={NewContainerSearch}/>
+        <Route name="search" path="containers/new/search" handler={NewContainerSearch}></Route>
         <Route name="pull" path="containers/new/pull" handler={NewContainerPull}></Route>
       </Route>
       <Route name="preferences" path="/preferences" handler={Preferences}/>

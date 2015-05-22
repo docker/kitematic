@@ -4,7 +4,6 @@ import path from 'path';
 import dockerode from 'dockerode';
 import _ from 'underscore';
 import util from './Util';
-import registry from '../utils/RegistryUtil';
 import metrics from '../utils/MetricsUtil';
 import containerServerActions from '../actions/ContainerServerActions';
 import Promise from 'bluebird';
@@ -145,7 +144,7 @@ export default {
     });
   },
 
-  run (name, repository, tag) {
+  run (auth, name, repository, tag) {
     tag = tag || 'latest';
     let imageName = repository + ':' + tag;
 
@@ -165,7 +164,7 @@ export default {
     this.placeholders[name] = placeholderData;
     localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
 
-    this.pullImage(repository, tag, error => {
+    this.pullImage(auth, repository, tag, error => {
       if (error) {
         containerServerActions.error({name, error});
         return;
@@ -327,81 +326,66 @@ export default {
     });
   },
 
-  pullImage (repository, tag, callback, progressCallback, blockedCallback) {
-    registry.layers(repository, tag, (err, layerSizes) => {
+  pullImage (auth, repository, tag, callback, progressCallback, blockedCallback) {
+    // TODO: Support v2 registry API
+    // TODO: clean this up- It's messy to work with pulls from both the v1 and v2 registry APIs
+    // Use the per-layer pull progress % to update the total progress.
+    this.client.listImages({all: 1}, (err, images) => {
+      images = images || [];
 
-      // TODO: Support v2 registry API
-      // TODO: clean this up- It's messy to work with pulls from both the v1 and v2 registry APIs
-      // Use the per-layer pull progress % to update the total progress.
-      this.client.listImages({all: 1}, (err, images) => {
-        images = images || [];
+      this.client.pull(repository + ':' + tag, {authconfig: {key: auth}}, (err, stream) => {
+        if (err) {
+          callback(err);
+          return;
+        }
+        stream.setEncoding('utf8');
 
-        let existingIds = new Set(images.map(function (image) {
-          return image.Id.slice(0, 12);
-        }));
+        let timeout = null;
+        let layerProgress = {};
+        stream.on('data', str => {
+          var data = JSON.parse(str);
 
-        let layersToDownload = layerSizes.filter(function (layerSize) {
-          return !existingIds.has(layerSize.Id);
-        });
-
-        this.client.pull(repository + ':' + tag, (err, stream) => {
-          if (err) {
-            callback(err);
+          if (data.error) {
             return;
           }
-          stream.setEncoding('utf8');
 
-          let layerProgress = layersToDownload.reduce(function (r, layer) {
-            if (_.findWhere(images, {Id: layer.Id})) {
-              r[layer.Id] = 1;
+          if (data.status && (data.status === 'Pulling dependent layers' || data.status.indexOf('already being pulled by another client') !== -1)) {
+            blockedCallback();
+            return;
+          }
+
+          if (!layerProgress[data.id]) {
+            layerProgress[data.id] = 0;
+          }
+
+          if (data.status === 'Already exists') {
+            layerProgress[data.id] = 1;
+          } else if (data.status === 'Downloading') {
+            let current = data.progressDetail.current;
+            let total = data.progressDetail.total;
+
+            if (total <= 0) {
+              progressCallback(0);
+              return;
             } else {
-              r[layer.Id] = 0;
-            }
-            return r;
-          }, {});
-
-          let timeout = null;
-          stream.on('data', str => {
-            var data = JSON.parse(str);
-
-            if (data.error) {
-              return;
+              layerProgress[data.id] = current / total;
             }
 
-            if (data.status && (data.status === 'Pulling dependent layers' || data.status.indexOf('already being pulled by another client') !== -1)) {
-              blockedCallback();
-              return;
+            let sum = _.values(layerProgress).reduce((pv, sv) => pv + sv, 0);
+            let numlayers = _.keys(layerProgress).length;
+
+            var totalProgress = sum / numlayers * 100;
+
+            if (!timeout) {
+              progressCallback(totalProgress);
+              timeout = setTimeout(() => {
+                timeout = null;
+              }, 100);
             }
-
-            if (data.status === 'Already exists') {
-              layerProgress[data.id] = 1;
-            } else if (data.status === 'Downloading') {
-              let current = data.progressDetail.current;
-              let total = data.progressDetail.total;
-
-              if (total <= 0) {
-                progressCallback(0);
-                return;
-              } else {
-                layerProgress[data.id] = current / total;
-              }
-
-              let sum = _.values(layerProgress).reduce((pv, sv) => pv + sv, 0);
-              let numlayers = _.keys(layerProgress).length;
-
-              var totalProgress = sum / numlayers * 100;
-
-              if (!timeout) {
-                progressCallback(totalProgress);
-                timeout = setTimeout(() => {
-                  timeout = null;
-                }, 100);
-              }
-            }
-          });
-          stream.on('end', function () {
-            callback();
-          });
+          }
+        });
+        stream.on('end', function () {
+          callback();
         });
       });
     });

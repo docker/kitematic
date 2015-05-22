@@ -44,16 +44,20 @@ class AccountStore {
     });
   }
 
-  loggedin ({username}) {
-    this.setState({username, errors: {}, loading: false});
+  loggedin ({username, verified}) {
+    this.setState({username, verified, errors: {}, loading: false});
   }
 
   signedup ({username}) {
     this.setState({username, errors: {}, loading: false});
   }
 
+  verify () {
+    this.setState({loading: true});
+  }
+
   verified ({verified}) {
-    this.setState({verified});
+    this.setState({verified, loading: false});
   }
 
   prompted ({prompted}) {
