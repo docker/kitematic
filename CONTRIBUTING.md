@@ -18,8 +18,7 @@ Before you fil an issue or a pull request, quickly read of the following tips on
 ### Prerequisites
 
 Most of the time, you'll have installed Kitematic before contibuting, but for the
-sake of completeness, you can also install [Node.js](https://nodejs.org/) and then
-run from your Git clone.
+sake of completeness, you can also install [Node.js](https://nodejs.org/) and the latest Xcode from the Apple App Store and then run from your Git clone.
 
 Running `npm start` will download and install the OS X Docker client,
 [Docker machine](https://github.com/docker/machine),
