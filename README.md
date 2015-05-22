@@ -15,6 +15,12 @@ Kitematic is a simple application for managing Docker containers on Mac OS X and
 
 Kitematic's documentation and other information can be found at [http://kitematic.com/docs](http://kitematic.com/docs).
 
+## Security Disclosure
+
+Security is very important to us. If you have any issue regarding security, 
+please disclose the information responsibly by sending an email to 
+security@docker.com and not by creating a github issue.
+
 ## Bugs and Feature Requests
 
 Have a bug or a feature request? Please first read the [Issue Guidelines](https://github.com/kitematic/kitematic/blob/master/CONTRIBUTING.md#using-the-issue-tracker) and search for existing and closed issues. If your problem or idea is not addressed yet, [please open a new issue](https://github.com/kitematic/kitematic/issues/new).
