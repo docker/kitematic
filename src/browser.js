@@ -33,7 +33,7 @@ app.on('ready', function () {
     'standard-window': false,
     resizable: true,
     frame: false,
-    show: true
+    show: true,
   });
 
   mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/index.html')));
