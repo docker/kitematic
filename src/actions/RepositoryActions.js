@@ -19,7 +19,7 @@ class RepositoryActions {
   }
 
   tags () {
-    
+
   }
 }
 
