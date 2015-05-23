@@ -178,9 +178,16 @@ export default {
       delete this.placeholders[name];
       localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
       this.createContainer(name, {Image: imageName});
-    }, progress => {
+    },
+
+    // progress is actually the progression PER LAYER (combined in columns)
+    // not total because it's not accurate enough
+    progress => {
       containerServerActions.progress({name, progress});
-    }, () => {
+    },
+
+
+    () => {
       containerServerActions.waiting({name, waiting: true});
     });
   },
@@ -310,7 +317,7 @@ export default {
       stream.setEncoding('utf8');
       stream.on('data', json => {
         let data = JSON.parse(json);
-        console.log(data);
+        // console.log(data);
 
         if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete') {
           return;
@@ -344,6 +351,9 @@ export default {
           return !existingIds.has(layerSize.Id);
         });
 
+        console.log("existingIds:" + existingIds.size)
+        console.log("layersToDownload:" + layersToDownload.length)
+
         this.client.pull(repository + ':' + tag, (err, stream) => {
           if (err) {
             callback(err);
@@ -351,16 +361,45 @@ export default {
           }
           stream.setEncoding('utf8');
 
+          // layerProgress contains progression infos for all layers
           let layerProgress = layersToDownload.reduce(function (r, layer) {
             if (_.findWhere(images, {Id: layer.Id})) {
-              r[layer.Id] = 1;
+              // If the layer is already here, we set current and total to 1
+              r[layer.Id] = {current:1, total:1, column:-1};
             } else {
-              r[layer.Id] = 0;
+              // At this point, the total layer size is unknown
+              // so we set total to -1 to avoid displaying it
+              r[layer.Id] = {current:0, total:-1, column:-1};
             }
             return r;
           }, {});
 
-          let timeout = null;
+          
+
+          let layersToLoad = _.keys(layerProgress).length;
+
+          console.log("nbLayers:" + layersToLoad)
+
+          // Split the loading in a few columns for more feedback
+          let columns = {};
+          columns.amount = 4; // arbitrary
+          columns.progress = []; // layerIDs, nbLayers, maxLayers, progress value
+          columns.toFill = 0; // the current column index, waiting for layer IDs to be displayed
+
+          for (let i = 0; i < columns.amount; i++)
+          {
+            let layerAmount = Math.ceil(layersToLoad / (columns.amount - i))
+            layersToLoad -= layerAmount;
+            columns.progress[i] = { layerIDs:[], nbLayers:0 , maxLayers:layerAmount , value:0.0 };
+          }
+
+
+
+          // scheduled to inform about progression at given interval
+          let tick = null;
+           
+
+          // data is associated with one layer only (can be identified with id)
           stream.on('data', str => {
             var data = JSON.parse(str);
 
@@ -374,34 +413,79 @@ export default {
             }
 
             if (data.status === 'Already exists') {
-              layerProgress[data.id] = 1;
+              
+              //layerProgress[data.id].current = 1;
+              //layerProgress[data.id].total = 1;
+
             } else if (data.status === 'Downloading') {
-              let current = data.progressDetail.current;
-              let total = data.progressDetail.total;
+            
+              // aduermael: How total could be <= 0 ?
 
-              if (total <= 0) {
-                progressCallback(0);
-                return;
-              } else {
-                layerProgress[data.id] = current / total;
+              // if (data.progressDetail.total <= 0) {
+              //   progressCallback(0);
+              //   return;
+              // } else {
+
+              layerProgress[data.id].current = data.progressDetail.current;
+              layerProgress[data.id].total = data.progressDetail.total;
+
+              // Assign to a column if not done yet
+              if (layerProgress[data.id].column == -1)
+              {
+                // test if we can still add layers to that column
+                if (columns.progress[columns.toFill].nbLayers == columns.progress[columns.toFill].maxLayers) columns.toFill++;
+                
+                layerProgress[data.id].column = columns.toFill;
+                columns.progress[columns.toFill].layerIDs.push(data.id);
+                columns.progress[columns.toFill].nbLayers++;
+
               }
+            
+              //}
 
-              let sum = _.values(layerProgress).reduce((pv, sv) => pv + sv, 0);
-              let numlayers = _.keys(layerProgress).length;
+              if (!tick) {
+                tick = setInterval( function(){
+                  // console.log(JSON.stringify(layerProgress))
 
-              var totalProgress = sum / numlayers * 100;
+                  // update values
+                  for (let i = 0; i < columns.amount; i++)
+                  {
+                    columns.progress[i].value = 0.0;
+                    
+                    // Start only if the column has accurate values for all layers
+                    if (columns.progress[i].nbLayers == columns.progress[i].maxLayers)
+                    {
+                      let layer;
+                      let totalSum = 0;
+                      let currentSum = 0;
 
-              if (!timeout) {
-                progressCallback(totalProgress);
-                timeout = setTimeout(() => {
-                  timeout = null;
-                }, 100);
+                      for (let j = 0; j < columns.progress[i].nbLayers; j++)                    
+                      {
+                        layer = layerProgress[columns.progress[i].layerIDs[j]];
+                        totalSum += layer.total;
+                        currentSum += layer.current;
+                      }
+
+                      if (totalSum > 0) columns.progress[i].value = 100.0 * currentSum / totalSum;
+                      else columns.progress[i].value = 0.0;
+                    }
+                  }
+
+                  progressCallback(columns);
+
+                },33);
               }
             }
+
           });
+
           stream.on('end', function () {
+
+            clearInterval(tick);
             callback();
+
           });
+
         });
       });
     });
