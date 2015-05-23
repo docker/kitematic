@@ -51,3 +51,4 @@ rm -rf ~/Library/Application\ Support/Kitematic
 ## Copyright and License
 
 Code released under the [Apache license](LICENSE).
+Images are copyrighted by Docker, Inc.
