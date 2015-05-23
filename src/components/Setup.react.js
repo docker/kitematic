@@ -76,15 +76,17 @@ var Setup = React.createClass({
   renderStep: function () {
     return (
       <div className="setup">
-        <Header />
-        <div className="image">
-          {this.renderContents()}
-        </div>
-        <div className="desc">
-          <div className="content">
-            <h4>Step {SetupStore.number()} out of {SetupStore.stepCount()}</h4>
-            <h1>{SetupStore.step().title}</h1>
-            <p>{SetupStore.step().message}</p>
+        <Header hideLogin={true}/>
+        <div className="setup-content">
+          <div className="image">
+            {this.renderContents()}
+          </div>
+          <div className="desc">
+            <div className="content">
+              <h4>Step {SetupStore.number()} out of {SetupStore.stepCount()}</h4>
+              <h1>{SetupStore.step().title}</h1>
+              <p>{SetupStore.step().message}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -93,17 +95,19 @@ var Setup = React.createClass({
   renderCancelled: function () {
     return (
       <div className="setup">
-        <Header />
-        <div className="image">
-          {this.renderContents()}
-        </div>
-        <div className="desc">
-          <div className="content">
-            <h4>Setup Cancelled</h4>
-            <h1>Couldn&#39;t Install Requirements</h1>
-            <p>Kitematic didn&#39;t receive the administrative privileges required to install or upgrade VirtualBox &amp; Docker.</p>
-            <p>Please click retry. If VirtualBox is not installed, you can download &amp; install it manually from the <a onClick={this.handleOpenWebsite}>official Oracle website</a>.</p>
-            <p><button className="btn btn-action" onClick={this.handleCancelRetry}>Retry</button></p>
+        <Header hideLogin={true}/>
+        <div className="setup-content">
+          <div className="image">
+            {this.renderContents()}
+          </div>
+          <div className="desc">
+            <div className="content">
+              <h4>Setup Cancelled</h4>
+              <h1>Couldn&#39;t Install Requirements</h1>
+              <p>Kitematic didn&#39;t receive the administrative privileges required to install or upgrade VirtualBox &amp; Docker.</p>
+              <p>Please click retry. If VirtualBox is not installed, you can download &amp; install it manually from the <a onClick={this.handleOpenWebsite}>official Oracle website</a>.</p>
+              <p><button className="btn btn-action" onClick={this.handleCancelRetry}>Retry</button></p>
+            </div>
           </div>
         </div>
       </div>
@@ -112,7 +116,7 @@ var Setup = React.createClass({
   renderError: function () {
     return (
       <div className="setup">
-        <Header />
+        <Header hideLogin={true}/>
         <div className="setup-content">
           <div className="image">
             <div className="contents">

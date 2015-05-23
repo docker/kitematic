@@ -167,8 +167,8 @@ module.exports = React.createClass({
 
       results = (
         <div className="result-grids">
-          {userRepoResults}
           {recommendedResults}
+          {userRepoResults}
           {otherResults}
         </div>
       );

@@ -21,6 +21,10 @@ module.exports = {
     return config;
   },
 
+  isPrompted: function () {
+    return localStorage.getItem('auth.prompted');
+  },
+
   prompted: function (prompted) {
     localStorage.setItem('auth.prompted', true);
     accountServerActions.prompted({prompted});
