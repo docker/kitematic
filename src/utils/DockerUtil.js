@@ -390,7 +390,7 @@ export default {
           // Assign to a column if not done yet
           if (!layerProgress[data.id].column) {
             // test if we can still add layers to that column
-            if (columns.progress[columns.toFill].nbLayers === columns.progress[columns.toFill].maxLayers) {
+            if (columns.progress[columns.toFill].nbLayers === columns.progress[columns.toFill].maxLayers && columns.toFill < columns.amount - 1) {
               columns.toFill++;
             }
 

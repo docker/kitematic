@@ -27,7 +27,7 @@ app.on('open-url', function (event, url) {
 app.on('ready', function () {
   var mainWindow = new BrowserWindow({
     width: size.width || 1000,
-    height: size.height || 600,
+    height: size.height || 780,
     'min-width': 1000,
     'min-height': 600,
     'standard-window': false,
