@@ -373,10 +373,14 @@ export default {
           if (!columns.progress) {
             columns.progress = []; // layerIDs, nbLayers, maxLayers, progress value
             let layersToLoad = _.keys(layerProgress).length;
+            let layersPerColumn = Math.floor(layersToLoad / columns.amount);
+            let leftOverLayers = layersToLoad % columns.amount;
             for (let i = 0; i < columns.amount; i++) {
-              let layerAmount = Math.ceil(layersToLoad / (columns.amount - i));
-              layersToLoad -= layerAmount;
-              columns.progress[i] = {layerIDs:[], nbLayers:0, maxLayers:layerAmount, value:0.0};
+              let layerAmount = layersPerColumn;
+              if (i < leftOverLayers) {
+                layerAmount += 1;
+              }
+              columns.progress[i] = {layerIDs: [], nbLayers:0, maxLayers: layerAmount, value: 0.0};
             }
           }
 

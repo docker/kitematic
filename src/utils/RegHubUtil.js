@@ -5,6 +5,8 @@ var util = require('../utils/Util');
 var repositoryServerActions = require('../actions/RepositoryServerActions');
 var tagServerActions = require('../actions/TagServerActions');
 
+let searchReq = null;
+
 module.exports = {
   // Normalizes results from search to v2 repository results
   normalize: function (repo) {
@@ -21,11 +23,16 @@ module.exports = {
   },
 
   search: function (query, page) {
+    if (searchReq) {
+      searchReq.abort();
+      searchReq = null;
+    }
+
     if (!query) {
       repositoryServerActions.resultsUpdated({repos: []});
     }
 
-    request.get({
+    searchReq = request.get({
       url: 'https://registry.hub.docker.com/v1/search?',
       qs: {q: query, page}
     }, (error, response, body) => {

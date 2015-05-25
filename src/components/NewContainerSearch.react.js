@@ -96,7 +96,7 @@ module.exports = React.createClass({
   render: function () {
     let filter = this.getQuery().filter || 'all';
     let repos = _.values(this.state.repos)
-        .filter(repo => repo.name.indexOf(this.state.query) !== -1 || repo.namespace.indexOf(this.state.query) !== -1)
+        .filter(repo => repo.name.toLowerCase().indexOf(this.state.query.toLowerCase()) !== -1 || repo.namespace.toLowerCase().indexOf(this.state.query.toLowerCase()) !== -1)
         .filter(repo => filter === 'all' || (filter === 'recommended' && repo.is_recommended) || (filter === 'userrepos' && repo.is_user_repo));
 
     let results;
