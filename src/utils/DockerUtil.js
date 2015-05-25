@@ -374,11 +374,11 @@ export default {
             return r;
           }, {});
 
-          
+
 
           let layersToLoad = _.keys(layerProgress).length;
 
-          console.log("nbLayers:" + layersToLoad)
+          console.log("nbLayers:" + layersToLoad);
 
           // Split the loading in a few columns for more feedback
           let columns = {};
@@ -388,7 +388,7 @@ export default {
 
           for (let i = 0; i < columns.amount; i++)
           {
-            let layerAmount = Math.ceil(layersToLoad / (columns.amount - i))
+            let layerAmount = Math.ceil(layersToLoad / (columns.amount - i));
             layersToLoad -= layerAmount;
             columns.progress[i] = { layerIDs:[], nbLayers:0 , maxLayers:layerAmount , value:0.0 };
           }
@@ -397,7 +397,7 @@ export default {
 
           // scheduled to inform about progression at given interval
           let tick = null;
-           
+
 
           // data is associated with one layer only (can be identified with id)
           stream.on('data', str => {
@@ -413,12 +413,14 @@ export default {
             }
 
             if (data.status === 'Already exists') {
-              
+
+              console.log("Already exists.");
+  
               //layerProgress[data.id].current = 1;
               //layerProgress[data.id].total = 1;
 
             } else if (data.status === 'Downloading') {
-            
+
               // aduermael: How total could be <= 0 ?
 
               // if (data.progressDetail.total <= 0) {
@@ -434,13 +436,13 @@ export default {
               {
                 // test if we can still add layers to that column
                 if (columns.progress[columns.toFill].nbLayers == columns.progress[columns.toFill].maxLayers) columns.toFill++;
-                
+
                 layerProgress[data.id].column = columns.toFill;
                 columns.progress[columns.toFill].layerIDs.push(data.id);
                 columns.progress[columns.toFill].nbLayers++;
 
               }
-            
+
               //}
 
               if (!tick) {
@@ -451,7 +453,7 @@ export default {
                   for (let i = 0; i < columns.amount; i++)
                   {
                     columns.progress[i].value = 0.0;
-                    
+
                     // Start only if the column has accurate values for all layers
                     if (columns.progress[i].nbLayers == columns.progress[i].maxLayers)
                     {
@@ -459,7 +461,7 @@ export default {
                       let totalSum = 0;
                       let currentSum = 0;
 
-                      for (let j = 0; j < columns.progress[i].nbLayers; j++)                    
+                      for (let j = 0; j < columns.progress[i].nbLayers; j++)
                       {
                         layer = layerProgress[columns.progress[i].layerIDs[j]];
                         totalSum += layer.total;
