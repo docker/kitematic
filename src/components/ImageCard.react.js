@@ -44,12 +44,13 @@ var ImageCard = React.createClass({
     $tagOverlay.fadeOut(300);
     metrics.track('Selected Image Tag');
   },
-  handleClick: function (repository) {
+  handleClick: function () {
     metrics.track('Created Container', {
       from: 'search'
     });
-    let name = containerStore.generateName(repository);
-    containerActions.run(name, repository, this.state.chosenTag);
+    let name = containerStore.generateName(this.props.image.name);
+    let repo = this.props.image.namespace === 'library' ? this.props.image.name : this.props.image.namespace + '/' + this.props.image.name;
+    containerActions.run(name, repo, this.state.chosenTag);
     this.transitionTo('containerHome', {name});
   },
   handleTagOverlayClick: function () {
@@ -164,7 +165,7 @@ var ImageCard = React.createClass({
               <span className="text" onClick={self.handleTagOverlayClick.bind(self, this.props.image.name)} data-name={this.props.image.name}>{this.state.chosenTag}</span>
             </div>
             <div className="action">
-              <a className="btn btn-action" onClick={self.handleClick.bind(self, this.props.image.name)}>Create</a>
+              <a className="btn btn-action" onClick={self.handleClick}>Create</a>
             </div>
           </div>
         </div>

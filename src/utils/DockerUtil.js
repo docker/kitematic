@@ -177,9 +177,16 @@ export default {
       delete this.placeholders[name];
       localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
       this.createContainer(name, {Image: imageName});
-    }, progress => {
+    },
+
+    // progress is actually the progression PER LAYER (combined in columns)
+    // not total because it's not accurate enough
+    progress => {
       containerServerActions.progress({name, progress});
-    }, () => {
+    },
+
+
+    () => {
       containerServerActions.waiting({name, waiting: true});
     });
   },
@@ -309,7 +316,7 @@ export default {
       stream.setEncoding('utf8');
       stream.on('data', json => {
         let data = JSON.parse(json);
-        console.log(data);
+        // console.log(data);
 
         if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete') {
           return;
@@ -327,66 +334,106 @@ export default {
   },
 
   pullImage (auth, repository, tag, callback, progressCallback, blockedCallback) {
-    // TODO: Support v2 registry API
-    // TODO: clean this up- It's messy to work with pulls from both the v1 and v2 registry APIs
-    // Use the per-layer pull progress % to update the total progress.
-    this.client.listImages({all: 1}, (err, images) => {
-      images = images || [];
+    this.client.pull(repository + ':' + tag, (err, stream) => {
+      if (err) {
+        callback(err);
+        return;
+      }
 
-      this.client.pull(repository + ':' + tag, {authconfig: {key: auth}}, (err, stream) => {
-        if (err) {
-          callback(err);
+      stream.setEncoding('utf8');
+
+      // scheduled to inform about progression at given interval
+      let tick = null;
+      let layerProgress = {};
+
+      // Split the loading in a few columns for more feedback
+      let columns = {};
+      columns.amount = 4; // arbitrary
+      columns.toFill = 0; // the current column index, waiting for layer IDs to be displayed
+
+      // data is associated with one layer only (can be identified with id)
+      stream.on('data', str => {
+        var data = JSON.parse(str);
+
+        if (data.error) {
           return;
         }
-        stream.setEncoding('utf8');
 
-        let timeout = null;
-        let layerProgress = {};
-        stream.on('data', str => {
-          var data = JSON.parse(str);
+        if (data.status && (data.status === 'Pulling dependent layers' || data.status.indexOf('already being pulled by another client') !== -1)) {
+          blockedCallback();
+          return;
+        }
 
-          if (data.error) {
-            return;
-          }
+        if (data.status === 'Pulling fs layer') {
+          layerProgress[data.id] = {
+            current: 0,
+            total: 1
+          };
+        } else if (data.status === 'Downloading') {
+          if (!columns.progress) {
+            columns.progress = []; // layerIDs, nbLayers, maxLayers, progress value
+            let layersToLoad = _.keys(layerProgress).length;
 
-          if (data.status && (data.status === 'Pulling dependent layers' || data.status.indexOf('already being pulled by another client') !== -1)) {
-            blockedCallback();
-            return;
-          }
+            console.log(_.values(layerProgress));
 
-          if (!layerProgress[data.id]) {
-            layerProgress[data.id] = 0;
-          }
+            console.log('layersToLoad: ', layersToLoad);
 
-          if (data.status === 'Already exists') {
-            layerProgress[data.id] = 1;
-          } else if (data.status === 'Downloading') {
-            let current = data.progressDetail.current;
-            let total = data.progressDetail.total;
-
-            if (total <= 0) {
-              progressCallback(0);
-              return;
-            } else {
-              layerProgress[data.id] = current / total;
-            }
-
-            let sum = _.values(layerProgress).reduce((pv, sv) => pv + sv, 0);
-            let numlayers = _.keys(layerProgress).length;
-
-            var totalProgress = sum / numlayers * 100;
-
-            if (!timeout) {
-              progressCallback(totalProgress);
-              timeout = setTimeout(() => {
-                timeout = null;
-              }, 100);
+            for (let i = 0; i < columns.amount; i++) {
+              let layerAmount = Math.ceil(layersToLoad / (columns.amount - i));
+              console.log(i, layerAmount);
+              layersToLoad -= layerAmount;
+              columns.progress[i] = {layerIDs:[], nbLayers:0, maxLayers:layerAmount, value:0.0};
             }
           }
-        });
-        stream.on('end', function () {
-          callback();
-        });
+
+          layerProgress[data.id].current = data.progressDetail.current;
+          layerProgress[data.id].total = data.progressDetail.total;
+
+          // Assign to a column if not done yet
+          if (!layerProgress[data.id].column) {
+            // test if we can still add layers to that column
+            if (columns.progress[columns.toFill].nbLayers === columns.progress[columns.toFill].maxLayers) {
+              columns.toFill++;
+            }
+
+            layerProgress[data.id].column = columns.toFill;
+            columns.progress[columns.toFill].layerIDs.push(data.id);
+            columns.progress[columns.toFill].nbLayers++;
+          }
+
+          if (!tick) {
+            tick = setTimeout(() => {
+              clearInterval(tick);
+              tick = null;
+              for (let i = 0; i < columns.amount; i++) {
+                columns.progress[i].value = 0.0;
+
+                // Start only if the column has accurate values for all layers
+                if (columns.progress[i].nbLayers === columns.progress[i].maxLayers) {
+                  let layer;
+                  let totalSum = 0;
+                  let currentSum = 0;
+
+                  for (let j = 0; j < columns.progress[i].nbLayers; j++) {
+                    layer = layerProgress[columns.progress[i].layerIDs[j]];
+                    totalSum += layer.total;
+                    currentSum += layer.current;
+                  }
+
+                  if (totalSum > 0) {
+                    columns.progress[i].value = 100.0 * currentSum / totalSum;
+                  } else {
+                    columns.progress[i].value = 0.0;
+                  }
+                }
+              }
+              progressCallback(columns);
+            }, 16);
+          }
+        }
+      });
+      stream.on('end', function () {
+        callback();
       });
     });
   },

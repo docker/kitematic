@@ -2,6 +2,7 @@ var _ = require('underscore');
 var $ = require('jquery');
 var React = require('react/addons');
 var Radial = require('./Radial.react');
+var ContainerProgress = require('./ContainerProgress.react');
 var ContainerHomePreview = require('./ContainerHomePreview.react');
 var ContainerHomeLogs = require('./ContainerHomeLogs.react');
 var ContainerHomeFolders = require('./ContainerHomeFolders.react');
@@ -50,22 +51,28 @@ var ContainerHome = React.createClass({
         </div>
       );
     } else if (this.props.container && this.props.container.State.Downloading) {
-      if (this.props.container.Progress !== undefined) {
-        if (this.props.container.Progress > 0) {
-          body = (
-            <div className="details-progress">
-              <h2>Downloading Image</h2>
-              <Radial progress={Math.min(Math.round(this.props.container.Progress), 99)} thick={true} gray={true}/>
-            </div>
-          );
-        } else {
-          body = (
-            <div className="details-progress">
-              <h2>Downloading Image</h2>
-              <Radial spin="true" progress="90" thick={true} transparent={true}/>
-            </div>
-          );
+      if (this.props.container.Progress) {
+
+        let fields = [];
+        let values = [];
+        let sum = 0.0;
+
+        for (let i = 0; i < this.props.container.Progress.amount; i++) {
+          values.push(Math.round(this.props.container.Progress.progress[i].value));
+          sum += this.props.container.Progress.progress[i].value;
         }
+
+        sum = sum / this.props.container.Progress.amount;
+
+        fields.push(<h2>{Math.round(sum*100)/100}%</h2>);
+        fields.push(<ContainerProgress pBar1={values[0]} pBar2={values[1]} pBar3={values[2]} pBar4={values[3]} />);
+
+        body = (
+          <div className="details-progress">
+            <h2>Downloading Image</h2>
+            {fields}
+          </div>
+        );
 
       } else if (this.props.container.State.Waiting) {
         body = (
