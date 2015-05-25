@@ -64,7 +64,7 @@ var ContainerHome = React.createClass({
 
         sum = sum / this.props.container.Progress.amount;
 
-        fields.push(<h2>{Math.round(sum*100)/100}%</h2>);
+        fields.push(<h2>{(Math.round(sum*100)/100).toFixed(2)}%</h2>);
         fields.push(<ContainerProgress pBar1={values[0]} pBar2={values[1]} pBar3={values[2]} pBar4={values[3]} />);
 
         body = (

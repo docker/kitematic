@@ -380,7 +380,7 @@ export default {
               if (i < leftOverLayers) {
                 layerAmount += 1;
               }
-              columns.progress[i] = {layerIDs: [], nbLayers:0, maxLayers: layerAmount, value: 0.0};
+              columns.progress[i] = {layerIDs: [], nbLayers:0 , maxLayers: layerAmount, value: 0.0};
             }
           }
 
@@ -407,7 +407,7 @@ export default {
                 columns.progress[i].value = 0.0;
 
                 // Start only if the column has accurate values for all layers
-                if (columns.progress[i].nbLayers === columns.progress[i].maxLayers) {
+                if (columns.progress[i].nbLayers > 0) {
                   let layer;
                   let totalSum = 0;
                   let currentSum = 0;
