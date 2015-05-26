@@ -74,7 +74,7 @@ var Header = React.createClass({
     let menu = new Menu();
 
     if (!this.state.verified) {
-      menu.append(new MenuItem({ label: 'I\'ve verified my email address', click: this.handleVerifyClick}));
+      menu.append(new MenuItem({ label: 'I\'ve Verified My Email Address', click: this.handleVerifyClick}));
     }
 
     menu.append(new MenuItem({ label: 'Sign Out', click: this.handleLogoutClick}));
