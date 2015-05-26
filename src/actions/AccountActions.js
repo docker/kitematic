@@ -19,7 +19,7 @@ class AccountActions {
 
   skip () {
     this.dispatch({});
-    hub.prompted(true);
+    hub.setPrompted(true);
   }
 
   verify () {

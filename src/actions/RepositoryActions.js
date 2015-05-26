@@ -1,6 +1,5 @@
 import alt from '../alt';
 import regHubUtil from '../utils/RegHubUtil';
-import hubUtil from '../utils/HubUtil';
 
 class RepositoryActions {
   recommended () {
@@ -15,7 +14,7 @@ class RepositoryActions {
 
   repos () {
     this.dispatch({});
-    regHubUtil.repos(hubUtil.jwt());
+    regHubUtil.repos();
   }
 
   tags () {

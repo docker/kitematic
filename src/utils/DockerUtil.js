@@ -4,6 +4,7 @@ import path from 'path';
 import dockerode from 'dockerode';
 import _ from 'underscore';
 import util from './Util';
+import hubUtil from './HubUtil';
 import metrics from '../utils/MetricsUtil';
 import containerServerActions from '../actions/ContainerServerActions';
 import Promise from 'bluebird';
@@ -144,7 +145,7 @@ export default {
     });
   },
 
-  run (auth, name, repository, tag) {
+  run (name, repository, tag) {
     tag = tag || 'latest';
     let imageName = repository + ':' + tag;
 
@@ -164,7 +165,7 @@ export default {
     this.placeholders[name] = placeholderData;
     localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
 
-    this.pullImage(auth, repository, tag, error => {
+    this.pullImage(repository, tag, error => {
       if (error) {
         containerServerActions.error({name, error});
         return;
@@ -333,8 +334,22 @@ export default {
     });
   },
 
-  pullImage (auth, repository, tag, callback, progressCallback, blockedCallback) {
-    this.client.pull(repository + ':' + tag, (err, stream) => {
+  pullImage (repository, tag, callback, progressCallback, blockedCallback) {
+    let opts = {}, config = hubUtil.config();
+    if (!hubUtil.config()) {
+      opts = {};
+    } else {
+      let [username, password] = hubUtil.creds(config);
+      opts = {
+        authconfig: {
+          username,
+          password,
+          auth: ''
+        }
+      };
+    }
+
+    this.client.pull(repository + ':' + tag, opts, (err, stream) => {
       if (err) {
         callback(err);
         return;
@@ -354,8 +369,10 @@ export default {
       // data is associated with one layer only (can be identified with id)
       stream.on('data', str => {
         var data = JSON.parse(str);
+        console.log(data);
 
         if (data.error) {
+          callback(data.error);
           return;
         }
 
@@ -405,8 +422,6 @@ export default {
               tick = null;
               for (let i = 0; i < columns.amount; i++) {
                 columns.progress[i].value = 0.0;
-
-                // Start only if the column has accurate values for all layers
                 if (columns.progress[i].nbLayers > 0) {
                   let layer;
                   let totalSum = 0;
@@ -419,7 +434,7 @@ export default {
                   }
 
                   if (totalSum > 0) {
-                    columns.progress[i].value = 100.0 * currentSum / totalSum;
+                    columns.progress[i].value = Math.min(100.0 * currentSum / totalSum, 100);
                   } else {
                     columns.progress[i].value = 0.0;
                   }

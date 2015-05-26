@@ -1,13 +1,13 @@
+var _ = require('underscore');
 var request = require('request');
 var accountServerActions = require('../actions/AccountServerActions');
-var regHubUtil = require('./RegHubUtil');
 
 module.exports = {
   init: function () {
     accountServerActions.prompted({prompted: localStorage.getItem('auth.prompted')});
     let username = localStorage.getItem('auth.username');
     let verified = localStorage.getItem('auth.verified') === 'true';
-    if (username) { // TODO: check for config too
+    if (username) {
       accountServerActions.loggedin({username, verified});
     }
   },
@@ -21,15 +21,6 @@ module.exports = {
     return config;
   },
 
-  isPrompted: function () {
-    return localStorage.getItem('auth.prompted');
-  },
-
-  prompted: function (prompted) {
-    localStorage.setItem('auth.prompted', true);
-    accountServerActions.prompted({prompted});
-  },
-
   // Retrives the current jwt hub token or null if no token exists
   jwt: function () {
     let jwt = localStorage.getItem('auth.jwt');
@@ -39,12 +30,53 @@ module.exports = {
     return jwt;
   },
 
-  post: function (req) {
-
+  prompted: function () {
+    return localStorage.getItem('auth.prompted');
   },
 
-  get: function (req) {
-    // TODO: implement me and wrap all jwt calls
+  setPrompted: function (prompted) {
+    localStorage.setItem('auth.prompted', true);
+    accountServerActions.prompted({prompted});
+  },
+
+  request: function (req, callback) {
+    let jwt = this.jwt();
+
+    if (jwt) {
+      _.extend(req, {
+        headers: {
+          Authorization: `JWT ${jwt}`
+        }
+      });
+    }
+
+    // First attempt with existing JWT
+    request(req, (error, response, body) => {
+      let data = JSON.parse(body);
+
+      // If the JWT has expired, then log in again to get a new JWT
+      if (data && data.detail === 'Signature has expired.') {
+        let config = this.config();
+        if (!this.config()) {
+          this.logout();
+          return;
+        }
+
+        let [username, password] = this.creds(config);
+        this.auth(username, password, (error, response, body) => {
+          let data = JSON.parse(body);
+          if (response.statusCode === 200 && data && data.token) {
+            localStorage.setItem('auth.jwt', data.token);
+          } else {
+            this.logout();
+          }
+
+          this.request(req, callback);
+        });
+      } else {
+        callback(error, response, body);
+      }
+    });
   },
 
   loggedin: function () {
@@ -59,10 +91,15 @@ module.exports = {
     localStorage.removeItem('auth.config');
   },
 
-  // Places a token under ~/.dockercfg and saves a jwt to localstore
   login: function (username, password) {
-    request.post('https://hub.docker.com/v2/users/login/', {form: {username, password}}, (err, response, body) => {
+    this.auth(username, password, (error, response, body) => {
+      if (error) {
+        accountServerActions.errors({errors: {detail: error.message}});
+        return;
+      }
+
       let data = JSON.parse(body);
+
       if (response.statusCode === 200) {
         if (data.token) {
           localStorage.setItem('auth.jwt', data.token);
@@ -70,9 +107,9 @@ module.exports = {
           localStorage.setItem('auth.verified', true);
           localStorage.setItem('auth.config', new Buffer(username + ':' + password).toString('base64'));
           accountServerActions.loggedin({username, verified: true});
-          regHubUtil.repos(data.token);
+          require('./RegHubUtil').repos();
         } else {
-          accountServerActions.errors({errors: {details: new Error('Did not receive login token.')}});
+          accountServerActions.errors({errors: {detail: 'Did not receive login token.'}});
         }
       } else if (response.statusCode === 401) {
         if (data && data.detail && data.detail.indexOf('Account not active yet') !== -1) {
@@ -84,8 +121,12 @@ module.exports = {
           accountServerActions.errors({errors: data});
         }
       }
+    });
+  },
 
-
+  auth: function (username, password, callback) {
+    request.post('https://hub.docker.com/v2/users/login/', {form: {username, password}}, (error, response, body) => {
+      callback(error, response, body);
     });
   },
 
@@ -96,8 +137,12 @@ module.exports = {
       return;
     }
 
-    let [username, password] = new Buffer(config, 'base64').toString().split(/:(.+)?/).slice(0, 2);
+    let [username, password] = this.creds(config);
     this.login(username, password);
+  },
+
+  creds: function (config) {
+    return new Buffer(config, 'base64').toString().split(/:(.+)?/).slice(0, 2);
   },
 
   // Signs up and places a token under ~/.dockercfg and saves a jwt to localstore

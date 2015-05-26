@@ -21,8 +21,12 @@ var routerContainer = require('./router');
 var repositoryActions = require('./actions/RepositoryActions');
 
 hubUtil.init();
+
+if (hubUtil.loggedin()) {
+  repositoryActions.repos();
+}
+
 repositoryActions.recommended();
-repositoryActions.repos();
 
 webUtil.addWindowSizeSaving();
 webUtil.addLiveReload();
@@ -46,8 +50,8 @@ routerContainer.set(router);
 SetupStore.setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   docker.init();
-  if (!hub.isPrompted() && !hub.loggedin()) {
-    router.transitionTo('signup');
+  if (!hub.prompted() && !hub.loggedin()) {
+    router.transitionTo('login');
   } else {
     router.transitionTo('search');
   }

@@ -2,6 +2,7 @@ var _ = require('underscore');
 var request = require('request');
 var async = require('async');
 var util = require('../utils/Util');
+var hubUtil = require('../utils/HubUtil');
 var repositoryServerActions = require('../actions/RepositoryServerActions');
 var tagServerActions = require('../actions/TagServerActions');
 
@@ -63,6 +64,7 @@ module.exports = {
         if (util.isOfficialRepo(name)) {
           name = 'library/' + name;
         }
+
         request.get({
           url: `https://registry.hub.docker.com/v2/repositories/${name}`,
         }, (error, response, body) => {
@@ -84,14 +86,9 @@ module.exports = {
     });
   },
 
-  tags: function (jwt, repo) {
-    let headers = jwt ? {
-      Authorization: `JWT ${jwt}`
-    } : null;
-
-    request.get({
-      url: `https://registry.hub.docker.com/v2/repositories/${repo}/tags`,
-      headers
+  tags: function (repo) {
+    hubUtil.request({
+      url: `https://registry.hub.docker.com/v2/repositories/${repo}/tags`
     }, (error, response, body) => {
       if (response.statusCode === 200) {
         let data = JSON.parse(body);
@@ -103,20 +100,11 @@ module.exports = {
   },
 
   // Returns the base64 encoded index token or null if no token exists
-  repos: function (jwt) {
-    if (!jwt) {
-      repositoryServerActions.reposUpdated({repos: []});
-      return;
-    }
-
+  repos: function () {
     repositoryServerActions.reposLoading({repos: []});
 
-    // TODO: provide jwt
-    request.get({
+    hubUtil.request({
       url: 'https://registry.hub.docker.com/v2/namespaces/',
-      headers: {
-        Authorization: `JWT ${jwt}`
-      }
     }, (error, response, body) => {
       if (error) {
         repositoryServerActions.reposError({error});
@@ -126,11 +114,8 @@ module.exports = {
       let data = JSON.parse(body);
       let namespaces = data.namespaces;
       async.map(namespaces, (namespace, cb) => {
-        request.get({
-          url: `https://registry.hub.docker.com/v2/repositories/${namespace}`,
-          headers: {
-            Authorization: `JWT ${jwt}`
-          }
+        hubUtil.request({
+          url: `https://registry.hub.docker.com/v2/repositories/${namespace}`
         }, (error, response, body) => {
             if (error) {
               repositoryServerActions.reposError({error});

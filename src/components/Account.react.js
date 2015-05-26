@@ -23,6 +23,12 @@ module.exports = React.createClass({
     accountStore.unlisten(this.update);
   },
 
+  componentWillUpdate: function (nextProps, nextState) {
+    if (nextState.username) {
+      this.goBack();
+    }
+  },
+
   handleSkip: function () {
     accountActions.skip();
     this.transitionTo('search');
@@ -35,12 +41,7 @@ module.exports = React.createClass({
   },
 
   update: function () {
-    let state = accountStore.getState();
-    this.setState(state);
-
-    if (state.username) {
-      this.goBack();
-    }
+    this.setState(accountStore.getState());
   },
 
   render: function () {
