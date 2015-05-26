@@ -37,20 +37,14 @@ var _steps = [{
   percent: 0,
   seconds: 5,
   run: Promise.coroutine(function* (progressCallback) {
-    var cmd = setupUtil.copyBinariesCmd() + ' && ' + setupUtil.fixBinariesCmd();
     if (!virtualBox.installed()) {
       yield virtualBox.killall();
-      cmd += ' && ' + setupUtil.installVirtualBoxCmd();
-    } else {
-      if (!setupUtil.needsBinaryFix()) {
-        return;
-      }
-    }
-    try {
       progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
-      yield util.exec(setupUtil.macSudoCmd(cmd));
-    } catch (err) {
-      throw null;
+      try {
+        yield util.exec(setupUtil.macSudoCmd(setupUtil.installVirtualBoxCmd()));
+      } catch (err) {
+        throw null;
+      }
     }
   })
 }, {
@@ -159,7 +153,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var vboxNeedsInstall = !virtualBox.installed();
 
     required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== virtualBox.checksum());
-    required.install = vboxNeedsInstall || setupUtil.needsBinaryFix();
+    required.install = vboxNeedsInstall;
     required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0;
 
     var exists = yield machine.exists();
@@ -176,20 +170,10 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     });
     return Promise.resolve(_requiredSteps);
   }),
-  updateBinaries: function () {
-    if (setupUtil.needsBinaryFix()) {
-      return Promise.resolve();
-    }
-    if (setupUtil.shouldUpdateBinaries()) {
-      return util.exec(setupUtil.copyBinariesCmd());
-    }
-    return Promise.resolve();
-  },
   run: Promise.coroutine(function* () {
     metrics.track('Started Setup', {
       virtualbox: virtualBox.installed() ? yield virtualBox.version() : 'Not Installed'
     });
-    yield this.updateBinaries();
     var steps = yield this.requiredSteps();
     for (let step of steps) {
       _currentStep = step;

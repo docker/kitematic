@@ -3,6 +3,7 @@ var app = remote.require('app');
 var shell = require('shell');
 var router = require('./router');
 var util = require('./utils/Util');
+var setupUtil = require('./utils/SetupUtil');
 var metrics = require('./utils/MetricsUtil');
 var machine = require('./utils/DockerMachineUtil');
 import docker from './utils/DockerUtil';
@@ -19,6 +20,23 @@ var MenuTemplate = function () {
       },
       {
         type: 'separator'
+      },
+      {
+        label: 'Install Docker Commands',
+        enabled: true,
+        click: function () {
+          metrics.track('Installed Docker Commands');
+          if (!setupUtil.shouldUpdateBinaries()) {
+            return;
+          }
+
+          if (setupUtil.needsBinaryFix()) {
+            let cmd = setupUtil.copyBinariesCmd() + ' && ' + setupUtil.fixBinariesCmd();
+            util.exec(setupUtil.macSudoCmd(cmd)).catch(() => {});
+          } else {
+            util.exec(setupUtil.copyBinariesCmd());
+          }
+        },
       },
       {
         label: 'Preferences',
