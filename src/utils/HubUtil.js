@@ -39,7 +39,11 @@ module.exports = {
     return jwt;
   },
 
-  refresh: function () {
+  post: function (req) {
+
+  },
+
+  get: function (req) {
     // TODO: implement me and wrap all jwt calls
   },
 
@@ -56,31 +60,32 @@ module.exports = {
   },
 
   // Places a token under ~/.dockercfg and saves a jwt to localstore
-  login: function (username, password, verifying) {
+  login: function (username, password) {
     request.post('https://hub.docker.com/v2/users/login/', {form: {username, password}}, (err, response, body) => {
       let data = JSON.parse(body);
       if (response.statusCode === 200) {
-        // TODO: save username to localstorage
-        // TODO: handle case where token does not exist
         if (data.token) {
           localStorage.setItem('auth.jwt', data.token);
           localStorage.setItem('auth.username', username);
           localStorage.setItem('auth.verified', true);
           localStorage.setItem('auth.config', new Buffer(username + ':' + password).toString('base64'));
-        }
-        if (verifying) {
-          accountServerActions.verified({username});
-        } else {
           accountServerActions.loggedin({username, verified: true});
+          regHubUtil.repos(data.token);
+        } else {
+          accountServerActions.errors({errors: {details: new Error('Did not receive login token.')}});
         }
-        regHubUtil.repos(data.token);
       } else if (response.statusCode === 401) {
         if (data && data.detail && data.detail.indexOf('Account not active yet') !== -1) {
           accountServerActions.loggedin({username, verified: false});
+          localStorage.setItem('auth.username', username);
+          localStorage.setItem('auth.verified', false);
+          localStorage.setItem('auth.config', new Buffer(username + ':' + password).toString('base64'));
         } else {
           accountServerActions.errors({errors: data});
         }
       }
+
+
     });
   },
 
@@ -92,7 +97,7 @@ module.exports = {
     }
 
     let [username, password] = new Buffer(config, 'base64').toString().split(/:(.+)?/).slice(0, 2);
-    this.login(username, password, true);
+    this.login(username, password);
   },
 
   // Signs up and places a token under ~/.dockercfg and saves a jwt to localstore

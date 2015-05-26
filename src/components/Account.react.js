@@ -35,7 +35,12 @@ module.exports = React.createClass({
   },
 
   update: function () {
-    this.setState(accountStore.getState());
+    let state = accountStore.getState();
+    this.setState(state);
+
+    if (state.username) {
+      this.goBack();
+    }
   },
 
   render: function () {
