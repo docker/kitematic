@@ -1,8 +1,11 @@
-var Router = require('react-router');
-var routes = require('./routes');
+module.exports = {
+  router: null,
 
-var router = Router.create({
-  routes: routes
-});
+  get: function () {
+    return this.router;
+  },
 
-module.exports = router;
+  set: function (router) {
+    this.router = router;
+  }
+};

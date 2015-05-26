@@ -51,13 +51,11 @@ var ContainerHome = React.createClass({
         </div>
       );
     } else if (this.props.container && this.props.container.State.Downloading) {
-      if (this.props.container.Progress !== undefined) {
-
+      if (this.props.container.Progress) {
         let values = [];
         let sum = 0.0;
 
         for (let i = 0; i < this.props.container.Progress.amount; i++) {
-
           values.push(Math.round(this.props.container.Progress.progress[i].value));
           sum += this.props.container.Progress.progress[i].value;
         }
@@ -67,9 +65,9 @@ var ContainerHome = React.createClass({
         body = (
           <div className="details-progress">
             <h2>Downloading Image</h2>
-            <h2>{Math.round(sum*100)/100}%</h2>
+            <h2>{(Math.round(sum*100)/100).toFixed(2)}%</h2>
             <div className="container-progress-wrapper">
-              <ContainerProgress pBar1={values[0]} pBar2={values[1]} pBar3={values[2]} pBar4={values[3]} />
+              <ContainerProgress pBar1={values[0]} pBar2={values[1]} pBar3={values[2]} pBar4={values[3]}/>
             </div>
           </div>
         );

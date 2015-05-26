@@ -18,7 +18,6 @@ try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
 } catch (err) {}
 
-
 var openURL = null;
 app.on('open-url', function (event, url) {
   event.preventDefault();
@@ -28,13 +27,13 @@ app.on('open-url', function (event, url) {
 app.on('ready', function () {
   var mainWindow = new BrowserWindow({
     width: size.width || 1000,
-    height: size.height || 700,
+    height: size.height || 780,
     'min-width': 1000,
-    'min-height': 700,
+    'min-height': 600,
     'standard-window': false,
     resizable: true,
     frame: false,
-    show: true,
+    show: false,
   });
 
   mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/index.html')));

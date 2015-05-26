@@ -1,32 +1,57 @@
 var _ = require('underscore');
-var $ = require('jquery');
 var React = require('react/addons');
+var Router = require('react-router');
 var RetinaImage = require('react-retina-image');
-var Radial = require('./Radial.react');
 var ImageCard = require('./ImageCard.react');
 var Promise = require('bluebird');
 var metrics = require('../utils/MetricsUtil');
 var classNames = require('classnames');
+var repositoryActions = require('../actions/RepositoryActions');
+var repositoryStore = require('../stores/RepositoryStore');
+var accountStore = require('../stores/AccountStore');
+var accountActions = require('../actions/AccountActions');
 
-var _recommended = [];
 var _searchPromise = null;
 
 module.exports = React.createClass({
+  mixins: [Router.Navigation, Router.State],
   getInitialState: function () {
     return {
       query: '',
-      loading: false,
-      results: _recommended
+      loading: repositoryStore.loading(),
+      repos: repositoryStore.all(),
+      username: accountStore.getState().username,
+      verified: accountStore.getState().verified,
+      accountLoading: accountStore.getState().loading,
+      error: repositoryStore.getState().error
     };
   },
   componentDidMount: function () {
     this.refs.searchInput.getDOMNode().focus();
-    this.recommended();
+    repositoryStore.listen(this.update);
+    accountStore.listen(this.updateAccount);
+    repositoryActions.search();
   },
   componentWillUnmount: function () {
     if (_searchPromise) {
       _searchPromise.cancel();
     }
+
+    repositoryStore.unlisten(this.update);
+    accountStore.unlisten(this.updateAccount);
+  },
+  update: function () {
+    this.setState({
+      loading: repositoryStore.loading(),
+      repos: repositoryStore.all()
+    });
+  },
+  updateAccount: function () {
+    this.setState({
+      username: accountStore.getState().username,
+      verified: accountStore.getState().verified,
+      accountLoading: accountStore.getState().loading
+    });
   },
   search: function (query) {
     if (_searchPromise) {
@@ -34,63 +59,16 @@ module.exports = React.createClass({
       _searchPromise = null;
     }
 
-    if (!query.length) {
-      this.setState({
-        query: query,
-        results: _recommended,
-        loading: false
-      });
-      return;
-    }
-
     this.setState({
       query: query,
       loading: true
     });
 
-    _searchPromise = Promise.delay(200).cancellable().then(() => Promise.resolve($.get('https://registry.hub.docker.com/v1/search?q=' + query))).then(data => {
+    _searchPromise = Promise.delay(200).cancellable().then(() => {
       metrics.track('Searched for Images');
-      this.setState({
-        results: data.results,
-        query: query,
-        loading: false
-      });
       _searchPromise = null;
-    }).catch(Promise.CancellationError, () => {
-    });
-  },
-  recommended: function () {
-    if (_recommended.length) {
-      return;
-    }
-    Promise.resolve($.ajax({
-      url: 'https://kitematic.com/recommended.json',
-      cache: false,
-      dataType: 'json',
-    })).then(res => res.repos).map(repo => {
-      var query = repo.repo;
-      var vals = query.split('/');
-      if (vals.length === 1) {
-        query = 'library/' + vals[0];
-      }
-      return $.get('https://registry.hub.docker.com/v1/repositories_info/' + query).then(data => {
-        var res = _.extend(data, repo);
-        res.description = data.short_description;
-        res.is_official = data.namespace === 'library';
-        res.name = data.repo;
-        res.star_count = data.stars;
-        return res;
-      });
-    }).then(results => {
-      _recommended = results.filter(r => !!r);
-      if (!this.state.query.length && this.isMounted()) {
-        this.setState({
-          results: _recommended
-        });
-      }
-    }).catch(err => {
-      console.log(err);
-    });
+      repositoryActions.search(query);
+    }).catch(Promise.CancellationError, () => {});
   },
   handleChange: function (e) {
     var query = e.target.value;
@@ -99,67 +77,162 @@ module.exports = React.createClass({
     }
     this.search(query);
   },
+  handleFilter: function (filter) {
+
+    // If we're clicking on the filter again - refresh
+    if (filter === 'userrepos' && this.getQuery().filter === 'userrepos') {
+      repositoryActions.repos();
+    }
+
+    if (filter === 'recommended' && this.getQuery().filter === 'recommended') {
+      repositoryActions.recommended();
+    }
+
+    this.transitionTo('search', {}, {filter: filter});
+
+    metrics.track('Filtered Results', {
+      filter: filter
+    });
+  },
+  handleCheckVerification: function () {
+    accountActions.verify();
+    metrics.track('Verified Account', {
+      from: 'search'
+    });
+  },
   render: function () {
-    var title = this.state.query ? 'Results' : 'Recommended';
-    var data = this.state.results;
-    var results;
-    if (data.length) {
-      var items = data.map(function (image) {
-        return (
-          <ImageCard key={image.name} image={image} />
-        );
-      });
+    let filter = this.getQuery().filter || 'all';
+    let repos = _.values(this.state.repos)
+        .filter(repo => repo.name.toLowerCase().indexOf(this.state.query.toLowerCase()) !== -1 || repo.namespace.toLowerCase().indexOf(this.state.query.toLowerCase()) !== -1)
+        .filter(repo => filter === 'all' || (filter === 'recommended' && repo.is_recommended) || (filter === 'userrepos' && repo.is_user_repo));
+
+    let results;
+    if (this.state.error) {
+      results = (
+        <div className="no-results">
+          <h2>There was an error contacting Docker Hub.</h2>
+        </div>
+      );
+    } else if (filter === 'userrepos' && !accountStore.getState().username) {
+      results = (
+        <div className="no-results">
+          <h2><Router.Link to="login">Log In</Router.Link>  or  <Router.Link to="signup">Sign Up</Router.Link> to access your Docker Hub repositories.</h2>
+          <RetinaImage src="connect-art.png" checkIfRetinaImgExists={false}/>
+        </div>
+      );
+    } else if (filter === 'userrepos' && !accountStore.getState().verified) {
+      let spinner = this.state.accountLoading ? <div className="spinner la-ball-clip-rotate la-dark"><div></div></div> : null;
+      results = (
+        <div className="no-results">
+          <h2>Please verify your Docker Hub account email address</h2>
+          <div className="verify">
+            <button className="btn btn-primary btn-lg" onClick={this.handleCheckVerification}>{'I\'ve Verified my Email Address'}</button> {spinner}
+          </div>
+          <RetinaImage src="inspection.png" checkIfRetinaImgExists={false}/>
+        </div>
+      );
+    } else if (this.state.loading) {
+      results = (
+        <div className="no-results">
+          <div className="loader">
+            <h2>Loading Images</h2>
+            <div className="spinner la-ball-clip-rotate la-dark la-lg"><div></div></div>
+          </div>
+        </div>
+      );
+    } else if (repos.length) {
+      let recommendedItems = repos.filter(repo => repo.is_recommended).map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />);
+      let otherItems = repos.filter(repo => !repo.is_recommended && !repo.is_user_repo).map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />);
+
+      let recommendedResults = recommendedItems.length ? (
+        <div>
+          <h4>Recommended</h4>
+          <div className="result-grid">
+            {recommendedItems}
+          </div>
+        </div>
+      ) : null;
+
+      let userRepoItems = repos.filter(repo => repo.is_user_repo).map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />);
+      let userRepoResults = userRepoItems.length ? (
+        <div>
+          <h4>My Repositories</h4>
+          <div className="result-grid">
+            {userRepoItems}
+          </div>
+        </div>
+      ) : null;
+
+      let otherResults = otherItems.length ? (
+        <div>
+          <h4>Other Repositories</h4>
+          <div className="result-grid">
+            {otherItems}
+          </div>
+        </div>
+      ) : null;
 
       results = (
-        <div className="result-grid">
-          {items}
+        <div className="result-grids">
+          {recommendedResults}
+          {userRepoResults}
+          {otherResults}
         </div>
       );
     } else {
-      if (this.state.results.length === 0 && this.state.query === '') {
+      if (this.state.query.length) {
         results = (
           <div className="no-results">
-            <div className="loader">
-              <h2>Loading Images</h2>
-              <Radial spin="true" progress={90} thick={true} transparent={true} />
-            </div>
+            <h2>Cannot find a matching image.</h2>
           </div>
         );
       } else {
         results = (
           <div className="no-results">
-            <h1>Cannot find a matching image.</h1>
+            <h2>No Images</h2>
           </div>
         );
       }
     }
-    var loadingClasses = classNames({
+
+    let loadingClasses = classNames({
       hidden: !this.state.loading,
-      loading: true
+      spinner: true,
+      loading: true,
+      'la-ball-clip-rotate': true,
+      'la-dark': true,
+      'la-sm': true
     });
-    var magnifierClasses = classNames({
+
+    let magnifierClasses = classNames({
       hidden: this.state.loading,
       icon: true,
       'icon-magnifier': true,
       'search-icon': true
     });
+
     return (
       <div className="details">
         <div className="new-container">
           <div className="new-container-header">
             <div className="text">
-              Select a Docker image to create a new container.
+              Select a Docker image to create a container.
             </div>
             <div className="search">
               <div className="search-bar">
                 <input type="search" ref="searchInput" className="form-control" placeholder="Search Docker Hub for an image" onChange={this.handleChange}/>
                 <div className={magnifierClasses}></div>
-                <RetinaImage className={loadingClasses} src="loading.png"/>
+                <div className={loadingClasses}><div></div></div>
               </div>
             </div>
           </div>
           <div className="results">
-            <h4>{title}</h4>
+            <div className="results-filters">
+              <span className="results-filter results-filter-title">FILTER BY</span>
+              <span className={`results-filter results-all tab ${filter === 'all' ? 'active' : ''}`} onClick={this.handleFilter.bind(this, 'all')}>All</span>
+              <span className={`results-filter results-recommended tab ${filter === 'recommended' ? 'active' : ''}`} onClick={this.handleFilter.bind(this, 'recommended')}>Recommended</span>
+              <span className={`results-filter results-userrepos tab ${filter === 'userrepos' ? 'active' : ''}`} onClick={this.handleFilter.bind(this, 'userrepos')}>My Repositories</span>
+            </div>
             {results}
           </div>
         </div>

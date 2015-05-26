@@ -1,13 +1,15 @@
 var $ = require('jquery');
 var React = require('react/addons');
 var Router = require('react-router');
+var shell = require('shell');
 var RetinaImage = require('react-retina-image');
 var metrics = require('../utils/MetricsUtil');
 var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
 var Tooltip = require('react-bootstrap').Tooltip;
-var util = require('../utils/Util');
 var containerActions = require('../actions/ContainerActions');
 var containerStore = require('../stores/ContainerStore');
+var tagStore = require('../stores/TagStore');
+var tagActions = require('../actions/TagActions');
 
 var ImageCard = React.createClass({
   mixins: [Router.Navigation],
@@ -17,6 +19,23 @@ var ImageCard = React.createClass({
       chosenTag: 'latest'
     };
   },
+  componentDidMount: function () {
+    tagStore.listen(this.update);
+  },
+  componentWillUnmount: function () {
+    tagStore.unlisten(this.update);
+  },
+  update: function () {
+    let repo = this.props.image.namespace + '/' + this.props.image.name;
+    let state = tagStore.getState();
+    if (this.state.tags.length && !state.tags[repo]) {
+      $(this.getDOMNode()).find('.tag-overlay').fadeOut(300);
+    }
+    this.setState({
+      loading: tagStore.getState().loading[repo] || false,
+      tags: tagStore.getState().tags[repo] || []
+    });
+  },
   handleTagClick: function (tag) {
     this.setState({
       chosenTag: tag
@@ -25,72 +44,55 @@ var ImageCard = React.createClass({
     $tagOverlay.fadeOut(300);
     metrics.track('Selected Image Tag');
   },
-  handleClick: function (repository) {
+  handleClick: function () {
     metrics.track('Created Container', {
-      from: 'search'
+      from: 'search',
+      private: this.props.image.is_private,
+      official: this.props.image.namespace === 'library',
+      userowned: this.props.image.is_user_repo,
+      recommended: this.props.image.is_recommended
     });
-    let name = containerStore.generateName(repository);
-    containerActions.run(name, repository, this.state.chosenTag);
+    let name = containerStore.generateName(this.props.image.name);
+    let repo = this.props.image.namespace === 'library' ? this.props.image.name : this.props.image.namespace + '/' + this.props.image.name;
+    containerActions.run(name, repo, this.state.chosenTag);
     this.transitionTo('containerHome', {name});
   },
-  handleTagOverlayClick: function (name) {
-    var $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
+  handleTagOverlayClick: function () {
+    let $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
     $tagOverlay.fadeIn(300);
-    $.get('https://registry.hub.docker.com/v1/repositories/' + name + '/tags', result => {
-      this.setState({
-        tags: result
-      });
-    });
+    tagActions.tags(this.props.image.namespace + '/' + this.props.image.name);
   },
   handleCloseTagOverlay: function () {
     var $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
     $tagOverlay.fadeOut(300);
   },
   handleRepoClick: function () {
-    var $repoUri = 'https://registry.hub.docker.com/';
-    if (this.props.image.is_official) {
-      $repoUri = $repoUri + "_/";
+    var repoUri = 'https://registry.hub.docker.com/';
+    if (this.props.image.namespace === 'library') {
+      repoUri = repoUri + '_/' + this.props.image.name;
     } else {
-      $repoUri = $repoUri + "u/";
+      repoUri = repoUri + 'u/' + this.props.image.namespace + '/' + this.props.image.name;
     }
-    util.exec(['open', $repoUri + this.props.image.name]);
-  },
-  componentDidMount: function() {
-    $.get('https://registry.hub.docker.com/v1/repositories/' + this.props.image.name + '/tags', result => {
-      this.setState({
-        tags: result,
-        chosenTag: result[0].name
-      });
-    });
+    shell.openExternal(repoUri);
   },
   render: function () {
     var self = this;
-    var name;
-    var imageNameTokens = this.props.image.name.split('/');
-    var namespace;
-    var repo;
-    if (imageNameTokens.length > 1) {
-      namespace = imageNameTokens[0];
-      repo = imageNameTokens[1];
-    } else {
-      namespace = "official";
-      repo = imageNameTokens[0];
-    }
-    if (this.props.image.is_official) {
+    let name;
+    if (this.props.image.namespace === 'library') {
       name = (
         <div>
-          <div className="namespace official">{namespace}</div>
+          <div className="namespace official">official</div>
           <OverlayTrigger placement="bottom" overlay={<Tooltip>View on Docker Hub</Tooltip>}>
-            <span className="repo" onClick={this.handleRepoClick}>{repo}</span>
+            <span className="repo" onClick={this.handleRepoClick}>{this.props.image.name}</span>
           </OverlayTrigger>
         </div>
       );
     } else {
       name = (
         <div>
-          <div className="namespace">{namespace}</div>
+          <div className="namespace">{this.props.image.namespace}</div>
           <OverlayTrigger placement="bottom" overlay={<Tooltip>View on Docker Hub</Tooltip>}>
-            <span className="repo" onClick={this.handleRepoClick}>{repo}</span>
+            <span className="repo" onClick={this.handleRepoClick}>{this.props.image.name}</span>
           </OverlayTrigger>
         </div>
       );
@@ -111,12 +113,16 @@ var ImageCard = React.createClass({
       imgsrc = 'http://kitematic.com/recommended/kitematic_html.png';
     }
     var tags;
-    if (self.state.tags.length > 0) {
+    if (self.state.loading) {
+      tags = <RetinaImage className="tags-loading" src="loading-white.png"/>;
+    } else if (self.state.tags.length === 0) {
+      tags = <span>No Tags</span>;
+    } else {
       var tagDisplay = self.state.tags.map(function (t) {
-        if (t.name === self.state.chosenTag) {
-          return <div className="tag active" key={t.name} onClick={self.handleTagClick.bind(self, t.name)}>{t.name}</div>;
+        if (t === self.state.chosenTag) {
+          return <div className="tag active" key={t} onClick={self.handleTagClick.bind(self, t)}>{t}</div>;
         } else {
-          return <div className="tag" key={t.name} onClick={self.handleTagClick.bind(self, t.name)}>{t.name}</div>;
+          return <div className="tag" key={t} onClick={self.handleTagClick.bind(self, t)}>{t}</div>;
         }
       });
       tags = (
@@ -124,13 +130,15 @@ var ImageCard = React.createClass({
           {tagDisplay}
         </div>
       );
-    } else {
-      tags = <RetinaImage className="tags-loading" src="loading-white.png"/>;
     }
-    var officialBadge;
-    if (this.props.image.is_official) {
-      officialBadge = (
-        <RetinaImage src="official.png" />
+    var badge = null;
+    if (this.props.image.namespace === 'library') {
+      badge = (
+        <RetinaImage src="official.png"/>
+      );
+    } else if (this.props.image.is_private) {
+      badge = (
+        <RetinaImage src="private.png"/>
       );
     }
     return (
@@ -143,7 +151,7 @@ var ImageCard = React.createClass({
         </div>
         <div className="card">
           <div className="badges">
-            {officialBadge}
+            {badge}
           </div>
           <div className="name">
             {name}
@@ -152,20 +160,16 @@ var ImageCard = React.createClass({
             {description}
           </div>
           <div className="actions">
-            <OverlayTrigger placement="bottom" overlay={<Tooltip>Favorites</Tooltip>}>
-              <div className="stars">
-                <span className="icon icon-star-9"></span>
-                <span className="text">{this.props.image.star_count}</span>
-              </div>
-            </OverlayTrigger>
+            <div className="stars">
+              <span className="icon icon-star-9"></span>
+              <span className="text">{this.props.image.star_count}</span>
+            </div>
             <div className="tags">
               <span className="icon icon-bookmark-2"></span>
-              <OverlayTrigger placement="bottom" overlay={<Tooltip>Change Tag</Tooltip>}>
-                <span className="text" onClick={self.handleTagOverlayClick.bind(self, this.props.image.name)} data-name={this.props.image.name}>{this.state.chosenTag}</span>
-              </OverlayTrigger>
+              <span className="text" onClick={self.handleTagOverlayClick.bind(self, this.props.image.name)} data-name={this.props.image.name}>{this.state.chosenTag}</span>
             </div>
             <div className="action">
-              <a className="btn btn-action" onClick={self.handleClick.bind(self, this.props.image.name)}>Create</a>
+              <a className="btn btn-action" onClick={self.handleClick}>Create</a>
             </div>
           </div>
         </div>

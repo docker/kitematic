@@ -5,10 +5,7 @@ var Router = require('react-router');
 var containerStore = require('../stores/ContainerStore');
 var ContainerList = require('./ContainerList.react');
 var Header = require('./Header.react');
-var ipc = require('ipc');
-var remote = require('remote');
 var metrics = require('../utils/MetricsUtil');
-var autoUpdater = remote.require('auto-updater');
 var RetinaImage = require('react-retina-image');
 var shell = require('shell');
 var machine = require('../utils/DockerMachineUtil');
@@ -21,31 +18,21 @@ var Containers = React.createClass({
   getInitialState: function () {
     return {
       sidebarOffset: 0,
-      containers: {},
-      sorted: [],
-      updateAvailable: false,
-      currentButtonLabel: ''
+      containers: containerStore.getState().containers,
+      sorted: this.sorted(containerStore.getState().containers)
     };
   },
 
   componentDidMount: function () {
     containerStore.listen(this.update);
-
-    ipc.on('application:update-available', () => {
-      this.setState({
-        updateAvailable: true
-      });
-    });
-    autoUpdater.checkForUpdates();
   },
 
   componentDidUnmount: function () {
     containerStore.unlisten(this.update);
   },
 
-  update: function () {
-    let containers = containerStore.getState().containers;
-    let sorted =  _.values(containers).sort(function (a, b) {
+  sorted: function (containers) {
+    return _.values(containers).sort(function (a, b) {
       if (a.State.Downloading && !b.State.Downloading) {
         return -1;
       } else if (!a.State.Downloading && b.State.Downloading) {
@@ -60,6 +47,11 @@ var Containers = React.createClass({
         }
       }
     });
+  },
+
+  update: function () {
+    let containers = containerStore.getState().containers;
+    let sorted = this.sorted(containerStore.getState().containers);
 
     let name = this.context.router.getCurrentParams().name;
     if (containerStore.getState().pending) {
@@ -95,11 +87,6 @@ var Containers = React.createClass({
     $(this.getDOMNode()).find('.new-container-item').parent().fadeIn();
     this.context.router.transitionTo('new');
     metrics.track('Pressed New Container');
-  },
-
-  handleAutoUpdateClick: function () {
-    metrics.track('Restarted to Update');
-    ipc.send('application:quit-install');
   },
 
   handleClickPreferences: function () {
@@ -164,12 +151,6 @@ var Containers = React.createClass({
     if (this.state.sidebarOffset) {
       sidebarHeaderClass += ' sep';
     }
-    var updateWidget;
-    if (this.state.updateAvailable) {
-      updateWidget = (
-        <a className="btn btn-action small" onClick={this.handleAutoUpdateClick}>New Update</a>
-      );
-    }
 
     var container = this.context.router.getCurrentParams().name ? this.state.containers[this.context.router.getCurrentParams().name] : {};
     return (
@@ -187,14 +168,11 @@ var Containers = React.createClass({
             </section>
             <section className="sidebar-containers" onScroll={this.handleScroll}>
               <ContainerList containers={this.state.sorted} newContainer={this.state.newContainer} />
-              <div className="sidebar-buttons">
-                <div className="btn-label">{this.state.currentButtonLabel}</div>
-                <span className="btn-sidebar" onClick={this.handleClickDockerTerminal} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><RetinaImage src="docker-terminal.png"/></span>
-                <span className="btn-sidebar" onClick={this.handleClickReportIssue} onMouseEnter={this.handleMouseEnterReportIssue} onMouseLeave={this.handleMouseLeaveReportIssue}><RetinaImage src="report-issue.png"/></span>
-                <span className="btn-sidebar" onClick={this.handleClickPreferences} onMouseEnter={this.handleMouseEnterPreferences} onMouseLeave={this.handleMouseLeavePreferences}><RetinaImage src="preferences.png"/></span>
-                {updateWidget}
-              </div>
-              <div className="sidebar-buttons-padding"></div>
+            </section>
+            <section className="sidebar-buttons">
+              <span className="btn-sidebar btn-terminal" onClick={this.handleClickDockerTerminal} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><RetinaImage src="whaleicon.png"/> <span className="text">DOCKER CLI</span></span>
+              <span className="btn-sidebar btn-feedback" onClick={this.handleClickReportIssue} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><RetinaImage src="feedback.png"/></span>
+              <span className="btn-sidebar" onClick={this.handleClickPreferences} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><RetinaImage src="preferences.png"/></span>
             </section>
           </div>
           <Router.RouteHandler pending={this.state.pending} containers={this.state.containers} container={container}/>

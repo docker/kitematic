@@ -9,10 +9,24 @@ var metrics = require('./utils/MetricsUtil');
 var router = require('./router');
 var template = require('./menutemplate');
 var webUtil = require('./utils/WebUtil');
+var hubUtil = require('./utils/HubUtil');
 var urlUtil = require ('./utils/URLUtil');
 var app = remote.require('app');
 var request = require('request');
 var docker = require('./utils/DockerUtil');
+var hub = require('./utils/HubUtil');
+var Router = require('react-router');
+var routes = require('./routes');
+var routerContainer = require('./router');
+var repositoryActions = require('./actions/RepositoryActions');
+
+hubUtil.init();
+
+if (hubUtil.loggedin()) {
+  repositoryActions.repos();
+}
+
+repositoryActions.recommended();
 
 webUtil.addWindowSizeSaving();
 webUtil.addLiveReload();
@@ -27,12 +41,20 @@ setInterval(function () {
   metrics.track('app heartbeat');
 }, 14400000);
 
+var router = Router.create({
+  routes: routes
+});
 router.run(Handler => React.render(<Handler/>, document.body));
+routerContainer.set(router);
 
 SetupStore.setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   docker.init();
-  router.transitionTo('search');
+  if (!hub.prompted() && !hub.loggedin()) {
+    router.transitionTo('login');
+  } else {
+    router.transitionTo('search');
+  }
 }).catch(err => {
   metrics.track('Setup Failed', {
     step: 'catch',
@@ -63,3 +85,7 @@ ipc.on('application:open-url', opts => {
     urlUtil.openUrl(opts.url, flags, app.getVersion());
   });
 });
+
+module.exports = {
+  router: router
+};
