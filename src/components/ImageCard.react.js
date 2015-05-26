@@ -48,8 +48,8 @@ var ImageCard = React.createClass({
     metrics.track('Created Container', {
       from: 'search',
       private: this.props.image.is_private,
-      official: this.props.image.is_official,
-      user_repo: this.props.image.is_user_repo,
+      official: this.props.image.namespace === 'library',
+      userowned: this.props.image.is_user_repo,
       recommended: this.props.image.is_recommended
     });
     let name = containerStore.generateName(this.props.image.name);
@@ -68,7 +68,7 @@ var ImageCard = React.createClass({
   },
   handleRepoClick: function () {
     var repoUri = 'https://registry.hub.docker.com/';
-    if (this.props.image.is_official) {
+    if (this.props.image.namespace === 'library') {
       repoUri = repoUri + '_/' + this.props.image.name;
     } else {
       repoUri = repoUri + 'u/' + this.props.image.namespace + '/' + this.props.image.name;
