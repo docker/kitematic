@@ -16,10 +16,6 @@ class RepositoryActions {
     this.dispatch({});
     regHubUtil.repos();
   }
-
-  tags () {
-
-  }
 }
 
 export default alt.createActions(RepositoryActions);
