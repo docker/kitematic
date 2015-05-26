@@ -317,7 +317,6 @@ export default {
       stream.setEncoding('utf8');
       stream.on('data', json => {
         let data = JSON.parse(json);
-        // console.log(data);
 
         if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete') {
           return;
@@ -369,7 +368,6 @@ export default {
       // data is associated with one layer only (can be identified with id)
       stream.on('data', str => {
         var data = JSON.parse(str);
-        console.log(data);
 
         if (data.error) {
           callback(data.error);

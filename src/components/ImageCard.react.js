@@ -46,7 +46,11 @@ var ImageCard = React.createClass({
   },
   handleClick: function () {
     metrics.track('Created Container', {
-      from: 'search'
+      from: 'search',
+      private: this.props.image.is_private,
+      official: this.props.image.is_official,
+      user_repo: this.props.image.is_user_repo,
+      recommended: this.props.image.is_recommended
     });
     let name = containerStore.generateName(this.props.image.name);
     let repo = this.props.image.namespace === 'library' ? this.props.image.name : this.props.image.namespace + '/' + this.props.image.name;

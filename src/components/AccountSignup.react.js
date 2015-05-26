@@ -52,13 +52,14 @@ module.exports = React.createClass({
 
     if (_.isEmpty(errors)) {
       accountActions.signup(this.state.username, this.state.password, this.state.email, this.state.subscribe);
+      metrics.track('Clicked Signed Up');
     }
-    metrics.track('Signed Up for Docker Hub');
   },
 
   handleClickLogin: function () {
     if (!this.props.loading) {
       this.replaceWith('login');
+      metrics.track('Switched to Log In');
     }
   },
 

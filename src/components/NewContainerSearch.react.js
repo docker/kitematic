@@ -89,9 +89,16 @@ module.exports = React.createClass({
     }
 
     this.transitionTo('search', {}, {filter: filter});
+
+    metrics.track('Filtered Results', {
+      filter: filter
+    });
   },
   handleCheckVerification: function () {
     accountActions.verify();
+    metrics.track('Verified Account', {
+      from: 'search'
+    });
   },
   render: function () {
     let filter = this.getQuery().filter || 'all';
@@ -173,11 +180,19 @@ module.exports = React.createClass({
         </div>
       );
     } else {
-      results = (
-        <div className="no-results">
-          <h2>Cannot find a matching image.</h2>
-        </div>
-      );
+      if (this.state.query.length) {
+        results = (
+          <div className="no-results">
+            <h2>Cannot find a matching image.</h2>
+          </div>
+        );
+      } else {
+        results = (
+          <div className="no-results">
+            <h2>No Images</h2>
+          </div>
+        );
+      }
     }
 
     let loadingClasses = classNames({

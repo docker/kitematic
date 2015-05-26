@@ -32,12 +32,12 @@ module.exports = React.createClass({
   handleSkip: function () {
     accountActions.skip();
     this.transitionTo('search');
-    metrics.track('Skipped Signup');
+    metrics.track('Skipped Login');
   },
 
   handleClose: function () {
     this.goBack();
-    metrics.track('Closed Signup');
+    metrics.track('Closed Login');
   },
 
   update: function () {
