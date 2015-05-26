@@ -52,8 +52,6 @@ var ContainerHome = React.createClass({
       );
     } else if (this.props.container && this.props.container.State.Downloading) {
       if (this.props.container.Progress) {
-
-        let fields = [];
         let values = [];
         let sum = 0.0;
 
@@ -64,13 +62,13 @@ var ContainerHome = React.createClass({
 
         sum = sum / this.props.container.Progress.amount;
 
-        fields.push(<h2>{(Math.round(sum*100)/100).toFixed(2)}%</h2>);
-        fields.push(<ContainerProgress pBar1={values[0]} pBar2={values[1]} pBar3={values[2]} pBar4={values[3]} />);
-
         body = (
           <div className="details-progress">
             <h2>Downloading Image</h2>
-            {fields}
+            <h2>{(Math.round(sum*100)/100).toFixed(2)}%</h2>
+            <div className="container-progress-wrapper">
+              <ContainerProgress pBar1={values[0]} pBar2={values[1]} pBar3={values[2]} pBar4={values[3]}/>
+            </div>
           </div>
         );
 
