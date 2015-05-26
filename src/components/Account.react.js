@@ -24,8 +24,12 @@ module.exports = React.createClass({
   },
 
   componentWillUpdate: function (nextProps, nextState) {
-    if (nextState.username) {
-      this.goBack();
+    if (!this.state.username && nextState.username) {
+      if (nextState.prompted) {
+        this.goBack();
+      } else {
+        this.transitionTo('search');
+      }
     }
   },
 

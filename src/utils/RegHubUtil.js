@@ -88,7 +88,7 @@ module.exports = {
 
   tags: function (repo) {
     hubUtil.request({
-      url: `https://registry.hub.docker.com/v2/repositories/${repo}/tags`
+      url: `https://registry.hub.docker.com/v2/repositories/v/tags`
     }, (error, response, body) => {
       if (response.statusCode === 200) {
         let data = JSON.parse(body);
@@ -104,7 +104,7 @@ module.exports = {
     repositoryServerActions.reposLoading({repos: []});
 
     hubUtil.request({
-      url: 'https://registry.hub.docker.com/v2/namespaces/',
+      url: 'https://hub.docker.com/v2/user/orgs/',
     }, (error, response, body) => {
       if (error) {
         repositoryServerActions.reposError({error});
@@ -112,7 +112,8 @@ module.exports = {
       }
 
       let data = JSON.parse(body);
-      let namespaces = data.namespaces;
+      let namespaces = data.results.map(r => r.orgname);
+      namespaces.push(hubUtil.username());
       async.map(namespaces, (namespace, cb) => {
         hubUtil.request({
           url: `https://registry.hub.docker.com/v2/repositories/${namespace}`

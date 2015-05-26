@@ -12,6 +12,10 @@ module.exports = {
     }
   },
 
+  username: function () {
+    return localStorage.getItem('auth.username') || null;
+  },
+
   // Returns the base64 encoded index token or null if no token exists
   config: function () {
     let config = localStorage.getItem('auth.config');
@@ -107,6 +111,7 @@ module.exports = {
           localStorage.setItem('auth.verified', true);
           localStorage.setItem('auth.config', new Buffer(username + ':' + password).toString('base64'));
           accountServerActions.loggedin({username, verified: true});
+          accountServerActions.prompted({prompted: true});
           require('./RegHubUtil').repos();
         } else {
           accountServerActions.errors({errors: {detail: 'Did not receive login token.'}});
@@ -114,6 +119,7 @@ module.exports = {
       } else if (response.statusCode === 401) {
         if (data && data.detail && data.detail.indexOf('Account not active yet') !== -1) {
           accountServerActions.loggedin({username, verified: false});
+          accountServerActions.prompted({prompted: true});
           localStorage.setItem('auth.username', username);
           localStorage.setItem('auth.verified', false);
           localStorage.setItem('auth.config', new Buffer(username + ':' + password).toString('base64'));
@@ -158,6 +164,7 @@ module.exports = {
       // TODO: save username to localstorage
       if (response.statusCode === 204) {
         accountServerActions.signedup({username, verified: false});
+        accountServerActions.prompted({prompted: true});
         localStorage.setItem('auth.username', username);
         localStorage.setItem('auth.verified', false);
         localStorage.setItem('auth.config', new Buffer(username + ':' + password).toString('base64'));
