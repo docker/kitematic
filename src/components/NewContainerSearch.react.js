@@ -126,7 +126,7 @@ module.exports = React.createClass({
         <div className="no-results">
           <h2>Please verify your Docker Hub account email address</h2>
           <div className="verify">
-            <button className="btn btn-primary btn-lg" onClick={this.handleCheckVerification}>{'I\'ve Verified my Email Address'}</button> {spinner}
+            <button className="btn btn-primary btn-lg" onClick={this.handleCheckVerification}>{'I\'ve Verified My Email Address'}</button> {spinner}
           </div>
           <RetinaImage src="inspection.png" checkIfRetinaImgExists={false}/>
         </div>

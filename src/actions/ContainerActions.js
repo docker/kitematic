@@ -2,10 +2,6 @@ import alt from '../alt';
 import dockerUtil from '../utils/DockerUtil';
 
 class ContainerActions {
-  start (name) {
-    this.dispatch({name});
-    dockerUtil.start(name);
-  }
 
   destroy (name) {
     this.dispatch({name});
@@ -17,14 +13,24 @@ class ContainerActions {
     dockerUtil.rename(name, newName);
   }
 
+  start (name) {
+    this.dispatch({name});
+    dockerUtil.start(name);
+  }
+
   stop (name) {
     this.dispatch({name});
     dockerUtil.stop(name);
   }
 
-  update (name, container) {
-    this.dispatch({name, container});
-    dockerUtil.updateContainer(name, container);
+  restart (name) {
+    this.dispatch({name});
+    dockerUtil.restart(name);
+  }
+
+  update (name, containerOpts) {
+    this.dispatch({name, containerOpts});
+    dockerUtil.updateContainer(name, containerOpts);
   }
 
   clearPending () {
