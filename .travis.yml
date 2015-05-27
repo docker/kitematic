@@ -6,6 +6,3 @@ cache:
   directories:
   - resources
   - node_modules
-
-after_success:
-  - which ./node_modules/coveralls/bin/coveralls.js && cat coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js

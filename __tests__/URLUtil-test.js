@@ -1,7 +1,7 @@
-jest.dontMock('./URLUtil');
+jest.dontMock('../src/utils/URLUtil');
 jest.dontMock('parseUri');
-var urlUtil = require('./URLUtil');
-var util = require('./Util');
+var urlUtil = require('../src/utils/URLUtil');
+var util = require('../src/utils/Util');
 
 describe('URLUtil', function () {
   beforeEach(() => {

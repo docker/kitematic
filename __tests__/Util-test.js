@@ -1,5 +1,5 @@
-jest.dontMock('./Util');
-var util = require('./Util');
+jest.dontMock('../src/utils/Util');
+var util = require('../src/utils/Util');
 
 describe('Util', function () {
   describe('when removing sensitive data', function () {

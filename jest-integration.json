@@ -1,0 +1,10 @@
+{
+  "testDirectoryName": "__integration__",
+  "scriptPreprocessor": "<rootDir>/util/preprocessor.js",
+  "setupEnvScriptFile": "<rootDir>/util/testenv.js",
+  "setupTestFrameworkScriptFile": "<rootDir>/util/prepare.js",
+  "unmockedModulePathPatterns": [
+    "babel",
+    "<rootDir>/node_modules/source-map-support"
+  ]
+}
