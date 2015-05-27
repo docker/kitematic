@@ -83,7 +83,8 @@ var ContainerDetailsSubheader = React.createClass({
   handleRestart: function () {
     if (!this.disableRestart()) {
       metrics.track('Restarted Container');
-      dockerUtil.restart(this.props.container.Name);
+      //dockerUtil.restart(this.props.container.Name);
+      containerActions.restart(this.props.container.Name);
     }
   },
   handleStop: function () {
@@ -223,7 +224,7 @@ var ContainerDetailsSubheader = React.createClass({
             <div className="action-icon" onClick={this.handleRestart}><RetinaImage src="button-restart.png"/></div>
             <span className="btn-label restart">Restart</span>
           </div>
-          {{startStopToggle}}
+          {startStopToggle}
           <div className={terminalActionClass} onMouseEnter={this.handleItemMouseEnterTerminal} onMouseLeave={this.handleItemMouseLeaveTerminal}>
             <div className="action-icon" onClick={this.handleTerminal}><RetinaImage src="button-terminal.png"/></div>
             <span className="btn-label terminal">Terminal</span>
