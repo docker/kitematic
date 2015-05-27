@@ -1,3 +1,5 @@
+jest.autoMockOff();
+
 // One minute timeout for integration tests
 jasmine.getEnv().DEFAULT_TIMEOUT_INTERVAL = 60000;
 
