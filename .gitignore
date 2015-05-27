@@ -9,6 +9,9 @@ npm-debug.log
 # Signing Identity
 identity*
 
+# Integration test environment
+integration
+
 # Resources
 resources/docker-*
 resources/boot2docker-*

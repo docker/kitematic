@@ -2,6 +2,8 @@ var _ = require('underscore');
 var request = require('request');
 var accountServerActions = require('../actions/AccountServerActions');
 
+let HUB2_ENDPOINT = process.env.HUB2_ENDPOINT || 'https://hub.docker.com/v2';
+
 module.exports = {
   init: function () {
     accountServerActions.prompted({prompted: localStorage.getItem('auth.prompted')});
@@ -95,10 +97,11 @@ module.exports = {
     localStorage.removeItem('auth.config');
   },
 
-  login: function (username, password) {
+  login: function (username, password, callback) {
     this.auth(username, password, (error, response, body) => {
       if (error) {
         accountServerActions.errors({errors: {detail: error.message}});
+        callback(error);
         return;
       }
 
@@ -112,9 +115,11 @@ module.exports = {
           localStorage.setItem('auth.config', new Buffer(username + ':' + password).toString('base64'));
           accountServerActions.loggedin({username, verified: true});
           accountServerActions.prompted({prompted: true});
+          if (callback) { callback(); }
           require('./RegHubUtil').repos();
         } else {
           accountServerActions.errors({errors: {detail: 'Did not receive login token.'}});
+          if (callback) { callback(new Error('Did not receive login token.')); }
         }
       } else if (response.statusCode === 401) {
         if (data && data.detail && data.detail.indexOf('Account not active yet') !== -1) {
@@ -123,15 +128,17 @@ module.exports = {
           localStorage.setItem('auth.username', username);
           localStorage.setItem('auth.verified', false);
           localStorage.setItem('auth.config', new Buffer(username + ':' + password).toString('base64'));
+          if (callback) { callback(); }
         } else {
           accountServerActions.errors({errors: data});
+          if (callback) { callback(new Error(data.detail)); }
         }
       }
     });
   },
 
   auth: function (username, password, callback) {
-    request.post('https://hub.docker.com/v2/users/login/', {form: {username, password}}, (error, response, body) => {
+    request.post(`${HUB2_ENDPOINT}/users/login/`, {form: {username, password}}, (error, response, body) => {
       callback(error, response, body);
     });
   },
@@ -153,7 +160,7 @@ module.exports = {
 
   // Signs up and places a token under ~/.dockercfg and saves a jwt to localstore
   signup: function (username, password, email, subscribe) {
-    request.post('https://hub.docker.com/v2/users/signup/', {
+    request.post('${HUB2_ENDPOINT}/users/signup/', {
       form: {
         username,
         password,
