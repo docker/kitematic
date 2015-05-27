@@ -193,6 +193,16 @@ input[type="text"] {
 }
 .btn-positive {
   .btn-styles(@brand-positive);
+  &:hover,
+  &:focus {
+    border-color: darken(@brand-positive, 7%);
+    color: darken(@brand-positive, 7%);
+  }
+  &:active {
+    background-color: lighten(@brand-positive, 53%);
+    border-color: darken(@brand-positive, 7%);
+    color: darken(@brand-positive, 7%);
+  }
 }
 .btn-default { .btn-styles(@btn-default-bg); }
 .btn-primary { .btn-styles(@btn-primary-bg); }
