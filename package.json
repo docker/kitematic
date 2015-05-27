@@ -13,6 +13,7 @@
   "scripts": {
     "start": "gulp",
     "test": "jest",
+    "integration": "jest -c jest-integration.json",
     "release": "gulp release",
     "release:beta": "gulp release --beta",
     "lint": "jsxhint src",
@@ -28,12 +29,6 @@
     "scriptPreprocessor": "<rootDir>/util/preprocessor.js",
     "setupEnvScriptFile": "<rootDir>/util/testenv.js",
     "setupTestFrameworkScriptFile": "<rootDir>/util/prepare.js",
-    "collectCoverage": true,
-    "testDirectoryName": "src",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "^((?!-test).)*$"
-    ],
     "unmockedModulePathPatterns": [
       "alt",
       "stream",
@@ -66,8 +61,8 @@
     "classnames": "^1.2.0",
     "coveralls": "^2.11.2",
     "deep-extend": "^0.4.0",
-    "dockerode": "^2.1.4",
     "exec": "0.2.0",
+    "dockerode": "^2.1.4",
     "install": "^0.1.8",
     "jquery": "^2.1.3",
     "mixpanel": "0.2.0",
@@ -102,7 +97,7 @@
     "gulp-shell": "^0.4.1",
     "gulp-sourcemaps": "^1.5.2",
     "gulp-util": "^3.0.4",
-    "jest-cli": "kitematic/jest",
+    "jest-cli": "^0.4.5",
     "jsxhint": "^0.14.0",
     "minimist": "^1.1.1",
     "react-tools": "^0.13.1",

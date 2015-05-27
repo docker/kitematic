@@ -1,0 +1,19 @@
+{
+  "testDirectoryName": "__integration__",
+  "scriptPreprocessor": "<rootDir>/util/preprocessor.js",
+  "setupEnvScriptFile": "<rootDir>/util/testenv.js",
+  "setupTestFrameworkScriptFile": "<rootDir>/util/prepare.js",
+  "unmockedModulePathPatterns": [
+    "alt",
+    "stream",
+    "tty",
+    "net",
+    "crypto",
+    "babel",
+    "<rootDir>/node_modules/.*JSONStream",
+    "<rootDir>/node_modules/object-assign",
+    "<rootDir>/node_modules/underscore",
+    "<rootDir>/node_modules/bluebird",
+    "<rootDir>/node_modules/source-map-support"
+  ]
+}
