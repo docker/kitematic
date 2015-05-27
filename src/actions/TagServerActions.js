@@ -3,7 +3,8 @@ import alt from '../alt';
 class TagServerActions {
   constructor () {
     this.generateActions(
-      'tagsUpdated'
+      'tagsUpdated',
+      'error'
     );
   }
 }

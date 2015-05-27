@@ -50,13 +50,19 @@
       flex-direction: row;
       justify-content: flex-end;
       font-size: 13px;
+      margin: 0 10px;
       margin-bottom: 10px;
-      margin: 0 20px;
 
       .results-filter {
         text-align: center;
         margin: 0 10px;
         min-width: 40px;
+        &.tab {
+          &:hover {
+            border-radius: 40px;
+            background-color: @gray-lightest;
+          }
+        }
       }
 
       .results-filter-title {
@@ -188,13 +194,18 @@
         font-size: 13px;
         display: none;
         padding: 10px;
+        p {
+          color: white;
+          padding-bottom: 7px;
+          border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
         .tag-list {
           display: flex;
           flex-direction: row;
           align-items: flex-start;
           align-content: flex-start;
           flex-flow: row wrap;
-          height: 140px;
+          height: 100px;
           overflow: auto;
           .tag {
             display: inline-block;

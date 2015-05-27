@@ -1,6 +1,6 @@
-jest.dontMock('./VirtualBoxUtil');
-var virtualBox = require('./VirtualBoxUtil');
-var util = require('./Util');
+jest.dontMock('../src/utils/VirtualBoxUtil');
+var virtualBox = require('../src/utils/VirtualBoxUtil');
+var util = require('../src/utils/Util');
 
 describe('VirtualBox', function () {
   it('returns the right command', function () {

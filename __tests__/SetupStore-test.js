@@ -1,9 +1,9 @@
-jest.dontMock('./SetupStore');
-var setupStore = require('./SetupStore');
-var virtualBox = require('../utils/VirtualBoxUtil');
-var util = require('../utils/Util');
-var machine = require('../utils/DockerMachineUtil');
-var setupUtil = require('../utils/SetupUtil');
+jest.dontMock('../src/stores/SetupStore');
+var setupStore = require('../src/stores/SetupStore');
+var virtualBox = require('../src/utils/VirtualBoxUtil');
+var util = require('../src/utils/Util');
+var machine = require('../src/utils/DockerMachineUtil');
+var setupUtil = require('../src/utils/SetupUtil');
 
 describe('SetupStore', function () {
   describe('download step', function () {

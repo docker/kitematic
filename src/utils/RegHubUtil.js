@@ -5,7 +5,9 @@ var util = require('../utils/Util');
 var hubUtil = require('../utils/HubUtil');
 var repositoryServerActions = require('../actions/RepositoryServerActions');
 var tagServerActions = require('../actions/TagServerActions');
+var Promise = require('bluebird');
 
+let REGHUB2_ENDPOINT = process.env.REGHUB2_ENDPOINT || 'https://registry.hub.docker.com/v2';
 let searchReq = null;
 
 module.exports = {
@@ -38,7 +40,7 @@ module.exports = {
       qs: {q: query, page}
     }, (error, response, body) => {
       if (error) {
-        repositoryServerActions.searchError({error});
+        repositoryServerActions.error({error});
       }
 
       let data = JSON.parse(body);
@@ -66,7 +68,7 @@ module.exports = {
         }
 
         request.get({
-          url: `https://registry.hub.docker.com/v2/repositories/${name}`,
+          url: `${REGHUB2_ENDPOINT}/repositories/${name}`,
         }, (error, response, body) => {
           if (error) {
             repositoryServerActions.error({error});
@@ -86,28 +88,38 @@ module.exports = {
     });
   },
 
-  tags: function (repo) {
+  tags: function (repo, callback) {
     hubUtil.request({
-      url: `https://registry.hub.docker.com/v2/repositories/${repo}/tags`
+      url: `${REGHUB2_ENDPOINT}/repositories/${repo}/tags`
     }, (error, response, body) => {
       if (response.statusCode === 200) {
         let data = JSON.parse(body);
         tagServerActions.tagsUpdated({repo, tags: data.tags});
-      } else if (response.statusCude === 401) {
-        return;
+        if (callback) { callback(null, data.tags); }
+      } else if (error || response.statusCode === 401) {
+        repositoryServerActions.error({repo});
+        if (callback) { callback(new Error('Failed to fetch repos')); }
       }
     });
   },
 
   // Returns the base64 encoded index token or null if no token exists
-  repos: function () {
+  repos: function (callback) {
     repositoryServerActions.reposLoading({repos: []});
 
     hubUtil.request({
-      url: 'https://registry.hub.docker.com/v2/namespaces/',
+      url: `${REGHUB2_ENDPOINT}/namespaces/`,
     }, (error, response, body) => {
       if (error) {
-        repositoryServerActions.reposError({error});
+        repositoryServerActions.error({error});
+        if (callback) { callback(error); }
+        return;
+      }
+
+      if (response.statusCode !== 200) {
+        let generalError = new Error('Failed to fetch repos');
+        repositoryServerActions.error({error: generalError});
+        if (callback) { callback({error: generalError}); }
         return;
       }
 
@@ -115,10 +127,11 @@ module.exports = {
       let namespaces = data.namespaces;
       async.map(namespaces, (namespace, cb) => {
         hubUtil.request({
-          url: `https://registry.hub.docker.com/v2/repositories/${namespace}`
+          url: `${REGHUB2_ENDPOINT}/repositories/${namespace}`
         }, (error, response, body) => {
             if (error) {
-              repositoryServerActions.reposError({error});
+              repositoryServerActions.error({error});
+              if (callback) { callback(error); }
               return;
             }
 
@@ -126,6 +139,12 @@ module.exports = {
             cb(null, data.results);
           });
         }, (error, lists) => {
+          if (error) {
+            repositoryServerActions.error({error});
+            if (callback) { callback(error); }
+            return;
+          }
+
           let repos = [];
           for (let list of lists) {
             repos = repos.concat(list);
@@ -136,6 +155,7 @@ module.exports = {
           });
 
           repositoryServerActions.reposUpdated({repos});
+          if (callback) { callback(null, repos); }
       });
     });
   }

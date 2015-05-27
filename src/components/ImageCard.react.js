@@ -144,6 +144,7 @@ var ImageCard = React.createClass({
     return (
       <div className="image-item">
         <div className="tag-overlay" onClick={self.handleCloseTagOverlay}>
+          <p>Please select an image tag.</p>
           {tags}
         </div>
         <div className="logo" style={logoStyle}>
@@ -169,7 +170,7 @@ var ImageCard = React.createClass({
               <span className="text" onClick={self.handleTagOverlayClick.bind(self, this.props.image.name)} data-name={this.props.image.name}>{this.state.chosenTag}</span>
             </div>
             <div className="action">
-              <a className="btn btn-action" onClick={self.handleClick}>Create</a>
+              <a className="btn btn-action btn-positive" onClick={self.handleClick}>Create</a>
             </div>
           </div>
         </div>

@@ -73,6 +73,8 @@ export default {
 
     if (containerData.NetworkSettings && containerData.NetworkSettings.Ports) {
       startopts.PortBindings = containerData.NetworkSettings.Ports;
+    } else if (containerData.HostConfig && containerData.HostConfig.PortBindings) {
+      startopts.PortBindings = containerData.HostConfig.PortBindings;
     } else {
       startopts.PublishAllPorts = true;
     }

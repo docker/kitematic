@@ -38,6 +38,11 @@ class TagStore {
     this.tags = {};
     this.emitChange();
   }
+
+  error ({repo}) {
+    this.loading[repo] = false;
+    this.emitChange();
+  }
 }
 
 export default alt.createStore(TagStore);
