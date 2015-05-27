@@ -83,7 +83,6 @@ var ContainerDetailsSubheader = React.createClass({
   handleRestart: function () {
     if (!this.disableRestart()) {
       metrics.track('Restarted Container');
-      //dockerUtil.restart(this.props.container.Name);
       containerActions.restart(this.props.container.Name);
     }
   },
