@@ -144,6 +144,7 @@ var ImageCard = React.createClass({
     return (
       <div className="image-item">
         <div className="tag-overlay" onClick={self.handleCloseTagOverlay}>
+          <p>Please select an image tag.</p>
           {tags}
         </div>
         <div className="logo" style={logoStyle}>
