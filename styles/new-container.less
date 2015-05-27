@@ -50,16 +50,18 @@
       flex-direction: row;
       justify-content: flex-end;
       font-size: 13px;
-      margin: 0 20px;
+      margin: 0 10px;
       margin-bottom: 10px;
 
       .results-filter {
         text-align: center;
         margin: 0 10px;
         min-width: 40px;
-        &:hover {
-          border-radius: 40px;
-          background-color: @gray-lightest;
+        &.tab {
+          &:hover {
+            border-radius: 40px;
+            background-color: @gray-lightest;
+          }
         }
       }
 
