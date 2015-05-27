@@ -156,7 +156,7 @@ var DockerMachine = {
       });
     } else {
       this.info().then(machine => {
-        var cmd = [resources.terminal(), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 $SHELL`];
+        var cmd = [resources.terminal(), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 /bin/bash`];
         util.exec(cmd).then(() => {});
       });
     }
