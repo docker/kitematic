@@ -6,7 +6,8 @@ class RepositoryServerActions {
       'reposLoading',
       'resultsUpdated',
       'recommendedUpdated',
-      'reposUpdated'
+      'reposUpdated',
+      'error'
     );
   }
 }
