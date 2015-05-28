@@ -1,4 +1,8 @@
-#!/bin/sh
+#!/bin/bash
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PATH=$DIR:$PATH
+CMD="export PATH='$PATH' clear && $*"
 
 ITERM_EXISTS=`osascript <<EOF
 set doesExist to false
@@ -17,14 +21,14 @@ function open_iterm () {
       tell the first terminal
         launch session "Default Session"
         tell the last session
-          write text "bash -c \"clear && $*\""
+          write text "bash -c \"$CMD\""
         end tell
       end tell
     on error
       tell (make new terminal)
         launch session "Default Session"
         tell the last session
-          write text "bash -c \"clear && $*\""
+          write text "bash -c \"$CMD\""
         end tell
       end tell
     end try
@@ -38,7 +42,7 @@ function open_terminal () {
   delay 0.4
   tell application "System Events" to keystroke "t" using command down
   tell application "Terminal"
-    do script "bash -c \"clear && $*\"" in window 1
+    do script "bash -c \"$CMD\" in window 1
   end tell
 EOF
 }
