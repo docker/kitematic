@@ -30,7 +30,7 @@ var MenuTemplate = function () {
           metrics.track('Opened Preferences', {
             from: 'menu'
           });
-          router.transitionTo('preferences');
+          router.get().transitionTo('preferences');
         }
       },
       {
