@@ -1,6 +1,7 @@
 var _ = require('underscore');
 var request = require('request');
 var accountServerActions = require('../actions/AccountServerActions');
+var metrics = require('./MetricsUtil');
 
 let HUB2_ENDPOINT = process.env.HUB2_ENDPOINT || 'https://hub.docker.com/v2';
 
@@ -115,6 +116,7 @@ module.exports = {
           localStorage.setItem('auth.config', new Buffer(username + ':' + password).toString('base64'));
           accountServerActions.loggedin({username, verified: true});
           accountServerActions.prompted({prompted: true});
+          metrics.track('Successfully Logged In');
           if (callback) { callback(); }
           require('./RegHubUtil').repos();
         } else {
@@ -174,6 +176,7 @@ module.exports = {
         localStorage.setItem('auth.username', username);
         localStorage.setItem('auth.verified', false);
         localStorage.setItem('auth.config', new Buffer(username + ':' + password).toString('base64'));
+        metrics.track('Successfully Signed Up');
       } else {
         let data = JSON.parse(body);
         let errors = {};

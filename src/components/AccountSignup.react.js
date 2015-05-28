@@ -52,7 +52,7 @@ module.exports = React.createClass({
 
     if (_.isEmpty(errors)) {
       accountActions.signup(this.state.username, this.state.password, this.state.email, this.state.subscribe);
-      metrics.track('Clicked Signed Up');
+      metrics.track('Clicked Sign Up');
     }
   },
 
