@@ -13,7 +13,7 @@ identity*
 integration
 
 # Resources
-resources/docker-*
+resources/docker*
 resources/boot2docker-*
 
 # Cache

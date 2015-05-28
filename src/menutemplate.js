@@ -3,8 +3,10 @@ var app = remote.require('app');
 var shell = require('shell');
 var router = require('./router');
 var util = require('./utils/Util');
+var setupUtil = require('./utils/SetupUtil');
 var metrics = require('./utils/MetricsUtil');
 var machine = require('./utils/DockerMachineUtil');
+var dialog = remote.require('dialog');
 import docker from './utils/DockerUtil';
 
 // main.js
@@ -35,8 +37,25 @@ var MenuTemplate = function () {
         type: 'separator'
       },
       {
-        label: 'Services',
-        submenu: []
+        label: 'Install Docker Commands',
+        enabled: true,
+        click: function () {
+          metrics.track('Installed Docker Commands');
+          if (!setupUtil.shouldUpdateBinaries()) {
+            return;
+          }
+
+          let copy = setupUtil.needsBinaryFix() ?
+               util.exec(setupUtil.copyBinariesCmd() + ' && ' + setupUtil.fixBinariesCmd()) :
+               util.exec(setupUtil.copyBinariesCmd());
+
+          copy.then(() => {
+            dialog.showMessageBox({
+              message: 'Docker Binaries have been copied to /usr/local/bin',
+              buttons: ['OK']
+            });
+          }).catch(() => {});
+        },
       },
       {
         type: 'separator'

@@ -72,7 +72,7 @@ var DockerMachine = {
     return util.exec([this.command(), 'rm', '-f', NAME]);
   },
   ip: function () {
-    return util.exec([this.command(), '-D', 'ip', NAME]).then(stdout => {
+    return util.exec([this.command(), 'ip', NAME]).then(stdout => {
       return Promise.resolve(stdout.trim().replace('\n', ''));
     });
   },
@@ -156,7 +156,7 @@ var DockerMachine = {
       });
     } else {
       this.info().then(machine => {
-        var cmd = [resources.terminal(), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 $SHELL`];
+        var cmd = [resources.terminal(), `PATH=${resources.resourceDir()}:$PATH DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 $SHELL`];
         util.exec(cmd).then(() => {});
       });
     }

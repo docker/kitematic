@@ -8,21 +8,19 @@ $packageJsonContent = $serializer.DeserializeObject($packageJson)
 $webclient = New-Object System.Net.WebClient
 
 $DOCKER_MACHINE_CLI_VERSION = $packageJsonContent['docker-machine-version']
-$DOCKER_MACHINE_CLI_FILE = 'docker-machine-' + $DOCKER_MACHINE_CLI_VERSION + '.exe'
 $DOCKER_CLI_VERSION = $packageJsonContent['docker-version']
-$DOCKER_CLI_FILE = 'docker-' + $DOCKER_CLI_VERSION + '.exe'
 
 
-if(-Not (test-path ($BasePath + '\resources\' + $DOCKER_CLI_FILE))) {
+if(-Not (test-path ($BasePath + '\resources\docker'))) {
     echo "-----> Downloading Docker CLI..."
     $source = "https://master.dockerproject.com/windows/amd64/docker.exe"
-    $destination = $BasePath + "\resources\" + $DOCKER_CLI_FILE
+    $destination = $BasePath + "\resources\docker"
     $webclient.DownloadFile($source, $destination)
 }
 
-if(-Not (test-path ($BasePath + '\resources\' + $DOCKER_MACHINE_CLI_FILE))) {
-    echo "-----> Downloading Docker Machine CLI..." 
-    $source = "https://github.com/docker/machine/releases/download/v0.1.0/docker-machine_windows-amd64.exe"
-    $destination = $BasePath + "\resources\" + $DOCKER_MACHINE_CLI_FILE 
+if(-Not (test-path ($BasePath + '\resources\docker-machine'))) {
+    echo "-----> Downloading Docker Machine CLI..."
+    $source = "https://github.com/docker/machine/releases/download/v" + $DOCKER_MACHINE_VERSION+ "/docker-machine_windows-amd64.exe"
+    $destination = $BasePath + "\resources\docker-machine"
     $webclient.DownloadFile($source, $destination)
 }

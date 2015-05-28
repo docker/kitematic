@@ -12,15 +12,18 @@ var virtualBox = require ('./VirtualBoxUtil');
 var SetupUtil = {
   needsBinaryFix() {
     return this.pathDoesNotExistOrDenied(util.binsPath()) ||
-        this.pathDoesNotExistOrDenied(util.dockerBinPath()) ||
-        this.pathDoesNotExistOrDenied(util.dockerMachineBinPath());
+        (fs.existsSync(util.dockerBinPath()) && this.pathDenied(util.dockerBinPath())) ||
+        (fs.existsSync(util.dockerMachineBinPath()) && this.pathDenied(util.dockerMachineBinPath()));
   },
   pathDoesNotExistOrDenied: function (path) {
     if(util.isWindows()) {
       return (!fs.existsSync(path));
     } else {
-      return (!fs.existsSync(path) || fs.statSync(path).gid !== 80 || fs.statSync(path).uid !== process.getuid());
+      return (!fs.existsSync(path) || this.pathDenied(path));
     }
+  },
+  pathDenied: function (path) {
+    return fs.statSync(path).gid !== 80 || fs.statSync(path).uid !== process.getuid();
   },
   shouldUpdateBinaries: function () {
     return !fs.existsSync(util.dockerBinPath()) ||
