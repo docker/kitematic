@@ -95,7 +95,7 @@ var Header = React.createClass({
     accountActions.verify();
   },
   render: function () {
-    let updateWidget = this.state.updateAvailable ? <a className="btn btn-action small no-drag" onClick={this.handleAutoUpdateClick}>UPDATE NOW</a> : null;
+    let updateWidget = this.state.updateAvailable && !this.props.hideLogin ? <a className="btn btn-action small no-drag" onClick={this.handleAutoUpdateClick}>UPDATE NOW</a> : null;
     let buttons;
     if (this.state.fullscreen) {
       buttons = (
