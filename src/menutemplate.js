@@ -51,7 +51,7 @@ var MenuTemplate = function () {
 
           copy.then(() => {
             dialog.showMessageBox({
-              message: 'Docker Binaries have been copied to /usr/local/bin',
+              message: 'Docker binaries have been copied to /usr/local/bin',
               buttons: ['OK']
             });
           }).catch(() => {});
