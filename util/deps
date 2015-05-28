@@ -23,7 +23,7 @@ if [ "$DOCKER_MACHINE_VERSION" != "$CURRENT_DOCKER_MACHINE_VERSION" ]; then
   echo "-----> Downloading Docker Machine CLI..."
   rm -rf docker-machine
   rm -rf docker-machine-*
-  curl -L -o docker-machine https://github.com/docker/machine/releases/download/v$DOCKER_MACHINE_VERSION-rc1/docker-machine_darwin-amd64
+  curl -L -o docker-machine https://github.com/docker/machine/releases/download/v$DOCKER_MACHINE_VERSION/docker-machine_darwin-amd64
   chmod +x docker-machine
 fi
 

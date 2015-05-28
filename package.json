@@ -26,7 +26,7 @@
     }
   ],
   "docker-version": "1.6.2",
-  "docker-machine-version": "0.3.0",
+  "docker-machine-version": "0.2.0",
   "electron-version": "0.26.0",
   "virtualbox-version": "4.3.28",
   "virtualbox-filename": "VirtualBox-4.3.28.pkg",
