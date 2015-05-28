@@ -12,9 +12,9 @@ module.exports = {
     return path.join(this.resourceDir(), 'terminal');
   },
   docker: function () {
-    return path.join(this.resourceDir(), 'docker-' + util.packagejson()['docker-version'] + util.binsEnding());
+    return path.join(this.resourceDir(), 'docker' + util.binsEnding());
   },
   dockerMachine: function () {
-    return path.join(this.resourceDir(), 'docker-machine-' + util.packagejson()['docker-machine-version'] + util.binsEnding());
+    return path.join(this.resourceDir(), 'docker-machine' + util.binsEnding());
   }
 };

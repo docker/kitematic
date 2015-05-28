@@ -17,13 +17,15 @@ export default {
 
   setup (ip, name) {
     if (!ip || !name) {
-      throw new Error('Falsy ip or machine name passed to init');
+      throw new Error('Falsy ip or name passed to docker client setup');
     }
 
     let certDir = path.join(util.home(), '.docker/machine/machines/', name);
     if (!fs.existsSync(certDir)) {
       throw new Error('Certificate directory does not exist');
     }
+
+    console.log(ip);
 
     this.host = ip;
     this.client = new dockerode({
