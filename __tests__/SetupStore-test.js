@@ -40,7 +40,7 @@ describe('SetupStore', function () {
     pit('installs virtualbox if it is not installed', function () {
       virtualBox.installed.mockReturnValue(false);
       util.exec.mockReturnValue(Promise.resolve());
-      return setupStore.steps().install.run().then(() => {
+      return setupStore.steps().install.run(() => {}).then(() => {
         expect(virtualBox.killall).toBeCalled();
         expect(setupUtil.installVirtualBoxCmd).toBeCalled();
       });
