@@ -160,7 +160,7 @@ module.exports = {
 
   // Signs up and places a token under ~/.dockercfg and saves a jwt to localstore
   signup: function (username, password, email, subscribe) {
-    request.post('${HUB2_ENDPOINT}/users/signup/', {
+    request.post(`${HUB2_ENDPOINT}/users/signup/`, {
       form: {
         username,
         password,
@@ -168,7 +168,6 @@ module.exports = {
         subscribe
       }
     }, (err, response, body) => {
-      // TODO: save username to localstorage
       if (response.statusCode === 204) {
         accountServerActions.signedup({username, verified: false});
         accountServerActions.prompted({prompted: true});
