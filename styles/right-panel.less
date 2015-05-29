@@ -13,7 +13,7 @@
     position: relative;
     border-bottom: 1px solid @color-divider;
     background-color: white;
-    height: 57px;
+    height: 51px;
     padding: 6px 10px 10px 24px;
     font-size: 13px;
     color: @gray-normal;
@@ -25,11 +25,21 @@
         display: inline-block;
         position: relative;
         img {
-          width: 42px;
-          height: 42px;
+          width: 35px;
+          height: 35px;
         }
         &.disabled {
           opacity: 0.3;
+          &:active {
+            img, .btn-label {
+              -webkit-filter: brightness(1);
+            }
+          }
+        }
+        &:active {
+          img, .btn-label {
+            -webkit-filter: brightness(0.8);
+          }
         }
         .action-icon {
           color: @gray-normal;
@@ -40,21 +50,21 @@
           color: @brand-action;
           font-size: 9px;
           width: 200px;
-          top: 45px;
+          top: 38px;
           &.view {
-            left: 7px;
+            left: 8px;
           }
           &.restart {
-            left: 2px;
+            left: 3px;
           }
           &.stop {
-            left: 7px;
+            left: 8px;
           }
           &.start {
-            left: 7px;
+            left: 8px;
           }
           &.terminal {
-            left: -1px;
+            left: 1px;
           }
           visibility: hidden;
         }
