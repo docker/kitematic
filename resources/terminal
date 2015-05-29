@@ -42,13 +42,13 @@ function open_terminal () {
   delay 0.4
   tell application "System Events" to keystroke "t" using command down
   tell application "Terminal"
-    do script "bash -c \"$CMD\" in window 1
+    do script "bash -c \"$CMD\"" in window 1
   end tell
 EOF
 }
 
-if [ $ITERM_EXISTS == "true" ]; then
-  open_iterm $* || open_terminal $*
+if [ "$ITERM_EXISTS" == "true" ]; then
+  open_iterm "$@" || open_terminal "$@"
 else
-  open_terminal $*
+  open_terminal "$@"
 fi
