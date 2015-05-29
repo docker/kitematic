@@ -30,6 +30,11 @@
         }
         &.disabled {
           opacity: 0.3;
+          &:active {
+            img, .btn-label {
+              -webkit-filter: brightness(1);
+            }
+          }
         }
         &:active {
           img, .btn-label {
