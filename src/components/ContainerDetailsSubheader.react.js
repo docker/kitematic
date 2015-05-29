@@ -107,7 +107,8 @@ var ContainerDetailsSubheader = React.createClass({
         shell = 'sh';
       }
       machine.ip().then(ip => {
-        var cmd = [resources.terminal(), 'ssh', '-p', '22', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=quiet', '-o', 'StrictHostKeyChecking=no', '-i', '~/.docker/machine/machines/' + machine.name() + '/id_rsa', 'docker@' + ip, '-t', 'docker', 'exec', '-i', '-t', container.Name, shell];
+        var cmd = [resources.terminal(), 'ssh', '-p', '22', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=quiet', '-o', 'StrictHostKeyChecking=no', '-i', '~/.docker/machine/machines/' + machine.name() + '/id_rsa', 'docker@' + ip, '-t', 'docker', 
+          'exec', '-i', '-t', container.Name, shell];
         exec(cmd, function (stderr, stdout, code) {
           if (code) {
             console.log(stderr);
@@ -215,18 +216,18 @@ var ContainerDetailsSubheader = React.createClass({
     return (
       <div className="details-subheader">
         <div className="details-header-actions">
-          <div className={runActionClass} onMouseEnter={this.handleItemMouseEnterView} onMouseLeave={this.handleItemMouseLeaveView}>
-            <div className="action-icon" onClick={this.handleRun}><RetinaImage src="button-view.png"/></div>
-            <span className="btn-label view">View</span>
-          </div>
+          {startStopToggle}
           <div className={restartActionClass} onMouseEnter={this.handleItemMouseEnterRestart} onMouseLeave={this.handleItemMouseLeaveRestart}>
             <div className="action-icon" onClick={this.handleRestart}><RetinaImage src="button-restart.png"/></div>
             <span className="btn-label restart">Restart</span>
           </div>
-          {startStopToggle}
           <div className={terminalActionClass} onMouseEnter={this.handleItemMouseEnterTerminal} onMouseLeave={this.handleItemMouseLeaveTerminal}>
             <div className="action-icon" onClick={this.handleTerminal}><RetinaImage src="button-terminal.png"/></div>
             <span className="btn-label terminal">Terminal</span>
+          </div>
+          <div className={runActionClass} onMouseEnter={this.handleItemMouseEnterView} onMouseLeave={this.handleItemMouseLeaveView}>
+            <div className="action-icon" onClick={this.handleRun}><RetinaImage src="button-view.png"/></div>
+            <span className="btn-label view">View</span>
           </div>
         </div>
         <div className="details-subheader-tabs">
