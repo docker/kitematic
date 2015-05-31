@@ -59,7 +59,7 @@ module.exports = {
     }
     return str.replace(/-----BEGIN CERTIFICATE-----.*-----END CERTIFICATE-----/mg, '<redacted>')
       .replace(/-----BEGIN RSA PRIVATE KEY-----.*-----END RSA PRIVATE KEY-----/mg, '<redacted>')
-      .replace(/\/Users\/.*\//mg, '/Users/<redacted>/');
+      .replace(/\/Users\/[^\/]*\//mg, '/Users/<redacted>/');
   },
   packagejson: function () {
     return JSON.parse(fs.readFileSync(path.join(__dirname, '../..', 'package.json'), 'utf8'));
