@@ -10,7 +10,7 @@ var MenuItem = remote.require('menu-item');
 var accountStore = require('../stores/AccountStore');
 var accountActions = require('../actions/AccountActions');
 var Router = require('react-router');
-var classNames = require('classNames');
+var classNames = require('classnames');
 
 var Header = React.createClass({
   mixins: [Router.Navigation],
