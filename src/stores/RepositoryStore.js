@@ -46,6 +46,7 @@ class RepositoryStore {
   }
 
   resultsUpdated ({repos}) {
+    console.log("Results found: %o", repos);
     this.setState({results: repos, resultsLoading: false});
   }
 
