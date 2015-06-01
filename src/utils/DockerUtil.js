@@ -4,7 +4,7 @@ import path from 'path';
 import dockerode from 'dockerode';
 import _ from 'underscore';
 import util from './Util';
-import registry from '../utils/RegistryUtil';
+import hubUtil from './HubUtil';
 import metrics from '../utils/MetricsUtil';
 import containerServerActions from '../actions/ContainerServerActions';
 import Promise from 'bluebird';
@@ -17,13 +17,15 @@ export default {
 
   setup (ip, name) {
     if (!ip || !name) {
-      throw new Error('Falsy ip or machine name passed to init');
+      throw new Error('Falsy ip or name passed to docker client setup');
     }
 
     let certDir = path.join(util.home(), '.docker/machine/machines/', name);
     if (!fs.existsSync(certDir)) {
       throw new Error('Certificate directory does not exist');
     }
+
+    console.log(ip);
 
     this.host = ip;
     this.client = new dockerode({
@@ -73,6 +75,8 @@ export default {
 
     if (containerData.NetworkSettings && containerData.NetworkSettings.Ports) {
       startopts.PortBindings = containerData.NetworkSettings.Ports;
+    } else if (containerData.HostConfig && containerData.HostConfig.PortBindings) {
+      startopts.PortBindings = containerData.HostConfig.PortBindings;
     } else {
       startopts.PublishAllPorts = true;
     }
@@ -215,9 +219,16 @@ export default {
       delete this.placeholders[name];
       localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
       this.createContainer(name, {Image: imageName});
-    }, progress => {
+    },
+
+    // progress is actually the progression PER LAYER (combined in columns)
+    // not total because it's not accurate enough
+    progress => {
       containerServerActions.progress({name, progress});
-    }, () => {
+    },
+
+
+    () => {
       containerServerActions.waiting({name, waiting: true});
     });
   },
@@ -356,7 +367,6 @@ export default {
       stream.setEncoding('utf8');
       stream.on('data', json => {
         let data = JSON.parse(json);
-        console.log(data);
 
         if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete') {
           return;
@@ -374,81 +384,117 @@ export default {
   },
 
   pullImage (repository, tag, callback, progressCallback, blockedCallback) {
-    registry.layers(repository, tag, (err, layerSizes) => {
+    let opts = {}, config = hubUtil.config();
+    if (!hubUtil.config()) {
+      opts = {};
+    } else {
+      let [username, password] = hubUtil.creds(config);
+      opts = {
+        authconfig: {
+          username,
+          password,
+          auth: ''
+        }
+      };
+    }
 
-      // TODO: Support v2 registry API
-      // TODO: clean this up- It's messy to work with pulls from both the v1 and v2 registry APIs
-      // Use the per-layer pull progress % to update the total progress.
-      this.client.listImages({all: 1}, (err, images) => {
-        images = images || [];
+    this.client.pull(repository + ':' + tag, opts, (err, stream) => {
+      if (err) {
+        callback(err);
+        return;
+      }
 
-        let existingIds = new Set(images.map(function (image) {
-          return image.Id.slice(0, 12);
-        }));
+      stream.setEncoding('utf8');
 
-        let layersToDownload = layerSizes.filter(function (layerSize) {
-          return !existingIds.has(layerSize.Id);
-        });
+      // scheduled to inform about progression at given interval
+      let tick = null;
+      let layerProgress = {};
 
-        this.client.pull(repository + ':' + tag, (err, stream) => {
-          if (err) {
-            callback(err);
-            return;
+      // Split the loading in a few columns for more feedback
+      let columns = {};
+      columns.amount = 4; // arbitrary
+      columns.toFill = 0; // the current column index, waiting for layer IDs to be displayed
+
+      // data is associated with one layer only (can be identified with id)
+      stream.on('data', str => {
+        var data = JSON.parse(str);
+
+        if (data.error) {
+          callback(data.error);
+          return;
+        }
+
+        if (data.status && (data.status === 'Pulling dependent layers' || data.status.indexOf('already being pulled by another client') !== -1)) {
+          blockedCallback();
+          return;
+        }
+
+        if (data.status === 'Pulling fs layer') {
+          layerProgress[data.id] = {
+            current: 0,
+            total: 1
+          };
+        } else if (data.status === 'Downloading') {
+          if (!columns.progress) {
+            columns.progress = []; // layerIDs, nbLayers, maxLayers, progress value
+            let layersToLoad = _.keys(layerProgress).length;
+            let layersPerColumn = Math.floor(layersToLoad / columns.amount);
+            let leftOverLayers = layersToLoad % columns.amount;
+            for (let i = 0; i < columns.amount; i++) {
+              let layerAmount = layersPerColumn;
+              if (i < leftOverLayers) {
+                layerAmount += 1;
+              }
+              columns.progress[i] = {layerIDs: [], nbLayers:0 , maxLayers: layerAmount, value: 0.0};
+            }
           }
-          stream.setEncoding('utf8');
 
-          let layerProgress = layersToDownload.reduce(function (r, layer) {
-            if (_.findWhere(images, {Id: layer.Id})) {
-              r[layer.Id] = 1;
-            } else {
-              r[layer.Id] = 0;
-            }
-            return r;
-          }, {});
+          layerProgress[data.id].current = data.progressDetail.current;
+          layerProgress[data.id].total = data.progressDetail.total;
 
-          let timeout = null;
-          stream.on('data', str => {
-            var data = JSON.parse(str);
-
-            if (data.error) {
-              return;
+          // Assign to a column if not done yet
+          if (!layerProgress[data.id].column) {
+            // test if we can still add layers to that column
+            if (columns.progress[columns.toFill].nbLayers === columns.progress[columns.toFill].maxLayers && columns.toFill < columns.amount - 1) {
+              columns.toFill++;
             }
 
-            if (data.status && (data.status === 'Pulling dependent layers' || data.status.indexOf('already being pulled by another client') !== -1)) {
-              blockedCallback();
-              return;
-            }
+            layerProgress[data.id].column = columns.toFill;
+            columns.progress[columns.toFill].layerIDs.push(data.id);
+            columns.progress[columns.toFill].nbLayers++;
+          }
 
-            if (data.status === 'Already exists') {
-              layerProgress[data.id] = 1;
-            } else if (data.status === 'Downloading') {
-              let current = data.progressDetail.current;
-              let total = data.progressDetail.total;
+          if (!tick) {
+            tick = setTimeout(() => {
+              clearInterval(tick);
+              tick = null;
+              for (let i = 0; i < columns.amount; i++) {
+                columns.progress[i].value = 0.0;
+                if (columns.progress[i].nbLayers > 0) {
+                  let layer;
+                  let totalSum = 0;
+                  let currentSum = 0;
 
-              if (total <= 0) {
-                progressCallback(0);
-                return;
-              } else {
-                layerProgress[data.id] = current / total;
+                  for (let j = 0; j < columns.progress[i].nbLayers; j++) {
+                    layer = layerProgress[columns.progress[i].layerIDs[j]];
+                    totalSum += layer.total;
+                    currentSum += layer.current;
+                  }
+
+                  if (totalSum > 0) {
+                    columns.progress[i].value = Math.min(100.0 * currentSum / totalSum, 100);
+                  } else {
+                    columns.progress[i].value = 0.0;
+                  }
+                }
               }
-
-              let sum = _.values(layerProgress).reduce((pv, sv) => pv + sv, 0);
-              let numlayers = _.keys(layerProgress).length;
-
-              var totalProgress = sum / numlayers * 100;
-
-              if (!timeout) {
-                progressCallback(totalProgress);
-                timeout = setTimeout(() => {
-                  timeout = null;
-                }, 100);
-              }
-            }
-          });
-          stream.on('end', function () {
-            callback();
-          });
-        });
+              progressCallback(columns);
+            }, 16);
+          }
+        }
+      });
+      stream.on('end', function () {
+        callback();
       });
     });
   },

@@ -32,7 +32,7 @@ var options = {
   appFilename: argv.beta ? 'Kitematic (Beta).app' : 'Kitematic.app',
   appName: argv.beta ? 'Kitematic (Beta)' : 'Kitematic',
   name: 'Kitematic',
-  icon: argv.beta ? './util/kitematic-beta.icns' : './util/kitematic.icns',
+  icon: './util/kitematic.icns',
   bundle: 'com.kitematic.kitematic'
 };
 

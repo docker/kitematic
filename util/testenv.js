@@ -1,6 +1,6 @@
 var mock = (function() {
   var store = {};
-      return {
+    return {
           getItem: function(key) {
           return store[key];
       },

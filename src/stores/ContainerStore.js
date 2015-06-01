@@ -97,11 +97,15 @@ class ContainerStore {
     this.setState({containers});
   }
 
+  // Receives the name of the container and columns of progression
+  // A column represents progression for one or more layers
   progress ({name, progress}) {
     let containers = this.containers;
+
     if (containers[name]) {
       containers[name].Progress = progress;
     }
+
     this.setState({containers});
   }
 

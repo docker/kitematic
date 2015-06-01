@@ -19,7 +19,7 @@ best way to start contributing to Kitematic is to review our doc on
 
 ### How does Kitematic work with Docker?
 
-Kitematic connects directly do a running instance of Docker and controls it via
+Kitematic connects directly to a running instance of Docker and controls it via
 the Docker Remote API.
 
 ### Which platforms does Kitematic support?

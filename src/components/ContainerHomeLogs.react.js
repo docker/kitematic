@@ -64,7 +64,7 @@ module.exports = React.createClass({
   },
   render: function () {
     var logs = this.state.logs.map(function (l, i) {
-      return <span key={i} dangerouslySetInnerHTML={{__html: l}}></span>;
+      return  <span key={i} dangerouslySetInnerHTML={{__html: l}}></span>;
     });
     if (logs.length === 0) {
       logs = "No logs for this container.";
