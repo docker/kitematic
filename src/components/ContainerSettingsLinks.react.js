@@ -10,7 +10,7 @@ var util = require('../utils/Util');
 var Typeahead = require('react-typeahead').Typeahead;
 
 var ContainerSettingsLinks = React.createClass({
-  mixins: [React.addons.LinkedStateMixin],
+  //mixins: [React.addons.LinkedStateMixin],
 
   contextTypes: {
     router: React.PropTypes.func
@@ -23,10 +23,11 @@ var ContainerSettingsLinks = React.createClass({
       return [util.randomId(), l[0], l[1]];
     });
     let containers = containerStore.getState().containers;
-    let sorted = _.pluck(containers,'Name');
+    let sorted = _.pluck(containers, 'Name');
 
     return {
       links: links,
+      selected: false,
       sorted: sorted
     };
   },
@@ -41,7 +42,7 @@ var ContainerSettingsLinks = React.createClass({
         let link = key + ':' + value;
         // Check if Container was previously added
         let currentKey = keys.indexOf(key);
-        if( currentKey != -1) {
+        if ( currentKey != -1) {
           list[currentKey] = link;
         } else {
           keys.push(key);
@@ -53,12 +54,30 @@ var ContainerSettingsLinks = React.createClass({
     containerActions.update(this.props.container.Name, {HostConfig: runtimeConfig});
   },
 
-  handleChangeLinksKey: function (index, value) {
+  handleChangeLinksKey: function (index, event) {
     let links = _.map(this.state.links, _.clone);
-
+    let selected = false;
+    let value;
+    if (typeof event === "string") {
+      selected = true;
+      value = event;
+    } else {
+      links[index][0] = util.randomId();
+      value = event.target.value;
+    }
     links[index][1] = value;
+    if (links[index][2] == "") {
+      links[index][0] = util.randomId();
+      links[index][2] = value;
+    }
     this.setState({
-      links: links
+      links: links,
+      selected: selected
+    }, () => {
+      if (!selected) {
+        this.refs.keyTypeahead.refs.entry.getDOMNode().focus();
+        this.refs.keyTypeahead.refs.entry.getDOMNode().value = value;
+      }
     });
   },
 
@@ -108,9 +127,12 @@ var ContainerSettingsLinks = React.createClass({
         icon = <a onClick={this.handleRemoveLinksVar.bind(this, index)} className="only-icon btn btn-action small"><span className="icon icon-cross"></span></a>;
       }
 
-      if(key == ""){
-        return (
-          <div key={id} className="keyval-row">
+      let inputDockerContainer = (
+        <input type="text" className="key line" defaultValue={key} readOnly />
+      );
+
+      if (key == "" || !this.state.selected) {
+        inputDockerContainer = (
             <Typeahead
               ref="keyTypeahead"
               options={this.state.sorted}
@@ -119,19 +141,20 @@ var ContainerSettingsLinks = React.createClass({
               defaultValue={key}
               onOptionSelected={this.handleChangeLinksKey.bind(this, index)}
             />
-            <input type="text" className="val line" defaultValue={val} onChange={this.handleChangeLinksVal.bind(this, index)} />
-            {icon}
-          </div>
         );
-      } else {
-        return (
-          <div key={id} className="keyval-row">
-            <input type="text" className="key line" defaultValue={key} readOnly />
-            <input type="text" className="val line" defaultValue={val} onChange={this.handleChangeLinksVal.bind(this, index)} />
-            {icon}
-          </div>
+      } else if (index === this.state.links.length - 1) {
+        inputDockerContainer = (
+          <input type="text" className="key line" defaultValue={key} onChange={this.handleChangeLinksKey.bind(this, index)} />
         );
       }
+
+      return (
+        <div key={id} className="keyval-row">
+          {inputDockerContainer}
+          <input type="text" className="val line" defaultValue={val} onChange={this.handleChangeLinksVal.bind(this, index)} />
+          {icon}
+        </div>
+      );
     });
 
     return (
@@ -150,7 +173,6 @@ var ContainerSettingsLinks = React.createClass({
         <div className="settings-section">
           <h4><span className="icon icon-alert-1"></span> <strong>Notice</strong>:</h4>
           <ul className="text-danger">
-            <li>When linking containers, make sure the docker container name matches the one in the list</li>
             <li>Linked containers will only take effect if the target docker container is running</li>
           </ul>
         </div>

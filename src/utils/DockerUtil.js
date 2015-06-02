@@ -25,8 +25,6 @@ export default {
       throw new Error('Certificate directory does not exist');
     }
 
-    console.log(ip);
-
     this.host = ip;
     this.client = new dockerode({
       protocol: 'https',
@@ -83,26 +81,26 @@ export default {
     // Add support for linked containers and runtime settings
     if (containerData.HostConfig) {
       var hostConfig = containerData.HostConfig;
-      if(typeof hostConfig.CpuShares !== "undefined" && hostConfig.CpuShares !== 0){
+      if (hostConfig.CpuShares && hostConfig.CpuShares !== 0){
         startopts.CpuShares = hostConfig.CpuShares;
       }
-      if(typeof hostConfig.Memory !== "undefined" && hostConfig.Memory !== 0){
+      if (hostConfig.Memory && hostConfig.Memory !== 0){
         startopts.Memory = hostConfig.Memory;
       }
-      if(typeof hostConfig.MemorySwap !== "undefined" && hostConfig.MemorySwap !== 0){
+      if (hostConfig.MemorySwap && hostConfig.MemorySwap !== 0){
         startopts.MemorySwap = hostConfig.MemorySwap;
       }
-      if(typeof hostConfig.Links !== "undefined" && hostConfig.Links !== null){
+      if (hostConfig.Links && hostConfig.Links !== null){
         startopts.Links = [];
         _.map(hostConfig.Links, (link) => {
           var i = link.indexOf(':');
           // Account for the slashes
-          if(link.indexOf('/') != -1 && link.indexOf('/') < i) {
+          if (link.indexOf('/') != -1 && link.indexOf('/') < i) {
             var keyStart = link.indexOf('/') + 1;
           } else {
             var keyStart = 0;
           }
-          if(link.lastIndexOf('/') != -1 && link.lastIndexOf('/') > i) {
+          if (link.lastIndexOf('/') != -1 && link.lastIndexOf('/') > i) {
             var valStart = link.lastIndexOf('/') + 1;
           } else {
             var valStart = i + 1;
@@ -110,15 +108,15 @@ export default {
           var key = link.slice(keyStart, i);
           var val = link.slice(valStart);
 
-          if(this.status(key)) {
-              startopts.Links.push(key+':'+val);
+          if (this.status(key)) {
+            startopts.Links.push(key+':'+val);
           }
         });
       }
     }
 
     let container = this.client.getContainer(name);
-    
+
     container.start(startopts, (error) => {
       if (error) {
         containerServerActions.error({name, error});
@@ -324,10 +322,9 @@ export default {
 
   status (name) {
     let running = false;
-    let container = this.client.getContainer(name);
-    if(typeof container !== "undefined") {
+    this.client.getContainer(name).inspect((error, container) => {
       running = container.State.Running;
-    }
+    });
     return running;
   },
 

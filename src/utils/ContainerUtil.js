@@ -20,12 +20,12 @@ var ContainerUtil = {
     return _.map(container.HostConfig.Links, link => {
       var i = link.indexOf(':');
       // Account for the slashes
-      if(link.indexOf('/') != -1 && link.indexOf('/') < i) {
+      if (link.indexOf('/') != -1 && link.indexOf('/') < i) {
         var keyStart = link.indexOf('/') + 1;
       } else {
         var keyStart = 0;
       }
-      if(link.lastIndexOf('/') != -1 && link.lastIndexOf('/') > i) {
+      if (link.lastIndexOf('/') != -1 && link.lastIndexOf('/') > i) {
         var valStart = link.lastIndexOf('/') + 1;
       } else {
         var valStart = i + 1;
@@ -49,7 +49,7 @@ var ContainerUtil = {
       return [["CpuShares",""],["Memory",""],["MemorySwap",""]];
     }
     return _.map([
-      ['CpuShares',container.HostConfig.CpuShares],
+      ['CpuShares', container.HostConfig.CpuShares],
       ['Memory', container.HostConfig.Memory/1000000],
       ['MemorySwap', container.HostConfig.MemorySwap/1000000]
     ]);
