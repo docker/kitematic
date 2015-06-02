@@ -10,7 +10,7 @@ var util = require('../utils/Util');
 var Typeahead = require('react-typeahead').Typeahead;
 
 var ContainerSettingsLinks = React.createClass({
-  //mixins: [React.addons.LinkedStateMixin],
+  mixins: [React.addons.LinkedStateMixin],
 
   contextTypes: {
     router: React.PropTypes.func
@@ -20,14 +20,13 @@ var ContainerSettingsLinks = React.createClass({
     let links = ContainerUtil.links(this.props.container) || [];
     links.push(['', '']);
     links = _.map(links, l => {
-      return [util.randomId(), l[0], l[1]];
+      return [util.randomId(), l[0], l[1], true];
     });
     let containers = containerStore.getState().containers;
     let sorted = _.pluck(containers, 'Name');
 
     return {
       links: links,
-      selected: false,
       sorted: sorted
     };
   },
@@ -58,23 +57,24 @@ var ContainerSettingsLinks = React.createClass({
     let links = _.map(this.state.links, _.clone);
     let selected = false;
     let value;
+    // Check if Typeahead or simple input
     if (typeof event === "string") {
       selected = true;
       value = event;
     } else {
-      links[index][0] = util.randomId();
       value = event.target.value;
     }
     links[index][1] = value;
     if (links[index][2] == "") {
-      links[index][0] = util.randomId();
       links[index][2] = value;
+      this.refs["link-val"].getDOMNode().value = value;
     }
+    links[index][3] =  selected;
     this.setState({
-      links: links,
-      selected: selected
-    }, () => {
+      links: links
+    }, () => {4
       if (!selected) {
+        // Focus on input after re-render
         this.refs.keyTypeahead.refs.entry.getDOMNode().focus();
         this.refs.keyTypeahead.refs.entry.getDOMNode().value = value;
       }
@@ -118,8 +118,8 @@ var ContainerSettingsLinks = React.createClass({
       return false;
     }
 
-    let vars = _.map(this.state.links, (kvp, index) => {
-      let [id, key, val] = kvp;
+    let vars = _.map(this.state.links, (kvps, index) => {
+      let [id, key, val, selected] = kvps;
       let icon;
       if (index === this.state.links.length - 1) {
         icon = <a onClick={this.handleAddLinksVar} className="only-icon btn btn-positive small"><span className="icon icon-add-1"></span></a>;
@@ -131,7 +131,7 @@ var ContainerSettingsLinks = React.createClass({
         <input type="text" className="key line" defaultValue={key} readOnly />
       );
 
-      if (key == "" || !this.state.selected) {
+      if (key == "" || !selected) {
         inputDockerContainer = (
             <Typeahead
               ref="keyTypeahead"
@@ -144,14 +144,14 @@ var ContainerSettingsLinks = React.createClass({
         );
       } else if (index === this.state.links.length - 1) {
         inputDockerContainer = (
-          <input type="text" className="key line" defaultValue={key} onChange={this.handleChangeLinksKey.bind(this, index)} />
+          <input type="text" ref="link-key"  className="key line" defaultValue={key} onChange={this.handleChangeLinksKey.bind(this, index)} />
         );
       }
 
       return (
         <div key={id} className="keyval-row">
           {inputDockerContainer}
-          <input type="text" className="val line" defaultValue={val} onChange={this.handleChangeLinksVal.bind(this, index)} />
+          <input type="text" ref="link-val" className="val line" defaultValue={val} onChange={this.handleChangeLinksVal.bind(this, index)} />
           {icon}
         </div>
       );
