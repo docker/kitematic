@@ -2,7 +2,7 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PATH=$DIR:$PATH
-CMD="export PATH='$PATH' clear && $*"
+CMD="export PATH='$PATH' && clear && $*"
 
 ITERM_EXISTS=`osascript <<EOF
 set doesExist to false
