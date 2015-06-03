@@ -12,17 +12,9 @@ var repositoryStore = require('../stores/RepositoryStore');
 var accountStore = require('../stores/AccountStore');
 var accountActions = require('../actions/AccountActions');
 
-// Infinite Support
+
+
 var _searchPromise = null;
-var _infiniteLoadBeginBottomOffset = 200;
-var _preloadBatchSize = 25;
-var _isInfiniteLoading = false;
-var _elementHeight = 186;
-var _containerHeight = 372;
-var _timeScrollStateLastsForAfterUserScrolls = 150;
-var _scrollTimeout = undefined;
-
-
 
 module.exports = React.createClass({
   mixins: [Router.Navigation, Router.State],
@@ -43,7 +35,7 @@ module.exports = React.createClass({
     let allRepos = repositoryStore.all();
     let repos = [];
     let filter = this.getQuery().filter || 'all';
-    if (allRepos.length) {
+    if (allRepos.length && this.state) {
       repos = _.values(allRepos)
                   .filter(repo => repo.name.toLowerCase().indexOf(this.state.query.toLowerCase()) !== -1 || repo.namespace.toLowerCase().indexOf(this.state.query.toLowerCase()) !== -1)
                   .filter(repo => filter === 'all' || (filter === 'recommended' && repo.is_recommended) || (filter === 'userrepos' && repo.is_user_repo));
@@ -79,7 +71,7 @@ module.exports = React.createClass({
         otherItems: otherItems
       });
     }
-
+    console.log("Refs: %o", this.refs);
   },
   updateAccount: function () {
     this.setState({
@@ -133,22 +125,7 @@ module.exports = React.createClass({
       filter: filter
     });
   },
-  getScrollTop() {
-    return this.refs.scrollable.getDOMNode().scrollTop;
-  },
-  handleScroll(e) {
-    // Inspired by: https://github.com/seatgeek/react-infinite/blob/master/src/react-infinite.jsx
-    if (e.target !== this.refs.scrollable.getDOMNode()) {
-      return;
-    }
-    let scrollTop = e.target.scrollTop;
-    let totalHeight = (_elementHeight * this.state.otherItems.length) / 2;
-    let infiniteScrollBottomLimit = scrollTop > (totalHeight - _containerHeight - _infiniteLoadBeginBottomOffset);
-    if (infiniteScrollBottomLimit) {
-      this.onInfiniteLoad();
-    }
-  },
-  onInfiniteLoad:  function() {
+  handleInfiniteLoad:  function() {
     let nextPage = this.state.page+1;
     let query = this.state.query;
     console.log("Triggered Infinite with  q: %o - p: %o", query, nextPage);
@@ -224,14 +201,18 @@ module.exports = React.createClass({
       <div className="result-grid">
         {otherItems}
       </div>
-      height:372px;overflow-x:hidden;overflow-y:scroll;
       */
       let otherResults = this.state.otherItems.length ? (
         <div>
           <h4>Other Repositories</h4>
-          <div className="infinite-scroll result-grid" ref="scrollable" onScroll={this.handleScroll} >
+          <Infinite className="infinite-scroll result-grid"
+                    preloadBatchSize={25}
+                    containerHeight={372}
+                    elementHeight={186}
+                    onInfiniteLoad={this.handleInfiniteLoad}
+                    infiniteLoadBeginBottomOffset={400} >
             {this.state.otherItems.map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />)}
-          </div>
+          </Infinite>
         </div>
       ) : null;
 
