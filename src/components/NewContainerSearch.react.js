@@ -2,6 +2,7 @@ var _ = require('underscore');
 var React = require('react/addons');
 var Router = require('react-router');
 var RetinaImage = require('react-retina-image');
+var Infinite = require('react-infinite');
 var ImageCard = require('./ImageCard.react');
 var Promise = require('bluebird');
 var metrics = require('../utils/MetricsUtil');
@@ -11,20 +12,43 @@ var repositoryStore = require('../stores/RepositoryStore');
 var accountStore = require('../stores/AccountStore');
 var accountActions = require('../actions/AccountActions');
 
+// Infinite Support
 var _searchPromise = null;
+var _infiniteLoadBeginBottomOffset = 200;
+var _preloadBatchSize = 25;
+var _isInfiniteLoading = false;
+var _elementHeight = 186;
+var _containerHeight = 372;
+var _timeScrollStateLastsForAfterUserScrolls = 150;
+var _scrollTimeout = undefined;
+
+
 
 module.exports = React.createClass({
   mixins: [Router.Navigation, Router.State],
   getInitialState: function () {
     return {
       query: '',
+      page: 1,
       loading: repositoryStore.loading(),
-      repos: repositoryStore.all(),
+      repos: this.getRepos(),
+      otherItems: [],
       username: accountStore.getState().username,
       verified: accountStore.getState().verified,
       accountLoading: accountStore.getState().loading,
       error: repositoryStore.getState().error
     };
+  },
+  getRepos: function () {
+    let allRepos = repositoryStore.all();
+    let repos = [];
+    let filter = this.getQuery().filter || 'all';
+    if (allRepos.length) {
+      repos = _.values(allRepos)
+                  .filter(repo => repo.name.toLowerCase().indexOf(this.state.query.toLowerCase()) !== -1 || repo.namespace.toLowerCase().indexOf(this.state.query.toLowerCase()) !== -1)
+                  .filter(repo => filter === 'all' || (filter === 'recommended' && repo.is_recommended) || (filter === 'userrepos' && repo.is_user_repo));
+    }
+    return repos;
   },
   componentDidMount: function () {
     this.refs.searchInput.getDOMNode().focus();
@@ -41,10 +65,21 @@ module.exports = React.createClass({
     accountStore.unlisten(this.updateAccount);
   },
   update: function () {
-    this.setState({
-      loading: repositoryStore.loading(),
-      repos: repositoryStore.all()
-    });
+    let currentPage = this.state.page;
+    let repos = this.getRepos();
+    let otherItems = _.union(this.state.otherItems, repos.filter(repo => !repo.is_recommended && !repo.is_user_repo));
+    if (!currentPage || currentPage == 1) {
+      this.setState({
+        loading: repositoryStore.loading(),
+        repos: repos,
+        otherItems: otherItems
+      });
+    } else {
+      this.setState({
+        otherItems: otherItems
+      });
+    }
+
   },
   updateAccount: function () {
     this.setState({
@@ -53,21 +88,25 @@ module.exports = React.createClass({
       accountLoading: accountStore.getState().loading
     });
   },
-  search: function (query) {
+  search: function (query, page=1) {
     if (_searchPromise) {
       _searchPromise.cancel();
       _searchPromise = null;
     }
-
+    let loading = true;
+    if (page > 1) {
+      loading = false;
+    }
     this.setState({
       query: query,
-      loading: true
+      page: page,
+      loading: loading
     });
 
     _searchPromise = Promise.delay(200).cancellable().then(() => {
       metrics.track('Searched for Images');
       _searchPromise = null;
-      repositoryActions.search(query);
+      repositoryActions.search(query, page);
     }).catch(Promise.CancellationError, () => {});
   },
   handleChange: function (e) {
@@ -94,6 +133,27 @@ module.exports = React.createClass({
       filter: filter
     });
   },
+  getScrollTop() {
+    return this.refs.scrollable.getDOMNode().scrollTop;
+  },
+  handleScroll(e) {
+    // Inspired by: https://github.com/seatgeek/react-infinite/blob/master/src/react-infinite.jsx
+    if (e.target !== this.refs.scrollable.getDOMNode()) {
+      return;
+    }
+    let scrollTop = e.target.scrollTop;
+    let totalHeight = (_elementHeight * this.state.otherItems.length) / 2;
+    let infiniteScrollBottomLimit = scrollTop > (totalHeight - _containerHeight - _infiniteLoadBeginBottomOffset);
+    if (infiniteScrollBottomLimit) {
+      this.onInfiniteLoad();
+    }
+  },
+  onInfiniteLoad:  function() {
+    let nextPage = this.state.page+1;
+    let query = this.state.query;
+    console.log("Triggered Infinite with  q: %o - p: %o", query, nextPage);
+    this.search(query, nextPage);
+  },
   handleCheckVerification: function () {
     accountActions.verify();
     metrics.track('Verified Account', {
@@ -102,9 +162,7 @@ module.exports = React.createClass({
   },
   render: function () {
     let filter = this.getQuery().filter || 'all';
-    let repos = _.values(this.state.repos)
-        .filter(repo => repo.name.toLowerCase().indexOf(this.state.query.toLowerCase()) !== -1 || repo.namespace.toLowerCase().indexOf(this.state.query.toLowerCase()) !== -1)
-        .filter(repo => filter === 'all' || (filter === 'recommended' && repo.is_recommended) || (filter === 'userrepos' && repo.is_user_repo));
+    let repos = this.state.repos;
 
     let results;
     if (this.state.error) {
@@ -142,7 +200,6 @@ module.exports = React.createClass({
       );
     } else if (repos.length) {
       let recommendedItems = repos.filter(repo => repo.is_recommended).map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />);
-      let otherItems = repos.filter(repo => !repo.is_recommended && !repo.is_user_repo).map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />);
 
       let recommendedResults = recommendedItems.length ? (
         <div>
@@ -163,11 +220,17 @@ module.exports = React.createClass({
         </div>
       ) : null;
 
-      let otherResults = otherItems.length ? (
+      /*
+      <div className="result-grid">
+        {otherItems}
+      </div>
+      height:372px;overflow-x:hidden;overflow-y:scroll;
+      */
+      let otherResults = this.state.otherItems.length ? (
         <div>
           <h4>Other Repositories</h4>
-          <div className="result-grid">
-            {otherItems}
+          <div className="infinite-scroll result-grid" ref="scrollable" onScroll={this.handleScroll} >
+            {this.state.otherItems.map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />)}
           </div>
         </div>
       ) : null;

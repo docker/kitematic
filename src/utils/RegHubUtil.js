@@ -25,7 +25,7 @@ module.exports = {
     return obj;
   },
 
-  search: function (query, page) {
+  search: function (query, page=1) {
     if (searchReq) {
       searchReq.abort();
       searchReq = null;
@@ -34,10 +34,10 @@ module.exports = {
     if (!query) {
       repositoryServerActions.resultsUpdated({repos: []});
     }
-
+    
     searchReq = request.get({
       url: 'https://registry.hub.docker.com/v1/search?',
-      qs: {q: query, page}
+      qs: {q: query, p: page}
     }, (error, response, body) => {
       if (error) {
         repositoryServerActions.error({error});
