@@ -26,7 +26,7 @@ module.exports = {
     return obj;
   },
 
-  search: function (query, page=1) {
+  search: function (query, page = 1) {
     if (searchReq) {
       searchReq.abort();
       searchReq = null;
@@ -38,7 +38,7 @@ module.exports = {
 
     searchReq = request.get({
       url: 'https://registry.hub.docker.com/v1/search?',
-      qs: {q: query, page: page, time: +new Date()}
+      qs: {q: query, page: page, time: Date.now()}
     }, (error, response, body) => {
       if (error) {
         repositoryServerActions.error({error});
@@ -50,7 +50,7 @@ module.exports = {
       });
       let pageLimit = data.num_pages;
       // Error in API, more items due to array count
-      let maxResults = data.num_results-1;
+      let maxResults = data.num_results - 1;
       if (response.statusCode === 200) {
         repositoryServerActions.resultsUpdated({repos, pageLimit, maxResults});
       }

@@ -47,8 +47,6 @@ var InfiniteGrid = React.createClass({
     };
   },
 
-  // METHODS
-
   _wrapperStyle: function() {
     return {
       maxHeight: window.innerHeight,
@@ -156,8 +154,6 @@ var InfiniteGrid = React.createClass({
       this.setState({initiatedLazyload: false });
     }
   },
-
-  // LIFECYCLE
 
   componentWillMount: function() {
     window.addEventListener('resize', this._resizeListener);
