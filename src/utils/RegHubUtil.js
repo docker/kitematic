@@ -53,6 +53,9 @@ module.exports = {
       let maxResults = data.num_results - 1;
       if (response.statusCode === 200) {
         repositoryServerActions.resultsUpdated({repos, pageLimit, maxResults});
+      } else {
+        repositoryServerActions.error({error: data.detail});
+        return;
       }
     });
   },
