@@ -88,7 +88,7 @@ module.exports = React.createClass({
       accountLoading: accountStore.getState().loading
     });
   },
-  search: function (query, page=1) {
+  search: function (query, page = 1) {
     if (_searchPromise) {
       _searchPromise.cancel();
       _searchPromise = null;
