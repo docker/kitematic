@@ -182,8 +182,6 @@ var InfiniteGrid = React.createClass({
     window.removeEventListener('resize', this._resizeListener);
   },
 
-  // LISTENERS
-
   _scrollListener: function(event) {
     this._visibleIndexes();
   },
@@ -197,8 +195,6 @@ var InfiniteGrid = React.createClass({
     this._updateItemDimensions();
     this._visibleIndexes();
   },
-
-  // RENDER
 
   render: function() {
     let entries = this.props.entries;
