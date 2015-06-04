@@ -23,6 +23,8 @@ module.exports = React.createClass({
     return {
       query: '',
       page: 1,
+      pageLimit: repositoryStore.getLimit(),
+      maxResults: repositoryStore.getMaxResults(),
       loading: repositoryStore.loading(),
       repos: this.getRepos(),
       otherItems: [],
@@ -60,16 +62,23 @@ module.exports = React.createClass({
   update: function () {
     let currentPage = this.state.page;
     let repos = this.getRepos();
-    let otherItems = _.union(this.state.otherItems, repos.filter(repo => !repo.is_recommended && !repo.is_user_repo));
+    let otherItems = repos.filter(repo => !repo.is_recommended && !repo.is_user_repo);
+    if (this.state.page > 1) {
+      otherItems = _.union(this.state.otherItems, otherItems);
+    }
     if (!currentPage || currentPage == 1) {
       this.setState({
         loading: repositoryStore.loading(),
         repos: repos,
-        otherItems: otherItems
+        otherItems: otherItems,
+        pageLimit: repositoryStore.getLimit(),
+        maxResults: repositoryStore.getMaxResults()
       });
     } else {
       this.setState({
-        otherItems: otherItems
+        otherItems: otherItems,
+        pageLimit: repositoryStore.getLimit(),
+        maxResults: repositoryStore.getMaxResults()
       });
     }
   },
@@ -128,7 +137,9 @@ module.exports = React.createClass({
   handleInfiniteLoad:  function(e) {
     let nextPage = this.state.page+1;
     let query = this.state.query;
-    this.search(query, nextPage);
+    if (nextPage <= this.state.pageLimit) {
+      this.search(query, nextPage);
+    }
   },
   handleCheckVerification: function () {
     accountActions.verify();
@@ -196,28 +207,14 @@ module.exports = React.createClass({
         </div>
       ) : null;
 
-      /*
-      <div className="result-grid">
-        {otherItems}
-      </div>
-      <Infinite className="infinite-scroll result-grid"
-                preloadBatchSize={372}
-                containerHeight={375}
-                elementHeight={186}
-                onInfiniteLoad={this.handleInfiniteLoad}
-                loadingSpinnerDelegate={this.elementInfiniteLoad()}
-                infiniteLoadBeginBottomOffset={375}
-                isInfiniteLoading={this.state.isInfiniteLoading}>
-        {this.state.otherItems.map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />)}
-      </Infinite>
-      */
       let otherResults = this.state.otherItems.length ? (
         <div>
           <h4>Other Repositories</h4>
-          <InfiniteGrid wrapperHeight={375}
+          <InfiniteGrid wrapperHeight={ (userRepoItems.length !== 0 || recommendedItems.length !== 0)? 375:600}
                         height={170}
                         width={340}
                         entries={this.state.otherItems.map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />)}
+                        maxEntries={this.state.maxResults}
                         lazyCallback={this.handleInfiniteLoad}/>
         </div>
       ) : null;

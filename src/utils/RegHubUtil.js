@@ -7,6 +7,7 @@ var repositoryServerActions = require('../actions/RepositoryServerActions');
 var tagServerActions = require('../actions/TagServerActions');
 var Promise = require('bluebird');
 
+
 let REGHUB2_ENDPOINT = process.env.REGHUB2_ENDPOINT || 'https://registry.hub.docker.com/v2';
 let searchReq = null;
 
@@ -34,23 +35,24 @@ module.exports = {
     if (!query) {
       repositoryServerActions.resultsUpdated({repos: []});
     }
-    console.log("Q: %o - P: %o", query, page);
 
     searchReq = request.get({
       url: 'https://registry.hub.docker.com/v1/search?',
-      qs: {q: query, p: page}
+      qs: {q: query, page: page, time: +new Date()}
     }, (error, response, body) => {
       if (error) {
         repositoryServerActions.error({error});
       }
-      console.log("E: %o - R: %o - B: %o", error, response, body);
 
       let data = JSON.parse(body);
       let repos = _.map(data.results, result => {
         return this.normalize(result);
       });
+      let pageLimit = data.num_pages;
+      // Error in API, more items due to array count
+      let maxResults = data.num_results-1;
       if (response.statusCode === 200) {
-        repositoryServerActions.resultsUpdated({repos});
+        repositoryServerActions.resultsUpdated({repos, pageLimit, maxResults});
       }
     });
   },
