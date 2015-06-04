@@ -3,6 +3,11 @@ var PureRenderMixin = React.addons.PureRenderMixin;
 
 var _initialTop = 0;
 
+/**
+ * Inspired from: https://github.com/TeckniX/react-infinite-grid
+ *
+ */
+
 var InfiniteGrid = React.createClass({
 
     mixins: [ PureRenderMixin ],
