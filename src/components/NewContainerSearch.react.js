@@ -2,7 +2,8 @@ var _ = require('underscore');
 var React = require('react/addons');
 var Router = require('react-router');
 var RetinaImage = require('react-retina-image');
-var Infinite = require('react-infinite');
+//var Infinite = require('react-infinite');
+var InfiniteGrid = require('./InfiniteGrid');
 var ImageCard = require('./ImageCard.react');
 var Promise = require('bluebird');
 var metrics = require('../utils/MetricsUtil');
@@ -25,7 +26,6 @@ module.exports = React.createClass({
       loading: repositoryStore.loading(),
       repos: this.getRepos(),
       otherItems: [],
-      isInfiniteLoading: false,
       username: accountStore.getState().username,
       verified: accountStore.getState().verified,
       accountLoading: accountStore.getState().loading,
@@ -65,33 +65,13 @@ module.exports = React.createClass({
       this.setState({
         loading: repositoryStore.loading(),
         repos: repos,
-        otherItems: otherItems,
-        isInfiniteLoading: false
+        otherItems: otherItems
       });
     } else {
       this.setState({
-        otherItems: otherItems,
-        isInfiniteLoading: false
+        otherItems: otherItems
       });
     }
-  },
-  componentDidUpdate(prevProps: object, prevState: object) {
-    let element = React.findDOMNode(this);
-    console.log("Element: %o", this);
-
-    // if (this.state.initialLoad) {
-    //   if (element.clientHeight === element.scrollHeight) {
-    //       // didn't load enough to enable scrolling yet
-    //       if (!this.state.isInfiniteLoading) {
-    //           console.log("loading more at initial");
-    //           this.handleInfiniteLoad();
-    //       }
-    //   } else {
-    //       this.setState({
-    //           initialLoad: false
-    //       });
-    //   }
-    // }
   },
   updateAccount: function () {
     this.setState({
@@ -146,18 +126,9 @@ module.exports = React.createClass({
     });
   },
   handleInfiniteLoad:  function(e) {
-    this.setState({
-        isInfiniteLoading: true
-    });
     let nextPage = this.state.page+1;
     let query = this.state.query;
-    console.log("Triggered Infinite with  q: %o - p: %o", query, nextPage);
     this.search(query, nextPage);
-  },
-  elementInfiniteLoad: function() {
-        return <div className="infinite-list-item">
-            Loading...
-        </div>;
   },
   handleCheckVerification: function () {
     accountActions.verify();
@@ -229,20 +200,25 @@ module.exports = React.createClass({
       <div className="result-grid">
         {otherItems}
       </div>
+      <Infinite className="infinite-scroll result-grid"
+                preloadBatchSize={372}
+                containerHeight={375}
+                elementHeight={186}
+                onInfiniteLoad={this.handleInfiniteLoad}
+                loadingSpinnerDelegate={this.elementInfiniteLoad()}
+                infiniteLoadBeginBottomOffset={375}
+                isInfiniteLoading={this.state.isInfiniteLoading}>
+        {this.state.otherItems.map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />)}
+      </Infinite>
       */
       let otherResults = this.state.otherItems.length ? (
         <div>
           <h4>Other Repositories</h4>
-          <Infinite className="infinite-scroll result-grid"
-                    preloadBatchSize={372}
-                    containerHeight={375}
-                    elementHeight={186}
-                    onInfiniteLoad={this.handleInfiniteLoad}
-                    loadingSpinnerDelegate={this.elementInfiniteLoad()}
-                    infiniteLoadBeginBottomOffset={375}
-                    isInfiniteLoading={this.state.isInfiniteLoading}>
-            {this.state.otherItems.map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />)}
-          </Infinite>
+          <InfiniteGrid wrapperHeight={375}
+                        height={170}
+                        width={340}
+                        entries={this.state.otherItems.map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />)}
+                        lazyCallback={this.handleInfiniteLoad}/>
         </div>
       ) : null;
 

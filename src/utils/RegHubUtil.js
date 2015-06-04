@@ -34,7 +34,8 @@ module.exports = {
     if (!query) {
       repositoryServerActions.resultsUpdated({repos: []});
     }
-    
+    console.log("Q: %o - P: %o", query, page);
+
     searchReq = request.get({
       url: 'https://registry.hub.docker.com/v1/search?',
       qs: {q: query, p: page}
@@ -42,6 +43,7 @@ module.exports = {
       if (error) {
         repositoryServerActions.error({error});
       }
+      console.log("E: %o - R: %o - B: %o", error, response, body);
 
       let data = JSON.parse(body);
       let repos = _.map(data.results, result => {
