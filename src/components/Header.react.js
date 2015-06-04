@@ -94,8 +94,7 @@ var Header = React.createClass({
     });
     accountActions.verify();
   },
-  render: function () {
-    let updateWidget = this.state.updateAvailable && !this.props.hideLogin ? <a className="btn btn-action small no-drag" onClick={this.handleAutoUpdateClick}>UPDATE NOW</a> : null;
+  renderWindowButtons: function () {
     let buttons;
     if (this.state.fullscreen) {
       buttons = (
@@ -114,7 +113,11 @@ var Header = React.createClass({
         </div>
       );
     }
-
+    return buttons;
+  },
+  render: function () {
+    let updateWidget = this.state.updateAvailable && !this.props.hideLogin ? <a className="btn btn-action small no-drag" onClick={this.handleAutoUpdateClick}>UPDATE NOW</a> : null;
+    
     let username;
     if (this.props.hideLogin) {
       username = null;
@@ -140,12 +143,18 @@ var Header = React.createClass({
 
     return (
       <div className={headerClasses}>
-        {buttons}
-        <div className="updates">
-          {updateWidget}
+        <div className="left-header">
+          {this.renderWindowButtons()}
+          <div className="login-wrapper">
+            <div className="login">
+              {username}
+            </div>
+          </div>
         </div>
-        <div className="login">
-          {username}
+        <div className="right-header">
+          <div className="updates">
+            {updateWidget}
+          </div>
         </div>
       </div>
     );

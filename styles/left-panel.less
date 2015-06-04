@@ -1,7 +1,6 @@
 /* Sidebar */
 
 .sidebar {
-  padding-top: 10px;
   background-color: white;
   margin: 0;
   border-right: 1px solid @color-divider;
@@ -13,7 +12,7 @@
   .sidebar-header {
     flex: 0 auto;
     min-width: 240px;
-    min-height: 47px;
+    min-height: 40px;
     display: flex;
     border-bottom: 1px solid transparent;
     transition: border-bottom 0.25s;
@@ -23,8 +22,7 @@
     }
     h4 {
       align-self: flex-start;
-      padding-left: 26px;
-      margin: 14px 0 0;
+      padding: 0.2rem 0 0 1.4rem;
       display: inline-block;
       position: relative;
     }
@@ -32,8 +30,9 @@
       display: flex;
       flex: 1 auto;
       justify-content: flex-end;
-      margin-right: 20px;
-      margin-top: 3px;
+      margin: 0.6rem 1rem 0 0;
+      //margin-right: 20px;
+      //margin-top: 3px;
       a {
         display: block;
         text-decoration: none;
@@ -88,13 +87,18 @@
           text-decoration: none;
           cursor: default;
         }
+        &:first-child {
+          li {
+            border-top: 1px solid @color-divider;
+          }
+        }
         &:focus {
           text-decoration: none;
         }
         &.active {
           background: @brand-action;
           li {
-            height: 57px;
+            height: 45px;
             border-bottom: none;
             .brand-gradient();
             .name {
@@ -136,25 +140,25 @@
       }
       li {
         vertical-align: middle;
-        padding: 10px 16px 10px 26px;
+        padding: 0.7rem 1rem 0.7rem 1.4rem;
         display: flex;
         flex-direction: row;
-        height: 57px;
+        height: 45px;
+        border-bottom: 1px solid @color-divider;
         .info {
-          font-size: 13px;
-          margin-left: 16px;
+          margin-left: 1rem;
           .name {
             text-overflow: ellipsis;
             max-width: 140px;
             white-space: nowrap;
             overflow: hidden;
-            font-size: 14px;
+            font-size: 12px;
             font-weight: 400;
             color: @gray-darkest;
           }
           .image {
             color: @gray-light;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 400;
             text-overflow: ellipsis;
             max-width: 140px;
@@ -166,9 +170,8 @@
           display: none;
           flex: 1;
           position: relative;
-          top: 5px;
+          top: 0.2rem;
           text-align: right;
-          margin-right: 4px;
           .btn-delete {
             font-size: 24px;
             color: @gray-lighter;
@@ -177,7 +180,7 @@
           }
         }
         .state {
-          margin-top: 9px;
+          margin-top: 0.6rem;
           display: inline-block;
           position: relative;
           min-width: 20px;

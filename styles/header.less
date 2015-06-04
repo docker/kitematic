@@ -1,10 +1,10 @@
 .header {
-  min-height: 50px;
+  min-height: 40px;
   -webkit-app-region: drag;
   -webkit-user-select: none;
 
   &.bordered {
-    border-bottom: 1px solid #E7E7E7;
+    border-bottom: 1px solid @color-divider;
   }
 
   display: flex;
@@ -12,6 +12,12 @@
   .no-drag {
     -webkit-app-region: no-drag;
   }
+  
+  .left-header {
+    display: flex;
+    min-width: 260px;
+  }
+
   .updates {
     flex: 1 auto;
     display: flex;
@@ -26,13 +32,20 @@
     }
   }
 
+  .login-wrapper {
+    flex: 1 auto;
+    display: flex;
+    justify-content: flex-end;
+  }
+
   .login {
     flex: 0 auto;
     display: flex;
-    color: #88919C;
+    color: @gray-light;
     align-items: center;
-    justify-content: flex-end;
-    margin-right: 13px;
+    border-left: 1px solid @color-divider;
+    border-right: 1px solid @color-divider;
+    padding: 0 1rem 0 0.6rem;
 
     &:active {
       img, span {
@@ -47,8 +60,7 @@
 
   .buttons {
     display: flex;
-    margin-left: 14px;
-
+    margin: 0 1.5rem;
     align-items: center;
     justify-content: center;
     &:hover {

@@ -63,33 +63,31 @@ input[type="text"] {
 
 // Mixin for generating new styles
 .btn-styles(@btn-color: @gray-normal) {
-  transition: all 0.25s;
   .reset-filter(); // Disable gradients for IE9 because filter bleeds through rounded corners
-  border-color: @btn-color;
-  color: @btn-color;
+  transition: all 100ms;
+  background: transparent;
+	border-color: @btn-color;
+	color: @btn-color;
 
-  &:hover,
-  &:focus {
-    border-color: darken(@btn-color, 15%);
-    color: darken(@btn-color, 15%);
+  &:hover {
+    background-color: fade(@btn-color, 3%);
+    border-color: darken(@btn-color, 5%);
+    color: darken(@btn-color, 5%);
     cursor: default;
     box-shadow: none;
-    background: none;
   }
+
+  &:focus,
+	&.focus {
+		color: @btn-color;
+		outline: none;
+	}
 
   &:active {
-    background-color: lighten(@btn-color, 45%);
-    border-color: darken(@btn-color, 15%);
-    color: darken(@btn-color, 15%);
-    box-shadow: none;
-  }
-
-  &.active {
-    background-color: @btn-color;
-    color: white;
-    box-shadow: none;
-    box-shadow: none;
-  }
+		background-color: fade(@btn-color, 5%);
+		border-color: darken(@btn-color, 5%);
+		box-shadow: 0 0 0 3px fade(@btn-color, 25%);
+	}
 
   &:disabled,
   &[disabled] {
@@ -129,7 +127,7 @@ input[type="text"] {
   background-color: transparent;
   color: @gray-normal;
   border: 1px solid @gray-normal;
-  border-radius: 40px;
+  border-radius: @border-radius;
   box-shadow: none;
   font-weight: 400;
   text-shadow: none;
@@ -169,7 +167,6 @@ input[type="text"] {
   &:active,
   &.active {
     background-image: none;
-    box-shadow: none;
   }
 
   &:focus,
@@ -193,16 +190,6 @@ input[type="text"] {
 }
 .btn-positive {
   .btn-styles(@brand-positive);
-  &:hover,
-  &:focus {
-    border-color: darken(@brand-positive, 7%);
-    color: darken(@brand-positive, 7%);
-  }
-  &:active {
-    background-color: lighten(@brand-positive, 53%);
-    border-color: darken(@brand-positive, 7%);
-    color: darken(@brand-positive, 7%);
-  }
 }
 .btn-default { .btn-styles(@btn-default-bg); }
 .btn-primary { .btn-styles(@btn-primary-bg); }
