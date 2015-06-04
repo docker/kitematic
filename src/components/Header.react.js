@@ -115,9 +115,12 @@ var Header = React.createClass({
     }
     return buttons;
   },
-  render: function () {
-    let updateWidget = this.state.updateAvailable && !this.props.hideLogin ? <a className="btn btn-action small no-drag" onClick={this.handleAutoUpdateClick}>UPDATE NOW</a> : null;
-    
+  renderDashboardHeader: function () {
+    let headerClasses = classNames({
+      bordered: !this.props.hideLogin,
+      header: true,
+      'no-drag': true
+    });
     let username;
     if (this.props.hideLogin) {
       username = null;
@@ -134,13 +137,7 @@ var Header = React.createClass({
         </span>
       );
     }
-
-    let headerClasses = classNames({
-      bordered: !this.props.hideLogin,
-      header: true,
-      'no-drag': true
-    });
-
+    let updateWidget = this.state.updateAvailable && !this.props.hideLogin ? <a className="btn btn-action small no-drag" onClick={this.handleAutoUpdateClick}>UPDATE NOW</a> : null;
     return (
       <div className={headerClasses}>
         <div className="left-header">
@@ -158,6 +155,29 @@ var Header = React.createClass({
         </div>
       </div>
     );
+  },
+  renderBasicHeader: function () {
+    let headerClasses = classNames({
+      bordered: !this.props.hideLogin,
+      header: true,
+      'no-drag': true
+    });
+    return (
+      <div className={headerClasses}>
+        <div className="left-header">
+          {this.renderWindowButtons()}
+        </div>
+        <div className="right-header">
+        </div>
+      </div>
+    );
+  },
+  render: function () {
+    if (this.props.hideLogin) {
+      return this.renderBasicHeader();
+    } else {
+      return this.renderDashboardHeader();
+    }
   }
 });
 
