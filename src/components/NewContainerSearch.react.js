@@ -213,11 +213,13 @@ module.exports = React.createClass({
 
     return (
       <div className="details">
+        <div className="header-section">
+          <div className="text">
+            Create Container
+          </div>
+        </div>
         <div className="new-container">
           <div className="new-container-header">
-            <div className="text">
-              Select a Docker image to create a container.
-            </div>
             <div className="search">
               <div className="search-bar">
                 <input type="search" ref="searchInput" className="form-control" placeholder="Search Docker Hub for an image" onChange={this.handleChange}/>
@@ -225,14 +227,14 @@ module.exports = React.createClass({
                 <div className={loadingClasses}><div></div></div>
               </div>
             </div>
-          </div>
-          <div className="results">
             <div className="results-filters">
               <span className="results-filter results-filter-title">FILTER BY</span>
               <span className={`results-filter results-all tab ${filter === 'all' ? 'active' : ''}`} onClick={this.handleFilter.bind(this, 'all')}>All</span>
               <span className={`results-filter results-recommended tab ${filter === 'recommended' ? 'active' : ''}`} onClick={this.handleFilter.bind(this, 'recommended')}>Recommended</span>
               <span className={`results-filter results-userrepos tab ${filter === 'userrepos' ? 'active' : ''}`} onClick={this.handleFilter.bind(this, 'userrepos')}>My Repositories</span>
             </div>
+          </div>
+          <div className="results">
             {results}
           </div>
         </div>

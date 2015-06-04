@@ -6,12 +6,12 @@
   border-right: 1px solid @color-divider;
   display: flex;
   flex-direction: column;
-  min-width: 260px;
+  min-width: @sidebar-width;
   box-sizing: border-box;
   position: relative;
   .sidebar-header {
     flex: 0 auto;
-    min-width: 240px;
+    min-width: @sidebar-width;
     min-height: 40px;
     display: flex;
     border-bottom: 1px solid transparent;
@@ -37,6 +37,9 @@
         display: block;
         text-decoration: none;
         cursor: default;
+        &:focus {
+          outline: 0;
+        }
         &.active {
           .btn-new {
             opacity: 0.3;
@@ -65,7 +68,7 @@
     overflow-y: auto;
     overflow-x: hidden;
     box-sizing: border-box;
-    max-width: 260px;
+    max-width: @sidebar-width;
     ul {
       flex: 1 auto;
       margin: 0;
@@ -89,7 +92,7 @@
         }
         &:first-child {
           li {
-            border-top: 1px solid @color-divider;
+            //border-top: 1px solid @color-divider;
           }
         }
         &:focus {
@@ -100,7 +103,7 @@
           li {
             height: 45px;
             border-bottom: none;
-            .brand-gradient();
+            background-color: @brand-primary;
             .name {
               color: white;
             }
@@ -144,12 +147,12 @@
         display: flex;
         flex-direction: row;
         height: 45px;
-        border-bottom: 1px solid @color-divider;
+        //border-bottom: 1px solid @color-divider;
         .info {
           margin-left: 1rem;
           .name {
             text-overflow: ellipsis;
-            max-width: 140px;
+            max-width: @sidebar-text-overflow-width;
             white-space: nowrap;
             overflow: hidden;
             font-size: 12px;
@@ -161,7 +164,7 @@
             font-size: 9px;
             font-weight: 400;
             text-overflow: ellipsis;
-            max-width: 140px;
+            max-width: @sidebar-text-overflow-width;
             white-space: nowrap;
             overflow: hidden;
           }
@@ -247,8 +250,8 @@
 /* Sidebar Buttons */
 
 .sidebar-buttons {
-  border-top: 1px solid #F0F4F8;
-  min-height: 48px;
+  border-top: 1px solid @color-divider;
+  min-height: 40px;
   flex: 0 auto;
   display: flex;
   flex-direction: row;
@@ -280,13 +283,13 @@
 
   .btn-terminal {
     flex: 1 auto;
-    border-right: 1px solid #F0F4F8;
+    border-right: 1px solid @color-divider;
     img {
       margin-right: 10px;
     }
   }
   .btn-feedback {
-    border-right: 1px solid #F0F4F8;
+    border-right: 1px solid @color-divider;
   }
   .btn {
     position: relative;
