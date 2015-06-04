@@ -210,7 +210,7 @@ var InfiniteGrid = React.createClass({
       <div ref="wrapper" className="infinite-grid-wrapper" onScroll={this._scrollListener} style={this._wrapperStyle()}>
         <div ref="grid" className="infinite-grid result-grid" style={this._gridStyle()}>
           {entries}
-          { this.state.initiatedLazyload ? loading : null }
+          {this.state.initiatedLazyload ? loading : null}
         </div>
       </div>
     );

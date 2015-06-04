@@ -2,7 +2,6 @@ var _ = require('underscore');
 var React = require('react/addons');
 var Router = require('react-router');
 var RetinaImage = require('react-retina-image');
-//var Infinite = require('react-infinite');
 var InfiniteGrid = require('./InfiniteGrid');
 var ImageCard = require('./ImageCard.react');
 var Promise = require('bluebird');
