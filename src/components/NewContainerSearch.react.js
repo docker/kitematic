@@ -122,7 +122,6 @@ module.exports = React.createClass({
     this.search(query);
   },
   handleFilter: function (filter) {
-    console.log("Filtering results");
 
     // If we're clicking on the filter again - refresh
     if (filter === 'userrepos' && this.getQuery().filter === 'userrepos') {
