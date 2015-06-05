@@ -25,7 +25,7 @@ module.exports = React.createClass({
       pageLimit: repositoryStore.getLimit(),
       maxResults: repositoryStore.getMaxResults(),
       loading: repositoryStore.loading(),
-      repos: this.getRepos(),
+      repos: [],
       otherItems: [],
       username: accountStore.getState().username,
       verified: accountStore.getState().verified,
@@ -37,7 +37,7 @@ module.exports = React.createClass({
     let allRepos = repositoryStore.all();
     let repos = [];
     let filter = this.getQuery().filter || 'all';
-    if (allRepos.length && this.state) {
+    if (allRepos.length) {
       repos = _.values(allRepos)
                   .filter(repo => repo.name.toLowerCase().indexOf(this.state.query.toLowerCase()) !== -1 || repo.namespace.toLowerCase().indexOf(this.state.query.toLowerCase()) !== -1)
                   .filter(repo => filter === 'all' || (filter === 'recommended' && repo.is_recommended) || (filter === 'userrepos' && repo.is_user_repo));
@@ -60,7 +60,7 @@ module.exports = React.createClass({
   },
   update: function () {
     let currentPage = this.state.page;
-    let repos = this.getRepos();
+    let repos = repositoryStore.all();
     let otherItems = repos.filter(repo => !repo.is_recommended && !repo.is_user_repo);
     if (this.state.page > 1) {
       otherItems = _.union(this.state.otherItems, otherItems);
@@ -122,7 +122,6 @@ module.exports = React.createClass({
     this.search(query);
   },
   handleFilter: function (filter) {
-
     // If we're clicking on the filter again - refresh
     if (filter === 'userrepos' && this.getQuery().filter === 'userrepos') {
       repositoryActions.repos();
@@ -158,7 +157,7 @@ module.exports = React.createClass({
   },
   render: function () {
     let filter = this.getQuery().filter || 'all';
-    let repos = this.state.repos;
+    let repos = this.getRepos();
 
     let results;
     if (this.state.error) {
@@ -215,8 +214,8 @@ module.exports = React.createClass({
           </div>
         </div>
       ) : null;
-
-      let otherResults = this.state.otherItems.length ? (
+      
+      let otherResults = (this.state.otherItems.length && filter === 'all') ? (
         <div>
           <h4>Other Repositories</h4>
           <InfiniteGrid ref="itemGrid"
