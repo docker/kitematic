@@ -203,9 +203,13 @@ gulp.task('download-docker', function (cb) {
     gutil.log(gutil.colors.green('Downloading Docker'));
 
     if(process.platform === 'win32') {
-      request('https://master.dockerproject.com/windows/amd64/docker-1.7.0-dev.exe').pipe(fs.createWriteStream('./resources/docker.exe')).on('end', cb);
+      request('https://master.dockerproject.com/windows/amd64/docker-1.7.0-dev.exe').pipe(fs.createWriteStream('./resources/docker.exe')).on('finish', cb);
     } else {
-      request('https://get.docker.com/builds/Darwin/x86_64/docker-' + packagejson['docker-version'] + '.tgz').pipe(fs.createWriteStream('./resources/docker')).on('end', cb);
+      request('https://get.docker.com/builds/Darwin/x86_64/docker-' + packagejson['docker-version'])
+        .pipe(fs.createWriteStream('./resources/docker')).on('finish', function () {
+           fs.chmodSync('./resources/docker', 755);
+           cb();
+         });
     }
   });
 });
@@ -222,10 +226,13 @@ gulp.task('download-docker-machine', function (cb) {
 
     if(process.platform === 'win32') {
       request('https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_windows-amd64.exe')
-          .pipe(fs.createWriteStream('./resources/docker-machine.exe')).on('end', function () {cb()});
+          .pipe(fs.createWriteStream('./resources/docker-machine.exe')).on('finish', function () {cb()});
     } else {
-      request('https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + 'docker-machine_darwin-amd64')
-          .pipe(fs.createWriteStream('./resources/docker-machine')).on('end', function () {cb()});
+      request('https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_darwin-amd64')
+          .pipe(fs.createWriteStream('./resources/docker-machine')).on('finish', function () {
+            fs.chmodSync('./resources/docker-machine', 755);
+            cb();
+          });
     }
   });
 });
@@ -244,7 +251,10 @@ gulp.task('download-docker-compose', function (cb) {
     } else {
       gutil.log(gutil.colors.green('Downloading Docker Compose'));
       request('https://github.com/docker/compose/releases/download/' + packagejson['docker-compose-version'] + '/docker-compose-Darwin-x86_64')
-          .pipe(fs.createWriteStream('./resources/docker-compose')).on('end', cb);
+          .pipe(fs.createWriteStream('./resources/docker-compose')).on('finish', function () {
+            fs.chmodSync('./resources/docker-compose', 755);
+            cb();
+          });
     }
   });
 });
@@ -254,7 +264,7 @@ gulp.task('download-boot2docker-iso', function (cb) {
   if (!fs.existsSync(b2dFile)) {
     gutil.log(gutil.colors.green('Downloading Boot2Docker iso'));
     request('https://github.com/boot2docker/boot2docker/releases/download/v' + packagejson['docker-version'] + '/boot2docker.iso')
-        .pipe(fs.createWriteStream(b2dFile)).on('end', cb);
+        .pipe(fs.createWriteStream(b2dFile)).on('finish', cb);
   } else {
     cb();
   }
