@@ -102,7 +102,11 @@ var ContainerDetailsSubheader = React.createClass({
     if (!this.disableTerminal()) {
       metrics.track('Terminaled Into Container');
       var container = this.props.container;
-      var shell = ContainerUtil.env(container).SHELL;
+      var shell = ContainerUtil.env(container).reduce((envs, env) => {
+        envs[env[0]] = env[1];
+        return envs;
+      }, {}).SHELL;
+
       if(typeof shell === 'undefined') {
         shell = 'sh';
       }
