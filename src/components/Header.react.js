@@ -127,20 +127,16 @@ var Header = React.createClass({
     } else if (this.state.username) {
       username = (
         <div className="login-wrapper">
-          <div className="login" onClick={this.handleUserClick}>
-            <span className="no-drag">
-              <RetinaImage src="user.png"/> {this.state.username} {this.state.verified ? null : '(Unverified)'} <RetinaImage src="userdropdown.png"/>
-            </span>
+          <div className="login no-drag" onClick={this.handleUserClick}>
+            <RetinaImage src="user.png"/> {this.state.username} {this.state.verified ? null : '(Unverified)'} <RetinaImage src="userdropdown.png"/>
           </div>
         </div>
       );
     } else {
       username = (
         <div className="login-wrapper">
-          <div className="login" onClick={this.handleLoginClick}>
-            <span className="no-drag">
-              <RetinaImage src="user.png"/> LOGIN
-            </span>
+          <div className="login no-drag" onClick={this.handleLoginClick}>
+            <RetinaImage src="user.png"/> LOGIN
           </div>
         </div>
       );
