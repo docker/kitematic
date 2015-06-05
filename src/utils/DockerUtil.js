@@ -170,8 +170,6 @@ export default {
     localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
 
     this.pullImage(repository, tag, error => {
-      delete this.placeholders[name];
-      localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
       if (error) {
         containerServerActions.error({name, error});
         return;
@@ -181,6 +179,8 @@ export default {
         return;
       }
 
+      delete this.placeholders[name];
+      localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
       this.createContainer(name, {Image: imageName});
     },
 
@@ -374,7 +374,6 @@ export default {
         var data = JSON.parse(str);
 
         if (data.error) {
-          console.log(data.error);
           callback(data.error);
           return;
         }
