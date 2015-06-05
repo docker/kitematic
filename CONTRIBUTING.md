@@ -20,12 +20,6 @@ Before you fil an issue or a pull request, quickly read of the following tips on
 Most of the time, you'll have installed Kitematic before contibuting, but for the
 sake of completeness, you can also install [Node.js 0.10.38](https://nodejs.org/dist/v0.10.38/).
 
-Running `npm start` will download and install the OS X Docker client,
-[Docker Machine](https://github.com/docker/machine), [Docker Compose](https://github.com/docker/compose)
-the [Boot2Docker iso](https://github.com/boot2docker/boot2docker),
-[Electron](http://electron.atom.io/), and [VirtualBox](https://www.virtualbox.org/)
-if needed.
-
 ### Other Prerequisites (Mac)
 - The latest Xcode from the Apple App Store.
 
@@ -34,6 +28,7 @@ if needed.
 - [Python](https://www.python.org/downloads/release/python-2710/)
 
 ### Getting Started
+
 
 - `npm install`
 
