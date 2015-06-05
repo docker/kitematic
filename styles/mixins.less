@@ -35,3 +35,16 @@
   -webkit-animation-fill-mode: forwards;
   -webkit-animation-duration: 0.2s;
 }
+
+.box-button {
+  transition: all 140ms;
+  color: @gray-light;
+  font-size: 10px;
+  font-weight: 500;
+  &:hover {
+    background-color: @color-box-button;
+  }
+  &:active {
+    background-color: darken(@color-box-button, 2%);
+  }
+}

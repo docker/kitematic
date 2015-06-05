@@ -126,15 +126,23 @@ var Header = React.createClass({
       username = null;
     } else if (this.state.username) {
       username = (
-        <span className="no-drag" onClick={this.handleUserClick}>
-          <RetinaImage src="user.png"/> {this.state.username} {this.state.verified ? null : '(Unverified)'} <RetinaImage src="userdropdown.png"/>
-        </span>
+        <div className="login-wrapper">
+          <div className="login" onClick={this.handleUserClick}>
+            <span className="no-drag">
+              <RetinaImage src="user.png"/> {this.state.username} {this.state.verified ? null : '(Unverified)'} <RetinaImage src="userdropdown.png"/>
+            </span>
+          </div>
+        </div>
       );
     } else {
       username = (
-        <span className="no-drag" onClick={this.handleLoginClick}>
-          <RetinaImage src="user.png"/> Log In
-        </span>
+        <div className="login-wrapper">
+          <div className="login" onClick={this.handleLoginClick}>
+            <span className="no-drag">
+              <RetinaImage src="user.png"/> LOGIN
+            </span>
+          </div>
+        </div>
       );
     }
     let updateWidget = this.state.updateAvailable && !this.props.hideLogin ? <a className="btn btn-action small no-drag" onClick={this.handleAutoUpdateClick}>UPDATE NOW</a> : null;
@@ -142,15 +150,14 @@ var Header = React.createClass({
       <div className={headerClasses}>
         <div className="left-header">
           {this.renderWindowButtons()}
-          <div className="login-wrapper">
-            <div className="login">
-              {username}
-            </div>
-          </div>
+          {username}
         </div>
         <div className="right-header">
           <div className="updates">
             {updateWidget}
+          </div>
+          <div className="logo">
+            <RetinaImage src="logo.png"/>
           </div>
         </div>
       </div>

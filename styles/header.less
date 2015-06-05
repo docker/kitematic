@@ -24,14 +24,14 @@
     align-items: center;
     justify-content: flex-end;
     margin-right: 20px;
-
-    img {
-      margin: 0 14px;
-      height: 16px;
-      width: 20px;
-    }
   }
 
+  .logo {
+    position: absolute;
+    right: 1rem;
+    top: 0.8rem;
+  }
+  
   .login-wrapper {
     flex: 1 auto;
     display: flex;
@@ -41,15 +41,15 @@
   .login {
     flex: 0 auto;
     display: flex;
-    color: @gray-light;
     align-items: center;
     border-left: 1px solid @color-divider;
     border-right: 1px solid @color-divider;
     padding: 0 1rem 0 0.6rem;
+    .box-button();
 
     &:active {
       img, span {
-        -webkit-filter: brightness(0.8);
+        -webkit-filter: brightness(0.9);
       }
     }
 

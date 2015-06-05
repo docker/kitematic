@@ -12,12 +12,12 @@
   .sidebar-header {
     flex: 0 auto;
     min-width: @sidebar-width;
-    min-height: 40px;
+    min-height: 42px;
     display: flex;
     border-bottom: 1px solid transparent;
     transition: border-bottom 0.25s;
     &.sep {
-      border-bottom: 1px solid #EEE;
+      border-bottom: 1px solid @color-divider;
       box-shadow: 0px 2px 3px 0px rgba(0,0,0,0.03);
     }
     h4 {
@@ -31,8 +31,6 @@
       flex: 1 auto;
       justify-content: flex-end;
       margin: 0.6rem 1rem 0 0;
-      //margin-right: 20px;
-      //margin-top: 3px;
       a {
         display: block;
         text-decoration: none;
@@ -264,10 +262,7 @@
     height: 18px;
   }
   .btn-sidebar {
-    font-size: 13px;
-    font-weight: 500;
-    color: @brand-primary;
-
+    .box-button();
     flex: 0 auto;
     display: flex;
     align-items: center;
@@ -276,7 +271,7 @@
 
     &:active {
       img, .text {
-        -webkit-filter: brightness(0.7);
+        -webkit-filter: brightness(0.9);
       }
     }
   }
