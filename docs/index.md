@@ -28,10 +28,9 @@ container!
 
 ## Technical Details
 
-Kitematic is a self-contained .app, with a two exceptions:
+Kitematic is a self-contained .app, with an exception:
 
 - It will install VirtualBox if it's not already installed.
-- It copies the `docker` and `docker-machine` binaries to `/usr/local/bin` for
   convenience.
 
 ### Why does Kitematic need my root password?
