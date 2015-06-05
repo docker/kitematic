@@ -45,7 +45,7 @@ var ContainerHome = React.createClass({
       body = (
         <div className="details-progress">
           <h3>An error occurred:</h3>
-          <h2>{this.props.container.Error.message}</h2>
+          <h2>{this.props.container.Error}</h2>
           <h3>If you feel that this error is invalid, please <a onClick={this.handleErrorClick}>file a ticket on our GitHub repo.</a></h3>
           <Radial progress={100} error={true} thick={true} transparent={true}/>
         </div>

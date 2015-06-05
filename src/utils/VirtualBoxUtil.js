@@ -17,11 +17,7 @@ var VirtualBox = {
     return util.isWindows() ? util.packagejson()['virtualbox-checksum-win'] : util.packagejson()['virtualbox-checksum'];
   },
   url: function () {
-    if(util.isWindows()) {
-      return 'http://download.virtualbox.org/virtualbox/4.3.26/VirtualBox-4.3.26-98988-Win.exe';
-    } else {
-      return `https://github.com/kitematic/virtualbox/releases/download/${util.packagejson()['virtualbox-version']}/${this.filename()}`;
-    }
+    return `https://github.com/kitematic/virtualbox/releases/download/${util.packagejson()['virtualbox-version']}/${this.filename()}`;
   },
   installed: function () {
     if(util.isWindows()) {

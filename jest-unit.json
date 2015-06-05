@@ -1,5 +1,5 @@
 {
-  "scriptPreprocessor": "<rootDir>/util/preprocessor.js",
+  "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
   "setupEnvScriptFile": "<rootDir>/util/testenv.js",
   "setupTestFrameworkScriptFile": "<rootDir>/util/prepare.js",
   "unmockedModulePathPatterns": [
@@ -9,10 +9,10 @@
     "net",
     "crypto",
     "babel",
-    "<rootDir>/node_modules/.*JSONStream",
-    "<rootDir>/node_modules/object-assign",
-    "<rootDir>/node_modules/underscore",
-    "<rootDir>/node_modules/bluebird",
-    "<rootDir>/node_modules/source-map-support"
+    "bluebird",
+    "object-assign",
+    "underscore",
+    "source-map-support",
+    "<rootDir>/node_modules/.*JSONStream"
   ]
 }

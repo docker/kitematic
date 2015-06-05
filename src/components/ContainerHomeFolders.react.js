@@ -63,8 +63,9 @@ var ContainerHomeFolder = React.createClass({
       return false;
     }
 
-    var folders = _.map(this.props.container.Volumes, (val, key) => {
-      var firstFolder = key.split(path.sep)[1];
+    console.log(this.props.container.Volumes);
+    var folders = _.map(_.omit(this.props.container.Volumes, (v, k) => k.indexOf('/Users/') !== -1), (val, key) => {
+      var firstFolder = key.split('/')[1];
       return (
         <div key={key} className="folder" onClick={this.handleClickFolder.bind(this, val, key)}>
           <RetinaImage src="folder.png" />
