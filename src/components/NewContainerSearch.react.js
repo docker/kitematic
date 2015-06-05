@@ -140,6 +140,12 @@ module.exports = React.createClass({
       this.search(query, nextPage);
     }
   },
+  handleScroll: function(e) {
+    console.log("Scrolling: %o",e);
+    if (this.refs.itemGrid) {
+      this.refs.itemGrid._scrollListener(e);
+    }
+  },
   handleCheckVerification: function () {
     accountActions.verify();
     metrics.track('Verified Account', {
@@ -209,7 +215,8 @@ module.exports = React.createClass({
       let otherResults = this.state.otherItems.length ? (
         <div>
           <h4>Other Repositories</h4>
-          <InfiniteGrid wrapperHeight={ (userRepoItems.length !== 0 || recommendedItems.length !== 0)? 375:600}
+          <InfiniteGrid ref="itemGrid"
+                        wrapperHeight={ (userRepoItems.length !== 0 || recommendedItems.length !== 0)? 375:600}
                         height={170}
                         width={340}
                         entries={this.state.otherItems.map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />)}
@@ -219,7 +226,7 @@ module.exports = React.createClass({
       ) : null;
 
       results = (
-        <div className="result-grids">
+        <div className="result-grids" onScroll={this.handleScroll}>
           {recommendedResults}
           {userRepoResults}
           {otherResults}
