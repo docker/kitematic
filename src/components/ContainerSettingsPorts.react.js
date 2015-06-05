@@ -65,7 +65,7 @@ var ContainerSettingsPorts = React.createClass({
           <div className="table ports">
             <div className="table-labels">
               <div className="label-left">DOCKER PORT</div>
-              <div className="label-right">MAC PORT</div>
+              <div className="label-right">LOCAL PORT</div>
             </div>
             {ports}
           </div>

@@ -3,6 +3,7 @@ var React = require('react/addons');
 var remote = require('remote');
 var dialog = remote.require('dialog');
 var shell = require('shell');
+var util = require('../utils/Util');
 var metrics = require('../utils/MetricsUtil');
 var containerActions = require('../actions/ContainerActions');
 
@@ -15,7 +16,10 @@ var ContainerSettingsVolumes = React.createClass({
       }
       var directory = filenames[0];
       if (directory) {
-        metrics.track('Chose Directory for Volume');
+        metrics.track('Choose Directory for Volume');
+        if(util.isWindows()) {
+             directory = util.windowsToLinuxPath(directory);
+        }
         var volumes = _.clone(self.props.container.Volumes);
         volumes[dockerVol] = directory;
         var binds = _.pairs(volumes).map(function (pair) {
@@ -48,8 +52,13 @@ var ContainerSettingsVolumes = React.createClass({
       return false;
     }
 
+    var homeDir = process.env.HOME;
+    if(util.isWindows()) {
+         homeDir = util.windowsToLinuxPath(homeDir);
+    }
+
     var volumes = _.map(this.props.container.Volumes, (val, key) => {
-      if (!val || val.indexOf(process.env.HOME) === -1) {
+      if (!val || val.indexOf(homeDir) === -1) {
         val = (
           <span>
             <a className="value-right">No Folder</a>
@@ -80,7 +89,7 @@ var ContainerSettingsVolumes = React.createClass({
           <div className="table volumes">
             <div className="table-labels">
               <div className="label-left">DOCKER FOLDER</div>
-              <div className="label-right">MAC FOLDER</div>
+              <div className="label-right">LOCAL FOLDER</div>
             </div>
             {volumes}
           </div>
