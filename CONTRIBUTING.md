@@ -29,12 +29,16 @@ sake of completeness, you can also install [Node.js 0.10.38](https://nodejs.org/
 
 ### Getting Started
 
-
 - `npm install`
 
 To run the app in development:
 
 - `npm start`
+
+Running `npm start` will download and install the OS X Docker client,
+[Docker Machine](https://github.com/docker/machine), [Docker Compose](https://github.com/docker/compose)
+the [Boot2Docker iso](https://github.com/boot2docker/boot2docker),
+[Electron](http://electron.atom.io/).
 
 ### Building & Release
 
