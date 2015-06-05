@@ -107,7 +107,7 @@ var ContainerDetailsSubheader = React.createClass({
         return envs;
       }, {}).SHELL;
 
-      if(typeof shell === 'undefined') {
+      if(!shell) {
         shell = 'sh';
       }
       machine.ip().then(ip => {
