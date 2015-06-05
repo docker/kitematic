@@ -26,9 +26,9 @@
     }
   ],
   "docker-version": "1.6.2",
-  "docker-machine-version": "0.2.0",
+  "docker-machine-version": "0.3.0-rc1",
   "docker-compose-version": "1.2.0",
-  "electron-version": "0.26.0",
+  "electron-version": "0.27.2",
   "virtualbox-version": "4.3.28",
   "virtualbox-filename": "VirtualBox-4.3.28.pkg",
   "virtualbox-filename-win": "VirtualBox-4.3.28.exe",
@@ -57,7 +57,7 @@
     "react": "^0.13.1",
     "react-bootstrap": "^0.20.3",
     "react-retina-image": "^1.1.2",
-    "react-router": "^0.13.2",
+    "react-router": "^0.13.3",
     "request": "^2.55.0",
     "request-progress": "^0.3.1",
     "rimraf": "^2.3.2",
@@ -66,6 +66,7 @@
   },
   "devDependencies": {
     "babel": "^5.1.10",
+    "babel-jest": "^5.2.0",
     "gulp": "^3.8.11",
     "gulp-babel": "^5.1.0",
     "gulp-changed": "^1.2.1",
