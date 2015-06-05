@@ -12,16 +12,17 @@ var InfiniteGrid = React.createClass({
 
   propTypes: {
     entries: React.PropTypes.arrayOf(React.PropTypes.element).isRequired,
+    parentComp: React.PropTypes.object,
     maxEntries: React.PropTypes.number,
     height: React.PropTypes.number,
     width: React.PropTypes.number,
-    wrapperHeight: React.PropTypes.number,
     lazyCallback: React.PropTypes.func
   },
 
-  getDefaultProps: function() {
+  getDefaultProps: function () {
     return {
       entries: [],
+      parentComp: null,
       maxEntries: 1,
       height: 250,
       width: 250,
@@ -29,12 +30,13 @@ var InfiniteGrid = React.createClass({
     };
   },
 
-  getInitialState: function() {
+  getInitialState: function () {
     return {
       initiatedLazyload: false,
-      minHeight: window.innerHeight * 2,
       minItemIndex: 0,
       maxItemIndex: 100,
+      parentComp: null,
+      wrapperHeight: 100,
       itemDimensions: {
         height: this.props.height,
         width: this.props.width,
@@ -44,31 +46,19 @@ var InfiniteGrid = React.createClass({
     };
   },
 
-  _wrapperStyle: function() {
-    return {
-      maxHeight: window.innerHeight,
-      overflowY: 'scroll',
-      width: '100%',
-      height: this.props.wrapperHeight,
-      WebkitOverflowScrolling: 'touch',
-    };
-  },
-
-  _gridStyle: function() {
-    return {
-      position: "relative",
-    };
-  },
-
-  _getGridRect: function() {
+  _getGridRect: function () {
     return this.refs.grid.getDOMNode().getBoundingClientRect();
   },
 
-  _getGridTop: function() {
+  _getParentHeight: function () {
+    return this.props.parentComp.getDOMNode().clientHeight;
+  },
+
+  _getGridTop: function () {
     return this.refs.grid.getDOMNode().offsetTop;
   },
 
-  _visibleIndexes: function() {
+  _visibleIndexes: function () {
     let itemsPerRow = this._itemsPerRow();
 
     // The number of rows that the user has scrolled past
@@ -90,12 +80,12 @@ var InfiniteGrid = React.createClass({
     this.setState({
       minItemIndex: min,
       maxItemIndex: max,
-    }, function() {
+    }, function () {
       this._lazyCallback();
     });
   },
 
-  _updateItemDimensions: function() {
+  _updateItemDimensions: function () {
     this.setState({
       itemDimensions: {
           height: this.props.height,
@@ -103,32 +93,32 @@ var InfiniteGrid = React.createClass({
           gridWidth: this._getGridRect().width,
           itemsPerRow: this._itemsPerRow(),
       },
-      minHeight: this._totalRows(),
+      wrapperHeight: this._getParentHeight()
     });
   },
 
-  _itemsPerRow: function() {
+  _itemsPerRow: function () {
     return Math.floor(this._getGridRect().width / this.props.width);
   },
 
-  _totalRows: function() {
+  _totalRows: function () {
     let scrolledPastHeight = (this.props.entries.length / this._itemsPerRow()) * this.props.height;
     if (scrolledPastHeight < 0) return 0;
     return scrolledPastHeight;
   },
 
-  _scrolledPastRows: function() {
+  _scrolledPastRows: function () {
     let rect = this._getGridRect();
     let topOffset = this._getGridTop();
     let topScrollOffset = topOffset + (rect.height - rect.bottom);
     return Math.floor(topScrollOffset / this.props.height);
   },
 
-  _numVisibleRows: function() {
-    return Math.ceil(this.props.wrapperHeight / this.props.height);
+  _numVisibleRows: function () {
+    return Math.ceil(this.state.wrapperHeight / this.props.height);
   },
 
-  _lazyCallback: function() {
+  _lazyCallback: function () {
     let lazyLimit = (this.props.entries.length-this.props.bufferLength);
     lazyLimit = lazyLimit < 1? 1:lazyLimit;
     if (!this.state.initiatedLazyload && (this.state.maxItemIndex >= lazyLimit) && (this.state.maxItemIndex < this.props.maxEntries) && this.props.lazyCallback) {
@@ -139,18 +129,18 @@ var InfiniteGrid = React.createClass({
     }
   },
 
-  componentDidMount: function() {
+  componentDidMount: function () {
     this._updateItemDimensions();
     this._visibleIndexes();
   },
-  componentWillMount: function() {
+  componentWillMount: function () {
     window.addEventListener('resize', this._resizeListener);
   },
-  componentWillUnmount: function() {
+  componentWillUnmount: function () {
     window.removeEventListener('resize', this._resizeListener);
   },
 
-  componentWillReceiveProps: function(nextProps) {
+  componentWillReceiveProps: function (nextProps) {
     if (nextProps.entries.length > this.props.entries.length) {
       this.setState({
         initiatedLazyload: false,
@@ -158,11 +148,11 @@ var InfiniteGrid = React.createClass({
     }
   },
 
-  _scrollListener: function(event) {
+  _scrollListener: function (event) {
     this._visibleIndexes();
   },
-  _resizeListener: function(event) {
-     if (!this.props.wrapperHeight) {
+  _resizeListener: function (event) {
+     if (!this.state.wrapperHeight) {
        this.setState({
            wrapperHeight: window.innerHeight,
        });
@@ -171,7 +161,7 @@ var InfiniteGrid = React.createClass({
      this._visibleIndexes();
    },
 
-  render: function() {
+  render: function () {
     let entries = this.props.entries;
     let loading = (
       <div className="spinner la-ball-clip-rotate la-dark la-lg"><div></div></div>

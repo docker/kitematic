@@ -96,6 +96,11 @@ module.exports = React.createClass({
     let loading = true;
     if (page > 1) {
       loading = false;
+    } else {
+      // Bring scroll to the top
+      if (this.refs.parentGrid) {
+        this.refs.parentGrid.getDOMNode().scrollTop = 0;
+      }
     }
     this.setState({
       query: query,
@@ -117,6 +122,7 @@ module.exports = React.createClass({
     this.search(query);
   },
   handleFilter: function (filter) {
+    console.log("Filtering results");
 
     // If we're clicking on the filter again - refresh
     if (filter === 'userrepos' && this.getQuery().filter === 'userrepos') {
@@ -141,7 +147,6 @@ module.exports = React.createClass({
     }
   },
   handleScroll: function(e) {
-    console.log("Scrolling: %o",e);
     if (this.refs.itemGrid) {
       this.refs.itemGrid._scrollListener(e);
     }
@@ -216,7 +221,7 @@ module.exports = React.createClass({
         <div>
           <h4>Other Repositories</h4>
           <InfiniteGrid ref="itemGrid"
-                        wrapperHeight={ (userRepoItems.length !== 0 || recommendedItems.length !== 0)? 375:600}
+                        parentComp={this}
                         height={170}
                         width={340}
                         entries={this.state.otherItems.map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />)}
@@ -226,7 +231,7 @@ module.exports = React.createClass({
       ) : null;
 
       results = (
-        <div className="result-grids" onScroll={this.handleScroll}>
+        <div className="result-grids" ref="parentGrid" onScroll={this.handleScroll}>
           {recommendedResults}
           {userRepoResults}
           {otherResults}
