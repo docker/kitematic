@@ -39,6 +39,9 @@ module.exports = {
   home: function () {
     return process.env[this.isWindows() ? 'USERPROFILE' : 'HOME'];
   },
+  documents: function () {
+    return this.isWindows() ? 'My\ Documents' : 'Documents';
+  },
   supportDir: function () {
     var dirs = ['Library', 'Application\ Support', 'Kitematic'];
     var acc = this.home();
