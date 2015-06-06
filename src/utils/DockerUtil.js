@@ -372,7 +372,6 @@ export default {
 
       // data is associated with one layer only (can be identified with id)
       stream.on('data', str => {
-        console.log(str);
         var data = JSON.parse(str);
 
         if (data.error) {
