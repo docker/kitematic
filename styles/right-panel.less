@@ -14,6 +14,24 @@
       color: @gray-darker;
       font-weight: 500;
       margin-left: 1.2rem;
+      .status {
+        font-size: 10px;
+        font-weight: 500;
+        position: relative;
+        left: 1rem;
+        &.running {
+          color: @brand-positive;
+        }
+        &.paused {
+          color: @gray-lighter;
+        }
+        &.stopped {
+          color: @gray-lighter;
+        }
+        &.downloading {
+          color: @brand-action;
+        }
+      }
     }
   }
   .details-subheader {
@@ -23,14 +41,12 @@
     position: relative;
     border-bottom: 1px solid @color-divider;
     background-color: white;
-    height: 51px;
-    padding: 6px 10px 10px 24px;
-    font-size: 13px;
+    height: 45px;
+    font-size: 10px;
     color: @gray-normal;
     .details-header-actions {
       flex: 1 auto;
       text-align: left;
-      margin-top: -12px;
       .action {
         display: inline-block;
         position: relative;
@@ -87,40 +103,6 @@
       margin-top: 3px;
     }
   }
-  .details-header {
-    flex: 0 auto;
-    display: flex;
-    flex-direction: row;
-    padding: 18px 24px 24px 24px;
-    position: relative;
-    background-color: white;
-    h1 {
-      margin: 0;
-      font-size: 20px;
-      font-weight: 400;
-      margin: 0;
-      color: @gray-darkest;
-    }
-    .status {
-      font-size: 10px;
-      font-weight: 500;
-      position: relative;
-      top: 8px;
-      left: 14px;
-      &.running {
-        color: @brand-positive;
-      }
-      &.paused {
-        color: @gray-lighter;
-      }
-      &.stopped {
-        color: @gray-lighter;
-      }
-      &.downloading {
-        color: @brand-action;
-      }
-    }
-  }
 
   .tab {
     font-weight: 400;
@@ -129,6 +111,9 @@
     transition: all 0.3s;
     color: @gray-normal;
     border-bottom: 3px solid transparent;
+    text-align: center;
+    min-width: 30px;
+    padding-bottom: 0.2rem;
     &.active {
       color: @gray-darkest;
       border-bottom: 3px solid @brand-primary;

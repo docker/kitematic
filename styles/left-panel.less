@@ -12,7 +12,7 @@
   .sidebar-header {
     flex: 0 auto;
     min-width: @sidebar-width;
-    min-height: 42px;
+    min-height: 45px;
     display: flex;
     border-bottom: 1px solid transparent;
     transition: border-bottom 0.25s;
@@ -22,7 +22,7 @@
     }
     h4 {
       align-self: flex-start;
-      padding: 0.2rem 0 0 1.4rem;
+      padding: 0.4rem 0 0 1.4rem;
       display: inline-block;
       position: relative;
     }
@@ -30,7 +30,7 @@
       display: flex;
       flex: 1 auto;
       justify-content: flex-end;
-      margin: 0.6rem 1rem 0 0;
+      margin: 0.8rem 1rem 0 0;
       a {
         display: block;
         text-decoration: none;
@@ -282,12 +282,18 @@
   .btn-terminal {
     flex: 1 auto;
     border-right: 1px solid @color-divider;
-    img {
-      margin-right: 10px;
-    }
+    color: @brand-primary;
   }
   .btn-feedback {
     border-right: 1px solid @color-divider;
+    .icon {
+      margin-right: 0;
+    }
+  }
+  .btn-preferences {
+    .icon {
+      margin-right: 0;
+    }
   }
   .btn {
     position: relative;
