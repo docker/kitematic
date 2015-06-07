@@ -102,6 +102,43 @@ input[type="text"] {
   }
 }
 
+.btn-filled-styles(@btn-color: @gray-normal) {
+  .reset-filter(); // Disable gradients for IE9 because filter bleeds through rounded corners
+  transition: all 100ms;
+  background: @btn-color;
+	color: white;
+
+  &:hover {
+    background-color: darken(@btn-color, 4%);
+    color: white;
+    cursor: default;
+    box-shadow: none;
+  }
+
+  &:focus,
+	&.focus {
+		color: white;
+		outline: none;
+	}
+
+  &:active {
+    background-color: darken(@btn-color, 5%);
+		box-shadow: 0 0 0 3px fade(@btn-color, 25%);
+	}
+
+  &:disabled,
+  &[disabled] {
+    opacity: 0.5;
+    background: @btn-color;
+    &.active {
+      background: @btn-color;
+      color: white;
+      box-shadow: none;
+      box-shadow: none;
+    }
+  }
+}
+
 .btn-group {
   &.tabs {
     .btn {
@@ -187,6 +224,9 @@ input[type="text"] {
 // Apply the mixin to the buttons
 .btn-action {
   .btn-styles(@brand-action);
+  &.btn-filled {
+    .btn-filled-styles(@brand-action);
+  }
 }
 .btn-positive {
   .btn-styles(@brand-positive);

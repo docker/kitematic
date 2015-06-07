@@ -141,6 +141,12 @@ var ImageCard = React.createClass({
         <RetinaImage src="private.png"/>
       );
     }
+    var tagDisp = (
+      <div className="tags">
+        <span className="key">TAG</span>
+        <span className="text" onClick={self.handleTagOverlayClick.bind(self, this.props.image.name)} data-name={this.props.image.name}>{this.state.chosenTag}</span>
+      </div>
+    );
     return (
       <div className="image-item">
         <div className="tag-overlay" onClick={self.handleCloseTagOverlay}>
@@ -151,26 +157,27 @@ var ImageCard = React.createClass({
           <RetinaImage src={imgsrc}/>
         </div>
         <div className="card">
-          <div className="badges">
-            {badge}
-          </div>
-          <div className="name">
-            {name}
-          </div>
-          <div className="description">
-            {description}
+          <div className="info">
+            <div className="badges">
+              {badge}
+            </div>
+            <div className="name">
+              {name}
+            </div>
+            <div className="description">
+              {description}
+            </div>
           </div>
           <div className="actions">
-            <div className="stars">
-              <span className="icon icon-star-9"></span>
+            <div className="favorites">
+              <span className="icon icon-favorite"></span>
               <span className="text">{this.props.image.star_count}</span>
             </div>
-            <div className="tags">
-              <span className="icon icon-bookmark-2"></span>
-              <span className="text" onClick={self.handleTagOverlayClick.bind(self, this.props.image.name)} data-name={this.props.image.name}>{this.state.chosenTag}</span>
+            <div className="more-menu">
+              <span className="icon icon-more"></span>
             </div>
-            <div className="action">
-              <a className="btn btn-action btn-positive" onClick={self.handleClick}>Create</a>
+            <div className="action" onClick={self.handleClick}>
+              CREATE
             </div>
           </div>
         </div>

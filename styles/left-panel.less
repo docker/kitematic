@@ -116,24 +116,24 @@
               z-index: 9999;
             }
             .state-new {
-              .at2x('container-white.png', 20px, 20px);
+              .at2x('container-white.png', @container-state-size, @container-state-size);
             }
             .state-running {
-              .at2x('running-white.png', 20px, 20px);
+              .at2x('running-white.png', @container-state-size, @container-state-size);
               .runningwave {
-                .at2x('runningwave-white.png', 20px, 20px);
+                .at2x('runningwave-white.png', @container-state-size, @container-state-size);
               }
             }
             .state-paused {
-              .at2x('wavy-white.png', 20px, 20px);
+              .at2x('wavy-white.png', @container-state-size, @container-state-size);
             }
             .state-stopped {
-              .at2x('stopped-white.png', 20px, 20px);
+              .at2x('stopped-white.png', @container-state-size, @container-state-size);
             }
             .state-downloading {
-              .at2x('downloading-white.png', 20px, 20px);
+              .at2x('downloading-white.png', @container-state-size, @container-state-size);
               .downloading-arrow {
-                .at2x('downloading-arrow-white.png', 20px, 20px);
+                .at2x('downloading-arrow-white.png', @container-state-size, @container-state-size);
               }
             }
           }
@@ -161,8 +161,9 @@
             color: @gray-darkest;
           }
           .image {
+            margin-top: -0.1rem;
             color: @gray-light;
-            font-size: 9px;
+            font-size: 10px;
             font-weight: 400;
             text-overflow: ellipsis;
             max-width: @sidebar-text-overflow-width;
@@ -187,28 +188,28 @@
           margin-top: 0.6rem;
           display: inline-block;
           position: relative;
-          min-width: 20px;
-          height: 20px;
+          min-width: @container-state-size;
+          height: @container-state-size;
         }
         .state-error {
-          .at2x('error.png', 20px, 20px);
+          .at2x('error.png', @container-state-size, @container-state-size);
         }
         .state-stopped {
-          .at2x('stopped.png', 20px, 20px);
+          .at2x('stopped.png', @container-state-size, @container-state-size);
         }
         .state-paused {
-          .at2x('paused.png', 20px, 20px);
+          .at2x('paused.png', @container-state-size, @container-state-size);
         }
         .state-new {
-          .at2x('container.png', 20px, 20px);
+          .at2x('container.png', @container-state-size, @container-state-size);
         }
         .state-downloading {
-          .at2x('downloading.png', 20px, 20px);
+          .at2x('downloading.png', @container-state-size, @container-state-size);
           overflow: hidden;
           .downloading-arrow {
-            width: 20px;
-            height: 20px;
-            .at2x('downloading-arrow.png', 20px, 20px);
+            width: @container-state-size;
+            height: @container-state-size;
+            .at2x('downloading-arrow.png', @container-state-size, @container-state-size);
             position: absolute;
             -webkit-animation-name: translatedownload;
             -webkit-animation-duration: 1.8s;
@@ -217,14 +218,14 @@
           }
         }
         .state-running {
-          .at2x('running.png', 20px, 20px);
+          .at2x('running.png', @container-state-size, @container-state-size);
           overflow: hidden;
           .runningwave {
             position: absolute;
-            width: 40px;
-            height: 20px;
+            width: @container-state-size * 2;
+            height: @container-state-size;
             left: -20px;
-            .at2x('runningwave.png', 20px, 20px);
+            .at2x('runningwave.png', @container-state-size, @container-state-size);
             -webkit-animation-name: translatewave;
             -webkit-animation-duration: 7.0s;
             -webkit-animation-iteration-count: infinite;
@@ -233,9 +234,9 @@
         }
         .state-restarting {
           display: inline-block;
-          width: 20px;
-          height: 20px;
-          .at2x('restarting.png', 20px, 20px);
+          width: @container-state-size;
+          height: @container-state-size;
+          .at2x('restarting.png', @container-state-size, @container-state-size);
           background-repeat: repeat-x;
           -webkit-animation-delay: -1s;
           -webkit-animation-name: rotate;

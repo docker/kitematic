@@ -97,29 +97,31 @@
         position: relative;
         .loading {
           position: absolute;
-          top: 11px;
+          top: 13px;
           left: 13px;
         }
         .search-icon {
-          font-size: 18px;
+          font-size: 14px;
           color: @gray-lighter;
           position: absolute;
-          top: 11px;
+          top: 14px;
           left: 13px;
         }
         input {
           transition: all 140ms;
-          width: 75%;
+          width: 90%;
+          max-width: 500px;
           border-radius: 0;
           position: relative;
           top: -1px;
           left: -1px;
-          font-size: 13px;
+          font-size: 14px;
           height: 46px;
-          padding: 4px 8px 4px 40px;
+          padding-left: 3.7rem;
           color: @gray-darkest;
           box-shadow: none;
           border: 1px solid @color-divider;
+          //border-right: 1px solid transparent;
           &:hover {
             border: 1px solid @gray-lighter;
           }
@@ -135,14 +137,14 @@
       }
     }
     .results-filters {
-      font-size: 13px;
-      margin: 1.2rem 1.2rem 0 0;
+      font-size: 12px;
+      margin: 1.3rem 1.3rem 0 0;
 
       .results-filter-title {
         color: @gray-lighter;
-        font-weight: 400;
+        font-weight: 500;
         padding-top: 0.7rem;
-        margin-right: 1rem;
+        margin-right: 0.7rem;
       }
     }
   }
@@ -151,27 +153,36 @@
 .result-grids {
 
   overflow: auto;
-  margin: 0 0 0 20px;
+  margin: 0 0 0 1.3rem;
+
   .result-grid {
     display: flex;
+    align-content: stretch;
+    display: flex;
     flex-flow: row wrap;
+    flex-wrap: wrap;
     justify-content: flex-start;
     margin-top: 10px;
     .image-item {
       display: flex;
+      flex: 1 0;
       position: relative;
-      width: 320px;
-      height: 166px;
-      border-radius: 4px;
+      min-width: @image-card-width;
+      max-width: @image-card-width;
+      height: @image-card-height;
+      border-radius: @border-radius;
       background-color: white;
-      margin-right: 20px;
-      margin-bottom: 20px;
+      margin-right: 1rem;
+      margin-bottom: 1rem;
       .tag-overlay {
+        display: flex;
+        flex: 1 0;
         z-index: 999;
         background-color: rgba(0,0,0,0.8);
-        border-radius: 4px;
-        width: 320px;
-        height: 166px;
+        border-radius: @border-radius;
+        min-width: @image-card-width;
+        max-width: @image-card-width;
+        height: @image-card-height;
         position: absolute;
         color: white;
         font-size: 13px;
@@ -218,103 +229,108 @@
         }
       }
       .logo {
-        flex: 1 auto;
-        min-width: 90px;
+        width: 60px;
+        min-width: 60px;
+        max-width: 60px;
         background-color: @brand-action;
-        border-top-left-radius: 4px;
-        border-bottom-left-radius: 4px;
+        border-top-left-radius: @border-radius;
+        border-bottom-left-radius: @border-radius;
         justify-content: center;
         text-align: center;
         box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,0.2);
         img {
-          margin-top: 15px;
+          width: 35px;
+          height: auto;
+          margin-top: 1.2rem;
         }
       }
       .card {
-        padding: 10px 20px 10px 20px;
         position: relative;
-        border: 1px solid @gray-lighter;
+        border: 1px solid darken(@gray-lightest, 5%);
         border-left: 0;
-        border-top-right-radius: 4px;
-        border-bottom-right-radius: 4px;
-        .badges {
-          position: absolute;
-          right: 15px;
-          top: 8px;
-        }
-        .name {
-          font-size: 18px;
-          color: @gray-darkest;
-          margin-bottom: 0px;
-          position: relative;
-          width: 190px;
-          .namespace {
-            font-size: 11px;
-            color: @gray-lighter;
-            margin-bottom: -3px;
-            &.official {
-              color: @brand-action;
+        border-top-right-radius: @border-radius;
+        border-bottom-right-radius: @border-radius;
+        .info {
+          padding: 0.7rem 1rem 0.7rem 1.2rem;
+          .badges {
+            position: absolute;
+            right: 15px;
+            top: 8px;
+          }
+          .name {
+            color: @gray-darkest;
+            position: relative;
+            width: 190px;
+            .namespace {
+              font-size: 10px;
+              color: @gray-normal;
+              &.official {
+                color: @brand-action;
+              }
+            }
+            .repo {
+              font-size: 13px;
+              font-weight: 500;
+              display: inline-block;
+              max-width: 190px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
             }
           }
-          .repo {
-            display: inline-block;
-            max-width: 190px;
-            overflow: hidden;
+          .description {
+            font-size: 10px;
+            color: @gray-light;
+            padding-right: 1rem;
+            height: 46px;
             text-overflow: ellipsis;
-            white-space: nowrap;
+            overflow: hidden;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            display: -webkit-box;
+            word-wrap: break-word;
           }
         }
-        .description {
-          font-size: 12px;
-          color: @gray-normal;
-          height: 50px;
-          width: 190px;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 3;
-          display: -webkit-box;
-          word-wrap: break-word;
-        }
         .actions {
-          width: 190px;
-          position: absolute;
-          bottom: 8px;
-          .stars {
-            height: 15px;
+          display: flex;
+          flex-direaction: column;
+          justify-content: flex-end;
+          height: 31px;
+          border-top: 1px solid @color-divider;
+          .favorites {
+            flex: 1 auto;
             font-size: 10px;
-            color: @gray-darker;
-            border-right: 1px solid @gray-lightest;
-            padding-right: 10px;
+            color: @gray-normal;
+            border-right: 1px solid @color-divider;
+            padding: 1rem 1.2rem;
             .icon {
               position: relative;
-              font-size: 16px;
-              margin-right: 3px;
-              top: -1px;
-              color: @gray-darkest;
+              font-size: 11px;
+              margin-right: 0.5rem;
+              color: @gray-normal;
             }
             .text {
               position: relative;
-              top: -6px;
+              top: -0.2rem;
             }
           }
           .tags {
-            height: 15px;
+            flex: 1 auto;
+            //height: 12px;
             font-size: 10px;
             color: @gray-darker;
-            padding-left: 10px;
-            .icon {
+            padding-left: 1rem;
+            .key {
               position: relative;
-              font-size: 12px;
-              margin-right: 2px;
-              top: 2px;
-              color: @gray-darkest;
+              //top: -1px;
+              font-weight: 400;
+              color: @gray-light;
             }
             .text {
               position: relative;
-              top: -2px;
-              padding: 3px 5px;
-              text-decoration: underline;
+              //top: -2px;
+              //padding: 3px 5px;
+              color: @brand-action;
               &:hover {
                 background-color: @brand-action;
                 color: white;
@@ -322,17 +338,27 @@
               }
             }
           }
+          .more-menu {
+            flex: 0 auto;
+            width: 40px;
+            padding: 0.3rem 1rem;
+            font-size: 20px;
+            border-right: 1px solid @color-divider;
+            .box-button();
+          }
           .action {
             flex: 1 auto;
-            .btn {
-              text-align: right;
-              position: relative;
-              float: right;
-              top: -7px;
-            }
+            .box-button();
+            //text-align: right;
+            //position: relative;
+            //float: right;
+            //top: -0.7rem;
+            /*.btn-more {
+              position: absolute;
+              font-size: 20px;
+              right: 7rem;
+            }*/
           }
-          display: flex;
-          flex-direaction: row;
         }
       }
     }
