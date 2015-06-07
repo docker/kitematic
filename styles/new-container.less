@@ -340,15 +340,23 @@
           }
           .more-menu {
             flex: 0 auto;
-            width: 40px;
+            width: 39px;
             padding: 0.3rem 1rem;
             font-size: 20px;
-            border-right: 1px solid @color-divider;
+            //border-right: 1px solid @color-divider;
             .box-button();
           }
           .action {
-            flex: 1 auto;
+            flex: 0 auto;
+            position: relative;
+            top: -1px;
+            right: -1px;
+            height: 32px;
             .box-button();
+            padding: 0.8rem 1rem;
+            color: @brand-primary;
+            border: 1px solid @brand-primary;
+            border-bottom-right-radius: @border-radius;
             //text-align: right;
             //position: relative;
             //float: right;
