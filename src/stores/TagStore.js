@@ -12,19 +12,26 @@ class TagStore {
     // maps 'namespace/name' => [list of tags]
     this.tags = {};
 
+    this.currentRepo = null;
+
     // maps 'namespace/name' => true / false
-    this.loading = {};
+    this.loading = false;
   }
 
   tags ({repo}) {
-    this.loading[repo] = true;
-    this.emitChange();
+    this.setState({
+      loading: true,
+      currentRepo: repo
+    });
   }
 
   tagsUpdated ({repo, tags}) {
-    this.tags[repo] = tags;
-    this.loading[repo] = false;
-    this.emitChange();
+    console.log("Set current repo: %o - %o", repo, this);
+    this.setState({
+      tags: tags,
+      loading: false,
+      currentRepo: repo
+    });
   }
 
   remove ({repo}) {
@@ -34,14 +41,17 @@ class TagStore {
   }
 
   loggedout () {
-    this.loading = {};
-    this.tags = {};
-    this.emitChange();
+    this.setState({
+      loading: {},
+      tags: {},
+      currentRepo: null
+    });
   }
 
   error ({repo}) {
-    this.loading[repo] = false;
-    this.emitChange();
+    this.setState({
+      loading: false
+    });
   }
 }
 

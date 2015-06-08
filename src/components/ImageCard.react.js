@@ -1,7 +1,9 @@
 var $ = require('jquery');
+var _ = require('underscore');
 var React = require('react/addons');
 var Router = require('react-router');
 var shell = require('shell');
+var Promise = require('bluebird');
 var RetinaImage = require('react-retina-image');
 var metrics = require('../utils/MetricsUtil');
 var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
@@ -13,29 +15,52 @@ var tagActions = require('../actions/TagActions');
 
 var ImageCard = React.createClass({
   mixins: [Router.Navigation],
-  getInitialState: function () {
+  getDefaultProps: function () {
     return {
-      tags: [],
-      chosenTag: 'latest'
+      tags: []
     };
   },
-  componentDidMount: function () {
-    tagStore.listen(this.update);
+  getInitialState: function () {
+    return {
+      chosenTag: 'later',
+      makeContainer: false
+    };
   },
-  componentWillUnmount: function () {
-    tagStore.unlisten(this.update);
-  },
-  update: function () {
-    let repo = this.props.image.namespace + '/' + this.props.image.name;
-    let state = tagStore.getState();
-    if (this.state.tags.length && !state.tags[repo]) {
-      $(this.getDOMNode()).find('.tag-overlay').fadeOut(300);
+  componentWillReceiveProps: function (nextProps) {
+    if(this.state.makeContainer) {
+      if (this.checkTagExists(nextProps.image)) {
+        this.handleCloseTagOverlay();
+      }
     }
-    this.setState({
-      loading: tagStore.getState().loading[repo] || false,
-      tags: tagStore.getState().tags[repo] || []
-    });
+    this.setState({loading: false});
   },
+  componentWillUpdate: function (next) {
+    if (tagStore.getState().currentRepo == this.props.image.namespace + '/' + this.props.image.name) {
+      console.log("Current: %o - make? %o", tagStore.getState().currentRepo, this.state.makeContainer);
+      if (this.state.makeContainer) {
+        //this.handleClick();
+        console.log("Click to make container %o - %o", this.props.tags, this.state.chosenTag);
+      }
+    }
+  },
+  checkTagExists: function (props) {
+    if (props.tags.length && _.indexOf(props.tags, this.state.chosenTag) !== -1) {
+      return true;
+    } else {
+      return false;
+    }
+  },
+  // update: function () {
+  //   let repo = this.props.image.namespace + '/' + this.props.image.name;
+  //   let state = tagStore.getState();
+  //   if (this.props.tags.length && !state.tags[repo]) {
+  //     $(this.getDOMNode()).find('.tag-overlay').fadeOut(300);
+  //   }
+  //   this.setState({
+  //     loading: tagStore.getState().loading[repo] || false,
+  //     tags: tagStore.getState().tags[repo] || []
+  //   });
+  // },
   handleTagClick: function (tag) {
     this.setState({
       chosenTag: tag
@@ -52,15 +77,26 @@ var ImageCard = React.createClass({
       userowned: this.props.image.is_user_repo,
       recommended: this.props.image.is_recommended
     });
+    this.setState({ makeContainer: true });
     let name = containerStore.generateName(this.props.image.name);
     let repo = this.props.image.namespace === 'library' ? this.props.image.name : this.props.image.namespace + '/' + this.props.image.name;
-    containerActions.run(name, repo, this.state.chosenTag);
-    this.transitionTo('containerHome', {name});
+    if (this.checkTagExists(this.props)) {
+      console.log("making container!! %o", this.props.image);
+      //containerActions.run(name, repo, this.state.chosenTag);
+      //this.transitionTo('containerHome', {name});
+    } else {
+      console.log("Didn't find tag: %o - %o", this.state.chosenTag, this.props.image);
+      tagActions.tags(this.props.image.namespace + '/' + this.props.image.name);
+      this.handleTagOverlayClick();
+    }
   },
   handleTagOverlayClick: function () {
     let $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
     $tagOverlay.fadeIn(300);
-    tagActions.tags(this.props.image.namespace + '/' + this.props.image.name);
+    if (this.props.tags.length === 0) {
+      this.setState({loading: true});
+      tagActions.tags(this.props.image.namespace + '/' + this.props.image.name);
+    }
   },
   handleCloseTagOverlay: function () {
     var $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
@@ -78,6 +114,7 @@ var ImageCard = React.createClass({
   render: function () {
     var self = this;
     let name;
+    let fullName = this.props.image.namespace + '/' + this.props.image.name;
     if (this.props.image.namespace === 'library') {
       name = (
         <div>
@@ -113,16 +150,17 @@ var ImageCard = React.createClass({
       imgsrc = 'http://kitematic.com/recommended/kitematic_html.png';
     }
     var tags;
-    if (self.state.loading) {
+
+    if (this.state.loading) {
       tags = <RetinaImage className="tags-loading" src="loading-white.png"/>;
-    } else if (self.state.tags.length === 0) {
+    } else if (!this.props.tags || this.props.tags.length === 0) {
       tags = <span>No Tags</span>;
     } else {
-      var tagDisplay = self.state.tags.map(function (t) {
-        if (t === self.state.chosenTag) {
-          return <div className="tag active" key={t} onClick={self.handleTagClick.bind(self, t)}>{t}</div>;
+      var tagDisplay = this.props.tags.map((t) => {
+        if (t === this.state.chosenTag) {
+          return <div className="tag active" key={t} onClick={this.handleTagClick.bind(this, t)}>{t}</div>;
         } else {
-          return <div className="tag" key={t} onClick={self.handleTagClick.bind(self, t)}>{t}</div>;
+          return <div className="tag" key={t} onClick={this.handleTagClick.bind(this, t)}>{t}</div>;
         }
       });
       tags = (

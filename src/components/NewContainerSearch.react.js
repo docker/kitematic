@@ -10,6 +10,8 @@ var repositoryActions = require('../actions/RepositoryActions');
 var repositoryStore = require('../stores/RepositoryStore');
 var accountStore = require('../stores/AccountStore');
 var accountActions = require('../actions/AccountActions');
+var tagStore = require('../stores/TagStore');
+var tagActions = require('../actions/TagActions');
 
 var _searchPromise = null;
 
@@ -30,6 +32,7 @@ module.exports = React.createClass({
     this.refs.searchInput.getDOMNode().focus();
     repositoryStore.listen(this.update);
     accountStore.listen(this.updateAccount);
+    tagStore.listen(this.updateTags);
     repositoryActions.search();
   },
   componentWillUnmount: function () {
@@ -39,6 +42,7 @@ module.exports = React.createClass({
 
     repositoryStore.unlisten(this.update);
     accountStore.unlisten(this.updateAccount);
+    tagStore.unlisten(this.updateTags);
   },
   update: function () {
     this.setState({
@@ -52,6 +56,25 @@ module.exports = React.createClass({
       verified: accountStore.getState().verified,
       accountLoading: accountStore.getState().loading
     });
+  },
+  updateTags: function (tagState) {
+    if (!tagState.loading) {
+      let repos = this.state.repos;
+      repos.map((image, index) => {
+        if (image.namespace + '/' + image.name === tagState.currentRepo) {
+          image.tags = tagState.tags
+          repos[index] = image;
+        }
+      });
+      this.setState({
+        repos: repos
+      });
+    }
+
+    // this.setState({
+    //   loading: tagStore.getState().loading[repo] || false,
+    //   tags: tagStore.getState().tags[repo] || []
+    // });
   },
   search: function (query) {
     if (_searchPromise) {
@@ -141,8 +164,9 @@ module.exports = React.createClass({
         </div>
       );
     } else if (repos.length) {
-      let recommendedItems = repos.filter(repo => repo.is_recommended).map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />);
-      let otherItems = repos.filter(repo => !repo.is_recommended && !repo.is_user_repo).map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />);
+      let recommendedItems = repos.filter(repo => repo.is_recommended).map(image => <ImageCard key={image.namespace + '/' + image.name} tags={image.tags||[]} image={image} />);
+      let otherItems = repos.filter(repo => !repo.is_recommended && !repo.is_user_repo).map(image => <ImageCard key={image.namespace + '/' + image.name} tags={image.tags||[]} image={image} />);
+      let userRepoItems = repos.filter(repo => repo.is_user_repo).map(image => <ImageCard key={image.namespace + '/' + image.name} tags={image.tags||[]} image={image} />);
 
       let recommendedResults = recommendedItems.length ? (
         <div>
@@ -153,7 +177,6 @@ module.exports = React.createClass({
         </div>
       ) : null;
 
-      let userRepoItems = repos.filter(repo => repo.is_user_repo).map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />);
       let userRepoResults = userRepoItems.length ? (
         <div>
           <h4>My Repositories</h4>

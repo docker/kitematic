@@ -101,8 +101,8 @@ module.exports = {
         tagServerActions.tagsUpdated({repo, tags: data.tags});
         if (callback) { callback(null, data.tags); }
       } else if (error || response.statusCode === 401) {
-        repositoryServerActions.error({repo});
-        if (callback) { callback(new Error('Failed to fetch repos')); }
+        tagServerActions.error({repo});
+        if (callback) { callback(new Error('Failed to fetch tags for repo')); }
       }
     });
   },
