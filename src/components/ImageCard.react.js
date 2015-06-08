@@ -122,7 +122,7 @@ var ImageCard = React.createClass({
     if (self.state.loading) {
       tags = <RetinaImage className="tags-loading" src="loading.png"/>;
     } else if (self.state.tags.length === 0) {
-      tags = <span>No Tags</span>;
+      tags = <div className="no-tags">No Tags</div>;
     } else {
       var tagDisplay = self.state.tags.map(function (t) {
         if (t === self.state.chosenTag) {
@@ -151,7 +151,7 @@ var ImageCard = React.createClass({
       <div className="image-item">
         <div className="overlay menu-overlay">
           <div className="menu-item" onClick={this.handleTagOverlayClick.bind(this, this.props.image.name)}>
-            CHOSEN TAG: <span className="selected-tag">{this.state.chosenTag}</span>
+            SELECTED TAG: <span className="selected-tag">{this.state.chosenTag}</span>
           </div>
           <div className="menu-item" onClick={this.handleRepoClick}>
             VIEW ON DOCKER HUB
