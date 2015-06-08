@@ -145,9 +145,12 @@
         display: flex;
         flex-direction: row;
         height: 45px;
-        //border-bottom: 1px solid @color-divider;
+        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent;
         &:hover {
           background-color: @color-box-button;
+          border-top: 1px solid @color-divider;
+          border-bottom: 1px solid @color-divider;
         }
         .info {
           margin-left: 1rem;

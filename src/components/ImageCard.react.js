@@ -57,12 +57,22 @@ var ImageCard = React.createClass({
     containerActions.run(name, repo, this.state.chosenTag);
     this.transitionTo('containerHome', {name});
   },
+  handleMenuOverlayClick: function () {
+    let $menuOverlay = $(this.getDOMNode()).find('.menu-overlay');
+    $menuOverlay.fadeIn(300);
+  },
+  handleCloseMenuOverlay: function () {
+    var $menuOverlay = $(this.getDOMNode()).find('.menu-overlay');
+    $menuOverlay.fadeOut(300);
+  },
   handleTagOverlayClick: function () {
     let $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
     $tagOverlay.fadeIn(300);
     tagActions.tags(this.props.image.namespace + '/' + this.props.image.name);
   },
   handleCloseTagOverlay: function () {
+    let $menuOverlay = $(this.getDOMNode()).find('.menu-overlay');
+    $menuOverlay.hide();
     var $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
     $tagOverlay.fadeOut(300);
   },
@@ -82,18 +92,14 @@ var ImageCard = React.createClass({
       name = (
         <div>
           <div className="namespace official">official</div>
-          <OverlayTrigger placement="bottom" overlay={<Tooltip>View on Docker Hub</Tooltip>}>
-            <span className="repo" onClick={this.handleRepoClick}>{this.props.image.name}</span>
-          </OverlayTrigger>
+          <span className="repo">{this.props.image.name}</span>
         </div>
       );
     } else {
       name = (
         <div>
           <div className="namespace">{this.props.image.namespace}</div>
-          <OverlayTrigger placement="bottom" overlay={<Tooltip>View on Docker Hub</Tooltip>}>
-            <span className="repo" onClick={this.handleRepoClick}>{this.props.image.name}</span>
-          </OverlayTrigger>
+          <span className="repo">{this.props.image.name}</span>
         </div>
       );
     }
@@ -114,7 +120,7 @@ var ImageCard = React.createClass({
     }
     var tags;
     if (self.state.loading) {
-      tags = <RetinaImage className="tags-loading" src="loading-white.png"/>;
+      tags = <RetinaImage className="tags-loading" src="loading.png"/>;
     } else if (self.state.tags.length === 0) {
       tags = <span>No Tags</span>;
     } else {
@@ -141,17 +147,25 @@ var ImageCard = React.createClass({
         <RetinaImage src="private.png"/>
       );
     }
-    var tagDisp = (
-      <div className="tags">
-        <span className="key">TAG</span>
-        <span className="text" onClick={self.handleTagOverlayClick.bind(self, this.props.image.name)} data-name={this.props.image.name}>{this.state.chosenTag}</span>
-      </div>
-    );
     return (
       <div className="image-item">
-        <div className="tag-overlay" onClick={self.handleCloseTagOverlay}>
+        <div className="overlay menu-overlay">
+          <div className="menu-item" onClick={this.handleTagOverlayClick.bind(this, this.props.image.name)}>
+            CHOSEN TAG: <span className="selected-tag">{this.state.chosenTag}</span>
+          </div>
+          <div className="menu-item" onClick={this.handleRepoClick}>
+            VIEW ON DOCKER HUB
+          </div>
+          <div className="close-overlay">
+            <a className="btn btn-action circular" onClick={self.handleCloseMenuOverlay}><span className="icon icon-delete"></span></a>
+          </div>
+        </div>
+        <div className="overlay tag-overlay">
           <p>Please select an image tag.</p>
           {tags}
+          <div className="close-overlay" onClick={self.handleCloseTagOverlay}>
+            <a className="btn btn-action circular"><span className="icon icon-delete"></span></a>
+          </div>
         </div>
         <div className="logo" style={logoStyle}>
           <RetinaImage src={imgsrc}/>
@@ -173,7 +187,7 @@ var ImageCard = React.createClass({
               <span className="icon icon-favorite"></span>
               <span className="text">{this.props.image.star_count}</span>
             </div>
-            <div className="more-menu">
+            <div className="more-menu" onClick={self.handleMenuOverlayClick}>
               <span className="icon icon-more"></span>
             </div>
             <div className="action" onClick={self.handleClick}>

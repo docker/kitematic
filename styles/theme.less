@@ -170,6 +170,17 @@ input[type="text"] {
   text-shadow: none;
   padding: 5px 14px 5px 14px;
   cursor: default;
+  
+  &.circular {
+    border-radius: 100%;
+    width: 25px;
+    height: 25px;
+    padding: 0;
+    padding-top: 4px;
+    .icon {
+      font-size: 10px;
+    }
+  }
 
   &.small {
     font-size: 11px;

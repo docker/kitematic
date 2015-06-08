@@ -174,24 +174,48 @@
       background-color: white;
       margin-right: 1rem;
       margin-bottom: 1rem;
-      .tag-overlay {
+      .overlay {
         display: flex;
         flex: 1 0;
-        z-index: 999;
-        background-color: rgba(0,0,0,0.8);
+        background-color: white;
         border-radius: @border-radius;
         min-width: @image-card-width;
         max-width: @image-card-width;
         height: @image-card-height;
         position: absolute;
-        color: white;
-        font-size: 13px;
+        color: @gray-normal;
         display: none;
-        padding: 10px;
+        border: 1px solid @color-divider;
+        
+      }
+      .menu-overlay {
+        z-index: 999;
+        .menu-item {
+          padding: 0.8rem 1rem;
+          border-bottom: 1px solid @color-divider;
+          .box-button();
+          .selected-tag {
+            color: @brand-primary;
+          }        
+        }
+        .close-overlay {
+          position: absolute;
+          bottom: 1rem;
+          right: 1rem;
+        }
+      }
+      .tag-overlay {
+        z-index: 1000;
+        .close-overlay {
+          position: absolute;
+          top: 0.6rem;
+          right: 0.7rem;
+        }
         p {
-          color: white;
-          padding-bottom: 7px;
-          border-bottom: 1px solid rgba(255,255,255,0.2);
+          color: @gray-normal;
+          padding: 0.8rem 1rem;
+          margin-bottom: 0;
+          border-bottom: 1px solid @color-divider;
         }
         .tag-list {
           display: flex;
@@ -199,29 +223,38 @@
           align-items: flex-start;
           align-content: flex-start;
           flex-flow: row wrap;
-          height: 100px;
+          height: 90px;
           overflow: auto;
+          padding: 0.5rem;
           .tag {
+            font-size: 10px;
+            padding: 0.3rem 0.6rem;
             display: inline-block;
             flex: 0 auto;
-            margin-right: 2px;
-            padding: 3px 5px;
+            border-radius: @border-radius;
+            margin-right: 0.3rem;
+            margin-bottom: 0.3rem;
+            border: 1px solid transparent;
             &.active {
-              background-color: rgba(255,255,255,0.2);
-              border-radius: 20px;
+              background-color: @brand-primary;
+              color: white;
+              &:hover {
+                background-color: @brand-primary;
+                color: white;
+                border: 1px solid transparent;
+              }
             }
             &:hover {
-              background-color: rgba(255,255,255,0.2);
-              border-radius: 20px;
+              background-color: @color-box-button;
+              border: 1px solid @color-divider;
             }
           }
         }
         .tags-loading {
           position: relative;
-          left: 42%;
-          top: 20%;
+          left: 45%;
           text-align: center;
-          margin: 14px auto;
+          margin-top: 3rem;
           -webkit-animation-name: spin;
           -webkit-animation-duration: 1.8s;
           -webkit-animation-iteration-count: infinite;
@@ -282,7 +315,7 @@
             font-size: 10px;
             color: @gray-light;
             padding-right: 1rem;
-            height: 46px;
+            height: 44px;
             text-overflow: ellipsis;
             overflow: hidden;
             -webkit-box-orient: vertical;
@@ -295,14 +328,14 @@
           display: flex;
           flex-direaction: column;
           justify-content: flex-end;
-          height: 31px;
+          height: 33px;
           border-top: 1px solid @color-divider;
           .favorites {
             flex: 1 auto;
             font-size: 10px;
             color: @gray-normal;
             border-right: 1px solid @color-divider;
-            padding: 1rem 1.2rem;
+            padding: 1.1rem 1.2rem;
             .icon {
               position: relative;
               font-size: 11px;
@@ -316,20 +349,16 @@
           }
           .tags {
             flex: 1 auto;
-            //height: 12px;
             font-size: 10px;
             color: @gray-darker;
             padding-left: 1rem;
             .key {
               position: relative;
-              //top: -1px;
               font-weight: 400;
               color: @gray-light;
             }
             .text {
               position: relative;
-              //top: -2px;
-              //padding: 3px 5px;
               color: @brand-action;
               &:hover {
                 background-color: @brand-action;
@@ -341,9 +370,8 @@
           .more-menu {
             flex: 0 auto;
             width: 39px;
-            padding: 0.3rem 1rem;
+            padding: 0.4rem 1rem;
             font-size: 20px;
-            //border-right: 1px solid @color-divider;
             .box-button();
           }
           .action {
@@ -351,21 +379,18 @@
             position: relative;
             top: -1px;
             right: -1px;
-            height: 32px;
+            height: 34px;
             .box-button();
-            padding: 0.8rem 1rem;
+            padding: 0.9rem 1rem;
             color: @brand-primary;
             border: 1px solid @brand-primary;
             border-bottom-right-radius: @border-radius;
-            //text-align: right;
-            //position: relative;
-            //float: right;
-            //top: -0.7rem;
-            /*.btn-more {
-              position: absolute;
-              font-size: 20px;
-              right: 7rem;
-            }*/
+            transition: all 140ms;
+            &:hover {
+              background-color: @brand-action;
+              color: white;
+              border: 1px solid darken(@brand-primary, 10%);
+            }
           }
         }
       }
