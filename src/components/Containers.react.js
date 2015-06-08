@@ -162,7 +162,7 @@ var Containers = React.createClass({
               <h4>Containers</h4>
               <div className="create">
                 <Router.Link to="new">
-                  <span className="btn-new icon icon-add"></span>
+                  <span className="btn btn-new btn-action circular"><span className="icon icon-add"></span></span>
                 </Router.Link>
               </div>
             </section>
