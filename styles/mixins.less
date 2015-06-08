@@ -31,13 +31,30 @@
 
 .widget-bar-style() {
   height: 40px;
-  text-transform: uppercase;
-  font-size: 12px;
-  font-weight: 500;
-  padding: 1.1rem;
   background-color: white;
-  color: @gray-light;
   border-bottom: 1px solid @color-divider;
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  z-index: 99999;
+  .text {
+    flex: 1 auto;
+    padding: 1.1rem;
+    text-transform: uppercase;
+    font-size: 12px;
+    font-weight: 500;
+    color: @gray-light;
+  }
+  .settings {
+    flex: 0 auto;
+    height: 40px;
+    width: 40px;
+    align-self: flex-end;
+    border-left: 1px solid @color-divider;
+    padding-top: 0.3rem;
+    padding-left: 0.9rem;
+    .box-button();
+  }
 }
 
 .fade-in() {
@@ -48,7 +65,7 @@
 }
 
 .box-button {
-  transition: all 140ms;
+  transition: all 100ms;
   color: @gray-light;
   font-size: 10px;
   font-weight: 500;

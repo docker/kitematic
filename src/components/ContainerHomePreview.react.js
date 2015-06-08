@@ -47,18 +47,22 @@ var ContainerHomePreview = React.createClass({
 
   render: function () {
     var preview;
+    var tempDisp = (
+      <div className="frame-overlay" onClick={this.handleClickPreview}><span className="icon icon-upload-2"></span><div className="text">Open in Browser</div></div>
+    );
     if (this.props.defaultPort) {
       var frame = React.createElement('webview', {className: 'frame', id: 'webview', src: this.props.ports[this.props.defaultPort].url, autosize: 'on'});
       preview = (
         <div className="web-preview wrapper">
           <div className="widget">
             <div className="top-bar">
-              <div className="text">WEB PREVIEW</div>
+              <div className="text">Web Preview</div>
+              <div className="settings" onClick={this.handleClickNotShowingCorrectly}>
+                <span className="icon icon-preferences"></span>
+              </div>
             </div>
             {frame}
-            <div className="frame-overlay" onClick={this.handleClickPreview}><span className="icon icon-upload-2"></span><div className="text">Open in Browser</div></div>
           </div>
-          <div className="subtext" onClick={this.handleClickNotShowingCorrectly}>Not showing correctly?</div>
         </div>
       );
     } else {
@@ -78,6 +82,9 @@ var ContainerHomePreview = React.createClass({
           <div className="widget">
             <div className="top-bar">
               <div className="text">IP & PORTS</div>
+              <div className="settings" onClick={this.handleClickNotShowingCorrectly}>
+                <span className="icon icon-preferences"></span>
+              </div>
             </div>
             <p>You can access this container using the following IP address and port:</p>
             <div className="table ports">
