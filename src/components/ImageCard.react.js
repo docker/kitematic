@@ -140,11 +140,11 @@ var ImageCard = React.createClass({
     var badge = null;
     if (this.props.image.namespace === 'library') {
       badge = (
-        <RetinaImage src="official.png"/>
+        <span className="icon icon-badge-official"></span>
       );
     } else if (this.props.image.is_private) {
       badge = (
-        <RetinaImage src="private.png"/>
+        <span className="icon icon-badge-private"></span>
       );
     }
     return (
