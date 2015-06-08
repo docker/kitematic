@@ -55,11 +55,8 @@
         .box-button();
         border-right: 1px solid @color-divider;
         &.disabled {
-          opacity: 0.3;
-          &:active {
-          }
-        }
-        &:active {
+          background-color: white;
+          color: fade(@gray-light, 20%);
         }
         .action-icon {
           text-align: center;
@@ -94,19 +91,24 @@
       }
     }
     .details-subheader-tabs {
+      margin: 1.2rem 1.2rem 0 0;
       flex: 1 auto;
       text-align: right;
-      margin-right: 3px;
-      margin-top: 3px;
+      text-transform: uppercase;
+      .tab {
+        font-weight: 500;
+        min-width: 40px;
+      }
     }
   }
 
   .tab {
+    font-size: 12px;
     font-weight: 400;
     display: inline-block;
     margin: 0 0.6rem;
     transition: all 0.3s;
-    color: @gray-normal;
+    color: @gray-light;
     border-bottom: 3px solid transparent;
     text-align: center;
     min-width: 28px;
