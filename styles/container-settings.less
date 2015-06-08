@@ -69,7 +69,7 @@
         }
       }
     }
-    .env-vars-labels {
+    .env-vars-labels, .links-vars-labels, .adv-vars-labels {
       width: 100%;
       font-size: 12px;
       color: @gray-light;
@@ -86,7 +86,7 @@
         width: 50%;
       }
     }
-    .env-vars {
+    .env-vars, .links-vars, .adv-vars {
       margin-bottom: 20px;
       .keyval-row {
         margin-bottom: 5px;
@@ -99,6 +99,38 @@
         &.val {
           width: 50%;
         }
+      }
+      .typeahead {
+        display: inline-block;
+        width: 30%;
+        margin-right: 30px;
+        ul {
+          position:absolute;
+          background-color: @gray-lightest;
+          margin: 5px 0px;
+          padding: 0px;
+          list-style: none;
+          border: 1px solid @gray-lighter;
+          li {
+            border-bottom: 1px solid @gray-lighter;
+            padding: 5px;
+            &:last-child {
+              border-bottom: none;
+            }
+          }
+        }
+        input {
+          width: 100%;
+          margin: 0px;
+        }
+      }
+      p {
+        margin-top: 5px;
+        margin-left: 5px;
+        flex: 1 auto;
+        display: flex;
+        font-size: 12px;
+        color: @gray-lighter;
       }
     }
     .table {
