@@ -52,7 +52,8 @@ app.on('ready', function () {
   });
 
   app.on('before-quit', function () {
-    if (!updating) {
+    // TODO: make this work for right click + close
+    if (!updating && mainWindow.webContents) {
       mainWindow.webContents.send('application:quitting');
     }
   });
