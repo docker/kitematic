@@ -64,7 +64,7 @@ var ContainerHomeFolder = React.createClass({
     }
 
     var folders = _.map(this.props.container.Volumes, (val, key) => {
-      var firstFolder = key.split(path.sep)[1];
+      var firstFolder = key;
       return (
         <div key={key} className="folder" onClick={this.handleClickFolder.bind(this, val, key)}>
           <RetinaImage src="folder.png" />
@@ -76,9 +76,13 @@ var ContainerHomeFolder = React.createClass({
     if (this.props.container.Volumes && _.keys(this.props.container.Volumes).length > 0 && this.props.container.State.Running) {
       return (
         <div className="folders wrapper">
-          <h4>Edit Files</h4>
           <div className="widget">
-            {folders}
+            <div className="top-bar">
+              <div className="text">Edit Files</div>
+            </div>
+            <div className="folders-list">
+              {folders}
+            </div>
           </div>
           <div className="subtext" onClick={this.handleClickChangeFolders}>Change Folders</div>
         </div>

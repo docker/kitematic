@@ -27,7 +27,7 @@ var ContainerHome = React.createClass({
   },
 
   handleResize: function () {
-    $('.left .wrapper').height(window.innerHeight - 240);
+    $('.left .wrapper').height(window.innerHeight - 105);
     $('.right .wrapper').height(window.innerHeight / 2 - 100);
   },
 
@@ -93,10 +93,10 @@ var ContainerHome = React.createClass({
           <div className="details-panel home">
             <div className="content">
               <div className="left">
-                <ContainerHomePreview ports={this.props.ports} defaultPort={this.props.defaultPort} />
+                <ContainerHomeLogs container={this.props.container}/>
               </div>
               <div className="right">
-                <ContainerHomeLogs container={this.props.container}/>
+                <ContainerHomePreview ports={this.props.ports} defaultPort={this.props.defaultPort} />
                 <ContainerHomeFolders container={this.props.container} />
               </div>
             </div>

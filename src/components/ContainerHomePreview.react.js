@@ -51,8 +51,10 @@ var ContainerHomePreview = React.createClass({
       var frame = React.createElement('webview', {className: 'frame', id: 'webview', src: this.props.ports[this.props.defaultPort].url, autosize: 'on'});
       preview = (
         <div className="web-preview wrapper">
-          <h4>Web Preview</h4>
           <div className="widget">
+            <div className="top-bar">
+              <div className="text">WEB PREVIEW</div>
+            </div>
             {frame}
             <div className="frame-overlay" onClick={this.handleClickPreview}><span className="icon icon-upload-2"></span><div className="text">Open in Browser</div></div>
           </div>
@@ -73,8 +75,10 @@ var ContainerHomePreview = React.createClass({
 
       preview = (
         <div className="web-preview wrapper">
-          <h4>IP &amp; Ports</h4>
           <div className="widget">
+            <div className="top-bar">
+              <div className="text">IP & PORTS</div>
+            </div>
             <p>You can access this container using the following IP address and port:</p>
             <div className="table ports">
               <div className="table-labels">
