@@ -109,11 +109,13 @@
               color: white;
               opacity: 0.8;
             }
-            .btn-delete {
-              font-size: 24px;
-              color: white;
-              position: relative;
-              z-index: 9999;
+            .action {
+              .btn {
+                border: 1px solid white;
+                .icon {
+                  color: white;
+                }
+              }
             }
             .state-new {
               .at2x('container-white.png', @container-state-size, @container-state-size);
@@ -180,11 +182,11 @@
           position: relative;
           top: 0.2rem;
           text-align: right;
-          .btn-delete {
-            font-size: 24px;
-            color: @gray-lighter;
-            position: relative;
-            z-index: 9999;
+          .btn {
+            border: 1px solid @gray-lighter;
+            .icon {
+              color: @gray-lighter;
+            }
           }
         }
         .state {
