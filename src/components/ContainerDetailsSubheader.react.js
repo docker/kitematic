@@ -117,46 +117,6 @@ var ContainerDetailsSubheader = React.createClass({
       });
     }
   },
-  handleItemMouseEnterView: function () {
-    var $action = $(this.getDOMNode()).find('.action .view');
-    $action.css("visibility", "visible");
-  },
-  handleItemMouseLeaveView: function () {
-    var $action = $(this.getDOMNode()).find('.action .view');
-    $action.css("visibility", "hidden");
-  },
-  handleItemMouseEnterRestart: function () {
-    var $action = $(this.getDOMNode()).find('.action .restart');
-    $action.css("visibility", "visible");
-  },
-  handleItemMouseLeaveRestart: function () {
-    var $action = $(this.getDOMNode()).find('.action .restart');
-    $action.css("visibility", "hidden");
-  },
-  handleItemMouseEnterStop: function () {
-    var $action = $(this.getDOMNode()).find('.action .stop');
-    $action.css("visibility", "visible");
-  },
-  handleItemMouseLeaveStop: function () {
-    var $action = $(this.getDOMNode()).find('.action .stop');
-    $action.css("visibility", "hidden");
-  },
-  handleItemMouseEnterStart: function () {
-    var $action = $(this.getDOMNode()).find('.action .start');
-    $action.css("visibility", "visible");
-  },
-  handleItemMouseLeaveStart: function () {
-    var $action = $(this.getDOMNode()).find('.action .start');
-    $action.css("visibility", "hidden");
-  },
-  handleItemMouseEnterTerminal: function () {
-    var $action = $(this.getDOMNode()).find('.action .terminal');
-    $action.css("visibility", "visible");
-  },
-  handleItemMouseLeaveTerminal: function () {
-    var $action = $(this.getDOMNode()).find('.action .terminal');
-    $action.css("visibility", "hidden");
-  },
   render: function () {
     var runActionClass = classNames({
       action: true,
@@ -200,16 +160,16 @@ var ContainerDetailsSubheader = React.createClass({
     var startStopToggle;
     if (this.disableStop()) {
       startStopToggle = (
-        <div className={startActionClass} onMouseEnter={this.handleItemMouseEnterStart} onMouseLeave={this.handleItemMouseLeaveStart}>
-          <div className="action-icon" onClick={this.handleStart}><RetinaImage src="button-start.png" /></div>
-          <span className="btn-label start">Start</span>
+        <div className={startActionClass}>
+          <div className="action-icon start" onClick={this.handleStart}><span className="icon icon-start"></span></div>
+          <div className="btn-label">START</div>
         </div>
       );
     } else {
       startStopToggle = (
-        <div className={stopActionClass} onMouseEnter={this.handleItemMouseEnterStop} onMouseLeave={this.handleItemMouseLeaveStop}>
-          <div className="action-icon" onClick={this.handleStop}><RetinaImage src="button-stop.png" /></div>
-          <span className="btn-label stop">Stop</span>
+        <div className={stopActionClass}>
+          <div className="action-icon stop" onClick={this.handleStop}><span className="icon icon-stop"></span></div>
+          <div className="btn-label">STOP</div>
         </div>
       );
     }
@@ -217,17 +177,17 @@ var ContainerDetailsSubheader = React.createClass({
       <div className="details-subheader">
         <div className="details-header-actions">
           {startStopToggle}
-          <div className={restartActionClass} onMouseEnter={this.handleItemMouseEnterRestart} onMouseLeave={this.handleItemMouseLeaveRestart}>
-            <div className="action-icon" onClick={this.handleRestart}><RetinaImage src="button-restart.png"/></div>
-            <span className="btn-label restart">Restart</span>
+          <div className={restartActionClass}>
+            <div className="action-icon" onClick={this.handleRestart}><span className="icon icon-restart"></span></div>
+            <div className="btn-label">RESTART</div>
           </div>
-          <div className={terminalActionClass} onMouseEnter={this.handleItemMouseEnterTerminal} onMouseLeave={this.handleItemMouseLeaveTerminal}>
-            <div className="action-icon" onClick={this.handleTerminal}><RetinaImage src="button-terminal.png"/></div>
-            <span className="btn-label terminal">Terminal</span>
+          <div className={terminalActionClass}>
+            <div className="action-icon" onClick={this.handleTerminal}><span className="icon icon-docker-exec"></span></div>
+            <div className="btn-label">EXEC</div>
           </div>
-          <div className={runActionClass} onMouseEnter={this.handleItemMouseEnterView} onMouseLeave={this.handleItemMouseLeaveView}>
-            <div className="action-icon" onClick={this.handleRun}><RetinaImage src="button-view.png"/></div>
-            <span className="btn-label view">View</span>
+          <div className={runActionClass}>
+            <div className="action-icon" onClick={this.handleRun}><span className="icon icon-browser-view"></span></div>
+            <div className="btn-label">VIEW</div>
           </div>
         </div>
         <div className="details-subheader-tabs">
