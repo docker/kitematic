@@ -41,7 +41,11 @@ var _steps = [{
       yield virtualBox.killall();
       progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
       try {
-        yield util.exec(setupUtil.macSudoCmd(setupUtil.installVirtualBoxCmd()));
+        if (util.isWindows()) {
+          yield util.exec([path.join(util.supportDir(), virtualBox.filename())]);
+        } else {
+          yield util.exec(setupUtil.macSudoCmd(setupUtil.installVirtualBoxCmd()));
+        }
       } catch (err) {
         throw null;
       }
