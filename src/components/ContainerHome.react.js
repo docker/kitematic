@@ -27,8 +27,9 @@ var ContainerHome = React.createClass({
   },
 
   handleResize: function () {
+    $('.full .wrapper').height(window.innerHeight - 105);
     $('.left .wrapper').height(window.innerHeight - 105);
-    $('.right .wrapper').height(window.innerHeight / 2 - 100);
+    $('.right .wrapper').height(window.innerHeight / 2 - 55);
   },
 
   handleErrorClick: function () {
@@ -36,14 +37,10 @@ var ContainerHome = React.createClass({
   },
 
   showWeb: function () {
-    console.log(_.keys(this.props.ports));
     return _.keys(this.props.ports).length > 0;
   },
   
   showFolders: function () {
-    console.log('SUPETEST');
-    console.log(this.props.container.Volumes);
-    console.log(_.keys(this.props.container.Volumes).length);
     return this.props.container.Volumes && _.keys(this.props.container.Volumes).length > 0 && this.props.container.State.Running;
   },
   
@@ -119,7 +116,9 @@ var ContainerHome = React.createClass({
         body = (
           <div className="details-panel home">
             <div className="content">
-              {logWidget}
+              <div className="full">
+                {logWidget}
+              </div>
             </div>
           </div>
         );

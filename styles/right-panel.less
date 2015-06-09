@@ -41,19 +41,21 @@
     position: relative;
     border-bottom: 1px solid @color-divider;
     background-color: white;
+    top: -1px;
     height: 45px;
     font-size: 10px;
     .details-header-actions {
       flex: 1 auto;
       text-align: left;
+      position: relative;
       .action {
         display: inline-block;
         position: relative;
-        width: 60px;
+        width: 50px;
         height: 44px;
-        padding-top: 0.2rem;
+        top: 0rem;
         .box-button();
-        border-right: 1px solid @color-divider;
+        //border-right: 1px solid @color-divider;
         &.disabled {
           background-color: white;
           color: fade(@gray-light, 20%);
@@ -62,14 +64,14 @@
           text-align: center;
           height: 44px;
           .icon {
-            font-size: 24px;
+            font-size: 20px;
             margin-left: 0.6rem;
           }
           &.stop {
             position: relative;
             top: 0.3rem;
             .icon {
-              font-size: 20px;
+              font-size: 16px;
               margin-top: 1rem;
             }
           }
@@ -77,7 +79,7 @@
             position: relative;
             top: 0.3rem;
             .icon {
-              font-size: 20px;
+              font-size: 16px;
               margin-top: 1rem;
             }
           }

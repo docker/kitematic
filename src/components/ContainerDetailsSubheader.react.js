@@ -60,12 +60,6 @@ var ContainerDetailsSubheader = React.createClass({
       this.context.router.transitionTo('containerHome', {name: this.context.router.getCurrentParams().name});
     }
   },
-  showLogs: function () {
-    if (!this.disableTab()) {
-      metrics.track('Viewed Logs');
-      this.context.router.transitionTo('containerLogs', {name: this.context.router.getCurrentParams().name});
-    }
-  },
   showSettings: function () {
     if (!this.disableTab()) {
       metrics.track('Viewed Settings');
@@ -192,7 +186,6 @@ var ContainerDetailsSubheader = React.createClass({
         </div>
         <div className="details-subheader-tabs">
           <span className={tabHomeClasses} onClick={this.showHome}>Home</span>
-          <span className={tabLogsClasses} onClick={this.showLogs}>Logs</span>
           <span className={tabSettingsClasses} onClick={this.showSettings}>Settings</span>
         </div>
       </div>
