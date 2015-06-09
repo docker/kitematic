@@ -81,15 +81,6 @@ export default {
     // Add support for linked containers and runtime settings
     if (containerData.HostConfig) {
       var hostConfig = containerData.HostConfig;
-      if (hostConfig.CpuShares && hostConfig.CpuShares !== 0){
-        startopts.CpuShares = hostConfig.CpuShares;
-      }
-      if (hostConfig.Memory && hostConfig.Memory !== 0){
-        startopts.Memory = hostConfig.Memory;
-      }
-      if (hostConfig.MemorySwap && hostConfig.MemorySwap !== 0){
-        startopts.MemorySwap = hostConfig.MemorySwap;
-      }
       if (hostConfig.Links && hostConfig.Links !== null){
         startopts.Links = [];
         _.map(hostConfig.Links, (link) => {

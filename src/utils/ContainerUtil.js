@@ -35,26 +35,6 @@ var ContainerUtil = {
     });
   },
 
-  runtime: function (container) {
-    // Grab saved hostconfig if previous setup failed
-    var SavedOpts = JSON.parse(localStorage.getItem('settings.runtime.' + container.Name));
-    var SavedConfig = {}
-    _.each(SavedOpts, function(val, key){
-      if(key == "CpuShares" || key == "Memory" || key == "MemorySwap") {
-        SavedConfig[key] = val;
-      }
-    });
-    _.extend(SavedConfig, container.HostConfig);
-    if (!container || !container.HostConfig ) {
-      return [["CpuShares",""],["Memory",""],["MemorySwap",""]];
-    }
-    return _.map([
-      ['CpuShares', container.HostConfig.CpuShares],
-      ['Memory', container.HostConfig.Memory/1000000],
-      ['MemorySwap', container.HostConfig.MemorySwap/1000000]
-    ]);
-  },
-
   // TODO: inject host here instead of requiring Docker
   ports: function (container) {
     if (!container || !container.NetworkSettings) {
