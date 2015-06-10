@@ -201,6 +201,9 @@ module.exports = function (grunt) {
 
     // livereload
     watchChokidar: {
+      options: {
+        spawn: false
+      },
       livereload: {
         options: {livereload: true},
         files: ['build/**/*']
@@ -221,4 +224,10 @@ module.exports = function (grunt) {
   });
   grunt.registerTask('default', ['download-binary', 'babel', 'less', 'copy:dev', 'shell:electron', 'watchChokidar']);
   grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron', 'copy:windows', 'copy:mac']);
+
+  process.on('SIGINT', function () {
+    console.log('INT');
+    grunt.task.run(['shell:electron:kill']);
+    process.exit(1);
+  });
 };
