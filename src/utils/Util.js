@@ -55,6 +55,9 @@ module.exports = {
   home: function () {
     return app.getPath('home');
   },
+  documents: function () {
+    return this.isWindows() ? 'My\ Documents' : 'Documents';
+  },
   supportDir: function () {
     return app.getPath('userData');
   },
@@ -70,12 +73,12 @@ module.exports = {
       .replace(/\/Users\/[^\/]*\//mg, '/Users/<redacted>/');
   },
   packagejson: function () {
-    return JSON.parse(fs.readFileSync(path.join(__dirname, '../..', 'package.json'), 'utf8'));
+    return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
   },
   settingsjson: function () {
     var settingsjson = {};
     try {
-      settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '../..', 'settings.json'), 'utf8'));
+      settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
     } catch (err) {}
     return settingsjson;
   },

@@ -207,7 +207,7 @@ gulp.task('download-docker', function (cb) {
     } else {
       request('https://get.docker.com/builds/Darwin/x86_64/docker-' + packagejson['docker-version'])
         .pipe(fs.createWriteStream('./resources/docker')).on('finish', function () {
-           fs.chmodSync('./resources/docker', 755);
+           fs.chmodSync('./resources/docker', 0755);
            cb();
          });
     }
@@ -230,7 +230,7 @@ gulp.task('download-docker-machine', function (cb) {
     } else {
       request('https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_darwin-amd64')
           .pipe(fs.createWriteStream('./resources/docker-machine')).on('finish', function () {
-            fs.chmodSync('./resources/docker-machine', 755);
+            fs.chmodSync('./resources/docker-machine', 0755);
             cb();
           });
     }
@@ -252,7 +252,7 @@ gulp.task('download-docker-compose', function (cb) {
       gutil.log(gutil.colors.green('Downloading Docker Compose'));
       request('https://github.com/docker/compose/releases/download/' + packagejson['docker-compose-version'] + '/docker-compose-Darwin-x86_64')
           .pipe(fs.createWriteStream('./resources/docker-compose')).on('finish', function () {
-            fs.chmodSync('./resources/docker-compose', 755);
+            fs.chmodSync('./resources/docker-compose', 0755);
             cb();
           });
     }

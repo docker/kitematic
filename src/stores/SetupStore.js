@@ -66,16 +66,6 @@ var _steps = [{
         yield machine.rm();
       }
       yield machine.create();
-      if(util.isWindows()) {
-        let home = util.home();
-        let driveLetter = home.charAt(0);
-        let parts = home.split('\\').slice(0, -1);
-        let usersDirName = parts[parts.length-1];
-        let usersDirPath = parts.join('\\');
-        let shareName = driveLetter + '/' + usersDirName;
-        yield virtualBox.mountSharedDir(machine.name(), shareName, usersDirPath);
-        yield machine.start();
-      }
       return;
     }
 
