@@ -80,7 +80,12 @@ gulp.task('download', function (cb) {
   downloadelectron({
     version: packagejson['electron-version'],
     outputDir: 'cache'
-  }, cb);
+  }, function() {
+    if (process.platform === 'linux') {
+      fs.chmodSync('./cache/electron', 0755);
+    }
+    cb();
+  });
 });
 
 gulp.task('copy', function () {
@@ -191,7 +196,11 @@ gulp.task('download-docker', function (cb) {
   if (process.platform === 'win32' && fs.existsSync(path.join('resources', 'docker.exe'))) {
     cb();
     return;
+  } else if (process.platform === 'linux') {
+    cb();
+    return;
   }
+
 
   execFile(path.join('resources', 'docker'), ['-v'], function (err, stdout, stderr) {
     var currentVersion = version(stdout);
@@ -227,6 +236,9 @@ gulp.task('download-docker-machine', function (cb) {
     if(process.platform === 'win32') {
       request('https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_windows-amd64.exe')
           .pipe(fs.createWriteStream('./resources/docker-machine.exe')).on('finish', function () {cb()});
+    } else if (process.platform === 'linux') {
+      cb();
+      return;
     } else {
       request('https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_darwin-amd64')
           .pipe(fs.createWriteStream('./resources/docker-machine')).on('finish', function () {
@@ -248,6 +260,13 @@ gulp.task('download-docker-compose', function (cb) {
     if(process.platform === 'win32') {
       // Todo: install windows version of compose
       cb();
+    } else if (process.platform === 'linux') {
+      gutil.log(gutil.colors.green('Downloading Docker Compose'));
+      request('https://github.com/docker/compose/releases/download/' + packagejson['docker-compose-version'] + '/docker-compose-Linux-x86_64')
+          .pipe(fs.createWriteStream('./resources/docker-compose')).on('finish', function () {
+            fs.chmodSync('./resources/docker-compose', 0755);
+            cb();
+          });
     } else {
       gutil.log(gutil.colors.green('Downloading Docker Compose'));
       request('https://github.com/docker/compose/releases/download/' + packagejson['docker-compose-version'] + '/docker-compose-Darwin-x86_64')
