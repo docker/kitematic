@@ -23,6 +23,9 @@ module.exports = {
   isWindows: function () {
     return process.platform === 'win32';
   },
+  isLinux: function () {
+    return process.platform === 'linux';
+  },
   binsPath: function () {
     return this.isWindows() ? path.join(this.home(), 'Kitematic-bins') : path.join('/usr/local/bin');
   },
