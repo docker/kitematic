@@ -61,7 +61,7 @@ module.exports = {
   settingsjson: function () {
     var settingsjson = {};
     try {
-      settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '../..', 'settings.json'), 'utf8'));
+      settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
     } catch (err) {}
     return settingsjson;
   },

@@ -88,7 +88,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: '.',
-          src: ['package.json', 'index.html'],
+          src: ['package.json', 'settings.json', 'index.html'],
           dest: 'build/'
         }, {
           expand: true,
@@ -111,7 +111,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: 'resources',
-          src: ['docker*', 'boot2docker.iso'],
+          src: ['docker*'],
           dest: 'dist/Kitematic-win32/resources/resources/'
         }],
         options: {
