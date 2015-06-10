@@ -156,7 +156,13 @@ var DockerMachine = {
   dockerTerminal: function () {
     if(util.isWindows()) {
       this.info().then(machine => {
-        util.execProper(`start cmd.exe /k "SET DOCKER_HOST=${machine.url}&& SET DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)}&& SET DOCKER_TLS_VERIFY=1`);
+        util.execProper('start cmd.exe /k',
+          {'env': {
+            'DOCKER_HOST' : machine.url,
+            'DOCKER_CERT_PATH' : path.join(util.home(), '.docker/machine/machines/' + machine.name),
+            'DOCKER_TLS_VERIFY': 1
+          }
+        });
       });
     } else {
       this.info().then(machine => {

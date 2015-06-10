@@ -1,4 +1,5 @@
 var exec = require('exec');
+var execProper = require('child_process').exec;
 var Promise = require('bluebird');
 var fs = require('fs');
 var path = require('path');
@@ -12,6 +13,19 @@ module.exports = {
     return new Promise((resolve, reject) => {
       exec(args, options, (stderr, stdout, code) => {
         if (code) {
+          var cmd = Array.isArray(args) ? args.join(' ') : args;
+          reject(new Error(cmd + ' returned non zero exit code. Stderr: ' + stderr));
+        } else {
+          resolve(stdout);
+        }
+      });
+    });
+  },
+  execProper: function (args, options) {
+    options = options || {};
+    return new Promise((resolve, reject) => {
+      execProper(args, options, (error, stdout, stderr) => {
+        if (error != null) {
           var cmd = Array.isArray(args) ? args.join(' ') : args;
           reject(new Error(cmd + ' returned non zero exit code. Stderr: ' + stderr));
         } else {
@@ -131,6 +145,13 @@ module.exports = {
   },
   randomId: function () {
     return crypto.randomBytes(32).toString('hex');
+  },
+  windowsToLinuxPath: function(windowsAbsPath) {
+    var fullPath = windowsAbsPath.replace(':', '').split(path.sep).join('/');
+    if(fullPath.charAt(0) !== '/'){
+      fullPath = '/' + fullPath.charAt(0).toLowerCase() + fullPath.substring(1);
+    }
+    return fullPath;
   },
   webPorts: ['80', '8000', '8080', '3000', '5000', '2368', '9200', '8983']
 };
