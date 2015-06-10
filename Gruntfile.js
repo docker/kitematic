@@ -1,6 +1,7 @@
 var path = require('path');
 var execFile = require('child_process').execFile;
 var packagejson = require('./package.json');
+var electron = require('electron-prebuilt');
 
 var WINDOWS_DOCKER_URL = 'https://get.docker.com/builds/Windows/x86_64/docker-1.6.2.exe';
 var DARWIN_DOCKER_URL = 'https://get.docker.com/builds/Darwin/x86_64/docker-' + packagejson['docker-version'];
@@ -36,9 +37,35 @@ module.exports = function (grunt) {
 
   grunt.initConfig({
     // electron
-    'download-electron': {
-      version: packagejson['electron-version'],
-      outputDir: 'cache'
+    electron: {
+      windows: {
+        options: {
+          name: 'Kitematic',
+          dir: 'build/',
+          out: 'dist/',
+          version: packagejson['electron-version'],
+          platform: 'win32',
+          arch: 'x64',
+          asar: true
+        }
+      },
+      osx: {
+        options: {
+          name: 'Kitematic',
+          dir: 'build/',
+          out: 'dist/osx/',
+          version: packagejson['electron-version'],
+          platform: 'darwin',
+          arch: 'x64',
+          asar: true
+        }
+      }
+    },
+
+    'create-windows-installer': {
+      appDirectory: 'dist/Kitematic-win32/',
+      outputDirectory: 'installer/',
+      authors: 'Docker Inc.'
     },
 
     // docker binaries
@@ -53,27 +80,6 @@ module.exports = function (grunt) {
         binary: path.join('resources', 'docker-machine'),
         download: 'curl:docker-machine'
       }
-    },
-
-    // electron
-    electron: {
-      windows: {
-        options: {
-          name: 'Kitematic',
-          dir: 'build/',
-          out: 'dist/',
-          version: packagejson['electron-version'],
-          platform: 'win32',
-          arch: 'x64',
-          asar: true
-        }
-      }
-    },
-
-    'create-windows-installer': {
-      appDirectory: 'dist/Kitematic-win32/',
-      outputDirectory: 'installer/',
-      authors: 'Docker Inc.'
     },
 
     // images
@@ -101,12 +107,20 @@ module.exports = function (grunt) {
           expand: true
         }]
       },
-      release: {
+      windows: {
+        files: [{
+          expand: true,
+          cwd: 'resources',
+          src: ['docker*', 'boot2docker.iso'],
+          dest: 'dist/Kitematic-win32/resources/resources/'
+        }]
+      },
+      osx: {
         files: [{
           expand: true,
           cwd: 'resources',
           src: ['**/*'],
-          dest: 'dist/Kitematic-win32/resources/resources/'
+          dest: 'dist/osx/Kitematic.app/resources/'
         }]
       }
     },
@@ -170,7 +184,7 @@ module.exports = function (grunt) {
 
     shell: {
       electron: {
-        command: path.join('cache', 'electron') + ' ' + 'build',
+        command: electron + ' ' + 'build',
         options: {
           async: true,
           execOptions: {
@@ -205,6 +219,6 @@ module.exports = function (grunt) {
       }
     }
   });
-  grunt.registerTask('default', ['download-electron', 'download-binary', 'babel', 'less', 'copy:dev', 'shell:electron', 'watchChokidar']);
-  grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron', 'copy:release']);
+  grunt.registerTask('default', ['download-binary', 'babel', 'less', 'copy:dev', 'shell:electron', 'watchChokidar']);
+  grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron', 'copy:windows', 'copy:mac']);
 };
