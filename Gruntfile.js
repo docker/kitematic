@@ -113,15 +113,21 @@ module.exports = function (grunt) {
           cwd: 'resources',
           src: ['docker*', 'boot2docker.iso'],
           dest: 'dist/Kitematic-win32/resources/resources/'
-        }]
+        }],
+        options: {
+          mode: true
+        }
       },
       osx: {
         files: [{
           expand: true,
           cwd: 'resources',
           src: ['**/*'],
-          dest: 'dist/osx/Kitematic.app/resources/'
-        }]
+          dest: 'dist/osx/Kitematic.app/Contents/Resources/resources/'
+        }],
+        options: {
+          mode: true
+        }
       }
     },
 
@@ -223,7 +229,12 @@ module.exports = function (grunt) {
     }
   });
   grunt.registerTask('default', ['download-binary', 'babel', 'less', 'copy:dev', 'shell:electron', 'watchChokidar']);
-  grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron', 'copy:windows', 'copy:mac']);
+
+  if (process.platform === 'win32') {
+    grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'copy:osx']);
+  } else {
+    grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx']);
+  }
 
   process.on('SIGINT', function () {
     console.log('INT');
