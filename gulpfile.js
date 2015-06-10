@@ -301,6 +301,10 @@ gulp.task('default', ['download-docker', 'download-docker-machine', 'download-do
       gulp.src('').pipe(shell(['cache\\electron.exe .'], {
           env: env
       }));
+  } else if(process.platform === 'linux') {
+      gulp.src('').pipe(shell(['./cache/electron ./'], {
+          env: env
+      }));
   } else {
       gulp.src('').pipe(shell(['./cache/Electron.app/Contents/MacOS/Electron .'], {
           env: env
