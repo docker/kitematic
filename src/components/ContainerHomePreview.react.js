@@ -47,9 +47,6 @@ var ContainerHomePreview = React.createClass({
 
   render: function () {
     var preview;
-    var tempDisp = (
-      <div className="frame-overlay" onClick={this.handleClickPreview}><span className="icon icon-upload-2"></span><div className="text">Open in Browser</div></div>
-    );
     if (this.props.defaultPort) {
       var frame = React.createElement('webview', {className: 'frame', id: 'webview', src: this.props.ports[this.props.defaultPort].url, autosize: 'on'});
       preview = (

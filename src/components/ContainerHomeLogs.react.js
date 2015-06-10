@@ -69,12 +69,6 @@ module.exports = React.createClass({
     if (logs.length === 0) {
       logs = "No logs for this container.";
     }
-    var tempDisp = (
-      <div className="mini-logs-overlay" onClick={this.handleClickLogs}>
-        <span className="icon icon-expand"></span>
-        <div className="text">View Logs</div>
-      </div>
-    );
     return (
       <div className="mini-logs wrapper">
         <div className="widget">

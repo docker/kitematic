@@ -30,7 +30,7 @@ var ContainerSettingsGeneral = React.createClass({
   },
 
   handleNameChange: function (e) {
-    let name = e.target.value;
+    var name = e.target.value;
     if (name === this.state.slugName) {
       return;
     }

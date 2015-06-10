@@ -4,8 +4,6 @@ var Router = require('react-router');
 var shell = require('shell');
 var RetinaImage = require('react-retina-image');
 var metrics = require('../utils/MetricsUtil');
-var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
-var Tooltip = require('react-bootstrap').Tooltip;
 var containerActions = require('../actions/ContainerActions');
 var containerStore = require('../stores/ContainerStore');
 var tagStore = require('../stores/TagStore');
@@ -87,7 +85,7 @@ var ImageCard = React.createClass({
   },
   render: function () {
     var self = this;
-    let name;
+    var name;
     if (this.props.image.namespace === 'library') {
       name = (
         <div>

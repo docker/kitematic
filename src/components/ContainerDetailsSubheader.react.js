@@ -1,4 +1,3 @@
-var $ = require('jquery');
 var _ = require('underscore');
 var React = require('react');
 var exec = require('exec');
@@ -6,10 +5,8 @@ var shell = require('shell');
 var metrics = require('../utils/MetricsUtil');
 var ContainerUtil = require('../utils/ContainerUtil');
 var machine = require('../utils/DockerMachineUtil');
-var RetinaImage = require('react-retina-image');
 var classNames = require('classnames');
 var resources = require('../utils/ResourcesUtil');
-var dockerUtil = require('../utils/DockerUtil');
 var containerActions = require('../actions/ContainerActions');
 
 var ContainerDetailsSubheader = React.createClass({
@@ -112,10 +109,6 @@ var ContainerDetailsSubheader = React.createClass({
     }
   },
   render: function () {
-    var runActionClass = classNames({
-      action: true,
-      disabled: this.disableRun()
-    });
     var restartActionClass = classNames({
       action: true,
       disabled: this.disableRestart()
@@ -139,11 +132,6 @@ var ContainerDetailsSubheader = React.createClass({
     var tabHomeClasses = classNames({
       'tab': true,
       'active': currentRoute === 'containerHome',
-      disabled: this.disableTab()
-    });
-    var tabLogsClasses = classNames({
-      'tab': true,
-      'active': currentRoute === 'containerLogs',
       disabled: this.disableTab()
     });
     var tabSettingsClasses = classNames({
