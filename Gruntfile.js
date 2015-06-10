@@ -237,7 +237,6 @@ module.exports = function (grunt) {
   }
 
   process.on('SIGINT', function () {
-    console.log('INT');
     grunt.task.run(['shell:electron:kill']);
     process.exit(1);
   });
