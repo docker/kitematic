@@ -11,7 +11,9 @@ var BOOT2DOCKER_ISO_URL = 'https://github.com/boot2docker/boot2docker/releases/d
 
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
-  // var target = grunt.option('target') || 'development';
+  var target = grunt.option('target') || 'development';
+  var env = process.env;
+  env.NODE_ENV = target;
 
   var version = function (str) {
     var match = str.match(/(\d+\.\d+\.\d+)/);
@@ -24,14 +26,13 @@ module.exports = function (grunt) {
     var config = grunt.config('download-binary')[target];
     execFile(config.binary, ['--version'], function (err, stdout) {
       var currentVersion = version(stdout);
-      if (!currentVersion || currentVersion !== config.version) {
+      if (!currentVersion || currentVersion !== version(config.version)) {
         grunt.task.run('curl:' + target);
         grunt.task.run('chmod');
       }
       done();
     });
   });
-
 
   grunt.initConfig({
     // electron
@@ -54,19 +55,59 @@ module.exports = function (grunt) {
       }
     },
 
+    // electron
+    electron: {
+      windows: {
+        options: {
+          name: 'Kitematic',
+          dir: 'build/',
+          out: 'dist/',
+          version: packagejson['electron-version'],
+          platform: 'win32',
+          arch: 'x64',
+          asar: true
+        }
+      }
+    },
+
+    'create-windows-installer': {
+      appDirectory: 'dist/Kitematic-win32/',
+      outputDirectory: 'installer/',
+      authors: 'Docker Inc.'
+    },
+
     // images
     copy: {
-      images: {
-        src: 'images/*',
-        dest: 'build/'
+      dev: {
+        files: [{
+          expand: true,
+          cwd: '.',
+          src: ['package.json', 'index.html'],
+          dest: 'build/'
+        }, {
+          expand: true,
+          cwd: 'images/',
+          src: ['**/*'],
+          dest: 'build/'
+        }, {
+          expand: true,
+          cwd: 'fonts/',
+          src: ['**/*'],
+          dest: 'build/'
+        }, {
+          cwd: 'node_modules/',
+          src: Object.keys(packagejson.dependencies).map(function (dep) { return dep + '/**/*';}),
+          dest: 'build/node_modules/',
+          expand: true
+        }]
       },
-      html: {
-        src: 'index.html',
-        dest: 'build/'
-      },
-      fonts: {
-        src: 'fonts/*',
-        dest: 'build/'
+      release: {
+        files: [{
+          expand: true,
+          cwd: 'resources',
+          src: ['**/*'],
+          dest: 'dist/Kitematic-win32/resources/resources/'
+        }]
       }
     },
 
@@ -104,8 +145,10 @@ module.exports = function (grunt) {
       options: {
         sourceMapFileInline: true
       },
-      files: {
-        'build/main.css': 'styles/main.less'
+      dist: {
+        files: {
+          'build/main.css': 'styles/main.less'
+        }
       }
     },
 
@@ -125,12 +168,28 @@ module.exports = function (grunt) {
       }
     },
 
-    // electron
+    shell: {
+      electron: {
+        command: path.join('cache', 'electron') + ' ' + 'build',
+        options: {
+          async: true,
+          execOptions: {
+            env: env
+          }
+        }
+      }
+    },
+
+    clean: {
+      dist: ['dist/'],
+      build: ['build/']
+    },
 
     // livereload
-    watch: {
-      options: {
-        livereload: true
+    watchChokidar: {
+      livereload: {
+        options: {livereload: true},
+        files: ['build/**/*']
       },
       js: {
         files: ['src/**/*.js'],
@@ -146,6 +205,6 @@ module.exports = function (grunt) {
       }
     }
   });
-
-  grunt.registerTask('default', ['download-electron', 'curl', 'babel', 'less', 'copy', 'watch', 'electron']);
+  grunt.registerTask('default', ['download-electron', 'download-binary', 'babel', 'less', 'copy:dev', 'shell:electron', 'watchChokidar']);
+  grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron', 'copy:release']);
 };

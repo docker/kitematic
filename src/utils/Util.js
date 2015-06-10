@@ -56,7 +56,7 @@ module.exports = {
       .replace(/\/Users\/[^\/]*\//mg, '/Users/<redacted>/');
   },
   packagejson: function () {
-    return JSON.parse(fs.readFileSync(path.join(__dirname, '../..', 'package.json'), 'utf8'));
+    return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
   },
   settingsjson: function () {
     var settingsjson = {};

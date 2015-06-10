@@ -2,6 +2,7 @@
 .swp
 build
 dist
+installer
 node_modules
 coverage
 npm-debug.log

@@ -5,9 +5,8 @@ var fs = require('fs');
 var ipc = require('ipc');
 var path = require('path');
 
-process.env.NODE_PATH = path.join(__dirname, '/../node_modules');
+process.env.NODE_PATH = path.join(__dirname, 'node_modules');
 process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
-process.chdir(path.join(__dirname, '..'));
 process.env.PATH = '/usr/local/bin:' + process.env.PATH;
 
 var size = {}, settingsjson = {};
@@ -17,6 +16,46 @@ try {
 try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
 } catch (err) {}
+
+var handleStartupEvent = function() {
+  if (process.platform !== 'win32') {
+    return false;
+  }
+
+  var squirrelCommand = process.argv[1];
+  switch (squirrelCommand) {
+    case '--squirrel-install':
+    case '--squirrel-updated':
+
+      // Optionally do things such as:
+      //
+      // - Install desktop and start menu shortcuts
+      // - Add your .exe to the PATH
+      // - Write to the registry for things like file associations and
+      //   explorer context menus
+
+      // Always quit when done
+      app.quit();
+
+      return true;
+    case '--squirrel-uninstall':
+      // Undo anything you did in the --squirrel-install and
+      // --squirrel-updated handlers
+
+      // Always quit when done
+      app.quit();
+
+      return true;
+    case '--squirrel-obsolete':
+      // This is called on the outgoing version of your app before
+      // we update to the new version - it's the opposite of
+      // --squirrel-updated
+      app.quit();
+      return true;
+  }
+};
+
+handleStartupEvent();
 
 var openURL = null;
 app.on('open-url', function (event, url) {
@@ -36,7 +75,7 @@ app.on('ready', function () {
     show: false,
   });
 
-  mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/index.html')));
+  mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, 'index.html')));
 
   app.on('activate-with-no-open-windows', function () {
     if (mainWindow) {
