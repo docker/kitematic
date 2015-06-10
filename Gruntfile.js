@@ -16,8 +16,6 @@ module.exports = function (grunt) {
   var env = process.env;
   env.NODE_ENV = target;
 
-  console.log(process.cwd());
-
   var version = function (str) {
     var match = str.match(/(\d+\.\d+\.\d+)/);
     return match ? match[1] : null;
@@ -38,6 +36,10 @@ module.exports = function (grunt) {
   });
 
   grunt.initConfig({
+    IDENTITY: '"Developer ID Application: Docker Inc"',
+    OSX_OUT: './dist/osx',
+    OSX_FILENAME: path.join('<%= OSX_OUT %>', 'Kitematic.app'),
+
     // electron
     electron: {
       windows: {
@@ -55,7 +57,7 @@ module.exports = function (grunt) {
         options: {
           name: 'Kitematic',
           dir: 'build/',
-          out: 'dist/osx/',
+          out: '<%= OSX_OUT %>',
           version: packagejson['electron-version'],
           platform: 'darwin',
           arch: 'x64',
@@ -126,10 +128,10 @@ module.exports = function (grunt) {
           expand: true,
           cwd: 'resources',
           src: ['**/*'],
-          dest: 'dist/osx/Kitematic.app/Contents/Resources/resources/'
+          dest: '<%= OSX_FILENAME %>/Contents/Resources/resources/'
         }, {
           src: 'util/kitematic.icns',
-          dest: 'dist/osx/Kitematic.app/Contents/Resources/atom.icns'
+          dest: '<%= OSX_FILENAME %>/Contents/Resources/atom.icns'
         }],
         options: {
           mode: true
@@ -203,6 +205,17 @@ module.exports = function (grunt) {
             env: env
           }
         }
+      },
+      sign: {
+        options: {
+          failOnError: false,
+        },
+        command: [
+          'codesign --deep -v -f -s <%= IDENTITY %> <%= OSX_FILENAME %>/Contents/Frameworks/*',
+          'codesign -v -f -s <%= IDENTITY %> <%= OSX_FILENAME %>',
+          'codesign -vvv --display <%= OSX_FILENAME %>',
+          'codesign -v --verify <%= OSX_FILENAME %>',
+        ].join(' && '),
       }
     },
 
@@ -239,7 +252,7 @@ module.exports = function (grunt) {
   if (process.platform === 'win32') {
     grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'copy:osx']);
   } else {
-    grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx']);
+    grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign']);
   }
 
   process.on('SIGINT', function () {
