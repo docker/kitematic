@@ -16,6 +16,8 @@ module.exports = function (grunt) {
   var env = process.env;
   env.NODE_ENV = target;
 
+  console.log(process.cwd());
+
   var version = function (str) {
     var match = str.match(/(\d+\.\d+\.\d+)/);
     return match ? match[1] : null;
@@ -57,7 +59,8 @@ module.exports = function (grunt) {
           version: packagejson['electron-version'],
           platform: 'darwin',
           arch: 'x64',
-          asar: true
+          asar: true,
+          'app-bundle-id': 'com.kitematic.kitematic'
         }
       }
     },
@@ -124,6 +127,9 @@ module.exports = function (grunt) {
           cwd: 'resources',
           src: ['**/*'],
           dest: 'dist/osx/Kitematic.app/Contents/Resources/resources/'
+        }, {
+          src: 'util/kitematic.icns',
+          dest: 'dist/osx/Kitematic.app/Contents/Resources/atom.icns'
         }],
         options: {
           mode: true
