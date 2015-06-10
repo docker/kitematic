@@ -56,7 +56,7 @@ module.exports = {
   recommended: function () {
     request.get('https://kitematic.com/recommended.json', (error, response, body) => {
       if (error) {
-        repositoryServerActions.recommendedError({error});
+        repositoryServerActions.error({error});
       }
 
       let data = JSON.parse(body);

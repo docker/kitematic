@@ -41,6 +41,9 @@ module.exports = {
   home: function () {
     return app.getPath('home');
   },
+  documents: function () {
+    return this.isWindows() ? 'My\ Documents' : 'Documents';
+  },
   supportDir: function () {
     return app.getPath('userData');
   },

@@ -25,7 +25,7 @@ var ContainerHomeFolder = React.createClass({
       }, (index) => {
         if (index === 0) {
           var volumes = _.clone(this.props.container.Volumes);
-          var newHostVolume = path.join(util.home(), 'Kitematic', this.props.container.Name, containerVolume);
+          var newHostVolume = path.join(util.home(), util.documents(), 'Kitematic', this.props.container.Name, containerVolume);
           volumes[containerVolume] = newHostVolume;
           var binds = _.pairs(volumes).map(function (pair) {
             if(util.isWindows()) {
