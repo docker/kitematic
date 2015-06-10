@@ -57,7 +57,10 @@ var ContainerHomePreview = React.createClass({
           <div className="widget">
             <div className="top-bar">
               <div className="text">Web Preview</div>
-              <div className="settings" onClick={this.handleClickNotShowingCorrectly}>
+              <div className="action" onClick={this.handleClickPreview}>
+                <span className="icon icon-open-external"></span>
+              </div>
+              <div className="action" onClick={this.handleClickNotShowingCorrectly}>
                 <span className="icon icon-preferences"></span>
               </div>
             </div>
@@ -82,7 +85,7 @@ var ContainerHomePreview = React.createClass({
           <div className="widget">
             <div className="top-bar">
               <div className="text">IP & PORTS</div>
-              <div className="settings" onClick={this.handleClickNotShowingCorrectly}>
+              <div className="action" onClick={this.handleClickNotShowingCorrectly}>
                 <span className="icon icon-preferences"></span>
               </div>
             </div>

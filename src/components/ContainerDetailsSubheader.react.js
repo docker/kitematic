@@ -179,10 +179,6 @@ var ContainerDetailsSubheader = React.createClass({
             <div className="action-icon" onClick={this.handleTerminal}><span className="icon icon-docker-exec"></span></div>
             <div className="btn-label">EXEC</div>
           </div>
-          <div className={runActionClass}>
-            <div className="action-icon" onClick={this.handleRun}><span className="icon icon-browser-view"></span></div>
-            <div className="btn-label">VIEW</div>
-          </div>
         </div>
         <div className="details-subheader-tabs">
           <span className={tabHomeClasses} onClick={this.showHome}>Home</span>

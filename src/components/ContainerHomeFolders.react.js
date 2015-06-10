@@ -78,7 +78,7 @@ var ContainerHomeFolder = React.createClass({
         <div className="widget">
           <div className="top-bar">
             <div className="text">Edit Files</div>
-            <div className="settings" onClick={this.handleClickChangeFolders}>
+            <div className="action" onClick={this.handleClickChangeFolders}>
               <span className="icon icon-preferences"></span>
             </div>
           </div>
