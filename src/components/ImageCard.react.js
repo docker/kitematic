@@ -149,10 +149,10 @@ var ImageCard = React.createClass({
       <div className="image-item">
         <div className="overlay menu-overlay">
           <div className="menu-item" onClick={this.handleTagOverlayClick.bind(this, this.props.image.name)}>
-            SELECTED TAG: <span className="selected-tag">{this.state.chosenTag}</span>
+            <span className="icon icon-tag"></span><span className="text">SELECTED TAG: <span className="selected-tag">{this.state.chosenTag}</span></span>
           </div>
           <div className="menu-item" onClick={this.handleRepoClick}>
-            VIEW ON DOCKER HUB
+            <span className="icon icon-link"></span><span className="text">VIEW ON DOCKER HUB</span>
           </div>
           <div className="close-overlay">
             <a className="btn btn-action circular" onClick={self.handleCloseMenuOverlay}><span className="icon icon-delete"></span></a>
