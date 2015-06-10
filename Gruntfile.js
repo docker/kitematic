@@ -13,6 +13,7 @@ var BOOT2DOCKER_ISO_URL = 'https://github.com/boot2docker/boot2docker/releases/d
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
   var target = grunt.option('target') || 'development';
+  var beta = grunt.option('beta') || false;
   var env = process.env;
   env.NODE_ENV = target;
 
@@ -35,16 +36,22 @@ module.exports = function (grunt) {
     });
   });
 
+  var APPNAME = beta ? 'Kitematic (Beta)' : 'Kitematic';
+  var OSX_OUT = './dist/osx';
+  var OSX_FILENAME = OSX_OUT + '/' + APPNAME + '.app';
+
   grunt.initConfig({
-    IDENTITY: '"Developer ID Application: Docker Inc"',
-    OSX_OUT: './dist/osx',
-    OSX_FILENAME: path.join('<%= OSX_OUT %>', 'Kitematic.app'),
+    IDENTITY: 'Developer ID Application: Docker Inc',
+    APPNAME: APPNAME,
+    OSX_OUT: OSX_OUT,
+    OSX_FILENAME: OSX_FILENAME,
+    OSX_FILENAME_ESCAPED: OSX_FILENAME.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)'),
 
     // electron
     electron: {
       windows: {
         options: {
-          name: 'Kitematic',
+          name: '<%= APPNAME %>',
           dir: 'build/',
           out: 'dist/',
           version: packagejson['electron-version'],
@@ -55,7 +62,7 @@ module.exports = function (grunt) {
       },
       osx: {
         options: {
-          name: 'Kitematic',
+          name: '<%= APPNAME %>',
           dir: 'build/',
           out: '<%= OSX_OUT %>',
           version: packagejson['electron-version'],
@@ -211,11 +218,14 @@ module.exports = function (grunt) {
           failOnError: false,
         },
         command: [
-          'codesign --deep -v -f -s <%= IDENTITY %> <%= OSX_FILENAME %>/Contents/Frameworks/*',
-          'codesign -v -f -s <%= IDENTITY %> <%= OSX_FILENAME %>',
-          'codesign -vvv --display <%= OSX_FILENAME %>',
-          'codesign -v --verify <%= OSX_FILENAME %>',
+          'codesign --deep -v -f -s "<%= IDENTITY %>" <%= OSX_FILENAME_ESCAPED %>/Contents/Frameworks/*',
+          'codesign -v -f -s "<%= IDENTITY %>" <%= OSX_FILENAME_ESCAPED %>',
+          'codesign -vvv --display <%= OSX_FILENAME_ESCAPED %>',
+          'codesign -v --verify <%= OSX_FILENAME_ESCAPED %>',
         ].join(' && '),
+      },
+      zip: {
+        command: 'ditto -c -k --sequesterRsrc --keepParent <%= OSX_FILENAME_ESCAPED %> <%= OSX_OUT %>/Kitematic-' + packagejson.version + '.zip',
       }
     },
 
@@ -252,7 +262,7 @@ module.exports = function (grunt) {
   if (process.platform === 'win32') {
     grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'copy:osx']);
   } else {
-    grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign']);
+    grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
   }
 
   process.on('SIGINT', function () {

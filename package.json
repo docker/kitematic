@@ -14,8 +14,8 @@
     "start": "gulp",
     "test": "jest -c jest-unit.json",
     "integration": "jest -c jest-integration.json",
-    "release": "gulp release",
-    "release:beta": "gulp release --beta",
+    "release": "grunt release",
+    "release:beta": "grunt release --beta=true",
     "lint": "jsxhint src",
     "reset": "gulp reset"
   },
@@ -88,6 +88,7 @@
     "minimist": "^1.1.1",
     "react-tools": "^0.13.1",
     "run-sequence": "^1.0.2",
+    "shell-escape": "^0.2.0",
     "source-map-support": "^0.2.10"
   }
 }
