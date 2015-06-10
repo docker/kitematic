@@ -62,7 +62,7 @@ module.exports = {
       let data = JSON.parse(body);
 
       // If the JWT has expired, then log in again to get a new JWT
-      if (data && data.detail === 'Signature has expired.') {
+      if (data && data.detail.indexOf('expired') !== -1) {
         let config = this.config();
         if (!this.config()) {
           this.logout();
