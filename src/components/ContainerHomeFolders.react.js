@@ -77,7 +77,7 @@ var ContainerHomeFolder = React.createClass({
       <div className="folders wrapper">
         <div className="widget">
           <div className="top-bar">
-            <div className="text">Edit Files</div>
+            <div className="text">Volumes</div>
             <div className="action" onClick={this.handleClickChangeFolders}>
               <span className="icon icon-preferences"></span>
             </div>

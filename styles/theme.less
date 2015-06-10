@@ -22,9 +22,12 @@ h4 {
 }
 
 a {
-  transition: color 0.25s;
+  color: @brand-action;
+  transition: color 150ms;
+  //cursor: pointer;
   &:hover {
     text-decoration: none;
+    color: darken(@brand-action, 10%);
   }
 }
 

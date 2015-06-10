@@ -130,12 +130,12 @@ var ContainerDetailsSubheader = React.createClass({
     var currentRoute = _.last(currentRoutes);
 
     var tabHomeClasses = classNames({
-      'tab': true,
+      'details-tab': true,
       'active': currentRoute === 'containerHome',
       disabled: this.disableTab()
     });
     var tabSettingsClasses = classNames({
-      'tab': true,
+      'details-tab': true,
       'active': currentRoutes && (currentRoutes.indexOf('containerSettings') >= 0),
       disabled: this.disableTab()
     });

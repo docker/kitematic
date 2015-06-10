@@ -27,8 +27,8 @@ var ContainerHome = React.createClass({
   },
 
   handleResize: function () {
-    $('.full .wrapper').height(window.innerHeight - 105);
-    $('.left .wrapper').height(window.innerHeight - 105);
+    $('.full .wrapper').height(window.innerHeight - 132);
+    $('.left .wrapper').height(window.innerHeight - 132);
     $('.right .wrapper').height(window.innerHeight / 2 - 55);
   },
 

@@ -13,36 +13,46 @@
       font-size: 14px;
       color: @gray-darker;
       font-weight: 500;
-      margin-left: 1.2rem;
+      margin-left: 1.5rem;
       .status {
+        padding: 0.3rem;
+        border-radius: @border-radius;
         font-size: 10px;
         font-weight: 500;
         position: relative;
         left: 1rem;
+        color: white;
+        border: 1px solid white;
         &.running {
+          border-color: @brand-positive;
           color: @brand-positive;
         }
         &.paused {
+          border-color: @gray-lighter;
           color: @gray-lighter;
         }
         &.stopped {
+          border-color: @gray-lighter;
           color: @gray-lighter;
         }
         &.downloading {
+          border-color: @brand-action;
           color: @brand-action;
         }
       }
     }
   }
   .details-subheader {
+    //margin: 1rem 1rem 0 1rem;
     flex: 0 auto;
     display: flex;
     flex-direction: row;
     position: relative;
     border-bottom: 1px solid @color-divider;
+    border-radius: @border-radius;
     background-color: white;
     top: -1px;
-    height: 45px;
+    height: 64px;
     font-size: 10px;
     .details-header-actions {
       flex: 1 auto;
@@ -50,11 +60,19 @@
       position: relative;
       .action {
         display: inline-block;
-        position: relative;
-        width: 50px;
-        height: 44px;
-        top: 0rem;
+        width: 54px;
+        padding-top: 0.5rem;
+        height: 60px;
         .box-button();
+        &:hover {
+          background-color: transparent;
+          color: @gray-darkest;
+        }
+        &:active {
+          color: @brand-action;
+          box-shadow: none;
+          background-color: transparent;
+        }
         //border-right: 1px solid @color-divider;
         &.disabled {
           background-color: white;
@@ -62,28 +80,49 @@
         }
         .action-icon {
           text-align: center;
-          height: 44px;
+          //height: 44px;
           .icon {
-            font-size: 20px;
+            font-size: 30px;
             margin-left: 0.6rem;
           }
         }
         .btn-label {
           text-align: center;
-          font-size: 8px;
+          font-size: 9px;
           position: relative;
-          top: -1.5rem;
+          top: -0.5rem;
         }
       }
     }
     .details-subheader-tabs {
-      margin: 1.2rem 1.2rem 0 0;
+      margin: 3rem -0.1rem 0 0;
       flex: 1 auto;
       text-align: right;
-      text-transform: uppercase;
-      .tab {
+      .details-tab {
+        transition: background-color 140ms;
+        font-size: 14px;
         font-weight: 500;
-        min-width: 40px;
+        padding: 1.5rem 2rem;
+        border-top: 1px solid @color-divider;
+        border-left: 1px solid @color-divider;
+        color: @gray-light;
+        &:hover {
+          background-color: @color-box-button;
+        }
+        &:last-child {
+          border-right: 1px solid @color-divider;
+        }
+        //border-radius: @border-radius;
+        &.active {
+          background-color: @color-background;
+          border-bottom: 1px solid @color-background;
+          border-top: 2px solid @brand-primary;
+          color: @gray-darker;
+        }
+        &:active {
+          box-shadow: inset 0 0 1px @color-divider;
+          background-color: darken(@color-box-button, 1%);
+        }
       }
     }
   }
@@ -129,6 +168,5 @@
   .details-panel {
     flex: 1;
     overflow: auto;
-    background-color: white;
   }
 }
