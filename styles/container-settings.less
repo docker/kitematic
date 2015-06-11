@@ -23,6 +23,7 @@
         outline: none;
         &.active {
           li {
+            font-weight: 500;
             border-bottom: 2px solid @brand-primary;
             color: @gray-darkest;
           }
@@ -110,6 +111,12 @@
       }
     }
     .table {
+      &.ports {
+        max-width: 500px;
+      }
+      &.volumes {
+        max-width: 100%;
+      }
       color: @gray-normal;
       tr {
         &:first-child {

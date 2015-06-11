@@ -37,53 +37,30 @@
           padding-bottom: 0px;
         }
         .table {
-          padding-left: 20px;
-          padding-right: 20px;
-          .icon-arrow-right {
-            color: #BBB;
-            font-size: 13px;
-            margin: 0px 8px;
-            position: relative;
-            top: 2px;
-            flex: 0 auto;
-            min-width: 13px;
-          }
-          &.ports {
-            .table-labels {
-              margin-top: 20px;
-              flex: 1 auto;
-              display: flex;
-              font-size: 10px;
-              color: @gray-light;
-              .label-left {
-                flex: 0 auto;
-                min-width: 60px;
-                margin-right: 30px;
-                text-align: right;
-              }
-              .label-right {
-                flex: 1 auto;
-                display: inline-block;
+          color: @gray-normal;
+          font-size: 12px;
+          margin-left: 0.2rem;
+          max-width: 300px;
+          tr {
+            &:first-child {
+              td {
+                border: none;
               }
             }
-            .table-values {
-              flex: 1 auto;
-              display: flex;
-              flex-direction: row;
-              margin: 8px 0;
-              font-size: 12px;
-              .value-left {
+            td {
+              border-color: @color-divider;
+              &.right {
                 text-align: right;
-                min-width: 70px;
-                flex: 0 auto;
-                padding: 0px;
               }
-              .value-right {
-                flex: 1 auto;
-                -webkit-user-select: text;
-                max-width: 170px;
-                padding: 0px;
-              }
+            }
+          }
+          th {
+            font-size: 10px;
+            color: @gray-lighter;
+            font-weight: 500;
+            border: none;
+            &.right {
+              text-align: right;
             }
           }
         }

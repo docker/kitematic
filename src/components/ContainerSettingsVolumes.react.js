@@ -72,7 +72,7 @@ var ContainerSettingsVolumes = React.createClass({
       <div className="settings-panel">
         <div className="settings-section">
           <h3>Configure Volumes</h3>
-          <table className="table">
+          <table className="table volumes">
             <thead>
               <tr>
                 <th>DOCKER FOLDER</th>

@@ -66,14 +66,14 @@ var ContainerHomePreview = React.createClass({
         </div>
       );
     } else {
-      var ports = _.map(_.pairs(this.props.ports), function (pair) {
+      var ports = _.map(_.pairs(this.props.ports), pair => {
         var key = pair[0];
         var val = pair[1];
         return (
-          <div key={key} className="table-values">
-            <span className="value-left">{key}</span><span className="icon icon-arrow-right"></span>
-            <span className="value-right">{val.display}</span>
-          </div>
+          <tr key={key}>
+            <td>{key}</td>
+            <td>{val.display}</td>
+          </tr>
         );
       });
 
@@ -87,13 +87,17 @@ var ContainerHomePreview = React.createClass({
               </div>
             </div>
             <p>You can access this container using the following IP address and port:</p>
-            <div className="table ports">
-              <div className="table-labels">
-                <div className="label-left">DOCKER PORT</div>
-                <div className="label-right">MAC PORT</div>
-              </div>
-              {ports}
-            </div>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>DOCKER PORT</th>
+                  <th>MAC PORT</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ports}
+              </tbody>
+            </table>
           </div>
         </div>
       );

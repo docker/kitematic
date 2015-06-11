@@ -62,7 +62,7 @@ var ContainerSettingsPorts = React.createClass({
       <div className="settings-panel">
         <div className="settings-section">
           <h3>Configure Ports</h3>
-          <table className="table">
+          <table className="table ports">
             <thead>
               <tr>
                 <th>DOCKER PORT</th>
