@@ -17,7 +17,7 @@ Before you fil an issue or a pull request, quickly read of the following tips on
 
 ### Prerequisites
 
-- [Node.js 0.10.38](https://nodejs.org/dist/v0.10.38/).
+- [Node.js 0.10.38](https://nodejs.org/dist/v0.10.38/)
 
 ### Other Prerequisites (Mac)
 - The latest Xcode from the Apple App Store.
