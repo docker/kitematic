@@ -1,5 +1,4 @@
 [![Build Status](https://travis-ci.org/kitematic/kitematic.svg?branch=master)](https://travis-ci.org/kitematic/kitematic)
-[![Coverage Status](https://coveralls.io/repos/kitematic/kitematic/badge.svg?branch=master)](https://coveralls.io/r/kitematic/kitematic?branch=master)
 [![bitHound Score](https://www.bithound.io/github/kitematic/kitematic/badges/score.svg)](https://www.bithound.io/github/kitematic/kitematic)
 
 
