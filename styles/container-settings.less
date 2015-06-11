@@ -1,38 +1,37 @@
 .details-panel .settings {
   display: flex;
   flex: 1 auto;
-  flex-direction: row;
+  flex-direction: column;
+  background-color: white;
+  margin: 1rem;
+  margin-bottom: 0;
+  border: 1px solid @color-divider;
+  border-radius: @border-radius;
   .settings-menu {
-    min-width: 180px;
+    display: flex;
     flex: 0 auto;
+    height: 40px;
+    border-bottom: 1px solid @color-divider;
     ul {
-      position: fixed;
-      margin: 0;
-      padding: 0;
-      padding-top: 14px;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      width: 100%;
+      justify-content: flex-end;
       a {
-        min-width: 160px;
-        margin-left: 12px;
         color: @gray-normal;
-        flex-shrink: 0;
         cursor: default;
         outline: none;
-        margin-bottom: 10px;
         &.active {
           li {
-            color: white;
-            border-radius: 40px;
-            .brand-gradient();
+            border-bottom: 2px solid @brand-primary;
+            color: @gray-darkest;
           }
         }
         &:hover {
           text-decoration: none;
           li {
             cursor: default;
-            border-radius: 40px;
-            background-color: @gray-lightest;
+            color: @gray-darkest;
           }
         }
         &:focus {
@@ -40,24 +39,32 @@
         }
       }
       li {
+        transition: all 140ms;
         vertical-align: middle;
-        padding: 5px 12px;
+        padding: 0.9rem 1.6rem;
         display: flex;
         flex-direction: row;
       }
     }
   }
   .settings-panel {
-    padding-left: 20px;
+    padding: 2rem;
     flex: 1 auto;
     overflow-x: hidden;
+    h3 {
+      margin-top: 0;
+      color: @gray-darker;
+      font-weight: 400;
+      font-size: 18px;
+    }
     .settings-section {
-      margin-bottom: 40px;
+      margin-bottom: 4rem;
     }
     .container-name {
-      margin-bottom: 20px;
+      margin-bottom: 2rem;
       input {
-        width: 40%;
+        width: 100%;
+        max-width: 500px;
       }
       p {
         font-weight: 300;
