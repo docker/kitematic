@@ -185,9 +185,9 @@ var ContainerSettingsGeneral = React.createClass({
       let [id, key, val] = kvp;
       let icon;
       if (index === this.state.env.length - 1) {
-        icon = <a onClick={this.handleAddEnvVar} className="only-icon btn btn-positive small"><span className="icon icon-add-1"></span></a>;
+        icon = <a onClick={this.handleAddEnvVar} className="only-icon btn btn-positive small"><span className="icon icon-add"></span></a>;
       } else {
-        icon = <a onClick={this.handleRemoveEnvVar.bind(this, index)} className="only-icon btn btn-action small"><span className="icon icon-cross"></span></a>;
+        icon = <a onClick={this.handleRemoveEnvVar.bind(this, index)} className="only-icon btn btn-action small"><span className="icon icon-delete"></span></a>;
       }
 
       return (

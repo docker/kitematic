@@ -78,8 +78,9 @@
     }
     .env-vars-labels {
       width: 100%;
-      font-size: 12px;
-      color: @gray-light;
+      font-size: 14px;
+      color: @gray-lighter;
+      font-weight: 500;
       margin-left: 5px;
       margin-bottom: 5px;
       margin-top: 20px;
@@ -109,97 +110,25 @@
       }
     }
     .table {
-      margin-bottom: 0;
-      .icon-arrow-right {
-        color: #BBB;
-        font-size: 20px;
-        margin: 0px 10px;
-        flex: 0 auto;
-        min-width: 13px;
-      }
-      &.ports {
-        .table-labels {
-          margin-top: 20px;
-          flex: 1 auto;
-          display: flex;
-          font-size: 12px;
-          color: @gray-light;
-          .label-left {
-            flex: 0 auto;
-            min-width: 85px;
-            margin-right: 30px;
-            text-align: right;
-          }
-          .label-right {
-            flex: 1 auto;
-            display: inline-block;
-            margin-left: 10px;
-            width: 40%;
+      color: @gray-normal;
+      tr {
+        &:first-child {
+          td {
+            border: none;
           }
         }
-        .table-values {
-          flex: 1 auto;
-          display: flex;
-          flex-direction: row;
-          margin: 8px 0;
-          .value-left {
-            text-align: right;
-            min-width: 85px;
-            flex: 0 auto;
-            padding: 0px;
-          }
-          .value-right {
-            flex: 1 auto;
-            -webkit-user-select: text;
-            max-width: 170px;
-            padding: 0px;
-          }
-          label {
-            margin-left: 8px;
-            margin-top: 1px;
-            font-weight: 400;
-            font-size: 13px;
-          }
-          input[type="checked"] {
-
-          }
+        td {
+          border-color: @color-divider;
         }
       }
-      &.volumes {
-        .table-labels {
-          margin-top: 20px;
-          flex: 1 auto;
-          display: flex;
-          font-size: 12px;
-          color: @gray-light;
-          .label-left {
-            flex: 0 auto;
-            margin-right: 30px;
-          }
-          .label-right {
-            flex: 1 auto;
-            display: inline-block;
-            margin-left: 10px;
-          }
-        }
-        .table-values {
-          flex: 1 auto;
-          display: flex;
-          flex-direction: row;
-          margin: 8px 0;
-          .value-left {
-            flex: 0 auto;
-            padding: 0px;
-          }
-          .value-right {
-            flex: 1 auto;
-            -webkit-user-select: text;
-            padding: 0px;
-          }
-          .btn {
-            margin-left: 10px;
-          }
-        }
+      th {
+        font-size: 14px;
+        color: @gray-lighter;
+        font-weight: 500;
+        border: none;
+      }
+      .btn {
+        margin-right: 0.5rem;
       }
     }
   }
