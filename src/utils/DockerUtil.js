@@ -103,6 +103,8 @@ export default {
       containerData.Env = containerData.Config.Env;
     }
 
+    containerData.Volumes = _.mapObject(containerData.Volumes, () => {return {};});
+
     let existing = this.client.getContainer(name);
     existing.kill(() => {
       existing.remove(() => {
@@ -203,7 +205,6 @@ export default {
         containerServerActions.error({name, error});
         return;
       }
-      existingData.name = existingData.Name || name;
 
       if (existingData.Config && existingData.Config.Image) {
         existingData.Image = existingData.Config.Image;

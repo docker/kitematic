@@ -1,6 +1,6 @@
 {
   "testDirectoryName": "__integration__",
-  "scriptPreprocessor": "<rootDir>/util/preprocessor.js",
+  "scriptPreprocessor": "<rootDir>/node_modules/babel-jest",
   "setupEnvScriptFile": "<rootDir>/util/testenv.js",
   "setupTestFrameworkScriptFile": "<rootDir>/util/prepare.js",
   "unmockedModulePathPatterns": [

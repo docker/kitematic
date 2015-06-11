@@ -3,6 +3,8 @@ var Promise = require('bluebird');
 var fs = require('fs');
 var path = require('path');
 var crypto = require('crypto');
+var remote = require('remote');
+var app = remote.require('app');
 
 module.exports = {
   exec: function (args, options) {
@@ -11,7 +13,7 @@ module.exports = {
       exec(args, options, (stderr, stdout, code) => {
         if (code) {
           var cmd = Array.isArray(args) ? args.join(' ') : args;
-          reject(new Error(cmd + ' returned non zero exit code. Stderr: ' + stderr));
+          reject(new Error(cmd + ' returned non zero exit code.\n===== Stderr =====\n ' + stderr + '\n===== Stdout =====\n' + stdout));
         } else {
           resolve(stdout);
         }
@@ -37,18 +39,13 @@ module.exports = {
     return str.replace(/ /g, '\\ ').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
   },
   home: function () {
-    return process.env[this.isWindows() ? 'USERPROFILE' : 'HOME'];
+    return app.getPath('home');
+  },
+  documents: function () {
+    return this.isWindows() ? 'My\ Documents' : 'Documents';
   },
   supportDir: function () {
-    var dirs = ['Library', 'Application\ Support', 'Kitematic'];
-    var acc = this.home();
-    dirs.forEach(function (d) {
-      acc = path.join(acc, d);
-      if (!fs.existsSync(acc)) {
-        fs.mkdirSync(acc);
-      }
-    });
-    return acc;
+    return app.getPath('userData');
   },
   CommandOrCtrl: function () {
     return this.isWindows() ? 'Ctrl' : 'Command';

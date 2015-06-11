@@ -160,7 +160,7 @@ var Containers = React.createClass({
             <section className={sidebarHeaderClass}>
               <h4>Containers</h4>
               <div className="create">
-                <Router.Link to="new">
+                <Router.Link tabIndex="-1" to="new">
                   <span className="btn btn-new btn-action has-icon btn-hollow"><span className="icon icon-add"></span>New</span>
                 </Router.Link>
               </div>
