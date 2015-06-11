@@ -65,12 +65,13 @@ input[type="text"] {
 }
 
 // Mixin for generating new styles
-.btn-styles(@btn-color: @gray-normal) {
+.btn-hollow-styles(@btn-color: @gray-normal) {
   .reset-filter(); // Disable gradients for IE9 because filter bleeds through rounded corners
   transition: all 100ms;
   background: transparent;
-	border-color: @btn-color;
+	border: 1px solid @btn-color;
 	color: @btn-color;
+  font-weight: 500;
 
   &:hover {
     background-color: fade(@btn-color, 3%);
@@ -109,8 +110,10 @@ input[type="text"] {
   .reset-filter(); // Disable gradients for IE9 because filter bleeds through rounded corners
   transition: all 100ms;
   background: @btn-color;
+  border: none;
 	color: white;
-
+  font-weight: 500;
+  
   &:hover {
     background-color: darken(@btn-color, 4%);
     color: white;
@@ -163,17 +166,27 @@ input[type="text"] {
 
 // Common styles
 .btn {
-  font-size: 13px;
   background-color: transparent;
   color: @gray-normal;
   border: 1px solid @gray-normal;
   border-radius: @border-radius;
   box-shadow: none;
-  font-weight: 400;
   text-shadow: none;
-  padding: 5px 14px 5px 14px;
   cursor: default;
-  
+  font-size: 12px;
+  padding: 0.4rem 1rem;
+  text-transform: uppercase;
+
+  &.has-icon {
+    .icon {
+      font-size: 0.9rem;
+      margin-right: 0.4rem;
+      &::before {
+        -webkit-font-smoothing: subpixel-antialiased;
+      }
+    }
+  }
+
   &.circular {
     border-radius: 100%;
     width: 25px;
@@ -241,20 +254,20 @@ input[type="text"] {
 
 // Apply the mixin to the buttons
 .btn-action {
-  .btn-styles(@brand-action);
-  &.btn-filled {
-    .btn-filled-styles(@brand-action);
+  .btn-hollow-styles(@brand-action);
+  &.btn-hollow {
+    .btn-hollow-styles(@brand-action);
   }
 }
 .btn-positive {
-  .btn-styles(@brand-positive);
+  .btn-filled-styles(@brand-positive);
 }
-.btn-default { .btn-styles(@btn-default-bg); }
-.btn-primary { .btn-styles(@btn-primary-bg); }
-.btn-success { .btn-styles(@btn-success-bg); }
-.btn-info    { .btn-styles(@btn-info-bg); }
-.btn-warning { .btn-styles(@btn-warning-bg); }
-.btn-danger  { .btn-styles(@btn-danger-bg); }
+.btn-default { .btn-filled-styles(@btn-default-bg); }
+.btn-primary { .btn-filled-styles(@btn-primary-bg); }
+.btn-success { .btn-filled-styles(@btn-success-bg); }
+.btn-info    { .btn-filled-styles(@btn-info-bg); }
+.btn-warning { .btn-filled-styles(@btn-warning-bg); }
+.btn-danger  { .btn-filled-styles(@btn-danger-bg); }
 
 .tooltip {
   .tooltip-inner {

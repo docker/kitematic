@@ -123,6 +123,20 @@
           box-shadow: inset 0 0 1px @color-divider;
           background-color: darken(@color-box-button, 1%);
         }
+        &.disabled {
+          color: @gray-lightest;
+          &:hover {
+            background-color: white;
+          }
+          &:active {
+            background-color: white;
+          }
+          &.active {
+            &:hover {
+              background-color: @color-background;
+            }
+          }
+        }
       }
     }
   }

@@ -83,7 +83,7 @@ var ContainerHomePreview = React.createClass({
             <div className="top-bar">
               <div className="text">IP & PORTS</div>
               <div className="action" onClick={this.handleClickNotShowingCorrectly}>
-                <span className="icon icon-edit"></span>
+                <span className="icon icon-preferences"></span>
               </div>
             </div>
             <p>You can access this container using the following IP address and port:</p>
