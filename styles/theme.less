@@ -6,7 +6,7 @@
 @import "bootstrap/mixins.less";
 
 h2 {
-  font-size: 18px;
+  font-size: 16px;
   color: @gray-normal;
 }
 
@@ -74,7 +74,7 @@ input[type="text"] {
   font-weight: 500;
 
   &:hover {
-    background-color: fade(@btn-color, 3%);
+    background-color: fade(@btn-color, 2%);
     border-color: darken(@btn-color, 5%);
     color: darken(@btn-color, 5%);
     cursor: default;
@@ -88,9 +88,9 @@ input[type="text"] {
 	}
 
   &:active {
-		background-color: fade(@btn-color, 5%);
+		background-color: fade(@btn-color, 3%);
 		border-color: darken(@btn-color, 5%);
-		box-shadow: 0 0 0 3px fade(@btn-color, 25%);
+    box-shadow: 0 0 15px fade(@btn-color, 25%);
 	}
 
   &:disabled,
@@ -129,7 +129,7 @@ input[type="text"] {
 
   &:active {
     background-color: darken(@btn-color, 5%);
-		box-shadow: 0 0 0 3px fade(@btn-color, 25%);
+    box-shadow: 0 0 15px fade(@btn-color, 25%);
 	}
 
   &:disabled,
@@ -174,7 +174,7 @@ input[type="text"] {
   text-shadow: none;
   cursor: default;
   font-size: 12px;
-  padding: 0.4rem 1rem;
+  padding: 0.5rem 1rem;
   text-transform: uppercase;
 
   &.has-icon {
