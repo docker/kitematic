@@ -3,7 +3,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  flex: 1 auto;
+  flex: 1 0;
   display: flex;
   flex-direction: column;
   .header-section {
@@ -43,7 +43,7 @@
     }
   }
   .details-subheader {
-    flex: 0 auto;
+    flex: 0 0;
     display: flex;
     flex-direction: row;
     position: relative;
@@ -51,7 +51,6 @@
     border-radius: @border-radius;
     background-color: white;
     top: -1px;
-    height: 64px;
     font-size: 10px;
     padding-left: 0.3rem;
     .details-header-actions {
@@ -95,8 +94,13 @@
       }
     }
     .details-subheader-tabs {
-      margin: 3rem -0.1rem 0 0;
-      flex: 1 auto;
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
+      position: relative;
+      right: -1px;
+      top: 1px;
+      flex: 1 0;
       text-align: right;
       .details-tab {
         transition: background-color 140ms;
@@ -105,6 +109,7 @@
         padding: 1.5rem 2rem;
         border-top: 1px solid @color-divider;
         border-left: 1px solid @color-divider;
+        border-bottom: 1px solid transparent;
         color: @gray-light;
         &:hover {
           background-color: @color-box-button;
