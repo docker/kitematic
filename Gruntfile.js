@@ -15,6 +15,7 @@ module.exports = function (grunt) {
   var target = grunt.option('target') || 'development';
   var beta = grunt.option('beta') || false;
   var env = process.env;
+  env.NODE_PATH = '..:' + env.NODE_PATH;
   env.NODE_ENV = target;
 
   var version = function (str) {
@@ -57,7 +58,8 @@ module.exports = function (grunt) {
           version: packagejson['electron-version'],
           platform: 'win32',
           arch: 'x64',
-          asar: true
+          asar: true,
+          icon: 'util/kitematic.ico'
         }
       },
       osx: {
@@ -76,8 +78,9 @@ module.exports = function (grunt) {
 
     'create-windows-installer': {
       appDirectory: 'dist/Kitematic-win32/',
-      outputDirectory: 'installer/',
-      authors: 'Docker Inc.'
+      authors: 'Docker Inc.',
+      loadingGif: 'util/loading.gif',
+      setupIcon: 'util/kitematic.ico'
     },
 
     // docker binaries
@@ -143,6 +146,13 @@ module.exports = function (grunt) {
         options: {
           mode: true
         }
+      }
+    },
+
+    rename: {
+      installer: {
+        src: 'installer/Setup.exe',
+        dest: 'installer/KitematicSetup.exe'
       }
     },
 
@@ -230,14 +240,13 @@ module.exports = function (grunt) {
     },
 
     clean: {
-      dist: ['dist/'],
-      build: ['build/']
+      release: ['build/', 'dist/', 'installer/'],
     },
 
     // livereload
     watchChokidar: {
       options: {
-        spawn: false
+        spawn: true
       },
       livereload: {
         options: {livereload: true},
@@ -245,22 +254,22 @@ module.exports = function (grunt) {
       },
       js: {
         files: ['src/**/*.js'],
-        tasks: ['babel']
+        tasks: ['newer:babel']
       },
       less: {
         files: ['styles/**/*.less'],
-        tasks: ['less']
+        tasks: ['newer:less']
       },
       copy: {
         files: ['images/*', 'index.html', 'fonts/*'],
-        tasks: ['copy']
+        tasks: ['newer:copy:dev']
       }
     }
   });
-  grunt.registerTask('default', ['download-binary', 'babel', 'less', 'copy:dev', 'shell:electron', 'watchChokidar']);
+  grunt.registerTask('default', ['download-binary', 'newer:babel', 'newer:less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'copy:osx']);
+    grunt.registerTask('release', ['clean', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'create-windows-installer', 'rename:installer']);
   } else {
     grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
   }
