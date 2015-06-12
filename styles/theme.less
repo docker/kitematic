@@ -6,7 +6,7 @@
 @import "bootstrap/mixins.less";
 
 h2 {
-  font-size: 18px;
+  font-size: 16px;
   color: @gray-normal;
 }
 
@@ -22,9 +22,12 @@ h4 {
 }
 
 a {
-  transition: color 0.25s;
+  color: @brand-action;
+  transition: color 150ms;
+  //cursor: pointer;
   &:hover {
     text-decoration: none;
+    color: darken(@brand-action, 10%);
   }
   outline: 0 !important;
 }
@@ -42,8 +45,8 @@ input[type="text"] {
       border-bottom: 1px solid @brand-action;
     }
     &::-webkit-input-placeholder {
-      color: #DDD;
-      font-weight: 300;
+      color: @gray-lighter;
+      font-weight: 400;
     }
   }
 }
@@ -63,34 +66,33 @@ input[type="text"] {
 }
 
 // Mixin for generating new styles
-.btn-styles(@btn-color: @gray-normal) {
-  transition: all 0.25s;
+.btn-hollow-styles(@btn-color: @gray-normal) {
   .reset-filter(); // Disable gradients for IE9 because filter bleeds through rounded corners
-  border-color: @btn-color;
-  color: @btn-color;
+  transition: all 100ms;
+  background: transparent;
+	border: 1px solid @btn-color;
+	color: @btn-color;
+  font-weight: 500;
 
-  &:hover,
-  &:focus {
-    border-color: darken(@btn-color, 15%);
-    color: darken(@btn-color, 15%);
+  &:hover {
+    background-color: fade(@btn-color, 2%);
+    border-color: darken(@btn-color, 5%);
+    color: darken(@btn-color, 5%);
     cursor: default;
     box-shadow: none;
-    background: none;
   }
+
+  &:focus,
+	&.focus {
+		color: @btn-color;
+		outline: none;
+	}
 
   &:active {
-    background-color: lighten(@btn-color, 45%);
-    border-color: darken(@btn-color, 15%);
-    color: darken(@btn-color, 15%);
-    box-shadow: none;
-  }
-
-  &.active {
-    background-color: @btn-color;
-    color: white;
-    box-shadow: none;
-    box-shadow: none;
-  }
+		background-color: fade(@btn-color, 3%);
+		border-color: darken(@btn-color, 5%);
+    box-shadow: 0 0 15px fade(@btn-color, 25%);
+	}
 
   &:disabled,
   &[disabled] {
@@ -98,6 +100,45 @@ input[type="text"] {
     background: none;
     &.active {
       background: none;
+      color: white;
+      box-shadow: none;
+      box-shadow: none;
+    }
+  }
+}
+
+.btn-filled-styles(@btn-color: @gray-normal) {
+  .reset-filter(); // Disable gradients for IE9 because filter bleeds through rounded corners
+  transition: all 100ms;
+  background: @btn-color;
+  border: none;
+	color: white;
+  font-weight: 500;
+  
+  &:hover {
+    background-color: darken(@btn-color, 4%);
+    color: white;
+    cursor: default;
+    box-shadow: none;
+  }
+
+  &:focus,
+	&.focus {
+		color: white;
+		outline: none;
+	}
+
+  &:active {
+    background-color: darken(@btn-color, 5%);
+    box-shadow: 0 0 15px fade(@btn-color, 25%);
+	}
+
+  &:disabled,
+  &[disabled] {
+    opacity: 0.5;
+    background: @btn-color;
+    &.active {
+      background: @btn-color;
       color: white;
       box-shadow: none;
       box-shadow: none;
@@ -126,16 +167,40 @@ input[type="text"] {
 
 // Common styles
 .btn {
-  font-size: 13px;
   background-color: transparent;
   color: @gray-normal;
   border: 1px solid @gray-normal;
-  border-radius: 40px;
+  border-radius: @border-radius;
   box-shadow: none;
-  font-weight: 400;
   text-shadow: none;
-  padding: 5px 14px 5px 14px;
   cursor: default;
+  font-size: 12px;
+  padding: 0.5rem 1rem;
+  text-transform: uppercase;
+
+  &.has-icon {
+    .icon {
+      font-size: 0.9rem;
+      margin-right: 0.4rem;
+      &::before {
+        -webkit-font-smoothing: subpixel-antialiased;
+      }
+    }
+  }
+
+  &.circular {
+    border-radius: 100%;
+    width: 25px;
+    height: 25px;
+    padding: 0;
+    padding-top: 4px;
+    .icon {
+      font-size: 10px;
+      &::before {
+        -webkit-font-smoothing: subpixel-antialiased;
+      }
+    }
+  }
 
   &.small {
     font-size: 11px;
@@ -181,36 +246,35 @@ input[type="text"] {
 
   &.only-icon {
     padding: 6px 7px 6px 7px;
+    border-radius: 100%;
     &.small {
       width: 22px;
-      padding: 4px 5px 4px 5px;
+      padding: 3px 5px 4px 5px;
+      .icon {
+        &::before {
+          -webkit-font-smoothing: subpixel-antialiased;
+        }
+      }
     }
   }
 }
 
 // Apply the mixin to the buttons
 .btn-action {
-  .btn-styles(@brand-action);
+  .btn-hollow-styles(@brand-action);
+  &.btn-hollow {
+    .btn-hollow-styles(@brand-action);
+  }
 }
 .btn-positive {
-  .btn-styles(@brand-positive);
-  &:hover,
-  &:focus {
-    border-color: darken(@brand-positive, 7%);
-    color: darken(@brand-positive, 7%);
-  }
-  &:active {
-    background-color: lighten(@brand-positive, 53%);
-    border-color: darken(@brand-positive, 7%);
-    color: darken(@brand-positive, 7%);
-  }
+  .btn-hollow-styles(@brand-positive);
 }
-.btn-default { .btn-styles(@btn-default-bg); }
-.btn-primary { .btn-styles(@btn-primary-bg); }
-.btn-success { .btn-styles(@btn-success-bg); }
-.btn-info    { .btn-styles(@btn-info-bg); }
-.btn-warning { .btn-styles(@btn-warning-bg); }
-.btn-danger  { .btn-styles(@btn-danger-bg); }
+.btn-default { .btn-filled-styles(@btn-default-bg); }
+.btn-primary { .btn-filled-styles(@btn-primary-bg); }
+.btn-success { .btn-filled-styles(@btn-success-bg); }
+.btn-info    { .btn-filled-styles(@btn-info-bg); }
+.btn-warning { .btn-filled-styles(@btn-warning-bg); }
+.btn-danger  { .btn-filled-styles(@btn-danger-bg); }
 
 .tooltip {
   .tooltip-inner {

@@ -108,7 +108,7 @@ var ContainerListItem = React.createClass({
             </div>
           </div>
           <div className="action">
-            <span className="icon icon-delete-3 btn-delete" onClick={this.handleDeleteContainer}></span>
+            <span className="btn circular" onClick={this.handleDeleteContainer}><span className="icon icon-delete"></span></span>
           </div>
         </li>
       </Router.Link>

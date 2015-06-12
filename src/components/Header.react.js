@@ -94,8 +94,7 @@ var Header = React.createClass({
     });
     accountActions.verify();
   },
-  render: function () {
-    let updateWidget = this.state.updateAvailable && !this.props.hideLogin ? <a className="btn btn-action small no-drag" onClick={this.handleAutoUpdateClick}>UPDATE NOW</a> : null;
+  renderWindowButtons: function () {
     let buttons;
     if (this.state.fullscreen) {
       buttons = (
@@ -114,41 +113,74 @@ var Header = React.createClass({
         </div>
       );
     }
-
-    let username;
-    if (this.props.hideLogin) {
-      username = null;
-    } else if (this.state.username) {
-      username = (
-        <span className="no-drag" onClick={this.handleUserClick}>
-          <RetinaImage src="user.png"/> {this.state.username} {this.state.verified ? null : '(Unverified)'} <RetinaImage src="userdropdown.png"/>
-        </span>
-      );
-    } else {
-      username = (
-        <span className="no-drag" onClick={this.handleLoginClick}>
-          <RetinaImage src="user.png"/> Log In
-        </span>
-      );
-    }
-
+    return buttons;
+  },
+  renderDashboardHeader: function () {
     let headerClasses = classNames({
       bordered: !this.props.hideLogin,
       header: true,
       'no-drag': true
     });
-
+    let username;
+    if (this.props.hideLogin) {
+      username = null;
+    } else if (this.state.username) {
+      username = (
+        <div className="login-wrapper">
+          <div className="login no-drag" onClick={this.handleUserClick}>
+            <span className="icon icon-user"></span> {this.state.username} {this.state.verified ? null : '(Unverified)'} <RetinaImage src="userdropdown.png"/>
+          </div>
+        </div>
+      );
+    } else {
+      username = (
+        <div className="login-wrapper">
+          <div className="login no-drag" onClick={this.handleLoginClick}>
+            <span className="icon icon-user"></span> LOGIN
+          </div>
+        </div>
+      );
+    }
+    let updateWidget = this.state.updateAvailable && !this.props.hideLogin ? <a className="btn btn-action small no-drag" onClick={this.handleAutoUpdateClick}>UPDATE NOW</a> : null;
     return (
       <div className={headerClasses}>
-        {buttons}
-        <div className="updates">
-          {updateWidget}
-        </div>
-        <div className="login">
+        <div className="left-header">
+          {this.renderWindowButtons()}
           {username}
+        </div>
+        <div className="right-header">
+          <div className="updates">
+            {updateWidget}
+          </div>
+          <div className="logo">
+            <RetinaImage src="logo.png"/>
+          </div>
         </div>
       </div>
     );
+  },
+  renderBasicHeader: function () {
+    let headerClasses = classNames({
+      bordered: !this.props.hideLogin,
+      header: true,
+      'no-drag': true
+    });
+    return (
+      <div className={headerClasses}>
+        <div className="left-header">
+          {this.renderWindowButtons()}
+        </div>
+        <div className="right-header">
+        </div>
+      </div>
+    );
+  },
+  render: function () {
+    if (this.props.hideLogin) {
+      return this.renderBasicHeader();
+    } else {
+      return this.renderDashboardHeader();
+    }
   }
 });
 

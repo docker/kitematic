@@ -3,135 +3,173 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  flex: 1 auto;
+  flex: 1 0;
   display: flex;
   flex-direction: column;
+  .header-section {
+    position: absolute;
+    top: 10px;
+    .text {
+      font-size: 14px;
+      color: @gray-darker;
+      font-weight: 500;
+      margin-left: 1.5rem;
+      .status {
+        padding: 0.3rem;
+        border-radius: @border-radius;
+        font-size: 10px;
+        font-weight: 500;
+        position: relative;
+        left: 1rem;
+        color: white;
+        border: 1px solid white;
+        &.running {
+          border-color: @brand-positive;
+          color: @brand-positive;
+        }
+        &.paused {
+          border-color: @gray-lighter;
+          color: @gray-lighter;
+        }
+        &.stopped {
+          border-color: @gray-lighter;
+          color: @gray-lighter;
+        }
+        &.downloading {
+          border-color: @brand-action;
+          color: @brand-action;
+        }
+      }
+    }
+  }
   .details-subheader {
     flex: 0 0;
     display: flex;
     flex-direction: row;
     position: relative;
     border-bottom: 1px solid @color-divider;
+    border-radius: @border-radius;
     background-color: white;
-    height: 51px;
-    padding: 6px 10px 10px 24px;
-    font-size: 13px;
-    color: @gray-normal;
+    top: -1px;
+    font-size: 10px;
+    padding-left: 0.3rem;
     .details-header-actions {
       flex: 1 auto;
       text-align: left;
-      margin-top: -12px;
+      position: relative;
       .action {
         display: inline-block;
-        position: relative;
-        img {
-          width: 35px;
-          height: 35px;
-        }
-        &.disabled {
-          opacity: 0.3;
-          &:active {
-            img, .btn-label {
-              -webkit-filter: brightness(1);
-            }
-          }
+        width: 54px;
+        padding-top: 0.5rem;
+        height: 60px;
+        .box-button();
+        &:hover {
+          background-color: transparent;
+          color: @gray-darkest;
         }
         &:active {
-          img, .btn-label {
-            -webkit-filter: brightness(0.8);
-          }
+          color: @brand-action;
+          box-shadow: none;
+          background-color: transparent;
+        }
+        //border-right: 1px solid @color-divider;
+        &.disabled {
+          background-color: white;
+          color: fade(@gray-light, 20%);
         }
         .action-icon {
-          color: @gray-normal;
-          margin-right: 15px;
+          text-align: center;
+          //height: 44px;
+          .icon {
+            font-size: 30px;
+            margin-left: 0.6rem;
+          }
         }
         .btn-label {
-          position: absolute;
-          color: @brand-action;
+          text-align: center;
           font-size: 9px;
-          width: 200px;
-          top: 38px;
-          &.view {
-            left: 8px;
-          }
-          &.restart {
-            left: 3px;
-          }
-          &.stop {
-            left: 8px;
-          }
-          &.start {
-            left: 8px;
-          }
-          &.terminal {
-            left: 1px;
-          }
-          visibility: hidden;
+          position: relative;
+          top: -0.5rem;
         }
       }
     }
     .details-subheader-tabs {
-      flex: 1 auto;
-      text-align: right;
-      margin-right: 3px;
-      margin-top: 3px;
-    }
-  }
-  .details-header {
-    flex: 0 0;
-    display: flex;
-    flex-direction: row;
-    padding: 18px 24px 24px 24px;
-    position: relative;
-    background-color: white;
-    h1 {
-      margin: 0;
-      font-size: 20px;
-      font-weight: 400;
-      margin: 0;
-      color: @gray-darkest;
-    }
-    .status {
-      font-size: 10px;
-      font-weight: 500;
+      display: flex;
+      justify-content: flex-end;
+      align-items: flex-end;
       position: relative;
-      top: 8px;
-      left: 14px;
-      &.running {
-        color: @brand-positive;
-      }
-      &.paused {
-        color: @gray-lighter;
-      }
-      &.stopped {
-        color: @gray-lighter;
-      }
-      &.downloading {
-        color: @brand-action;
+      right: -1px;
+      top: 1px;
+      flex: 1 0;
+      text-align: right;
+      .details-tab {
+        transition: background-color 140ms;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 1.5rem 2rem;
+        border-top: 1px solid @color-divider;
+        border-left: 1px solid @color-divider;
+        border-bottom: 1px solid transparent;
+        color: @gray-light;
+        &:hover {
+          background-color: @color-box-button;
+        }
+        &:last-child {
+          border-right: 1px solid @color-divider;
+        }
+        //border-radius: @border-radius;
+        &.active {
+          background-color: @color-background;
+          border-bottom: 1px solid @color-background;
+          border-top: 3px solid @brand-primary;
+          color: @gray-darker;
+        }
+        &:active {
+          box-shadow: inset 0 0 1px @color-divider;
+          background-color: darken(@color-box-button, 1%);
+        }
+        &.disabled {
+          color: @gray-lightest;
+          &:hover {
+            background-color: white;
+          }
+          &:active {
+            background-color: white;
+          }
+          &.active {
+            &:hover {
+              background-color: @color-background;
+            }
+          }
+        }
       }
     }
   }
 
   .tab {
-    margin-left: 16px;
-    padding: 6px 10px;
+    font-size: 12px;
     font-weight: 400;
     display: inline-block;
+    margin: 0 0.6rem;
+    transition: all 0.3s;
+    color: @gray-light;
+    border-bottom: 3px solid transparent;
+    text-align: center;
+    min-width: 20px;
+    padding-bottom: 1rem;
     &.active {
-      border-radius: 40px;
-      color: white;
-      .brand-gradient();
+      font-weight: 500;
+      color: @gray-darkest;
+      border-bottom: 3px solid @brand-primary;
     }
     &.disabled {
       opacity: 0.5;
       &:hover {
-        border-radius: 40px;
-        background-color: transparent;
+        color: @gray-light;
       }
     }
     &:hover {
-      border-radius: 40px;
-      background-color: @gray-lightest;
+      color: @gray-darkest;
     }
   }
 
@@ -150,6 +188,5 @@
   .details-panel {
     flex: 1 auto;
     overflow: auto;
-    background-color: white;
   }
 }

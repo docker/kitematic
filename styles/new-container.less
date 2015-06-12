@@ -31,7 +31,6 @@
   display: flex;
   flex: 1 auto;
   flex-direction: column;
-  padding: 25px 0 0;
 
   .spinner {
     display: inline-block;
@@ -42,35 +41,6 @@
     flex-direction: column;
     flex: 1 auto;
     color: @gray-normal;
-
-    .results-filters {
-      flex: 0 auto;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-end;
-      font-size: 13px;
-      margin: 0 10px;
-      margin-bottom: 10px;
-
-      .results-filter {
-        text-align: center;
-        margin: 0 10px;
-        min-width: 40px;
-        &.tab {
-          &:hover {
-            border-radius: 40px;
-            background-color: @gray-lightest;
-          }
-        }
-      }
-
-      .results-filter-title {
-        color: @gray-lighter;
-        font-weight: 500;
-        padding-top: 6px;
-      }
-    }
 
     .no-results {
       flex: 1 auto;
@@ -115,45 +85,49 @@
     }
   }
   .new-container-header {
-    margin: 0 20px 8px;
+    background-color: white;
+    height: 45px;
+    border-bottom: 1px solid @color-divider;
     display: flex;
     flex: 0 auto;
     flex-shrink: 0;
-    .text {
-      flex: 1 auto;
-      width: 50%;
-      font-size: 14px;
-      color: @gray-normal;
-    }
     .search {
       flex: 1 auto;
       .search-bar {
-        top: -7px;
         position: relative;
         .loading {
           position: absolute;
-          top: 7px;
-          left: 10px;
+          top: 13px;
+          left: 13px;
         }
         .search-icon {
-          font-size: 18px;
+          font-size: 20px;
           color: @gray-lighter;
           position: absolute;
-          top: 5px;
-          left: 10px;
+          top: 10px;
+          left: 13px;
         }
         input {
-          border-radius: 20px;
-          font-size: 12px;
-          height: 30px;
-          padding: 4px 8px 4px 35px;
+          transition: all 140ms;
+          width: 90%;
+          max-width: 500px;
+          border-radius: 0;
+          position: relative;
+          top: -1px;
+          left: -1px;
+          font-size: 14px;
+          height: 46px;
+          padding-left: 4.4rem;
           color: @gray-darkest;
-          margin-bottom: 3px;
-          border-color: @gray-lighter;
           box-shadow: none;
+          border: 1px solid @color-divider;
+          //border-right: 1px solid transparent;
+          &:hover {
+            border: 1px solid @gray-lighter;
+          }
           &:focus {
             box-shadow: none;
-            border-color: @brand-primary;
+            border: 1px solid @brand-primary;
           }
           &::-webkit-input-placeholder {
             color: @gray-lighter;
@@ -162,42 +136,94 @@
         }
       }
     }
+    .results-filters {
+      margin: 1.2rem 1.2rem 0 0;
+      .results-filter-title {
+        font-size: 12px;
+        color: @gray-lighter;
+        font-weight: 500;
+        margin-right: 0.7rem;
+      }
+    }
   }
 }
 
 .result-grids {
 
   overflow: auto;
-  margin: 0 0 0 20px;
+  margin: 0 0 0 1.3rem;
+
   .result-grid {
     display: flex;
+    align-content: stretch;
+    display: flex;
     flex-flow: row wrap;
+    flex-wrap: wrap;
     justify-content: flex-start;
     margin-top: 10px;
     .image-item {
       display: flex;
+      flex: 1 0;
       position: relative;
-      width: 320px;
-      height: 166px;
-      border-radius: 4px;
+      min-width: @image-card-width;
+      max-width: @image-card-width;
+      height: @image-card-height;
+      border-radius: @border-radius;
       background-color: white;
-      margin-right: 20px;
-      margin-bottom: 20px;
-      .tag-overlay {
-        z-index: 999;
-        background-color: rgba(0,0,0,0.8);
-        border-radius: 4px;
-        width: 320px;
-        height: 166px;
+      margin-right: 1rem;
+      margin-bottom: 1rem;
+      .overlay {
+        display: flex;
+        flex: 1 0;
+        background-color: white;
+        border-radius: @border-radius;
+        min-width: @image-card-width;
+        max-width: @image-card-width;
+        height: @image-card-height;
         position: absolute;
-        color: white;
-        font-size: 13px;
+        color: @gray-normal;
         display: none;
-        padding: 10px;
+        border: 1px solid @color-divider;
+        
+      }
+      .menu-overlay {
+        z-index: 999;
+        .menu-item {
+          padding: 0.8rem 1rem;
+          border-bottom: 1px solid @color-divider;
+          height: 40px;
+          .box-button();
+          .selected-tag {
+            color: @brand-primary;
+            margin-left: 0.3rem;
+          }
+          .icon {
+            font-size: 18px;
+          }
+          .text {
+            position: relative;
+            top: -0.4rem;
+            margin-left: 0.3rem;
+          }
+        }
+        .close-overlay {
+          position: absolute;
+          bottom: 1rem;
+          right: 1rem;
+        }
+      }
+      .tag-overlay {
+        z-index: 1000;
+        .close-overlay {
+          position: absolute;
+          top: 0.6rem;
+          right: 0.7rem;
+        }
         p {
-          color: white;
-          padding-bottom: 7px;
-          border-bottom: 1px solid rgba(255,255,255,0.2);
+          color: @gray-normal;
+          padding: 0.8rem 1rem;
+          margin-bottom: 0;
+          border-bottom: 1px solid @color-divider;
         }
         .tag-list {
           display: flex;
@@ -205,133 +231,149 @@
           align-items: flex-start;
           align-content: flex-start;
           flex-flow: row wrap;
-          height: 100px;
+          height: 90px;
           overflow: auto;
+          padding: 0.5rem;
           .tag {
+            font-size: 10px;
+            padding: 0.3rem 0.6rem;
             display: inline-block;
             flex: 0 auto;
-            margin-right: 2px;
-            padding: 3px 5px;
+            border-radius: @border-radius;
+            margin-right: 0.3rem;
+            margin-bottom: 0.3rem;
+            border: 1px solid transparent;
             &.active {
-              background-color: rgba(255,255,255,0.2);
-              border-radius: 20px;
+              background-color: @brand-primary;
+              color: white;
+              &:hover {
+                background-color: @brand-primary;
+                color: white;
+                border: 1px solid transparent;
+              }
             }
             &:hover {
-              background-color: rgba(255,255,255,0.2);
-              border-radius: 20px;
+              background-color: @color-box-button;
+              border: 1px solid @color-divider;
             }
           }
         }
         .tags-loading {
           position: relative;
-          left: 42%;
-          top: 20%;
+          left: 45%;
           text-align: center;
-          margin: 14px auto;
+          margin-top: 3rem;
           -webkit-animation-name: spin;
           -webkit-animation-duration: 1.8s;
           -webkit-animation-iteration-count: infinite;
           -webkit-animation-timing-function: linear;
         }
+        .no-tags {
+          color: @gray-lighter;
+          text-align: center;
+          margin-top: 3rem;
+        }
       }
       .logo {
-        flex: 1 auto;
-        min-width: 90px;
+        width: 60px;
+        min-width: 60px;
+        max-width: 60px;
         background-color: @brand-action;
-        border-top-left-radius: 4px;
-        border-bottom-left-radius: 4px;
+        border-top-left-radius: @border-radius;
+        border-bottom-left-radius: @border-radius;
         justify-content: center;
         text-align: center;
         box-shadow: inset 0px 0px 0px 1px rgba(0,0,0,0.2);
         img {
-          margin-top: 15px;
+          width: 35px;
+          height: auto;
+          margin-top: 1.2rem;
         }
       }
       .card {
-        padding: 10px 20px 10px 20px;
         position: relative;
-        border: 1px solid @gray-lighter;
+        border: 1px solid darken(@gray-lightest, 5%);
         border-left: 0;
-        border-top-right-radius: 4px;
-        border-bottom-right-radius: 4px;
-        .badges {
-          position: absolute;
-          right: 15px;
-          top: 8px;
-        }
-        .name {
-          font-size: 18px;
-          color: @gray-darkest;
-          margin-bottom: 0px;
-          position: relative;
-          width: 190px;
-          .namespace {
-            font-size: 11px;
-            color: @gray-lighter;
-            margin-bottom: -3px;
-            &.official {
-              color: @brand-action;
+        border-top-right-radius: @border-radius;
+        border-bottom-right-radius: @border-radius;
+        .info {
+          padding: 0.7rem 1rem 0.7rem 1.2rem;
+          .badges {
+            color: @brand-primary;
+            position: absolute;
+            right: 0.6rem;
+            top: 0.7rem;
+          }
+          .name {
+            color: @gray-darkest;
+            position: relative;
+            width: 190px;
+            .namespace {
+              font-size: 10px;
+              color: @gray-normal;
+              &.official {
+                color: @brand-action;
+              }
+            }
+            .repo {
+              font-size: 13px;
+              font-weight: 500;
+              display: inline-block;
+              max-width: 190px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
             }
           }
-          .repo {
-            display: inline-block;
-            max-width: 190px;
-            overflow: hidden;
+          .description {
+            font-size: 10px;
+            color: @gray-light;
+            padding-right: 1rem;
+            height: 44px;
             text-overflow: ellipsis;
-            white-space: nowrap;
+            overflow: hidden;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            display: -webkit-box;
+            word-wrap: break-word;
           }
         }
-        .description {
-          font-size: 12px;
-          color: @gray-normal;
-          height: 50px;
-          width: 190px;
-          text-overflow: ellipsis;
-          overflow: hidden;
-          -webkit-box-orient: vertical;
-          -webkit-line-clamp: 3;
-          display: -webkit-box;
-          word-wrap: break-word;
-        }
         .actions {
-          width: 190px;
-          position: absolute;
-          bottom: 8px;
-          .stars {
-            height: 15px;
+          display: flex;
+          flex-direaction: column;
+          justify-content: flex-end;
+          height: 33px;
+          border-top: 1px solid @color-divider;
+          .favorites {
+            flex: 1 auto;
             font-size: 10px;
-            color: @gray-darker;
-            border-right: 1px solid @gray-lightest;
-            padding-right: 10px;
+            color: @gray-normal;
+            border-right: 1px solid @color-divider;
+            padding: 1.1rem 1.2rem;
             .icon {
               position: relative;
-              font-size: 16px;
-              margin-right: 3px;
-              top: -1px;
-              color: @gray-darkest;
+              font-size: 11px;
+              margin-right: 0.5rem;
+              color: @gray-normal;
             }
             .text {
               position: relative;
-              top: -6px;
+              top: -0.2rem;
             }
           }
           .tags {
-            height: 15px;
+            flex: 1 auto;
             font-size: 10px;
             color: @gray-darker;
-            padding-left: 10px;
-            .icon {
+            padding-left: 1rem;
+            .key {
               position: relative;
-              font-size: 12px;
-              margin-right: 2px;
-              top: 2px;
-              color: @gray-darkest;
+              font-weight: 400;
+              color: @gray-light;
             }
             .text {
               position: relative;
-              top: -2px;
-              padding: 3px 5px;
-              text-decoration: underline;
+              color: @brand-action;
               &:hover {
                 background-color: @brand-action;
                 color: white;
@@ -339,17 +381,31 @@
               }
             }
           }
+          .more-menu {
+            flex: 0 auto;
+            width: 39px;
+            padding: 0.4rem 1rem;
+            font-size: 20px;
+            .box-button();
+          }
           .action {
-            flex: 1 auto;
-            .btn {
-              text-align: right;
-              position: relative;
-              float: right;
-              top: -7px;
+            flex: 0 auto;
+            position: relative;
+            top: -1px;
+            right: -1px;
+            height: 34px;
+            .box-button();
+            padding: 0.9rem 1rem;
+            color: @brand-primary;
+            border: 1px solid @brand-primary;
+            border-bottom-right-radius: @border-radius;
+            transition: all 140ms;
+            &:hover {
+              background-color: @brand-action;
+              color: white;
+              border: 1px solid darken(@brand-primary, 10%);
             }
           }
-          display: flex;
-          flex-direaction: row;
         }
       }
     }
