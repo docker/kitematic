@@ -184,6 +184,23 @@
       margin-bottom: 20px;
       text-align: center;
     }
+    &.error {
+      p {
+        color: @gray-darker;
+        &.error-message {
+          span {
+            display: block;
+            margin-bottom: 0.5rem;
+          }
+          text-align: center;
+          color: @brand-negative;
+          background-color: lighten(@brand-negative, 32%);
+          padding: 1rem;
+          border-radius: @border-radius;
+          -webkit-user-select: text;
+        }
+      }
+    }
   }
   .details-panel {
     flex: 1 auto;
