@@ -11,6 +11,8 @@ class RepositoryStore {
     this.bindActions(repositoryServerActions);
     this.bindActions(accountServerActions);
     this.results = [];
+    this.pageLimit = 1;
+    this.maxResults = 1;
     this.recommended = [];
     this.repos = [];
     this.reposLoading = false;
@@ -45,8 +47,8 @@ class RepositoryStore {
     this.setState({error: null, resultsLoading: true});
   }
 
-  resultsUpdated ({repos}) {
-    this.setState({results: repos, resultsLoading: false});
+  resultsUpdated ({repos, pageLimit, maxResults}) {
+    this.setState({results: repos, pageLimit: pageLimit, maxResults: maxResults, resultsLoading: false});
   }
 
   recommended () {
@@ -65,6 +67,16 @@ class RepositoryStore {
     let state = this.getState();
     let all = state.recommended.concat(state.repos).concat(state.results);
     return _.uniq(all, false, repo => repo.namespace + '/' + repo.name);
+  }
+
+  static getLimit () {
+    let state = this.getState();
+    return state.pageLimit;
+  }
+
+  static getMaxResults () {
+    let state = this.getState();
+    return state.maxResults;
   }
 
   static loading () {

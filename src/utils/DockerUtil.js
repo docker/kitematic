@@ -25,8 +25,6 @@ export default {
       throw new Error('Certificate directory does not exist');
     }
 
-    console.log(ip);
-
     this.host = ip;
     this.client = new dockerode({
       protocol: 'https',
