@@ -42,7 +42,7 @@ var _steps = [{
       progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
       try {
         if (util.isWindows()) {
-          yield util.exec([path.join(util.supportDir(), virtualBox.filename())]);
+          yield util.exec([path.join(util.supportDir(), virtualBox.filename()), '-msiparams', 'REBOOT=ReallySuppress', 'LIMITUI=INSTALLUILEVEL_PROGRESSONLY']);
         } else {
           yield util.exec(setupUtil.macSudoCmd(setupUtil.installVirtualBoxCmd()));
         }
@@ -57,7 +57,7 @@ var _steps = [{
   message: 'To run Docker containers on your computer, Kitematic is starting a Linux virtual machine. This may take a minute...',
   totalPercent: 60,
   percent: 0,
-  seconds: 72,
+  seconds: 80,
   run: Promise.coroutine(function* (progressCallback) {
     setupUtil.simulateProgress(this.seconds, progressCallback);
     var exists = yield machine.exists();

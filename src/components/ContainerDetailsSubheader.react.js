@@ -12,6 +12,7 @@ var classNames = require('classnames');
 var resources = require('../utils/ResourcesUtil');
 var dockerUtil = require('../utils/DockerUtil');
 var containerActions = require('../actions/ContainerActions');
+var dockerMachineUtil = require('../utils/DockerMachineUtil');
 
 var ContainerDetailsSubheader = React.createClass({
   contextTypes: {
@@ -111,26 +112,7 @@ var ContainerDetailsSubheader = React.createClass({
       if(!shell) {
         shell = 'sh';
       }
-      machine.ip().then(ip => {
-        if(util.isWindows()) {
-          var cmd = ['ssh', '-p', '22', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=quiet', '-o', 'StrictHostKeyChecking=no', '-i', util.home() + '/.docker/machine/machines/' + machine.name() + '/id_rsa', 'docker@' + ip, '-t', 'docker', 
-            'exec', '-i' , '-t', container.Name, shell];
-            console.log(cmd.join(" "));
-          util.execProper('start cmd.exe /C "' + cmd.join(" ") + '"', function (stderr, stdout, code) {
-            if (code) {
-              console.log(stderr);
-            }
-          });
-        } else {
-          var cmd = [resources.terminal(), 'ssh', '-p', '22', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=quiet', '-o', 'StrictHostKeyChecking=no', '-i', '~/.docker/machine/machines/' + machine.name() + '/id_rsa', 'docker@' + ip, '-t', 'docker', 
-            'exec', '-i', '-t', container.Name, shell];
-          exec(cmd, function (stderr, stdout, code) {
-            if (code) {
-              console.log(stderr);
-            }
-          });
-        }
-      });
+      dockerMachineUtil.dockerTerminal(`docker exec -it ${this.props.container.Name} ${shell}`);
     }
   },
   handleItemMouseEnterView: function () {

@@ -153,23 +153,29 @@ var DockerMachine = {
       });
     });
   },
-  dockerTerminal: function () {
+  dockerTerminal: function (cmd) {
     if(util.isWindows()) {
+      cmd = cmd || '';
       this.info().then(machine => {
-        util.execProper('start cmd.exe /k',
-          {'env': {
+        util.exec('start powershell.exe ' + cmd,
+          {env: {
             'DOCKER_HOST' : machine.url,
             'DOCKER_CERT_PATH' : path.join(util.home(), '.docker/machine/machines/' + machine.name),
-            'DOCKER_TLS_VERIFY': 1
+            'DOCKER_TLS_VERIFY': 1,
+            'PATH': resources.resourceDir()
           }
         });
       });
     } else {
+      cmd = cmd || '$SHELL';
       this.info().then(machine => {
-        var cmd = [resources.terminal(), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 $SHELL`];
+        var cmd = [resources.terminal(), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 ${cmd}`];
         util.exec(cmd).then(() => {});
       });
     }
+  },
+  exec: function () {
+
   }
 };
 

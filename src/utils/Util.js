@@ -1,5 +1,5 @@
 var exec = require('exec');
-var execProper = require('child_process').exec;
+var child_process = require('child_process');
 var Promise = require('bluebird');
 var fs = require('fs');
 var path = require('path');
@@ -10,22 +10,10 @@ var app = remote.require('app');
 module.exports = {
   exec: function (args, options) {
     options = options || {};
+    let fn = Array.isArray(args) ? exec : child_process.exec;
     return new Promise((resolve, reject) => {
-      exec(args, options, (stderr, stdout, code) => {
+      fn(args, options, (stderr, stdout, code) => {
         if (code) {
-          var cmd = Array.isArray(args) ? args.join(' ') : args;
-          reject(new Error(cmd + ' returned non zero exit code. Stderr: ' + stderr));
-        } else {
-          resolve(stdout);
-        }
-      });
-    });
-  },
-  execProper: function (args, options) {
-    options = options || {};
-    return new Promise((resolve, reject) => {
-      execProper(args, options, (error, stdout, stderr) => {
-        if (error != null) {
           var cmd = Array.isArray(args) ? args.join(' ') : args;
           reject(new Error(cmd + ' returned non zero exit code. Stderr: ' + stderr));
         } else {
