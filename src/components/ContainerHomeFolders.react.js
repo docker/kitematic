@@ -58,9 +58,8 @@ var ContainerHomeFolder = React.createClass({
       return false;
     }
 
-    console.log(this.props.container.Volumes);
     var folders = _.map(_.omit(this.props.container.Volumes, (v, k) => k.indexOf('/Users/') !== -1), (val, key) => {
-      var firstFolder = key.split('/')[1];
+      var firstFolder = key;
       return (
         <div key={key} className="folder" onClick={this.handleClickFolder.bind(this, val, key)}>
           <RetinaImage src="folder.png" />
@@ -69,19 +68,21 @@ var ContainerHomeFolder = React.createClass({
       );
     });
 
-    if (this.props.container.Volumes && _.keys(this.props.container.Volumes).length > 0 && this.props.container.State.Running) {
-      return (
-        <div className="folders wrapper">
-          <h4>Edit Files</h4>
-          <div className="widget">
+    return (
+      <div className="folders wrapper">
+        <div className="widget">
+          <div className="top-bar">
+            <div className="text">Volumes</div>
+            <div className="action" onClick={this.handleClickChangeFolders}>
+              <span className="icon icon-preferences"></span>
+            </div>
+          </div>
+          <div className="folders-list">
             {folders}
           </div>
-          <div className="subtext" onClick={this.handleClickChangeFolders}>Change Folders</div>
         </div>
-      );
-    } else {
-      return false;
-    }
+      </div>
+    );
   }
 });
 

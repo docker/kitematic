@@ -23,8 +23,10 @@ var ContainerDetailsHeader = React.createClass({
       state = <span className="status stopped">STOPPED</span>;
     }
     return (
-      <div className="details-header">
-        <h1>{this.props.container.Name}</h1>{state}
+      <div className="header-section">
+        <div className="text">
+          {this.props.container.Name}{state}
+        </div>
       </div>
     );
   }

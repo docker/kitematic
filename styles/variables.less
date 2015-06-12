@@ -1,5 +1,5 @@
-@brand-primary:         #24B8EB;
-@brand-action:          #24B8EB;
+@brand-primary:         #22b8eb;
+@brand-action:          @brand-primary;
 @brand-positive:        #15CC35;
 @brand-negative:        #FF5F52;
 
@@ -13,14 +13,24 @@
 @traffic-light-gray-border:       #D3D3D3;
 
 @gray-darkest:          #233137;
-@gray-darker:           #556473;
-@gray-normal:           #7A8491;
-@gray-light:            #9AA7BB;
-@gray-lighter:          #C4CDDA;
-@gray-lightest:         #E1E8EF;
+@gray-darker:           #3f5167;
+@gray-normal:           #556473;
+@gray-light:            #7a8491;
+@gray-lighter:          #c4cdda;
+@gray-lightest:         #e6edf4;
 
 @color-divider:         @gray-lightest;
-@color-background:      #FCFCFC;
+@color-box-button:      lighten(@gray-lightest, 5%);
+@color-background:      lighten(@gray-lightest, 4.5%);
 
 @font-regular:          "Helvetica Neue", Segoe UI, Arial, "Lucida Grande", sans-serif;
 @font-code:             Menlo, Consolas;
+
+@border-radius:         0.2rem;
+
+@sidebar-width:                   220px;
+@sidebar-text-overflow-width:     140px;
+
+@container-state-size:        20px;
+@image-card-width:            260px;
+@image-card-height:           130px;

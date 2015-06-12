@@ -51,38 +51,53 @@ var ContainerHomePreview = React.createClass({
       var frame = React.createElement('webview', {className: 'frame', id: 'webview', src: this.props.ports[this.props.defaultPort].url, autosize: 'on'});
       preview = (
         <div className="web-preview wrapper">
-          <h4>Web Preview</h4>
           <div className="widget">
+            <div className="top-bar">
+              <div className="text">Web Preview</div>
+              <div className="action" onClick={this.handleClickPreview}>
+                <span className="icon icon-open-external"></span>
+              </div>
+              <div className="action" onClick={this.handleClickNotShowingCorrectly}>
+                <span className="icon icon-preferences"></span>
+              </div>
+            </div>
             {frame}
-            <div className="frame-overlay" onClick={this.handleClickPreview}><span className="icon icon-upload-2"></span><div className="text">Open in Browser</div></div>
           </div>
-          <div className="subtext" onClick={this.handleClickNotShowingCorrectly}>Not showing correctly?</div>
         </div>
       );
     } else {
-      var ports = _.map(_.pairs(this.props.ports), function (pair) {
+      var ports = _.map(_.pairs(this.props.ports), pair => {
         var key = pair[0];
         var val = pair[1];
         return (
-          <div key={key} className="table-values">
-            <span className="value-left">{key}</span><span className="icon icon-arrow-right"></span>
-            <span className="value-right">{val.display}</span>
-          </div>
+          <tr key={key}>
+            <td>{key}</td>
+            <td>{val.display}</td>
+          </tr>
         );
       });
 
       preview = (
         <div className="web-preview wrapper">
-          <h4>IP &amp; Ports</h4>
           <div className="widget">
-            <p>You can access this container using the following IP address and port:</p>
-            <div className="table ports">
-              <div className="table-labels">
-                <div className="label-left">DOCKER PORT</div>
-                <div className="label-right">MAC PORT</div>
+            <div className="top-bar">
+              <div className="text">IP & PORTS</div>
+              <div className="action" onClick={this.handleClickNotShowingCorrectly}>
+                <span className="icon icon-preferences"></span>
               </div>
-              {ports}
             </div>
+            <p>You can access this container using the following IP address and port:</p>
+            <table className="table">
+              <thead>
+                <tr>
+                  <th>DOCKER PORT</th>
+                  <th>MAC PORT</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ports}
+              </tbody>
+            </table>
           </div>
         </div>
       );

@@ -1,38 +1,38 @@
 .details-panel .settings {
   display: flex;
   flex: 1 auto;
-  flex-direction: row;
+  flex-direction: column;
+  background-color: white;
+  margin: 1rem;
+  margin-bottom: 0;
+  border: 1px solid @color-divider;
+  border-radius: @border-radius;
   .settings-menu {
-    min-width: 180px;
+    display: flex;
     flex: 0 auto;
+    height: 40px;
+    border-bottom: 1px solid @color-divider;
     ul {
-      position: fixed;
-      margin: 0;
-      padding: 0;
-      padding-top: 14px;
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
+      width: 100%;
+      justify-content: flex-end;
       a {
-        min-width: 160px;
-        margin-left: 12px;
         color: @gray-normal;
-        flex-shrink: 0;
         cursor: default;
         outline: none;
-        margin-bottom: 10px;
         &.active {
           li {
-            color: white;
-            border-radius: 40px;
-            .brand-gradient();
+            font-weight: 500;
+            border-bottom: 3px solid @brand-primary;
+            color: @gray-darkest;
           }
         }
         &:hover {
           text-decoration: none;
           li {
             cursor: default;
-            border-radius: 40px;
-            background-color: @gray-lightest;
+            color: @gray-darkest;
           }
         }
         &:focus {
@@ -40,24 +40,32 @@
         }
       }
       li {
+        transition: all 140ms;
         vertical-align: middle;
-        padding: 5px 12px;
+        padding: 0.9rem 1.6rem;
         display: flex;
         flex-direction: row;
       }
     }
   }
   .settings-panel {
-    padding-left: 20px;
+    padding: 2rem;
     flex: 1 auto;
     overflow-x: hidden;
+    h3 {
+      margin-top: 0;
+      color: @gray-darker;
+      font-weight: 400;
+      font-size: 18px;
+    }
     .settings-section {
-      margin-bottom: 40px;
+      margin-bottom: 4rem;
     }
     .container-name {
-      margin-bottom: 20px;
+      margin-bottom: 2rem;
       input {
-        width: 40%;
+        width: 100%;
+        max-width: 500px;
       }
       p {
         font-weight: 300;
@@ -71,8 +79,9 @@
     }
     .env-vars-labels {
       width: 100%;
-      font-size: 12px;
-      color: @gray-light;
+      font-size: 14px;
+      color: @gray-lighter;
+      font-weight: 500;
       margin-left: 5px;
       margin-bottom: 5px;
       margin-top: 20px;
@@ -102,97 +111,31 @@
       }
     }
     .table {
-      margin-bottom: 0;
-      .icon-arrow-right {
-        color: #BBB;
-        font-size: 20px;
-        margin: 0px 10px;
-        flex: 0 auto;
-        min-width: 13px;
-      }
       &.ports {
-        .table-labels {
-          margin-top: 20px;
-          flex: 1 auto;
-          display: flex;
-          font-size: 12px;
-          color: @gray-light;
-          .label-left {
-            flex: 0 auto;
-            min-width: 85px;
-            margin-right: 30px;
-            text-align: right;
-          }
-          .label-right {
-            flex: 1 auto;
-            display: inline-block;
-            margin-left: 10px;
-            width: 40%;
-          }
-        }
-        .table-values {
-          flex: 1 auto;
-          display: flex;
-          flex-direction: row;
-          margin: 8px 0;
-          .value-left {
-            text-align: right;
-            min-width: 85px;
-            flex: 0 auto;
-            padding: 0px;
-          }
-          .value-right {
-            flex: 1 auto;
-            -webkit-user-select: text;
-            max-width: 170px;
-            padding: 0px;
-          }
-          label {
-            margin-left: 8px;
-            margin-top: 1px;
-            font-weight: 400;
-            font-size: 13px;
-          }
-          input[type="checked"] {
-
-          }
-        }
+        max-width: 500px;
       }
       &.volumes {
-        .table-labels {
-          margin-top: 20px;
-          flex: 1 auto;
-          display: flex;
-          font-size: 12px;
-          color: @gray-light;
-          .label-left {
-            flex: 0 auto;
-            margin-right: 30px;
-          }
-          .label-right {
-            flex: 1 auto;
-            display: inline-block;
-            margin-left: 10px;
+        max-width: 100%;
+      }
+      color: @gray-normal;
+      tr {
+        &:first-child {
+          td {
+            border: none;
           }
         }
-        .table-values {
-          flex: 1 auto;
-          display: flex;
-          flex-direction: row;
-          margin: 8px 0;
-          .value-left {
-            flex: 0 auto;
-            padding: 0px;
-          }
-          .value-right {
-            flex: 1 auto;
-            -webkit-user-select: text;
-            padding: 0px;
-          }
-          .btn {
-            margin-left: 10px;
-          }
+        td {
+          border-color: @color-divider;
         }
+      }
+      th {
+        font-size: 14px;
+        color: @gray-lighter;
+        font-weight: 500;
+        border: none;
+      }
+      .btn {
+        margin-right: 0.5rem;
       }
     }
   }

@@ -27,14 +27,23 @@ var ContainerHome = React.createClass({
   },
 
   handleResize: function () {
-    $('.left .wrapper').height(window.innerHeight - 240);
-    $('.right .wrapper').height(window.innerHeight / 2 - 100);
+    $('.full .wrapper').height(window.innerHeight - 132);
+    $('.left .wrapper').height(window.innerHeight - 132);
+    $('.right .wrapper').height(window.innerHeight / 2 - 55);
   },
 
   handleErrorClick: function () {
     shell.openExternal('https://github.com/kitematic/kitematic/issues/new');
   },
 
+  showWeb: function () {
+    return _.keys(this.props.ports).length > 0;
+  },
+  
+  showFolders: function () {
+    return this.props.container.Volumes && _.keys(this.props.container.Volumes).length > 0 && this.props.container.State.Running;
+  },
+  
   render: function () {
     if (!this.props.container) {
       return;
@@ -88,43 +97,42 @@ var ContainerHome = React.createClass({
         );
       }
     } else {
-      if (this.props.defaultPort) {
+      var logWidget = (
+        <ContainerHomeLogs container={this.props.container}/>
+      );
+      var webWidget;
+      if (this.showWeb()) {
+        webWidget = (
+          <ContainerHomePreview ports={this.props.ports} defaultPort={this.props.defaultPort} />
+        );
+      }
+      var folderWidget;
+      if (this.showFolders()) {
+        folderWidget = (
+          <ContainerHomeFolders container={this.props.container} />
+        );
+      }
+      if (logWidget && !webWidget && !folderWidget) {
         body = (
           <div className="details-panel home">
             <div className="content">
-              <div className="left">
-                <ContainerHomePreview ports={this.props.ports} defaultPort={this.props.defaultPort} />
-              </div>
-              <div className="right">
-                <ContainerHomeLogs container={this.props.container}/>
-                <ContainerHomeFolders container={this.props.container} />
+              <div className="full">
+                {logWidget}
               </div>
             </div>
           </div>
         );
       } else {
-        var right;
-        if (_.keys(this.props.ports) > 0) {
-          right = (
-            <div className="right">
-              <ContainerHomePreview  ports={this.props.ports} defaultPort={this.props.defaultPort} />
-              <ContainerHomeFolders container={this.props.container} />
-            </div>
-          );
-        } else {
-          right = (
-            <div className="right">
-              <ContainerHomeFolders container={this.props.container} />
-            </div>
-          );
-        }
         body = (
           <div className="details-panel home">
             <div className="content">
               <div className="left">
-                <ContainerHomeLogs container={this.props.container}/>
+                {logWidget}
               </div>
-              {right}
+              <div className="right">
+                {webWidget}
+                {folderWidget}
+              </div>
             </div>
           </div>
         );

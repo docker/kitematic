@@ -1,11 +1,12 @@
 [![Build Status](https://travis-ci.org/kitematic/kitematic.svg?branch=master)](https://travis-ci.org/kitematic/kitematic)
-[![Coverage Status](https://coveralls.io/repos/kitematic/kitematic/badge.svg?branch=master)](https://coveralls.io/r/kitematic/kitematic?branch=master)
 [![bitHound Score](https://www.bithound.io/github/kitematic/kitematic/badges/score.svg)](https://www.bithound.io/github/kitematic/kitematic)
 
 
 ![Kitematic Logo](https://cloud.githubusercontent.com/assets/251292/5269258/1b229c3c-7a2f-11e4-96f1-e7baf3c86d73.png)
 
 Kitematic is a simple application for managing Docker containers on Mac OS X and Windows (coming soon).
+
+![Kitematic Screenshot](https://cloud.githubusercontent.com/assets/3325447/8119979/152f1010-104f-11e5-9298-cd3e92b61ec6.png)
 
 ## Installing Kitematic
 

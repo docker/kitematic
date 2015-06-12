@@ -42,25 +42,30 @@ var MenuTemplate = function () {
         click: function () {
           metrics.track('Installed Docker Commands');
           if (!setupUtil.shouldUpdateBinaries()) {
+            dialog.showMessageBox({
+              message: 'Docker binaries are already installed in /usr/local/bin',
+              buttons: ['OK']
+            });
             return;
           }
 
           let copy = setupUtil.needsBinaryFix() ?
-               util.exec(setupUtil.copyBinariesCmd() + ' && ' + setupUtil.fixBinariesCmd()) :
+               util.exec(setupUtil.macSudoCmd(setupUtil.copyBinariesCmd() + ' && ' + setupUtil.fixBinariesCmd())) :
                util.exec(setupUtil.copyBinariesCmd());
 
           copy.then(() => {
             dialog.showMessageBox({
-              message: 'Docker binaries have been copied to /usr/local/bin',
+              message: 'Docker binaries have been installed under /usr/local/bin',
               buttons: ['OK']
             });
-          }).catch(() => {});
+          }).catch((err) => {
+            console.log(err);
+          });
         },
       },
       {
         type: 'separator'
-      },
-      {
+      }, {
         label: 'Hide Kitematic',
         accelerator: util.CommandOrCtrl() + '+H',
         selector: 'hide:'

@@ -49,6 +49,8 @@ var _steps = [{
       } catch (err) {
         throw null;
       }
+    } else if (!util.isWindows() && !virtualBox.active()) {
+      yield util.exec(setupUtil.macSudoCmd(util.escapePath('/Library/Application Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh') + ' restart'));
     }
   })
 }, {
@@ -147,7 +149,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var vboxNeedsInstall = !virtualBox.installed();
 
     required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== virtualBox.checksum());
-    required.install = vboxNeedsInstall;
+    required.install = vboxNeedsInstall || !virtualBox.active();
     required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0;
 
     var exists = yield machine.exists();

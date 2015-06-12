@@ -59,7 +59,7 @@ var SetupUtil = {
     }
   },
   macSudoCmd: function (cmd) {
-    return `${util.escapePath(resources.macsudo())} -p "Kitematic requires administrative privileges to install." sh -c \"${cmd}\"`;
+    return `${util.escapePath(resources.macsudo())} -p "Kitematic requires administrative privileges to install and/or start VirtualBox." sh -c \"${cmd}\"`;
   },
   simulateProgress(estimateSeconds, progress) {
     var times = _.range(0, estimateSeconds * 1000, 200);

@@ -71,12 +71,14 @@ module.exports = React.createClass({
     }
     return (
       <div className="mini-logs wrapper">
-        <h4>Logs</h4>
         <div className="widget">
+          <div className="top-bar">
+            <div className="text">Container Logs</div>
+          </div>
           <div className="logs">
             {logs}
           </div>
-          <div className="mini-logs-overlay" onClick={this.handleClickLogs}><span className="icon icon-scale-spread-1"></span><div className="text">View Logs</div></div> </div>
+        </div>
       </div>
     );
   }

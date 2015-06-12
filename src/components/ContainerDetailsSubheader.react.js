@@ -1,4 +1,3 @@
-var $ = require('jquery');
 var _ = require('underscore');
 var React = require('react');
 var exec = require('exec');
@@ -7,10 +6,8 @@ var metrics = require('../utils/MetricsUtil');
 var ContainerUtil = require('../utils/ContainerUtil');
 var util = require('../utils/Util');
 var machine = require('../utils/DockerMachineUtil');
-var RetinaImage = require('react-retina-image');
 var classNames = require('classnames');
 var resources = require('../utils/ResourcesUtil');
-var dockerUtil = require('../utils/DockerUtil');
 var containerActions = require('../actions/ContainerActions');
 var dockerMachineUtil = require('../utils/DockerMachineUtil');
 
@@ -62,12 +59,6 @@ var ContainerDetailsSubheader = React.createClass({
       this.context.router.transitionTo('containerHome', {name: this.context.router.getCurrentParams().name});
     }
   },
-  showLogs: function () {
-    if (!this.disableTab()) {
-      metrics.track('Viewed Logs');
-      this.context.router.transitionTo('containerLogs', {name: this.context.router.getCurrentParams().name});
-    }
-  },
   showSettings: function () {
     if (!this.disableTab()) {
       metrics.track('Viewed Settings');
@@ -115,51 +106,7 @@ var ContainerDetailsSubheader = React.createClass({
       dockerMachineUtil.dockerTerminal(`docker exec -it ${this.props.container.Name} ${shell}`);
     }
   },
-  handleItemMouseEnterView: function () {
-    var $action = $(this.getDOMNode()).find('.action .view');
-    $action.css("visibility", "visible");
-  },
-  handleItemMouseLeaveView: function () {
-    var $action = $(this.getDOMNode()).find('.action .view');
-    $action.css("visibility", "hidden");
-  },
-  handleItemMouseEnterRestart: function () {
-    var $action = $(this.getDOMNode()).find('.action .restart');
-    $action.css("visibility", "visible");
-  },
-  handleItemMouseLeaveRestart: function () {
-    var $action = $(this.getDOMNode()).find('.action .restart');
-    $action.css("visibility", "hidden");
-  },
-  handleItemMouseEnterStop: function () {
-    var $action = $(this.getDOMNode()).find('.action .stop');
-    $action.css("visibility", "visible");
-  },
-  handleItemMouseLeaveStop: function () {
-    var $action = $(this.getDOMNode()).find('.action .stop');
-    $action.css("visibility", "hidden");
-  },
-  handleItemMouseEnterStart: function () {
-    var $action = $(this.getDOMNode()).find('.action .start');
-    $action.css("visibility", "visible");
-  },
-  handleItemMouseLeaveStart: function () {
-    var $action = $(this.getDOMNode()).find('.action .start');
-    $action.css("visibility", "hidden");
-  },
-  handleItemMouseEnterTerminal: function () {
-    var $action = $(this.getDOMNode()).find('.action .terminal');
-    $action.css("visibility", "visible");
-  },
-  handleItemMouseLeaveTerminal: function () {
-    var $action = $(this.getDOMNode()).find('.action .terminal');
-    $action.css("visibility", "hidden");
-  },
   render: function () {
-    var runActionClass = classNames({
-      action: true,
-      disabled: this.disableRun()
-    });
     var restartActionClass = classNames({
       action: true,
       disabled: this.disableRestart()
@@ -181,33 +128,28 @@ var ContainerDetailsSubheader = React.createClass({
     var currentRoute = _.last(currentRoutes);
 
     var tabHomeClasses = classNames({
-      'tab': true,
+      'details-tab': true,
       'active': currentRoute === 'containerHome',
       disabled: this.disableTab()
     });
-    var tabLogsClasses = classNames({
-      'tab': true,
-      'active': currentRoute === 'containerLogs',
-      disabled: this.disableTab()
-    });
     var tabSettingsClasses = classNames({
-      'tab': true,
+      'details-tab': true,
       'active': currentRoutes && (currentRoutes.indexOf('containerSettings') >= 0),
       disabled: this.disableTab()
     });
     var startStopToggle;
     if (this.disableStop()) {
       startStopToggle = (
-        <div className={startActionClass} onMouseEnter={this.handleItemMouseEnterStart} onMouseLeave={this.handleItemMouseLeaveStart}>
-          <div className="action-icon" onClick={this.handleStart}><RetinaImage src="button-start.png" /></div>
-          <span className="btn-label start">Start</span>
+        <div className={startActionClass}>
+          <div className="action-icon start" onClick={this.handleStart}><span className="icon icon-start"></span></div>
+          <div className="btn-label">START</div>
         </div>
       );
     } else {
       startStopToggle = (
-        <div className={stopActionClass} onMouseEnter={this.handleItemMouseEnterStop} onMouseLeave={this.handleItemMouseLeaveStop}>
-          <div className="action-icon" onClick={this.handleStop}><RetinaImage src="button-stop.png" /></div>
-          <span className="btn-label stop">Stop</span>
+        <div className={stopActionClass}>
+          <div className="action-icon stop" onClick={this.handleStop}><span className="icon icon-stop"></span></div>
+          <div className="btn-label">STOP</div>
         </div>
       );
     }
@@ -215,22 +157,17 @@ var ContainerDetailsSubheader = React.createClass({
       <div className="details-subheader">
         <div className="details-header-actions">
           {startStopToggle}
-          <div className={restartActionClass} onMouseEnter={this.handleItemMouseEnterRestart} onMouseLeave={this.handleItemMouseLeaveRestart}>
-            <div className="action-icon" onClick={this.handleRestart}><RetinaImage src="button-restart.png"/></div>
-            <span className="btn-label restart">Restart</span>
+          <div className={restartActionClass}>
+            <div className="action-icon" onClick={this.handleRestart}><span className="icon icon-restart"></span></div>
+            <div className="btn-label">RESTART</div>
           </div>
-          <div className={terminalActionClass} onMouseEnter={this.handleItemMouseEnterTerminal} onMouseLeave={this.handleItemMouseLeaveTerminal}>
-            <div className="action-icon" onClick={this.handleTerminal}><RetinaImage src="button-terminal.png"/></div>
-            <span className="btn-label terminal">Terminal</span>
-          </div>
-          <div className={runActionClass} onMouseEnter={this.handleItemMouseEnterView} onMouseLeave={this.handleItemMouseLeaveView}>
-            <div className="action-icon" onClick={this.handleRun}><RetinaImage src="button-view.png"/></div>
-            <span className="btn-label view">View</span>
+          <div className={terminalActionClass}>
+            <div className="action-icon" onClick={this.handleTerminal}><span className="icon icon-docker-exec"></span></div>
+            <div className="btn-label">EXEC</div>
           </div>
         </div>
         <div className="details-subheader-tabs">
           <span className={tabHomeClasses} onClick={this.showHome}>Home</span>
-          <span className={tabLogsClasses} onClick={this.showLogs}>Logs</span>
           <span className={tabSettingsClasses} onClick={this.showSettings}>Settings</span>
         </div>
       </div>
