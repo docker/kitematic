@@ -63,7 +63,6 @@ var ContainerHomeFolder = React.createClass({
       return false;
     }
 
-    console.log(this.props.container.Volumes);
     var folders = _.map(_.omit(this.props.container.Volumes, (v, k) => k.indexOf('/Users/') !== -1), (val, key) => {
       var firstFolder = key;
       return (
