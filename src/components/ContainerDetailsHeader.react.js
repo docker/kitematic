@@ -1,6 +1,37 @@
 var React = require('react/addons');
+var Notification = require('../utils/Notification');
+var containerStore = require('../stores/ContainerStore');
 
 var ContainerDetailsHeader = React.createClass({
+  getInitialState() {
+    return {
+      message: ''
+    };
+  },
+  componentDidMount: function () {
+    containerStore.listen(this.handleShow);
+  },
+  componentWillReceiveProps: function (nextProps) {
+    if (nextProps.container.Name != this.props.container.Name) {
+      this.handleNotificationActionClick();
+    }
+  },
+  handleShow(contState) {
+    if (contState.containers[this.props.container.Name].State.Error.length) {
+      this.setState({
+        message: contState.containers[this.props.container.Name].State.Error
+      }, function() {
+        this.refs.notification.show();
+      });
+    }
+  },
+  handleNotificationActionClick() {
+    this.setState({
+      message: ''
+    }, function(){
+      this.refs.notification.hide();
+    });
+  },
   render: function () {
     var state;
     if (!this.props.container) {
@@ -22,9 +53,19 @@ var ContainerDetailsHeader = React.createClass({
     } else {
       state = <span className="status stopped">STOPPED</span>;
     }
+    let notificationStyles = {
+      active:{ right: '1em' },
+      bar: { right: '-100%', top: '6rem', bottom: 'inherit', left: 'inherit' },
+      action: { color: '#FFCCBC' }
+    };
     return (
       <div className="details-header">
         <h1>{this.props.container.Name}</h1>{state}
+        <Notification
+            ref="notification"
+            message={this.state.message}
+            styles={notificationStyles}
+            onClick={this.handleNotificationActionClick}/>
       </div>
     );
   }
