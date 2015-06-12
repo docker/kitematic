@@ -53,6 +53,9 @@ var ContainerSettingsPorts = React.createClass({
     else if (duplicates.length > 0) {
       ports[key].error = "Collision with other port at container.";
     }
+    else if (port == 22 || port == 2376) {
+      ports[key].error = "Ports 22 and 2376 are reserved ports for Kitematic/Docker.";
+    }
 
     this.setState({ ports: ports });
   },
