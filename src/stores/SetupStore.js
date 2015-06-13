@@ -42,14 +42,14 @@ var _steps = [{
       progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
       try {
         if (util.isWindows()) {
-          yield util.exec([path.join(util.supportDir(), virtualBox.filename())]);
+          yield util.exec([path.join(util.supportDir(), virtualBox.filename()), '-msiparams', 'REBOOT=ReallySuppress', 'LIMITUI=INSTALLUILEVEL_PROGRESSONLY']);
         } else {
           yield util.exec(setupUtil.macSudoCmd(setupUtil.installVirtualBoxCmd()));
         }
       } catch (err) {
         throw null;
       }
-    } else if (!virtualBox.active()) {
+    } else if (util.isWindows() && !virtualBox.active()) {
       yield util.exec(setupUtil.macSudoCmd(util.escapePath('/Library/Application Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh') + ' restart'));
     }
   })
@@ -59,7 +59,7 @@ var _steps = [{
   message: 'To run Docker containers on your computer, Kitematic is starting a Linux virtual machine. This may take a minute...',
   totalPercent: 60,
   percent: 0,
-  seconds: 72,
+  seconds: 80,
   run: Promise.coroutine(function* (progressCallback) {
     setupUtil.simulateProgress(this.seconds, progressCallback);
     var exists = yield machine.exists();
@@ -68,16 +68,6 @@ var _steps = [{
         yield machine.rm();
       }
       yield machine.create();
-      if(util.isWindows()) {
-        let home = util.home();
-        let driveLetter = home.charAt(0);
-        let parts = home.split('\\').slice(0, -1);
-        let usersDirName = parts[parts.length-1];
-        let usersDirPath = parts.join('\\');
-        let shareName = driveLetter + '/' + usersDirName;
-        yield virtualBox.mountSharedDir(machine.name(), shareName, usersDirPath);
-        yield machine.start();
-      }
       return;
     }
 
@@ -159,7 +149,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var vboxNeedsInstall = !virtualBox.installed();
 
     required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== virtualBox.checksum());
-    required.install = vboxNeedsInstall || !virtualBox.active();
+    required.install = vboxNeedsInstall || (util.isWindows() && !virtualBox.active());
     required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0;
 
     var exists = yield machine.exists();
