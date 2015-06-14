@@ -52,11 +52,11 @@ var ContainerHome = React.createClass({
     let body;
     if (this.props.container.Error) {
       body = (
-        <div className="details-progress">
-          <h3>An error occurred:</h3>
-          <h2>{this.props.container.Error}</h2>
-          <h3>If you feel that this error is invalid, please <a onClick={this.handleErrorClick}>file a ticket on our GitHub repo.</a></h3>
-          <Radial progress={100} error={true} thick={true} transparent={true}/>
+        <div className="details-progress error">
+          <h2>We&#39;re sorry. There seem to be an error:</h2>
+          <p className="error-message">{this.props.container.Error}</p>
+          <p>If this error is invalid, please file a ticket on our Github repo.</p>
+          <a className="btn btn-action" onClick={this.handleErrorClick}>File Ticket</a>
         </div>
       );
     } else if (this.props.container && this.props.container.State.Downloading) {
