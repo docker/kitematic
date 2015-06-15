@@ -87,7 +87,7 @@
         }
         .btn-label {
           text-align: center;
-          font-size: 9px;
+          font-size: 10px;
           position: relative;
           top: -0.5rem;
         }
@@ -183,6 +183,23 @@
     h2 {
       margin-bottom: 20px;
       text-align: center;
+    }
+    &.error {
+      p {
+        color: @gray-darker;
+        &.error-message {
+          span {
+            display: block;
+            margin-bottom: 0.5rem;
+          }
+          text-align: center;
+          color: @brand-negative;
+          background-color: lighten(@brand-negative, 32%);
+          padding: 1rem;
+          border-radius: @border-radius;
+          -webkit-user-select: text;
+        }
+      }
     }
   }
   .details-panel {
