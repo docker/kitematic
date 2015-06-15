@@ -44,7 +44,8 @@ module.exports = {
     return app.getPath('home');
   },
   documents: function () {
-    return this.isWindows() ? 'My\ Documents' : 'Documents';
+    // TODO: fix me for windows 7
+    return 'Documents';
   },
   supportDir: function () {
     return app.getPath('userData');
@@ -140,6 +141,9 @@ module.exports = {
       fullPath = '/' + fullPath.charAt(0).toLowerCase() + fullPath.substring(1);
     }
     return fullPath;
+  },
+  linuxToWindowsPath: function (linuxAbsPath) {
+    return linuxAbsPath.replace('/c', 'c:').split('/').join('\\');
   },
   webPorts: ['80', '8000', '8080', '3000', '5000', '2368', '9200', '8983']
 };

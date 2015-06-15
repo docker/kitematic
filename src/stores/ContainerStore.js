@@ -74,7 +74,7 @@ class ContainerStore {
       return;
     }
 
-    deepExtend(containers[name], container);
+    _.extend(containers[name], container);
 
     if (containers[name].State) {
       containers[name].State.Updating = true;
