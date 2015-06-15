@@ -122,9 +122,9 @@ var ContainerSettingsLinks = React.createClass({
       let [id, key, val, selected] = kvps;
       let icon;
       if (index === this.state.links.length - 1) {
-        icon = <a onClick={this.handleAddLinksVar} className="only-icon btn btn-positive small"><span className="icon icon-add-1"></span></a>;
+        icon = <a onClick={this.handleAddLinksVar} className="only-icon btn btn-positive small"><span className="icon icon-add"></span></a>;
       } else {
-        icon = <a onClick={this.handleRemoveLinksVar.bind(this, index)} className="only-icon btn btn-action small"><span className="icon icon-cross"></span></a>;
+        icon = <a onClick={this.handleRemoveLinksVar.bind(this, index)} className="only-icon btn btn-action small"><span className="icon icon-delete"></span></a>;
       }
 
       let inputDockerContainer = (
