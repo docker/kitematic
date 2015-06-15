@@ -17,7 +17,7 @@ var ContainerDetailsHeader = React.createClass({
     }
   },
   handleShow(contState) {
-    if (contState.containers[this.props.container.Name].State.Error.length) {
+    if (contState.containers[this.props.container.Name].State.Error.length && !this.props.container.State.Paused && this.props.container.State.ExitCode && !this.props.container.State.Restarting && !this.props.container.State.Starting) {
       this.setState({
         message: contState.containers[this.props.container.Name].State.Error
       }, function() {
@@ -54,13 +54,15 @@ var ContainerDetailsHeader = React.createClass({
       state = <span className="status stopped">STOPPED</span>;
     }
     let notificationStyles = {
-      active:{ right: '1em' },
-      bar: { right: '-100%', top: '6rem', bottom: 'inherit', left: 'inherit' },
-      action: { color: '#FFCCBC' }
+      active:{ right: '18em' },
+      bar: { right: '-100rem', top: '6.75rem', bottom: 'initial', left: 'initial' },
+      action: { color: '#C92C2C' }
     };
     return (
-      <div className="details-header">
-        <h1>{this.props.container.Name}</h1>{state}
+      <div className="header-section">
+        <div className="text">
+          {this.props.container.Name}{state}
+        </div>
         <Notification
             ref="notification"
             message={this.state.message}

@@ -31,18 +31,20 @@ var Notification = React.createClass({
     }
 
     styles.default = {
-      padding: '1rem',
-      background: '#212121',
-      color: '#FAFAFA',
+      padding: '0.5rem',
+      background: '#f6f8fb',
+      color: '#000000',
       width: 'auto',
       position: 'fixed',
-      left: '-100%',
-      top: '6rem',
-      boxShadow: '0 0 1px 1px rgba(10,10,11,0.125)',
-      borderRadius: '5px',
+      left: '-100rem',
+      top: '0.75rem',
+      border: '1px solid #22b8eb',
+      boxShadow: '0 0 1px 1px rgba(34, 184, 235,0.125)',
+      borderRadius: '2px',
       cursor: 'default',
       font: '1rem normal Roboto, sans-serif',
-      transition: '.5s ease'
+      transition: '.5s ease',
+      zIndex: '10'
     };
 
     if (this.props.styles && this.props.styles.bar) {
@@ -70,7 +72,7 @@ var Notification = React.createClass({
     styles = {
       padding: '0.125rem',
       marginLeft: '1rem',
-      color: '#f44336',
+      color: '#C92C2C',
       textTransform: 'uppercase',
       letterSpacing: '.125ex',
       borderRadius: '5px',

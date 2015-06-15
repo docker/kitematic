@@ -1,8 +1,15 @@
-page_title: Kitematic Known Issues
-page_description: Information about known issues in Kitematic
-page_keywords: docker, documentation, about, technology, kitematic, gui
+<!--[metadata]>
++++
+title = "Known Issues"
+description = "Information about known issues in Kitematic"
+keywords = ["docker, documentation, about, technology, kitematic,  gui"]
+[menu.main]
+parent="smn_workw_kitematic"
+weight=5
++++
+<![end-metadata]-->
 
-# Known Issues
+# Kitematic: Known Issues
 
 
 Kitematic is in beta, so we're still working out the kinks. The most common

@@ -47,43 +47,43 @@ var ContainerSettingsVolumes = React.createClass({
     if (!this.props.container) {
       return false;
     }
-
     var volumes = _.map(this.props.container.Volumes, (val, key) => {
       if (!val || val.indexOf(process.env.HOME) === -1) {
         val = (
-          <span>
-            <a className="value-right">No Folder</a>
-            <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleChooseVolumeClick.bind(this, key)}>Change</a>
-            <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleRemoveVolumeClick.bind(this, key)}>Remove</a>
-          </span>
+          <span className="value-right">No Folder</span>
         );
       } else {
         val = (
-          <span>
-            <a className="value-right" onClick={this.handleOpenVolumeClick.bind(this, val)}>{val.replace(process.env.HOME, '~')}</a>
-            <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleChooseVolumeClick.bind(this, key)}>Change</a>
-            <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleRemoveVolumeClick.bind(this, key)}>Remove</a>
-          </span>
+          <a className="value-right" onClick={this.handleOpenVolumeClick.bind(this, val)}>{val.replace(process.env.HOME, '~')}</a>
         );
       }
       return (
-        <div key={key} className="table-values">
-          <span className="value-left">{key}</span><span className="icon icon-arrow-right"></span>
-          {val}
-        </div>
+        <tr>
+          <td>{key}</td>
+          <td>{val}</td>
+          <td>
+            <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleChooseVolumeClick.bind(this, key)}>Change</a>
+            <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleRemoveVolumeClick.bind(this, key)}>Remove</a>
+          </td>
+        </tr>
       );
     });
     return (
       <div className="settings-panel">
         <div className="settings-section">
           <h3>Configure Volumes</h3>
-          <div className="table volumes">
-            <div className="table-labels">
-              <div className="label-left">DOCKER FOLDER</div>
-              <div className="label-right">MAC FOLDER</div>
-            </div>
-            {volumes}
-          </div>
+          <table className="table volumes">
+            <thead>
+              <tr>
+                <th>DOCKER FOLDER</th>
+                <th>MAC FOLDER</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {volumes}
+            </tbody>
+          </table>
         </div>
       </div>
     );
