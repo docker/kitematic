@@ -106,7 +106,7 @@ var Header = React.createClass({
         </div>
       );
     } else {
-      if (false /*util.isWindows()*/) {
+      if (util.isWindows()) {
         buttons = (
           <div className="windows-buttons">
           <div className="windows-button button-close enabled" onClick={this.handleClose}></div>
