@@ -89,7 +89,8 @@ class ContainerStore {
       return;
     }
     // Trigger log update
-    LogStore.fetch(container.Name);
+    // TODO: fix this loading multiple times
+    // LogStore.fetch(container.Name);
 
     containers[container.Name] = container;
 
