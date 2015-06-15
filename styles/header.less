@@ -17,6 +17,12 @@
     display: flex;
     min-width: @sidebar-width + 1px;
   }
+  
+  .right-header {
+    display: flex;
+    justify-content: flex-end;
+    flex: 1 0;
+  }
 
   .updates {
     flex: 1 auto;
@@ -27,9 +33,7 @@
   }
 
   .logo {
-    position: absolute;
-    right: 1rem;
-    top: 0.8rem;
+    padding: 0.9rem 1rem 0 0;
   }
 
   .login-wrapper {
@@ -46,15 +50,18 @@
     border-right: 1px solid @color-divider;
     padding: 0 1rem 0 1rem;
     .box-button();
-
-    &:active {
-      img, span {
-        -webkit-filter: brightness(0.9);
-      }
+    .text {
+      max-width: 70px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-
     img {
-      margin: 0 5px;
+      position: relative;
+      top: 0.1rem;
+      margin: 0 0rem 0 0.4rem;
+      width: 8px;
+      height: 5px;
     }
   }
 

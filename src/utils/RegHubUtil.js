@@ -5,6 +5,7 @@ var util = require('../utils/Util');
 var hubUtil = require('../utils/HubUtil');
 var repositoryServerActions = require('../actions/RepositoryServerActions');
 var tagServerActions = require('../actions/TagServerActions');
+var Promise = require('bluebird');
 
 let REGHUB2_ENDPOINT = process.env.REGHUB2_ENDPOINT || 'https://registry.hub.docker.com/v2';
 let searchReq = null;
@@ -61,7 +62,7 @@ module.exports = {
       let data = JSON.parse(body);
       let repos = data.repos;
       async.map(repos, (repo, cb) => {
-        var name = repo.repo;
+        let name = repo.repo;
         if (util.isOfficialRepo(name)) {
           name = 'library/' + name;
         }

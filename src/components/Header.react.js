@@ -139,7 +139,12 @@ var Header = React.createClass({
       username = (
         <div className="login-wrapper">
           <div className="login no-drag" onClick={this.handleUserClick}>
-            <span className="icon icon-user"></span> {this.state.username} {this.state.verified ? null : '(Unverified)'} <RetinaImage src="userdropdown.png"/>
+            <span className="icon icon-user"></span>
+              <span className="text">
+                {this.state.username}
+                {this.state.verified ? null : '(Unverified)'}
+              </span>
+              <RetinaImage src="userdropdown.png"/>
           </div>
         </div>
       );

@@ -15,7 +15,7 @@ module.exports = {
       fn(args, options, (stderr, stdout, code) => {
         if (code) {
           var cmd = Array.isArray(args) ? args.join(' ') : args;
-          reject(new Error(cmd + ' returned non zero exit code.\n===== Stderr =====\n ' + stderr + '\n===== Stdout =====\n' + stdout));
+          reject(new Error(cmd + ' returned non zero exit code. Stderr: ' + stderr));
         } else {
           resolve(stdout);
         }

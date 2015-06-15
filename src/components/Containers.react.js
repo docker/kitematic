@@ -6,6 +6,7 @@ var containerStore = require('../stores/ContainerStore');
 var ContainerList = require('./ContainerList.react');
 var Header = require('./Header.react');
 var metrics = require('../utils/MetricsUtil');
+var RetinaImage = require('react-retina-image');
 var shell = require('shell');
 var machine = require('../utils/DockerMachineUtil');
 

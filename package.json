@@ -11,13 +11,12 @@
   },
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
-    "start": "gulp",
+    "start": "grunt",
     "test": "jest -c jest-unit.json",
     "integration": "jest -c jest-integration.json",
     "release": "grunt release",
     "release:beta": "grunt release --beta=true",
-    "lint": "jsxhint src",
-    "reset": "gulp reset"
+    "lint": "jsxhint src"
   },
   "licenses": [
     {

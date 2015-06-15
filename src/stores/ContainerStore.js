@@ -3,6 +3,7 @@ import deepExtend from 'deep-extend';
 import alt from '../alt';
 import containerServerActions from '../actions/ContainerServerActions';
 import containerActions from '../actions/ContainerActions';
+var LogStore = require('./LogStore');
 
 class ContainerStore {
   constructor () {
@@ -87,6 +88,8 @@ class ContainerStore {
     if (!containers[container.Name] || containers[container.Name].State.Updating) {
       return;
     }
+    // Trigger log update
+    LogStore.fetch(container.Name);
 
     containers[container.Name] = container;
 
