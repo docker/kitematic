@@ -2,6 +2,7 @@ var app = require('app');
 var autoUpdater = require('auto-updater');
 var BrowserWindow = require('browser-window');
 var fs = require('fs');
+var os = require('os');
 var ipc = require('ipc');
 var path = require('path');
 
@@ -90,12 +91,21 @@ app.on('ready', function () {
     autoUpdater.quitAndInstall();
   });
 
-  app.on('before-quit', function () {
-    // TODO: make this work for right click + close
-    if (!updating && mainWindow.webContents) {
+  if (os.platform() === 'win32') {
+    mainWindow.on('close', function () {
       mainWindow.webContents.send('application:quitting');
-    }
-  });
+      return true;
+    });
+    app.on('window-all-closed', function() {
+      app.quit();
+    });
+  } else if (os.platform() === 'darwin') {
+    app.on('before-quit', function () {
+      if (!updating) {
+        mainWindow.webContents.send('application:quitting');
+      }
+    });
+  }
 
   mainWindow.webContents.on('new-window', function (e) {
     e.preventDefault();
@@ -125,7 +135,7 @@ app.on('ready', function () {
     });
 
     if (process.env.NODE_ENV !== 'development') {
-      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion() + '&beta=' + !!settingsjson.beta);
+      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion() + '&beta=' + !!settingsjson.beta + '&platform=' + os.platform());
     }
   });
 
