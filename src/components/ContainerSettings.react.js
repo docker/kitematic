@@ -1,3 +1,4 @@
+var $ = require('jquery');
 var _ = require('underscore');
 var React = require('react/addons');
 var Router = require('react-router');
@@ -11,6 +12,17 @@ var ContainerSettings = React.createClass({
   },
   componentDidMount: function() {
     this.init();
+    this.handleResize();
+    window.addEventListener('resize', this.handleResize);
+  },
+  componentWillUnmount: function() {
+    window.removeEventListener('resize', this.handleResize);
+  },
+  componentDidUpdate: function () {
+    this.handleResize();
+  },
+  handleResize: function () {
+    $('.settings-panel').height(window.innerHeight - 210);
   },
   init: function () {
     var currentRoute = _.last(this.context.router.getCurrentRoutes()).name;

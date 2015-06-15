@@ -23,8 +23,11 @@ var VirtualBox = {
     if(util.isWindows()) {
       return fs.existsSync('C:\\Program Files\\Oracle\\VirtualBox\\VBoxManage.exe') && fs.existsSync('C:\\Program Files\\Oracle\\VirtualBox\\VirtualBox.exe');
     } else {
-      return fs.existsSync('/usr/bin/VBoxManage') && fs.existsSync('/Applications/VirtualBox.app');
+      return fs.existsSync('/usr/bin/VBoxManage') && fs.existsSync('/Applications/VirtualBox.app') && fs.existsSync('/Applications/VirtualBox.app/Contents/MacOS/VBoxManage');
     }
+  },
+  active: function () {
+    return fs.existsSync('/dev/vboxnetctl');
   },
   version: function () {
     return new Promise((resolve, reject) => {

@@ -10,13 +10,15 @@
     flex-direction: row;
 
     flex: 1 auto;
-
+    
+    padding: 2rem;
+    
     .image {
       display: flex;
       flex: 1 auto;
       align-items: center;
       justify-content: flex-end;
-      padding-right: 40px;
+      padding-right: 10rem;
 
       img {
         width: 399px;
@@ -38,8 +40,8 @@
       flex: 1 auto;
       align-items: flex-end;
       justify-content: center;
-      padding-right: 60px;
-      padding-left: 80px;
+      padding-right: 5rem;
+      padding-left: 15rem;
       flex-direction: column;
 
       img {
@@ -96,14 +98,10 @@
           button[type="submit"] {
             flex: 0 auto;
             display: block;
+            .btn-filled-styles(@brand-action);
             font-size: 18px;
             padding: 10px 20px;
-            color: white;
-            background-color: @brand-action;
             border: 0;
-            &:hover {
-              background-color: darken(@brand-action, 5%);
-            }
           }
         }
 

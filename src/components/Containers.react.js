@@ -6,7 +6,6 @@ var containerStore = require('../stores/ContainerStore');
 var ContainerList = require('./ContainerList.react');
 var Header = require('./Header.react');
 var metrics = require('../utils/MetricsUtil');
-var RetinaImage = require('react-retina-image');
 var shell = require('shell');
 var machine = require('../utils/DockerMachineUtil');
 
@@ -162,7 +161,7 @@ var Containers = React.createClass({
               <h4>Containers</h4>
               <div className="create">
                 <Router.Link to="new">
-                  <span className="btn-new icon icon-add-3"></span>
+                  <span className="btn btn-new btn-action has-icon btn-hollow"><span className="icon icon-add"></span>New</span>
                 </Router.Link>
               </div>
             </section>
@@ -170,9 +169,9 @@ var Containers = React.createClass({
               <ContainerList containers={this.state.sorted} newContainer={this.state.newContainer} />
             </section>
             <section className="sidebar-buttons">
-              <span className="btn-sidebar btn-terminal" onClick={this.handleClickDockerTerminal} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><RetinaImage src="whaleicon.png"/> <span className="text">DOCKER CLI</span></span>
-              <span className="btn-sidebar btn-feedback" onClick={this.handleClickReportIssue} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><RetinaImage src="feedback.png"/></span>
-              <span className="btn-sidebar" onClick={this.handleClickPreferences} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><RetinaImage src="preferences.png"/></span>
+              <span className="btn-sidebar btn-terminal" onClick={this.handleClickDockerTerminal} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><span className="icon icon-docker-cli"></span><span className="text">DOCKER CLI</span></span>
+              <span className="btn-sidebar btn-feedback" onClick={this.handleClickReportIssue} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><span className="icon icon-feedback"></span></span>
+              <span className="btn-sidebar btn-preferences" onClick={this.handleClickPreferences} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><span className="icon icon-preferences"></span></span>
             </section>
           </div>
           <Router.RouteHandler pending={this.state.pending} containers={this.state.containers} container={container}/>
