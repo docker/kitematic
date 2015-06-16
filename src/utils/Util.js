@@ -143,7 +143,7 @@ module.exports = {
     return fullPath;
   },
   linuxToWindowsPath: function (linuxAbsPath) {
-    return linuxAbsPath.replace('/c', 'c:').split('/').join('\\');
+    return linuxAbsPath.replace('/c', 'C:').split('/').join('\\');
   },
   webPorts: ['80', '8000', '8080', '3000', '5000', '2368', '9200', '8983']
 };

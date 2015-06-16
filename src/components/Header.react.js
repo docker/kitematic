@@ -95,6 +95,13 @@ var Header = React.createClass({
     });
     accountActions.verify();
   },
+  renderLogo: function () {
+    return (
+      <div className="logo">
+        <RetinaImage src="logo.png"/>
+      </div>
+    );
+  },
   renderWindowButtons: function () {
     let buttons;
     if (this.state.fullscreen) {
@@ -109,9 +116,9 @@ var Header = React.createClass({
       if (util.isWindows()) {
         buttons = (
           <div className="windows-buttons">
+          <div className="windows-button button-minimize enabled" onClick={this.handleMinimize}><div className="icon"></div></div>
+          <div className="windows-button button-fullscreen enabled" onClick={this.handleFullscreen}><div className="icon"></div></div>
           <div className="windows-button button-close enabled" onClick={this.handleClose}></div>
-          <div className="windows-button button-minimize enabled" onClick={this.handleMinimize}></div>
-          <div className="windows-button button-fullscreen enabled" onClick={this.handleFullscreen}></div>
           </div>
         );
       } else {
@@ -161,16 +168,14 @@ var Header = React.createClass({
     return (
       <div className={headerClasses}>
         <div className="left-header">
-          {this.renderWindowButtons()}
+          {util.isWindows () ? this.renderLogo() : this.renderWindowButtons()}
           {username}
         </div>
         <div className="right-header">
           <div className="updates">
             {updateWidget}
           </div>
-          <div className="logo">
-            <RetinaImage src="logo.png"/>
-          </div>
+          {util.isWindows () ? this.renderWindowButtons() : this.renderLogo()}
         </div>
       </div>
     );

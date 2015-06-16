@@ -57,7 +57,7 @@ var ContainerSettingsVolumes = React.createClass({
     metrics.track('Opened Volume Directory', {
       from: 'settings'
     });
-    shell.showItemInFolder(path);
+    shell.showItemInFolder(util.linuxToWindowsPath(path));
   },
   render: function () {
     if (!this.props.container) {
@@ -71,8 +71,9 @@ var ContainerSettingsVolumes = React.createClass({
           <span className="value-right">No Folder</span>
         );
       } else {
+        let local = util.isWindows() ? util.linuxToWindowsPath(val) : val;
         val = (
-          <a className="value-right" onClick={this.handleOpenVolumeClick.bind(this, val)}>{val.replace(process.env.HOME, '~')}</a>
+          <a className="value-right" onClick={this.handleOpenVolumeClick.bind(this, val)}>{local.replace(process.env.HOME, '~')}</a>
         );
       }
       return (
@@ -94,7 +95,7 @@ var ContainerSettingsVolumes = React.createClass({
             <thead>
               <tr>
                 <th>DOCKER FOLDER</th>
-                <th>MAC FOLDER</th>
+                <th>LOCAL FOLDER</th>
                 <th></th>
               </tr>
             </thead>

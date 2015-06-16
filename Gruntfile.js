@@ -285,7 +285,7 @@ module.exports = function (grunt) {
       },
       less: {
         files: ['styles/**/*.less'],
-        tasks: ['newer:less']
+        tasks: ['less']
       },
       copy: {
         files: ['images/*', 'index.html', 'fonts/*'],
@@ -293,7 +293,7 @@ module.exports = function (grunt) {
       }
     }
   });
-  grunt.registerTask('default', ['download-binary', 'newer:babel', 'newer:less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+  grunt.registerTask('default', ['download-binary', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (process.platform === 'win32') {
     grunt.registerTask('release', ['clean', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename:installer']);
