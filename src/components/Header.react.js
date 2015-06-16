@@ -104,32 +104,22 @@ var Header = React.createClass({
   },
   renderWindowButtons: function () {
     let buttons;
-    if (this.state.fullscreen) {
+    if (util.isWindows()) {
       buttons = (
-        <div className="buttons">
-          <div className="button button-close disabled"></div>
-          <div className="button button-minimize disabled"></div>
-          <div className="button button-fullscreenclose enabled" onClick={this.handleFullscreen}></div>
+        <div className="windows-buttons">
+        <div className="windows-button button-minimize enabled" onClick={this.handleMinimize}><div className="icon"></div></div>
+        <div className={`windows-button ${this.state.fullscreen ? 'button-fullscreenclose' : 'button-fullscreen'} enabled`} onClick={this.handleFullscreen}><div className="icon"></div></div>
+        <div className="windows-button button-close enabled" onClick={this.handleClose}></div>
         </div>
       );
     } else {
-      if (util.isWindows()) {
-        buttons = (
-          <div className="windows-buttons">
-          <div className="windows-button button-minimize enabled" onClick={this.handleMinimize}><div className="icon"></div></div>
-          <div className="windows-button button-fullscreen enabled" onClick={this.handleFullscreen}><div className="icon"></div></div>
-          <div className="windows-button button-close enabled" onClick={this.handleClose}></div>
-          </div>
-        );
-      } else {
-        buttons = (
-          <div className="buttons">
-          <div className="button button-close enabled" onClick={this.handleClose}></div>
-          <div className="button button-minimize enabled" onClick={this.handleMinimize}></div>
-          <div className="button button-fullscreen enabled" onClick={this.handleFullscreen}></div>
-          </div>
-        );
-      }
+      buttons = (
+        <div className="buttons">
+        <div className="button button-close enabled" onClick={this.handleClose}></div>
+        <div className="button button-minimize enabled" onClick={this.handleMinimize}></div>
+        <div className="button button-fullscreen enabled" onClick={this.handleFullscreen}></div>
+        </div>
+      );
     }
     return buttons;
   },
@@ -189,9 +179,10 @@ var Header = React.createClass({
     return (
       <div className={headerClasses}>
         <div className="left-header">
-          {this.renderWindowButtons()}
+          {util.isWindows () ? null : this.renderWindowButtons()}
         </div>
         <div className="right-header">
+          {util.isWindows () ? this.renderWindowButtons() : null}
         </div>
       </div>
     );
