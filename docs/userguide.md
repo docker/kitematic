@@ -30,7 +30,7 @@ stream logs, and single click terminal into your Docker container all from the
 GUI.
 
 First, if you haven't yet done so, [download and start
-Kitematic](./kitematic-overview.md).
+Kitematic](/).
 
 ## Container list
 
