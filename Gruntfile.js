@@ -179,7 +179,7 @@ module.exports = function (grunt) {
     rename: {
       installer: {
         src: 'installer/Setup.exe',
-        dest: 'installer/KitematicSetup.exe'
+        dest: 'installer/KitematicSetup-' + packagejson.version + '.exe'
       }
     },
 
