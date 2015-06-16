@@ -59,7 +59,7 @@ var _steps = [{
   message: 'To run Docker containers on your computer, Kitematic is starting a Linux virtual machine. This may take a minute...',
   totalPercent: 60,
   percent: 0,
-  seconds: 80,
+  seconds: 110,
   run: Promise.coroutine(function* (progressCallback) {
     setupUtil.simulateProgress(this.seconds, progressCallback);
     var exists = yield machine.exists();
