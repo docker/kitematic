@@ -162,7 +162,7 @@ var DockerMachine = {
             'DOCKER_HOST' : machine.url,
             'DOCKER_CERT_PATH' : path.join(util.home(), '.docker/machine/machines/' + machine.name),
             'DOCKER_TLS_VERIFY': 1,
-            'PATH': resources.resourceDir() + ':' + process.env.PATH
+            'PATH': resources.resourceDir() + ';' + process.env.PATH
           }
         });
       });
