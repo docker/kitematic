@@ -153,7 +153,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: 'resources',
-          src: ['docker*'],
+          src: ['docker*', 'boot2docker.iso', 'ssh.exe', 'OPENSSH_LICENSE'],
           dest: 'dist/Kitematic-win32/resources/resources/'
         }],
         options: {
@@ -164,7 +164,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: 'resources',
-          src: ['**/*'],
+          src: ['docker*', 'boot2docker.iso', 'macsudo', 'terminal'],
           dest: '<%= OSX_FILENAME %>/Contents/Resources/resources/'
         }, {
           src: 'util/kitematic.icns',

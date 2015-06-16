@@ -58,9 +58,9 @@ var DockerMachine = {
   create: function () {
     var dockerversion = util.packagejson()['docker-version'];
     if (util.isWindows()) {
-      return util.exec([this.command(), '--native-ssh', '-D', 'create', '-d', 'virtualbox', '--virtualbox-boot2docker-url', path.join(process.cwd(), 'resources', 'boot2docker-' + dockerversion + '.iso'), '--virtualbox-memory', '2048', NAME]);
+      return util.exec([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', NAME]);
     } else {
-      return util.exec([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-boot2docker-url', path.join(process.cwd(), 'resources', 'boot2docker-' + dockerversion + '.iso'), '--virtualbox-memory', '2048', NAME]);
+      return util.exec([this.command(), '-D', 'create', '-d', 'virtualbox' ,'--virtualbox-boot2docker-url', path.join(process.cwd(), 'resources', 'boot2docker-' + dockerversion + '.iso'), '--virtualbox-memory', '2048', NAME]);
     }
   },
   start: function () {
@@ -161,8 +161,7 @@ var DockerMachine = {
           {env: {
             'DOCKER_HOST' : machine.url,
             'DOCKER_CERT_PATH' : path.join(util.home(), '.docker/machine/machines/' + machine.name),
-            'DOCKER_TLS_VERIFY': 1,
-            'PATH': resources.resourceDir() + ';' + process.env.PATH
+            'DOCKER_TLS_VERIFY': 1
           }
         });
       });
@@ -174,9 +173,6 @@ var DockerMachine = {
       });
     }
   },
-  exec: function () {
-
-  }
 };
 
 module.exports = DockerMachine;
