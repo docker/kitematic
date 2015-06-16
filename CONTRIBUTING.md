@@ -23,7 +23,7 @@ Before you fil an issue or a pull request, quickly read of the following tips on
 - The latest Xcode from the Apple App Store.
 
 ### Other Prerequisites (Windows)
-- [Visual Studio 2013 Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) (or similar)
+- [Visual Studio 2013 Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) (or similar) - Kitematic does not need any optional packages. 
 - [Python](https://www.python.org/downloads/release/python-2710/)
 
 ### Getting Started
