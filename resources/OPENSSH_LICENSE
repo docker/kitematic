@@ -1,3 +1,5 @@
+Kitematic includes OpenSSH ssh.exe from the msysgit distribution version Git-1.9.5-preview20150319, available online at https://github.com/msysgit/git/tree/v1.9.5.msysgit.1
+
 This file is part of the OpenSSH software.
 
 The licences which components of this software fall under are as

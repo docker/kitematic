@@ -1,0 +1,20 @@
+Kitematic includes (but does not link to) various DLLs included with the msysgit Git-1.9.5-preview20150319 distribution. Included is the MSYS runtime license.
+Source is available online at https://github.com/msysgit/git/tree/v1.9.5.msysgit.1
+
+File:		     MSYS_LICENSE
+Copyright (C):	     2001, Earnie Boyd  <earnie@users.sf.net>
+File $Revision$
+File Revision $Date$
+MSYS Release:	     1.0.2
+MSYS Release Date:   November 30th, 2001
+
+The software, both source and binary forms, are covered via differing licenses.
+Each license has it's own set of rules so please make sure you read them
+carefully to see how it applies to you, particularly if you're going to
+distribute the software.
+
+The MSYS runtime software source can found in the winsup/cygwin directory.  The
+existing code portions of this source is covered by the CYGWIN_LICENSE which can
+be found in this directory in a file by the name of CYGWIN_LICENSE.  MSYS
+specific software code added regardless of existing license is covered by the
+ESPL which can be found in a file by the same name.
