@@ -5,7 +5,7 @@ var fs = require('fs');
 var util = require('./Util');
 var resources = require('./ResourcesUtil');
 
-var NAME = 'dev';
+var NAME = util.isWindows () ? 'kitematic' : 'dev';
 
 var DockerMachine = {
   command: function () {
