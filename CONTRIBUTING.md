@@ -6,7 +6,8 @@ Before you fil an issue or a pull request, quickly read of the following tips on
 
 ## Table of Contents
 
- - [Prerequisites](#prerequisites)
+ - [Mac Prerequisites](#prerequisites-for-developing-kitematic-on-mac)
+ - [Windows Prerequisites](#prerequisites-for-developing-kitematic-on-windows)
  - [Getting Started](#getting-started)
  - [Architecture](#architecture)
  - [GitHub Issues](#github-issues)
@@ -21,7 +22,7 @@ You will need to install:
 -  [Node.js 0.10.38](https://nodejs.org/dist/v0.10.38/)
 - The latest Xcode from the Apple App Store. 
 
-### Prerequisites for developing Kitematic on on Windows 
+### Prerequisites for developing Kitematic on Windows 
 You will need to install: 
 - [Node.js 0.10.38](https://nodejs.org/dist/v0.10.38/)
 - Open a command prompt (`cmd`) and run the command `mkdir ~/AppData/Roaming/npm` 
