@@ -46,6 +46,9 @@ module.exports = {
   dockerMachineBinPath: function () {
     return path.join(this.binsPath(), 'docker-machine' + this.binsEnding());
   },
+  dockerComposeBinPath: function () {
+    return path.join(this.binsPath(), 'docker-compose' + this.binsEnding());
+  },
   escapePath: function (str) {
     return str.replace(/ /g, '\\ ').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
   },
