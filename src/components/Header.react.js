@@ -53,7 +53,11 @@ var Header = React.createClass({
     }
   },
   handleClose: function () {
-    remote.getCurrentWindow().hide();
+    if (util.isWindows()) {
+      remote.getCurrentWindow().close();
+    } else {
+      remote.getCurrentWindow().hide();
+    }
   },
   handleMinimize: function () {
     remote.getCurrentWindow().minimize();
