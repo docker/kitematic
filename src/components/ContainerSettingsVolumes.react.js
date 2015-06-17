@@ -57,7 +57,11 @@ var ContainerSettingsVolumes = React.createClass({
     metrics.track('Opened Volume Directory', {
       from: 'settings'
     });
-    shell.showItemInFolder(util.linuxToWindowsPath(path));
+    if (util.isWindows()) {
+      shell.showItemInFolder(util.linuxToWindowsPath(path));
+    } else {
+      shell.showItemInFolder(path);
+    }
   },
   render: function () {
     if (!this.props.container) {
