@@ -62,7 +62,7 @@ var ContainerHomePreview = React.createClass({
               </div>
             </div>
             {frame}
-            <div className="frame-overlay"></div>
+            <div onClick={this.handleClickPreview} className="frame-overlay"></div>
           </div>
         </div>
       );
