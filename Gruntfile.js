@@ -153,7 +153,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: 'resources',
-          src: ['docker*', 'boot2docker.iso', 'ssh.exe', 'OPENSSH_LICENSE'],
+          src: ['docker*', 'boot2docker.iso', 'ssh.exe', 'OPENSSH_LICENSE', 'msys-*'],
           dest: 'dist/Kitematic-win32/resources/resources/'
         }],
         options: {
