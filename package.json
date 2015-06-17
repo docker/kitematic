@@ -1,6 +1,6 @@
 {
   "name": "Kitematic",
-  "version": "0.6.6",
+  "version": "0.6.7",
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X.",
   "homepage": "https://kitematic.com/",
@@ -80,6 +80,7 @@
     "grunt-electron": "^1.0.0",
     "grunt-electron-installer": "^0.33.0",
     "grunt-newer": "^1.1.1",
+    "grunt-rcedit": "^0.3.1",
     "grunt-rename": "^0.1.4",
     "grunt-shell": "^1.1.2",
     "grunt-shell-spawn": "^0.3.8",

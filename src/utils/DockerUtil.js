@@ -25,8 +25,6 @@ export default {
       throw new Error('Certificate directory does not exist');
     }
 
-    console.log(ip);
-
     this.host = ip;
     this.client = new dockerode({
       protocol: 'https',
@@ -369,13 +367,14 @@ export default {
       let columns = {};
       columns.amount = 4; // arbitrary
       columns.toFill = 0; // the current column index, waiting for layer IDs to be displayed
+      let error = null;
 
       // data is associated with one layer only (can be identified with id)
       stream.on('data', str => {
         var data = JSON.parse(str);
 
         if (data.error) {
-          callback(data.error);
+          error = data.error;
           return;
         }
 
@@ -449,7 +448,7 @@ export default {
         }
       });
       stream.on('end', function () {
-        callback();
+        callback(error);
       });
     });
   },

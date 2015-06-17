@@ -76,11 +76,38 @@ module.exports = function (grunt) {
       }
     },
 
+    rcedit: {
+      exes: {
+        files: [{
+          expand: true,
+          cwd: 'dist/Kitematic-win32',
+          src: ['Kitematic.exe']
+        }],
+        options: {
+          icon: 'util/kitematic.ico',
+          'file-version': packagejson.version,
+          'product-version': packagejson.version,
+          'version-string': {
+            'CompanyName': 'Docker, Inc',
+            'ProductVersion': packagejson.version,
+            'ProductName': 'Kitematic',
+            'FileDescription': 'Kitematic',
+            'InternalName': 'Kitematic.exe',
+            'OriginalFilename': 'Kitematic.exe',
+            'LegalCopyright': 'Copyright 2015 Docker Inc. All rights reserved.'
+          }
+        }
+      }
+    },
+
     'create-windows-installer': {
       appDirectory: 'dist/Kitematic-win32/',
       authors: 'Docker Inc.',
       loadingGif: 'util/loading.gif',
-      setupIcon: 'util/kitematic.ico'
+      setupIcon: 'util/kitematic.ico',
+      description: 'Kitematic',
+      title: 'Kitematic',
+      version: packagejson.version
     },
 
     // docker binaries
@@ -126,7 +153,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: 'resources',
-          src: ['docker*'],
+          src: ['docker*', 'boot2docker.iso', 'ssh.exe', 'OPENSSH_LICENSE', 'msys-*'],
           dest: 'dist/Kitematic-win32/resources/resources/'
         }],
         options: {
@@ -137,7 +164,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: 'resources',
-          src: ['**/*'],
+          src: ['docker*', 'boot2docker.iso', 'macsudo', 'terminal'],
           dest: '<%= OSX_FILENAME %>/Contents/Resources/resources/'
         }, {
           src: 'util/kitematic.icns',
@@ -152,7 +179,7 @@ module.exports = function (grunt) {
     rename: {
       installer: {
         src: 'installer/Setup.exe',
-        dest: 'installer/KitematicSetup.exe'
+        dest: 'installer/KitematicSetup-' + packagejson.version + '.exe'
       }
     },
 
@@ -258,7 +285,7 @@ module.exports = function (grunt) {
       },
       less: {
         files: ['styles/**/*.less'],
-        tasks: ['newer:less']
+        tasks: ['less']
       },
       copy: {
         files: ['images/*', 'index.html', 'fonts/*'],
@@ -266,10 +293,10 @@ module.exports = function (grunt) {
       }
     }
   });
-  grunt.registerTask('default', ['download-binary', 'newer:babel', 'newer:less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+  grunt.registerTask('default', ['download-binary', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'create-windows-installer', 'rename:installer']);
+    grunt.registerTask('release', ['clean', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename:installer']);
   } else {
     grunt.registerTask('release', ['clean:dist', 'clean:build', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
   }

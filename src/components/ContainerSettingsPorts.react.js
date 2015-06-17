@@ -46,7 +46,7 @@ var ContainerSettingsPorts = React.createClass({
   },
   render: function () {
     if (!this.props.container) {
-      return (<div></div>);
+      return false;
     }
     var ports = _.map(_.pairs(this.state.ports), pair => {
       var key = pair[0];
@@ -66,7 +66,7 @@ var ContainerSettingsPorts = React.createClass({
             <thead>
               <tr>
                 <th>DOCKER PORT</th>
-                <th>MAC PORT</th>
+                <th>ACCESS URL</th>
               </tr>
             </thead>
             <tbody>

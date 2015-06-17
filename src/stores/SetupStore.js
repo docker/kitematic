@@ -49,7 +49,7 @@ var _steps = [{
       } catch (err) {
         throw null;
       }
-    } else if (util.isWindows() && !virtualBox.active()) {
+    } else if (!util.isWindows() && !virtualBox.active()) {
       yield util.exec(setupUtil.macSudoCmd(util.escapePath('/Library/Application Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh') + ' restart'));
     }
   })
@@ -59,7 +59,7 @@ var _steps = [{
   message: 'To run Docker containers on your computer, Kitematic is starting a Linux virtual machine. This may take a minute...',
   totalPercent: 60,
   percent: 0,
-  seconds: 80,
+  seconds: 110,
   run: Promise.coroutine(function* (progressCallback) {
     setupUtil.simulateProgress(this.seconds, progressCallback);
     var exists = yield machine.exists();
@@ -149,7 +149,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var vboxNeedsInstall = !virtualBox.installed();
 
     required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== virtualBox.checksum());
-    required.install = vboxNeedsInstall || (util.isWindows() && !virtualBox.active());
+    required.install = vboxNeedsInstall || (!util.isWindows() && !virtualBox.active());
     required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0;
 
     var exists = yield machine.exists();

@@ -2,8 +2,10 @@ var app = require('app');
 var autoUpdater = require('auto-updater');
 var BrowserWindow = require('browser-window');
 var fs = require('fs');
+var os = require('os');
 var ipc = require('ipc');
 var path = require('path');
+var child_process = require('child_process');
 
 process.env.NODE_PATH = path.join(__dirname, 'node_modules');
 process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
@@ -17,45 +19,28 @@ try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, 'settings.json'), 'utf8'));
 } catch (err) {}
 
-var handleStartupEvent = function() {
-  if (process.platform !== 'win32') {
-    return false;
-  }
+let updateCmd = (args, cb) => {
+  let updateExe = path.resolve(path.dirname(process.execPath), '..', 'Update.exe');
+  let child = child_process.spawn(updateExe, args, {detached: true});
+  child.on('close', cb);
+};
 
+if (process.platform === 'win32') {
   var squirrelCommand = process.argv[1];
+  let target = path.basename(process.execPath);
   switch (squirrelCommand) {
     case '--squirrel-install':
     case '--squirrel-updated':
-
-      // Optionally do things such as:
-      //
-      // - Install desktop and start menu shortcuts
-      // - Add your .exe to the PATH
-      // - Write to the registry for things like file associations and
-      //   explorer context menus
-
-      // Always quit when done
-      app.quit();
-
-      return true;
+      updateCmd(['--createShortcut', target], app.quit);
+      break;
     case '--squirrel-uninstall':
-      // Undo anything you did in the --squirrel-install and
-      // --squirrel-updated handlers
-
-      // Always quit when done
-      app.quit();
-
-      return true;
+      updateCmd(['--removeShortcut', target], app.quit);
+      break;
     case '--squirrel-obsolete':
-      // This is called on the outgoing version of your app before
-      // we update to the new version - it's the opposite of
-      // --squirrel-updated
       app.quit();
-      return true;
+      break;
   }
-};
-
-handleStartupEvent();
+}
 
 var openURL = null;
 app.on('open-url', function (event, url) {
@@ -72,7 +57,7 @@ app.on('ready', function () {
     'standard-window': false,
     resizable: true,
     frame: false,
-    show: false,
+    show: false
   });
 
   mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, 'index.html')));
@@ -90,12 +75,21 @@ app.on('ready', function () {
     autoUpdater.quitAndInstall();
   });
 
-  app.on('before-quit', function () {
-    // TODO: make this work for right click + close
-    if (!updating && mainWindow.webContents) {
+  if (os.platform() === 'win32') {
+    mainWindow.on('close', function () {
       mainWindow.webContents.send('application:quitting');
-    }
-  });
+      return true;
+    });
+    app.on('window-all-closed', function() {
+      app.quit();
+    });
+  } else if (os.platform() === 'darwin') {
+    app.on('before-quit', function () {
+      if (!updating) {
+        mainWindow.webContents.send('application:quitting');
+      }
+    });
+  }
 
   mainWindow.webContents.on('new-window', function (e) {
     e.preventDefault();
@@ -125,7 +119,7 @@ app.on('ready', function () {
     });
 
     if (process.env.NODE_ENV !== 'development') {
-      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion() + '&beta=' + !!settingsjson.beta);
+      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion() + '&beta=' + !!settingsjson.beta + '&platform=' + os.platform());
     }
   });
 
