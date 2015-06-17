@@ -22,10 +22,14 @@ var ContainerSettingsGeneral = React.createClass({
       return [util.randomId(), e[0], e[1]];
     });
 
+    let [tty, openStdin] = ContainerUtil.mode(this.props.container) || [false, false];
+
     return {
       slugName: null,
       nameError: null,
-      env: env
+      env: env,
+      tty: tty,
+      openStdin: openStdin
     };
   },
 
@@ -90,7 +94,9 @@ var ContainerSettingsGeneral = React.createClass({
         list.push(key + '=' + value);
       }
     });
-    containerActions.update(this.props.container.Name, {Env: list});
+    let tty = this.state.tty;
+    let openStdin = this.state.openStdin;
+    containerActions.update(this.props.container.Name, {Env: list, Tty: tty, OpenStdin: openStdin});
   },
 
   handleChangeEnvKey: function (index, event) {
@@ -131,6 +137,18 @@ var ContainerSettingsGeneral = React.createClass({
     });
 
     metrics.track('Removed Environment Variable');
+  },
+
+  handleChangeTty: function () {
+    this.setState({
+      tty: !this.state.tty
+    });
+  },
+
+  handleChangeOpenStdin: function () {
+    this.setState({
+      openStdin: !this.state.openStdin
+    });
   },
 
   handleDeleteContainer: function () {
@@ -210,6 +228,13 @@ var ContainerSettingsGeneral = React.createClass({
           </div>
           <div className="env-vars">
             {vars}
+          </div>
+        </div>
+        <div className="settings-section">
+          <div className="env-vars">
+            <h4>Foreground Options</h4>
+            <p><input type="checkbox" checked={this.state.tty} onChange={this.handleChangeTty}/> Attach standard streams to a tty, including stdin if it is not closed</p>
+            <p><input type="checkbox" checked={this.state.openStdin} onChange={this.handleChangeOpenStdin}/> Keep STDIN open even if not attached</p>
           </div>
           <a className="btn btn-action" disabled={this.props.container.State.Updating} onClick={this.handleSaveEnvVars}>Save</a>
         </div>
