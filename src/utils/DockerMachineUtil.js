@@ -166,10 +166,9 @@ var DockerMachine = {
         });
       });
     } else {
-      cmd = cmd || '$SHELL';
+      cmd = cmd || process.env.SHELL;
       this.info().then(machine => {
-        var cmd = [resources.terminal(), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 ${cmd}`];
-        util.exec(cmd).then(() => {});
+        util.exec([resources.terminal(), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 ${cmd}`]).then(() => {});
       });
     }
   },
