@@ -28,8 +28,10 @@ var SetupUtil = {
   shouldUpdateBinaries: function () {
     return !fs.existsSync(util.dockerBinPath()) ||
         !fs.existsSync(util.dockerMachineBinPath()) ||
+        !fs.existsSync(util.dockerComposeBinPath()) ||
+        this.checksum(util.dockerBinPath()) !== this.checksum(resources.docker()) ||
         this.checksum(util.dockerMachineBinPath()) !== this.checksum(resources.dockerMachine()) ||
-        this.checksum(util.dockerBinPath()) !== this.checksum(resources.docker());
+        this.checksum(util.dockerComposeBinPath()) !== this.checksum(resources.dockerCompose());
   },
   copycmd: function (src, dest) {
     return ['rm', '-f', dest, '&&', 'cp', src, dest];
@@ -40,6 +42,8 @@ var SetupUtil = {
     cmd.push.apply(cmd, this.copycmd(util.escapePath(resources.dockerMachine()), '/usr/local/bin/docker-machine'));
     cmd.push('&&');
     cmd.push.apply(cmd, this.copycmd(util.escapePath(resources.docker()), '/usr/local/bin/docker'));
+    cmd.push('&&');
+    cmd.push.apply(cmd, this.copycmd(util.escapePath(resources.dockerCompose()), '/usr/local/bin/docker-compose'));
     return cmd.join(' ');
   },
   fixBinariesCmd: function () {
@@ -49,6 +53,8 @@ var SetupUtil = {
     cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, path.join('/usr/local/bin', 'docker-machine')]);
     cmd.push('&&');
     cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, path.join('/usr/local/bin', 'docker')]);
+    cmd.push('&&');
+    cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, path.join('/usr/local/bin', 'docker-compose')]);
     return cmd.join(' ');
   },
   installVirtualBoxCmd: function () {
