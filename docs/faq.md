@@ -1,9 +1,16 @@
-page_title: Kitematic: Frequently Asked Questions
-page_description: Documentation covering common questions users have about Kitematic
-page_keywords: docker, documentation, about, technology, kitematic, gui
+<!--[metadata]>
++++
+title = "Frequently Asked Questions"
+description = "Documentation covering common questions users have about Kitematic"
+keywords = ["docker, documentation, about, technology, kitematic,  gui"]
+[menu.main]
+parent="smn_workw_kitematic"
+weight=5
++++
+<![end-metadata]-->
 
 
-# Frequently Asked Questions
+# Kitematic: Frequently Asked Questions
 
 ### Is Kitematic Open Source?
 

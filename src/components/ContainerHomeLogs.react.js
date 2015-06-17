@@ -43,7 +43,7 @@ module.exports = React.createClass({
   },
   scrollToBottom: function () {
     var parent = $('.logs');
-    if (parent.scrollTop() >= _prevBottom - 50) {
+    if (parent[0].scrollHeight - parent.height() >= _prevBottom - 50) {
       parent.scrollTop(parent[0].scrollHeight - parent.height());
     }
     _prevBottom = parent[0].scrollHeight - parent.height();
