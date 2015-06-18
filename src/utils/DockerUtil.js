@@ -101,6 +101,7 @@ export default {
       containerData.Env = containerData.Config.Env;
     }
 
+
     containerData.Volumes = _.mapObject(containerData.Volumes, () => {return {};});
 
     let existing = this.client.getContainer(name);
@@ -160,6 +161,8 @@ export default {
       Config: {
         Image: imageName,
       },
+      Tty: true,
+      OpenStdin: true,
       State: {
         Downloading: true
       }
@@ -181,7 +184,7 @@ export default {
 
       delete this.placeholders[name];
       localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
-      this.createContainer(name, {Image: imageName});
+      this.createContainer(name, {Image: imageName, Tty: true, OpenStdin: true});
     },
 
     // progress is actually the progression PER LAYER (combined in columns)

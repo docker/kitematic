@@ -13,6 +13,14 @@ var ContainerUtil = {
     });
   },
 
+  // Provide Foreground options
+  mode: function (container) {
+    if (!container || !container.Config) {
+      return [true, true];
+    }
+    return [container.Config.Tty, container.Config.OpenStdin];
+  },
+
   // TODO: inject host here instead of requiring Docker
   ports: function (container) {
     if (!container || !container.NetworkSettings) {
