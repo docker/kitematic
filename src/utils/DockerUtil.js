@@ -137,6 +137,10 @@ export default {
       }
       async.map(containers, (container, callback) => {
         this.client.getContainer(container.Id).inspect((error, container) => {
+          if (error) {
+            callback(error);
+            return;
+          }
           container.Name = container.Name.replace('/', '');
           callback(null, container);
         });
