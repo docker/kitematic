@@ -47,7 +47,7 @@ var Metrics = {
 
     var os;
 
-    if(util.isWindows()) {
+    if(util.isWindows() || util.isLinux()) {
       os = navigator.userAgent;
     } else {
       os = navigator.userAgent.match(/Mac OS X (\d+_\d+_\d+)/)[1].replace(/_/g, '.');
