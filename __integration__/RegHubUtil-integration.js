@@ -26,7 +26,8 @@ describe('RegHubUtil Integration Tests', () => {
         hubUtil.login(process.env.INTEGRATION_USER, process.env.INTEGRATION_PASSWORD, () => {
           regHubUtil.tags(`${process.env.INTEGRATION_USER}/test_private`, (error, tags) => {
             expect(error).toBeFalsy();
-            expect(tags).toEqual(['latest']);
+            expect(tags.length).toEqual(1);
+            expect(tags[0].name).toEqual('latest');
             resolve();
           });
         });
@@ -50,8 +51,10 @@ describe('RegHubUtil Integration Tests', () => {
       return new Promise((resolve) => {
         hubUtil.login(process.env.INTEGRATION_USER, process.env.INTEGRATION_PASSWORD, () => {
           regHubUtil.tags(`${process.env.INTEGRATION_USER}/test`, (error, tags) => {
+            console.log(tags);
             expect(error).toBeFalsy();
-            expect(tags).toEqual(['latest']);
+            expect(tags.length).toEqual(1);
+            expect(tags[0].name).toEqual('latest');
             resolve();
           });
         });

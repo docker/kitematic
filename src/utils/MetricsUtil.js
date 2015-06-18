@@ -4,6 +4,8 @@ var uuid = require('node-uuid');
 var fs = require('fs');
 var path = require('path');
 var util = require('./Util');
+var os = require('os');
+var osxRelease = require('osx-release');
 var settings;
 
 try {
@@ -45,19 +47,11 @@ var Metrics = {
       localStorage.setItem('metrics.id', uuid.v4());
     }
 
-    var os;
-
-    if(util.isWindows()) {
-      os = navigator.userAgent;
-    } else {
-      os = navigator.userAgent.match(/Mac OS X (\d+_\d+_\d+)/)[1].replace(/_/g, '.');
-    }
-
     mixpanel.track(name, assign({
       distinct_id: id,
       version: util.packagejson().version,
-      'Operating System Version': os,
-      beta: !!settings.beta
+      'Operating System': os.platform(),
+      'Operating System Version': osxRelease(os.release())
     }, data));
   },
 

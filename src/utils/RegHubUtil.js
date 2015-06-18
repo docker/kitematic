@@ -98,8 +98,8 @@ module.exports = {
     }, (error, response, body) => {
       if (response.statusCode === 200) {
         let data = JSON.parse(body);
-        tagServerActions.tagsUpdated({repo, tags: data.tags});
-        if (callback) { callback(null, data.tags); }
+        tagServerActions.tagsUpdated({repo, tags: data});
+        if (callback) { callback(null, data); }
       } else if (error || response.statusCode === 401) {
         repositoryServerActions.error({repo});
         if (callback) { callback(new Error('Failed to fetch repos')); }
