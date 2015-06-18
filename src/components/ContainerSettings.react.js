@@ -55,6 +55,11 @@ var ContainerSettings = React.createClass({
                   Volumes
                 </li>
               </Router.Link>
+              <Router.Link to="containerSettingsAdvanced" params={{name: container.Name}}>
+                <li>
+                  Advanced
+                </li>
+              </Router.Link>
             </ul>
           </div>
           <Router.RouteHandler {...this.props}/>
