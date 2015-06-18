@@ -56,11 +56,10 @@ var DockerMachine = {
     });
   },
   create: function () {
-    var dockerversion = util.packagejson()['docker-version'];
     if (util.isWindows()) {
       return util.exec([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', NAME]);
     } else {
-      return util.exec([this.command(), '-D', 'create', '-d', 'virtualbox' ,'--virtualbox-boot2docker-url', path.join(process.cwd(), 'resources', 'boot2docker-' + dockerversion + '.iso'), '--virtualbox-memory', '2048', NAME]);
+      return util.exec([this.command(), '-D', 'create', '-d', 'virtualbox' ,'--virtualbox-boot2docker-url', path.join(process.cwd(), 'resources', 'boot2docker.iso'), '--virtualbox-memory', '2048', NAME]);
     }
   },
   start: function () {

@@ -1,4 +1,5 @@
 var path = require('path');
+var fs = require('fs');
 var execFile = require('child_process').execFile;
 var packagejson = require('./package.json');
 var electron = require('electron-prebuilt');
@@ -26,6 +27,19 @@ module.exports = function (grunt) {
     var match = str.match(/(\d+\.\d+\.\d+)/);
     return match ? match[1] : null;
   };
+
+  grunt.registerTask('download-boot2docker-iso', 'Downloads provided boot2docker version', function () {
+    var version = grunt.config('version');
+    try {
+      var data = fs.readFileSync(path);
+      var match = data.match(/Boot2Docker-v(\d+\.\d+\.\d+)/);
+      if (match && match[1] !== version) {
+        grunt.task.run('curl:boot2docker-iso');
+      }
+    } catch (err) {
+      grunt.task.run('curl:boot2docker-iso');
+    }
+  });
 
   grunt.registerMultiTask('download-binary', 'Downloads binary unless version up to date', function () {
     var target = grunt.task.current.target;
@@ -213,7 +227,7 @@ module.exports = function (grunt) {
       },
       'boot2docker-iso': {
         src: BOOT2DOCKER_ISO_URL,
-        dest: path.join('resources', 'boot2docker-' + packagejson['docker-version'])
+        dest: path.join('resources', 'boot2docker.iso')
       }
     },
 
@@ -282,6 +296,7 @@ module.exports = function (grunt) {
 
     clean: {
       release: ['build/', 'dist/', 'installer/'],
+      isos: ['resources/boot2docker*']
     },
 
     // livereload
@@ -307,12 +322,12 @@ module.exports = function (grunt) {
       }
     }
   });
-  grunt.registerTask('default', ['download-binary', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+  grunt.registerTask('default', ['download-binary', 'if-missing:curl:boot2docker-iso', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename:installer']);
+    grunt.registerTask('release', ['clean', 'download-binary', 'if-missing:curl:boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename:installer']);
   } else {
-    grunt.registerTask('release', ['clean', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
+    grunt.registerTask('release', ['clean', 'download-binary', 'if-missing:curl:boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
   }
 
   process.on('SIGINT', function () {
