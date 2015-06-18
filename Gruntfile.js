@@ -18,6 +18,9 @@ module.exports = function (grunt) {
   env.NODE_PATH = '..:' + env.NODE_PATH;
   env.NODE_ENV = target;
 
+  var certificateFile = grunt.option('certificate');
+  var certificatePassword = grunt.option('password');
+
   var version = function (str) {
     var match = str.match(/(\d+\.\d+\.\d+)/);
     return match ? match[1] : null;
@@ -107,7 +110,9 @@ module.exports = function (grunt) {
       setupIcon: 'util/kitematic.ico',
       description: 'Kitematic',
       title: 'Kitematic',
-      version: packagejson.version
+      version: packagejson.version,
+      certificateFile: certificateFile,
+      certificatePassword: certificatePassword
     },
 
     // docker binaries
