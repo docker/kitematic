@@ -63,10 +63,21 @@ var Header = React.createClass({
     remote.getCurrentWindow().minimize();
   },
   handleFullscreen: function () {
-    remote.getCurrentWindow().setFullScreen(!remote.getCurrentWindow().isFullScreen());
-    this.setState({
-      fullscreen: remote.getCurrentWindow().isFullScreen()
-    });
+    if (util.isWindows()) {
+      if (remote.getCurrentWindow().isMaximized()) {
+        remote.getCurrentWindow().unmaximize();
+      } else {
+        remote.getCurrentWindow().maximize();
+      }
+      this.setState({
+        fullscreen: remote.getCurrentWindow().isMaximized()
+      });
+    } else {
+      remote.getCurrentWindow().setFullScreen(!remote.getCurrentWindow().isFullScreen());
+      this.setState({
+        fullscreen: remote.getCurrentWindow().isFullScreen()
+      });
+    }
   },
   handleFullscreenHover: function () {
     this.update();
