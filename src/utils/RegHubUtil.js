@@ -56,6 +56,12 @@ module.exports = {
     request.get('https://kitematic.com/recommended.json', (error, response, body) => {
       if (error) {
         repositoryServerActions.error({error});
+        return;
+      }
+
+      if (response.statusCode !== 200) {
+        repositoryServerActions.error({error: new Error('Could not fetch recommended repo list. Please try again later.')});
+        return;
       }
 
       let data = JSON.parse(body);

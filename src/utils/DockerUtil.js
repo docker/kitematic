@@ -137,10 +137,15 @@ export default {
       }
       async.map(containers, (container, callback) => {
         this.client.getContainer(container.Id).inspect((error, container) => {
+          if (error) {
+            callback(null, null);
+            return;
+          }
           container.Name = container.Name.replace('/', '');
           callback(null, container);
         });
       }, (err, containers) => {
+        containers = containers.filter(c => c !== null);
         if (err) {
           // TODO: add a global error handler for this
           return;
