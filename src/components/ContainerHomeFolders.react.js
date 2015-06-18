@@ -18,23 +18,18 @@ var ContainerHomeFolder = React.createClass({
       from: 'home'
     });
 
-    if (hostVolume.indexOf(process.env.HOME) === -1) {
+    if (hostVolume.indexOf(util.windowsToLinuxPath(util.home())) === -1) {
       dialog.showMessageBox({
         message: 'Enable all volumes to edit files via Finder? This may not work with all database containers.',
         buttons: ['Enable Volumes', 'Cancel']
       }, (index) => {
         if (index === 0) {
           var volumes = _.clone(this.props.container.Volumes);
-          var newHostVolume = path.join(util.home(), 'Kitematic', this.props.container.Name, containerVolume);
+          var newHostVolume = util.escapePath(path.join(util.home(), util.documents(), 'Kitematic', this.props.container.Name, containerVolume));
           volumes[containerVolume] = newHostVolume;
           var binds = _.pairs(volumes).map(function (pair) {
             if(util.isWindows()) {
-              var home = util.home();
-              home = home.charAt(0).toLowerCase() + home.slice(1);
-              home = '/' + home.replace(':', '').replace(/\\/g, '/');
-              var fullPath = path.join(home, 'Kitematic', pair[1], pair[0]);
-              fullPath = fullPath.replace(/\\/g, '/');
-              return fullPath + ':' + pair[0];
+              return util.windowsToLinuxPath(pair[1]) + ':' + pair[0];
             }
             return pair[1] + ':' + pair[0];
           });
@@ -49,7 +44,8 @@ var ContainerHomeFolder = React.createClass({
         }
       });
     } else {
-      shell.showItemInFolder(hostVolume);
+      let path = util.isWindows() ? util.linuxToWindowsPath(hostVolume) : hostVolume;
+      shell.showItemInFolder(path);
     }
   },
   handleClickChangeFolders: function () {
@@ -63,8 +59,8 @@ var ContainerHomeFolder = React.createClass({
       return false;
     }
 
-    var folders = _.map(this.props.container.Volumes, (val, key) => {
-      var firstFolder = key.split(path.sep)[1];
+    var folders = _.map(_.omit(this.props.container.Volumes, (v, k) => k.indexOf('/Users/') !== -1), (val, key) => {
+      var firstFolder = key;
       return (
         <div key={key} className="folder" onClick={this.handleClickFolder.bind(this, val, key)}>
           <RetinaImage src="folder.png" />
@@ -73,19 +69,21 @@ var ContainerHomeFolder = React.createClass({
       );
     });
 
-    if (this.props.container.Volumes && _.keys(this.props.container.Volumes).length > 0 && this.props.container.State.Running) {
-      return (
-        <div className="folders wrapper">
-          <h4>Edit Files</h4>
-          <div className="widget">
+    return (
+      <div className="folders wrapper">
+        <div className="widget">
+          <div className="top-bar">
+            <div className="text">Volumes</div>
+            <div className="action" onClick={this.handleClickChangeFolders}>
+              <span className="icon icon-preferences"></span>
+            </div>
+          </div>
+          <div className="folders-list">
             {folders}
           </div>
-          <div className="subtext" onClick={this.handleClickChangeFolders}>Change Folders</div>
         </div>
-      );
-    } else {
-      return false;
-    }
+      </div>
+    );
   }
 });
 

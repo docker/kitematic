@@ -27,14 +27,23 @@ var ContainerHome = React.createClass({
   },
 
   handleResize: function () {
-    $('.left .wrapper').height(window.innerHeight - 240);
-    $('.right .wrapper').height(window.innerHeight / 2 - 100);
+    $('.full .wrapper').height(window.innerHeight - 132);
+    $('.left .wrapper').height(window.innerHeight - 132);
+    $('.right .wrapper').height(window.innerHeight / 2 - 55);
   },
 
   handleErrorClick: function () {
     shell.openExternal('https://github.com/kitematic/kitematic/issues/new');
   },
 
+  showWeb: function () {
+    return _.keys(this.props.ports).length > 0;
+  },
+  
+  showFolders: function () {
+    return this.props.container.Volumes && _.keys(this.props.container.Volumes).length > 0 && this.props.container.State.Running;
+  },
+  
   render: function () {
     if (!this.props.container) {
       return;
@@ -43,11 +52,11 @@ var ContainerHome = React.createClass({
     let body;
     if (this.props.container.Error) {
       body = (
-        <div className="details-progress">
-          <h3>An error occurred:</h3>
-          <h2>{this.props.container.Error.message}</h2>
-          <h3>If you feel that this error is invalid, please <a onClick={this.handleErrorClick}>file a ticket on our GitHub repo.</a></h3>
-          <Radial progress={100} error={true} thick={true} transparent={true}/>
+        <div className="details-progress error">
+          <h2>We&#39;re sorry. There seem to be an error:</h2>
+          <p className="error-message">{this.props.container.Error}</p>
+          <p>If this error is invalid, please file a ticket on our Github repo.</p>
+          <a className="btn btn-action" onClick={this.handleErrorClick}>File Ticket</a>
         </div>
       );
     } else if (this.props.container && this.props.container.State.Downloading) {
@@ -88,43 +97,42 @@ var ContainerHome = React.createClass({
         );
       }
     } else {
-      if (this.props.defaultPort) {
+      var logWidget = (
+        <ContainerHomeLogs container={this.props.container}/>
+      );
+      var webWidget;
+      if (this.showWeb()) {
+        webWidget = (
+          <ContainerHomePreview ports={this.props.ports} defaultPort={this.props.defaultPort} />
+        );
+      }
+      var folderWidget;
+      if (this.showFolders()) {
+        folderWidget = (
+          <ContainerHomeFolders container={this.props.container} />
+        );
+      }
+      if (logWidget && !webWidget && !folderWidget) {
         body = (
           <div className="details-panel home">
             <div className="content">
-              <div className="left">
-                <ContainerHomePreview ports={this.props.ports} defaultPort={this.props.defaultPort} />
-              </div>
-              <div className="right">
-                <ContainerHomeLogs container={this.props.container}/>
-                <ContainerHomeFolders container={this.props.container} />
+              <div className="full">
+                {logWidget}
               </div>
             </div>
           </div>
         );
       } else {
-        var right;
-        if (_.keys(this.props.ports) > 0) {
-          right = (
-            <div className="right">
-              <ContainerHomePreview  ports={this.props.ports} defaultPort={this.props.defaultPort} />
-              <ContainerHomeFolders container={this.props.container} />
-            </div>
-          );
-        } else {
-          right = (
-            <div className="right">
-              <ContainerHomeFolders container={this.props.container} />
-            </div>
-          );
-        }
         body = (
           <div className="details-panel home">
             <div className="content">
               <div className="left">
-                <ContainerHomeLogs container={this.props.container}/>
+                {logWidget}
               </div>
-              {right}
+              <div className="right">
+                {webWidget}
+                {folderWidget}
+              </div>
             </div>
           </div>
         );

@@ -62,7 +62,7 @@ module.exports = {
       let data = JSON.parse(body);
 
       // If the JWT has expired, then log in again to get a new JWT
-      if (data && data.detail === 'Signature has expired.') {
+      if (data && data.detail && data.detail.indexOf('expired') !== -1) {
         let config = this.config();
         if (!this.config()) {
           this.logout();
@@ -74,11 +74,10 @@ module.exports = {
           let data = JSON.parse(body);
           if (response.statusCode === 200 && data && data.token) {
             localStorage.setItem('auth.jwt', data.token);
+            this.request(req, callback);
           } else {
             this.logout();
           }
-
-          this.request(req, callback);
         });
       } else {
         callback(error, response, body);

@@ -74,7 +74,7 @@ var ContainerSettingsPorts = React.createClass({
   },
   render: function () {
     if (!this.props.container) {
-      return (<div></div>);
+      return false;
     }
     var isUpdating = (this.props.container.State.Updating);
     var isValid = true;
@@ -84,32 +84,36 @@ var ContainerSettingsPorts = React.createClass({
       isValid = (error) ? false : isValid;
 
       return (
-        <div key={key} className="table-values">
-          <span className="value-left">{key}</span>
-          <span className="icon icon-arrow-right"></span>
-          <span className="value-right">
+        <tr key={key}>
+          <td>{key}</td>
+          <td className="bind">
             <a onClick={this.handleViewLink.bind(this, url)}>{ip}</a>:
             <input
               type="text"
-              className="line"
+              disabled={isUpdating}
               onChange={this.handleChangePort.bind(this, key)}
-              defaultValue={port}></input>
-            <span className="error">{error}</span>
-          </span>
-        </div>
+              defaultValue={port} />
+          </td>
+          <td className="error">{error}</td>
+        </tr>
       );
     });
     return (
       <div className="settings-panel">
         <div className="settings-section">
           <h3>Configure Ports</h3>
-          <div className="table ports">
-            <div className="table-labels">
-              <div className="label-left">DOCKER PORT</div>
-              <div className="label-right">MAC IP:PORT</div>
-            </div>
-            {ports}
-          </div>
+          <table className="table ports">
+            <thead>
+              <tr>
+                <th>DOCKER PORT</th>
+                <th>MAC IP:PORT</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {ports}
+            </tbody>
+          </table>
           <a className="btn btn-action"
              disabled={isUpdating || !isValid}
              onClick={this.handleSave}>

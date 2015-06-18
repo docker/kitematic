@@ -1,8 +1,15 @@
-page_title: Kitematic User Guide: Intro & Overview
-page_description: Documentation that provides an overview of Kitematic and installation instructions
-page_keywords: docker, documentation, about, technology, kitematic, gui
+<!--[metadata]>
++++
+title = "Kitematic"
+description = "Documentation that provides an overview of Kitematic and installation instructions"
+keywords = ["docker, documentation, about, technology, kitematic,  gui"]
+[menu.main]
+parent="mn_install"
+weight=2
++++
+<![end-metadata]-->
 
-# Installing Kitematic
+# Kitematic: Install Kitematic
 
 You install Kitematic much the same way you install any application on a Mac or
 Windows PC: download an image and run an installer.
@@ -19,30 +26,28 @@ Opening Kitematic for the first time sets up everything you need to run Docker
 containers. If you don't already have VirtualBox installed, Kitematic will
 download and install the latest version.
 
-![Installing](./assets/installing.png)
+![Installing](../images/installing.png)
 
 All Done! Within a minute you should be ready to start running your first
 container!
 
-![containers](./assets/containers.png)
+![containers](../images/containers.png)
 
 ## Technical Details
 
-Kitematic is a self-contained .app, with a two exceptions:
+Kitematic is a self-contained .app, with an exception:
 
 - It will install VirtualBox if it's not already installed.
-- It copies the `docker` and `docker-machine` binaries to `/usr/local/bin` for
-  convenience.
 
 ### Why does Kitematic need my root password?
 
 Kitematic needs your root password for two reasons:
 
-- Installing VirtualBox requires root as it includes Mac OS X kernel extensions.
+- Installing VirtualBox requires root access as it includes Mac OS X kernel extensions.
 - Copying `docker` and `docker-machine` to `/usr/local/bin` may require root
   permission if the default permissions for this directory have been changed
   prior to installing Kitematic.
 
 ## Next Steps
 
-For information about using Kitematic, take a look at the [User Guide](./userguide.md).
+For information about using Kitematic, take a look at the [User Guide](/userguide).

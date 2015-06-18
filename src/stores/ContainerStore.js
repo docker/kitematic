@@ -3,6 +3,7 @@ import deepExtend from 'deep-extend';
 import alt from '../alt';
 import containerServerActions from '../actions/ContainerServerActions';
 import containerActions from '../actions/ContainerActions';
+var LogStore = require('./LogStore');
 
 class ContainerStore {
   constructor () {
@@ -73,7 +74,7 @@ class ContainerStore {
       return;
     }
 
-    deepExtend(containers[name], container);
+    _.extend(containers[name], container);
 
     if (containers[name].State) {
       containers[name].State.Updating = true;
@@ -87,6 +88,9 @@ class ContainerStore {
     if (!containers[container.Name] || containers[container.Name].State.Updating) {
       return;
     }
+    // Trigger log update
+    // TODO: fix this loading multiple times
+    // LogStore.fetch(container.Name);
 
     containers[container.Name] = container;
 

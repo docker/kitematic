@@ -56,7 +56,7 @@ module.exports = {
   recommended: function () {
     request.get('https://kitematic.com/recommended.json', (error, response, body) => {
       if (error) {
-        repositoryServerActions.recommendedError({error});
+        repositoryServerActions.error({error});
       }
 
       let data = JSON.parse(body);
@@ -80,7 +80,11 @@ module.exports = {
             data.is_recommended = true;
             _.extend(data, repo);
             cb(null, data);
+          } else {
+            repositoryServerActions.error({error: new Error('Could not fetch repository information from Docker Hub.')});
+            return;
           }
+
         });
       }, (error, repos) => {
         repositoryServerActions.recommendedUpdated({repos});
@@ -132,6 +136,11 @@ module.exports = {
             if (error) {
               repositoryServerActions.error({error});
               if (callback) { callback(error); }
+              return;
+            }
+
+            if (response.statusCode !== 200) {
+              repositoryServerActions.error({error: new Error('Could not fetch repository information from Docker Hub.')});
               return;
             }
 

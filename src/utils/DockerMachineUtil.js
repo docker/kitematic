@@ -5,7 +5,7 @@ var fs = require('fs');
 var util = require('./Util');
 var resources = require('./ResourcesUtil');
 
-var NAME = 'dev';
+var NAME = util.isWindows () ? 'kitematic' : 'dev';
 
 var DockerMachine = {
   command: function () {
@@ -57,7 +57,11 @@ var DockerMachine = {
   },
   create: function () {
     var dockerversion = util.packagejson()['docker-version'];
-    return util.exec([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-boot2docker-url', path.join(process.cwd(), 'resources', 'boot2docker-' + dockerversion + '.iso'), '--virtualbox-memory', '2048', NAME]);
+    if (util.isWindows()) {
+      return util.exec([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', NAME]);
+    } else {
+      return util.exec([this.command(), '-D', 'create', '-d', 'virtualbox' ,'--virtualbox-boot2docker-url', path.join(process.cwd(), 'resources', 'boot2docker-' + dockerversion + '.iso'), '--virtualbox-memory', '2048', NAME]);
+    }
   },
   start: function () {
     return util.exec([this.command(), '-D', 'start', NAME]);
@@ -149,18 +153,25 @@ var DockerMachine = {
       });
     });
   },
-  dockerTerminal: function () {
+  dockerTerminal: function (cmd) {
     if(util.isWindows()) {
+      cmd = cmd || '';
       this.info().then(machine => {
-        util.execProper(`start cmd.exe /k "SET DOCKER_HOST=${machine.url}&& SET DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)}&& SET DOCKER_TLS_VERIFY=1`);
+        util.exec('start powershell.exe ' + cmd,
+          {env: {
+            'DOCKER_HOST' : machine.url,
+            'DOCKER_CERT_PATH' : path.join(util.home(), '.docker/machine/machines/' + machine.name),
+            'DOCKER_TLS_VERIFY': 1
+          }
+        });
       });
     } else {
+      cmd = cmd || process.env.SHELL;
       this.info().then(machine => {
-        var cmd = [resources.terminal(), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 $SHELL`];
-        util.exec(cmd).then(() => {});
+        util.exec([resources.terminal(), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 ${cmd}`]).then(() => {});
       });
     }
-  }
+  },
 };
 
 module.exports = DockerMachine;

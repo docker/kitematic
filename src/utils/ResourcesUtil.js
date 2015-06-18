@@ -16,5 +16,8 @@ module.exports = {
   },
   dockerMachine: function () {
     return path.join(this.resourceDir(), 'docker-machine' + util.binsEnding());
+  },
+  dockerCompose: function () {
+    return path.join(this.resourceDir(), 'docker-compose' + util.binsEnding());
   }
 };

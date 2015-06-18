@@ -6,7 +6,8 @@ Before you fil an issue or a pull request, quickly read of the following tips on
 
 ## Table of Contents
 
- - [Prerequisites](#prerequisites)
+ - [Mac Prerequisites](#prerequisites-for-developing-kitematic-on-mac)
+ - [Windows Prerequisites](#prerequisites-for-developing-kitematic-on-windows)
  - [Getting Started](#getting-started)
  - [Architecture](#architecture)
  - [GitHub Issues](#github-issues)
@@ -15,16 +16,19 @@ Before you fil an issue or a pull request, quickly read of the following tips on
  - [Testing](#testing)
  - [License](#license)
 
-### Prerequisites
 
-Most of the time, you'll have installed Kitematic before contibuting, but for the
-sake of completeness, you can also install [Node.js](https://nodejs.org/) and the latest Xcode from the Apple App Store and then run from your Git clone.
+### Prerequisites for developing Kitematic on Mac 
+You will need to install: 
+-  [Node.js 0.10.38](https://nodejs.org/dist/v0.10.38/)
+- The latest Xcode from the Apple App Store. 
 
-Running `npm start` will download and install the OS X Docker client,
-[Docker machine](https://github.com/docker/machine),
-the [Boot2Docker iso](https://github.com/boot2docker/boot2docker),
-[Electron](http://electron.atom.io/), and [VirtualBox](https://www.virtualbox.org/)
-if needed.
+### Prerequisites for developing Kitematic on Windows 
+You will need to install: 
+- [Node.js 0.10.38](https://nodejs.org/dist/v0.10.38/)
+- Open a command prompt (`cmd`) and run the command `mkdir ~/AppData/Roaming/npm` 
+- [Visual Studio 2013 Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) (or similar) - You do not need to install any optional packages during install.
+- [Python](https://www.python.org/downloads/release/python-2710/)
+
 
 ### Getting Started
 
@@ -33,6 +37,11 @@ if needed.
 To run the app in development:
 
 - `npm start`
+
+Running `npm start` will download and install the Docker client,
+[Docker Machine](https://github.com/docker/machine), [Docker Compose](https://github.com/docker/compose)
+the [Boot2Docker iso](https://github.com/boot2docker/boot2docker),
+[Electron](http://electron.atom.io/).
 
 ### Building & Release
 
