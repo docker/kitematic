@@ -16,7 +16,7 @@ var ContainerUtil = {
   // Provide Foreground options
   mode: function (container) {
     if (!container || !container.Config) {
-      return [false, false];
+      return [true, true];
     }
     return [container.Config.Tty, container.Config.OpenStdin];
   },

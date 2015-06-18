@@ -22,7 +22,7 @@ var ContainerSettingsGeneral = React.createClass({
       return [util.randomId(), e[0], e[1]];
     });
 
-    let [tty, openStdin] = ContainerUtil.mode(this.props.container) || [false, false];
+    let [tty, openStdin] = ContainerUtil.mode(this.props.container) || [true, true];
 
     return {
       slugName: null,
@@ -232,7 +232,7 @@ var ContainerSettingsGeneral = React.createClass({
         </div>
         <div className="settings-section">
           <div className="env-vars">
-            <h4>Foreground Options</h4>
+            <h4>Advanced Options</h4>
             <p><input type="checkbox" checked={this.state.tty} onChange={this.handleChangeTty}/> Attach standard streams to a tty, including stdin if it is not closed</p>
             <p><input type="checkbox" checked={this.state.openStdin} onChange={this.handleChangeOpenStdin}/> Keep STDIN open even if not attached</p>
           </div>
