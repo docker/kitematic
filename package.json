@@ -25,7 +25,7 @@
     }
   ],
   "docker-version": "1.6.2",
-  "docker-machine-version": "0.3.0-rc2",
+  "docker-machine-version": "0.3.0-rc3",
   "docker-compose-version": "1.2.0",
   "electron-version": "0.27.2",
   "virtualbox-version": "4.3.28",
