@@ -1,13 +1,18 @@
+var $ = require('jquery');
 var _ = require('underscore');
 var React = require('react');
 var exec = require('exec');
 var shell = require('shell');
 var metrics = require('../utils/MetricsUtil');
 var ContainerUtil = require('../utils/ContainerUtil');
+var util = require('../utils/Util');
 var machine = require('../utils/DockerMachineUtil');
+var RetinaImage = require('react-retina-image');
 var classNames = require('classnames');
 var resources = require('../utils/ResourcesUtil');
+var dockerUtil = require('../utils/DockerUtil');
 var containerActions = require('../actions/ContainerActions');
+var dockerMachineUtil = require('../utils/DockerMachineUtil');
 
 var ContainerDetailsSubheader = React.createClass({
   contextTypes: {
@@ -101,15 +106,7 @@ var ContainerDetailsSubheader = React.createClass({
       if(!shell) {
         shell = 'sh';
       }
-      machine.ip().then(ip => {
-        var cmd = [resources.terminal(), 'ssh', '-p', '22', '-o', 'UserKnownHostsFile=/dev/null', '-o', 'LogLevel=quiet', '-o', 'StrictHostKeyChecking=no', '-i', '~/.docker/machine/machines/' + machine.name() + '/id_rsa', 'docker@' + ip, '-t', 'docker', 
-          'exec', '-i', '-t', container.Name, shell];
-        exec(cmd, function (stderr, stdout, code) {
-          if (code) {
-            console.log(stderr);
-          }
-        });
-      });
+      dockerMachineUtil.dockerTerminal(`docker exec -it ${this.props.container.Name} ${shell}`);
     }
   },
   render: function () {

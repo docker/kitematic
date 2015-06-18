@@ -18,23 +18,18 @@ var ContainerHomeFolder = React.createClass({
       from: 'home'
     });
 
-    if (hostVolume.indexOf(process.env.HOME) === -1) {
+    if (hostVolume.indexOf(util.windowsToLinuxPath(util.home())) === -1) {
       dialog.showMessageBox({
         message: 'Enable all volumes to edit files via Finder? This may not work with all database containers.',
         buttons: ['Enable Volumes', 'Cancel']
       }, (index) => {
         if (index === 0) {
           var volumes = _.clone(this.props.container.Volumes);
-          var newHostVolume = path.join(util.home(), util.documents(), 'Kitematic', this.props.container.Name, containerVolume);
+          var newHostVolume = util.escapePath(path.join(util.home(), util.documents(), 'Kitematic', this.props.container.Name, containerVolume));
           volumes[containerVolume] = newHostVolume;
           var binds = _.pairs(volumes).map(function (pair) {
             if(util.isWindows()) {
-              var home = util.home();
-              home = home.charAt(0).toLowerCase() + home.slice(1);
-              home = '/' + home.replace(':', '').replace(/\\/g, '/');
-              var fullPath = path.join(home, 'Kitematic', pair[1], pair[0]);
-              fullPath = fullPath.replace(/\\/g, '/');
-              return fullPath + ':' + pair[0];
+              return util.windowsToLinuxPath(pair[1]) + ':' + pair[0];
             }
             return pair[1] + ':' + pair[0];
           });
@@ -49,7 +44,8 @@ var ContainerHomeFolder = React.createClass({
         }
       });
     } else {
-      shell.showItemInFolder(hostVolume);
+      let path = util.isWindows() ? util.linuxToWindowsPath(hostVolume) : hostVolume;
+      shell.showItemInFolder(path);
     }
   },
   handleClickChangeFolders: function () {

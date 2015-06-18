@@ -74,11 +74,10 @@ module.exports = {
           let data = JSON.parse(body);
           if (response.statusCode === 200 && data && data.token) {
             localStorage.setItem('auth.jwt', data.token);
+            this.request(req, callback);
           } else {
             this.logout();
           }
-
-          this.request(req, callback);
         });
       } else {
         callback(error, response, body);

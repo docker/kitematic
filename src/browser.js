@@ -2,12 +2,13 @@ var app = require('app');
 var autoUpdater = require('auto-updater');
 var BrowserWindow = require('browser-window');
 var fs = require('fs');
+var os = require('os');
 var ipc = require('ipc');
 var path = require('path');
+var child_process = require('child_process');
 
-process.env.NODE_PATH = path.join(__dirname, '/../node_modules');
+process.env.NODE_PATH = path.join(__dirname, 'node_modules');
 process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
-process.chdir(path.join(__dirname, '..'));
 process.env.PATH = '/usr/local/bin:' + process.env.PATH;
 
 var size = {}, settingsjson = {};
@@ -15,8 +16,31 @@ try {
   size = JSON.parse(fs.readFileSync(path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], 'Library', 'Application\ Support', 'Kitematic', 'size')));
 } catch (err) {}
 try {
-  settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
+  settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, 'settings.json'), 'utf8'));
 } catch (err) {}
+
+let updateCmd = (args, cb) => {
+  let updateExe = path.resolve(path.dirname(process.execPath), '..', 'Update.exe');
+  let child = child_process.spawn(updateExe, args, {detached: true});
+  child.on('close', cb);
+};
+
+if (process.platform === 'win32') {
+  var squirrelCommand = process.argv[1];
+  let target = path.basename(process.execPath);
+  switch (squirrelCommand) {
+    case '--squirrel-install':
+    case '--squirrel-updated':
+      updateCmd(['--createShortcut', target], app.quit);
+      break;
+    case '--squirrel-uninstall':
+      updateCmd(['--removeShortcut', target], app.quit);
+      break;
+    case '--squirrel-obsolete':
+      app.quit();
+      break;
+  }
+}
 
 var openURL = null;
 app.on('open-url', function (event, url) {
@@ -33,10 +57,10 @@ app.on('ready', function () {
     'standard-window': false,
     resizable: true,
     frame: false,
-    show: false,
+    show: false
   });
 
-  mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, '..', 'build/index.html')));
+  mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, 'index.html')));
 
   app.on('activate-with-no-open-windows', function () {
     if (mainWindow) {
@@ -51,11 +75,21 @@ app.on('ready', function () {
     autoUpdater.quitAndInstall();
   });
 
-  app.on('before-quit', function () {
-    if (!updating) {
+  if (os.platform() === 'win32') {
+    mainWindow.on('close', function () {
       mainWindow.webContents.send('application:quitting');
-    }
-  });
+      return true;
+    });
+    app.on('window-all-closed', function() {
+      app.quit();
+    });
+  } else if (os.platform() === 'darwin') {
+    app.on('before-quit', function () {
+      if (!updating) {
+        mainWindow.webContents.send('application:quitting');
+      }
+    });
+  }
 
   mainWindow.webContents.on('new-window', function (e) {
     e.preventDefault();
@@ -85,7 +119,7 @@ app.on('ready', function () {
     });
 
     if (process.env.NODE_ENV !== 'development') {
-      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion() + '&beta=' + !!settingsjson.beta);
+      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion() + '&beta=' + !!settingsjson.beta + '&platform=' + os.platform());
     }
   });
 

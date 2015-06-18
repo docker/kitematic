@@ -7,7 +7,7 @@ var util = require('./Util');
 var settings;
 
 try {
-  settings = JSON.parse(fs.readFileSync(path.join(__dirname, '../..', 'settings.json'), 'utf8'));
+  settings = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
 } catch (err) {
   settings = {};
 }

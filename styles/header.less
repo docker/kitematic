@@ -12,12 +12,12 @@
   .no-drag {
     -webkit-app-region: no-drag;
   }
-  
+
   .left-header {
     display: flex;
     min-width: @sidebar-width + 1px;
   }
-  
+
   .right-header {
     display: flex;
     justify-content: flex-end;
@@ -33,9 +33,9 @@
   }
 
   .logo {
-    padding: 0.9rem 1rem 0 0;
+    padding: 0.9rem 1rem 0 1rem;
   }
-  
+
   .login-wrapper {
     flex: 1 auto;
     display: flex;
@@ -62,6 +62,81 @@
       margin: 0 0rem 0 0.4rem;
       width: 8px;
       height: 5px;
+    }
+  }
+
+  .windows-buttons {
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    flex: 0 1 auto;
+    margin-right: 7px;
+    -webkit-app-region: no-drag;
+
+    .windows-button {
+      height: 25px;
+      margin-left: 1px;
+      -webkit-transition: -webkit-filter 0.3s;
+
+      &:hover {
+        -webkit-transition: -webkit-filter 0s;
+      }
+
+      &.button-minimize, &.button-fullscreen, &.button-fullscreenclose  {
+        min-width: 34px;
+        background-color: white;
+
+        .icon {
+          background-repeat: no-repeat;
+          -webkit-filter: brightness(0.3);
+          height: 25px;
+        }
+
+        &:hover {
+          -webkit-filter: brightness(0.9);
+        }
+
+        &:active {
+          -webkit-filter: brightness(0.8);
+        }
+      }
+
+      &.button-minimize {
+        .icon {
+          background-position: 50% 18px;
+          .at2x('windows-minimize.png', 14px, 2px);
+        }
+      }
+
+      &.button-fullscreen {
+        .icon {
+          background-position: center;
+          .at2x('windows-fullscreen.png', 14px, 2px);
+        }
+      }
+
+      &.button-fullscreenclose {
+        .icon {
+          background-position: center;
+          .at2x('windows-fullscreenclose.png', 14px, 2px);
+        }
+      }
+
+      &.button-close {
+        min-width: 58px;
+        background: #C75050;
+        .at2x('windows-close.png', 12px, 9px);
+        background-repeat: no-repeat;
+        background-position: center;
+        box-shadow: inset 0 0 0 -1px rgba(255, 255, 255, 0.4);
+        &:hover {
+          -webkit-filter: saturate(120%);
+        }
+
+        &:active {
+          -webkit-filter: brightness(0.8);
+        }
+      }
     }
   }
 
