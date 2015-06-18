@@ -14,12 +14,13 @@ module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
   var target = grunt.option('target') || 'development';
   var beta = grunt.option('beta') || false;
+  var alpha = grunt.option('alpha') || false;
   var env = process.env;
   env.NODE_PATH = '..:' + env.NODE_PATH;
   env.NODE_ENV = target;
 
-  var certificateFile = grunt.option('certificate');
-  var certificatePassword = grunt.option('password');
+  var certificateFile = grunt.option('certificateFile');
+  var certificatePassword = grunt.option('certificatePassword');
 
   var version = function (str) {
     var match = str.match(/(\d+\.\d+\.\d+)/);
@@ -40,7 +41,15 @@ module.exports = function (grunt) {
     });
   });
 
-  var APPNAME = beta ? 'Kitematic (Beta)' : 'Kitematic';
+  var BASENAME = 'Kitematic';
+  var APPNAME = BASENAME;
+
+  if (alpha) {
+    APPNAME += ' (Alpha)';
+  } else if (beta) {
+    APPNAME += ' (Beta)';
+  }
+
   var OSX_OUT = './dist/osx';
   var OSX_FILENAME = OSX_OUT + '/' + APPNAME + '.app';
 
@@ -55,7 +64,7 @@ module.exports = function (grunt) {
     electron: {
       windows: {
         options: {
-          name: '<%= APPNAME %>',
+          name: APPNAME,
           dir: 'build/',
           out: 'dist/',
           version: packagejson['electron-version'],
@@ -67,7 +76,7 @@ module.exports = function (grunt) {
       },
       osx: {
         options: {
-          name: '<%= APPNAME %>',
+          name: APPNAME,
           dir: 'build/',
           out: '<%= OSX_OUT %>',
           version: packagejson['electron-version'],
@@ -83,8 +92,8 @@ module.exports = function (grunt) {
       exes: {
         files: [{
           expand: true,
-          cwd: 'dist/Kitematic-win32',
-          src: ['Kitematic.exe']
+          cwd: 'dist/' + APPNAME + '-win32',
+          src: [APPNAME + '.exe']
         }],
         options: {
           icon: 'util/kitematic.ico',
@@ -93,10 +102,10 @@ module.exports = function (grunt) {
           'version-string': {
             'CompanyName': 'Docker, Inc',
             'ProductVersion': packagejson.version,
-            'ProductName': 'Kitematic',
-            'FileDescription': 'Kitematic',
-            'InternalName': 'Kitematic.exe',
-            'OriginalFilename': 'Kitematic.exe',
+            'ProductName': APPNAME,
+            'FileDescription': APPNAME,
+            'InternalName': APPNAME + '.exe',
+            'OriginalFilename': APPNAME + '.exe',
             'LegalCopyright': 'Copyright 2015 Docker Inc. All rights reserved.'
           }
         }
@@ -104,12 +113,13 @@ module.exports = function (grunt) {
     },
 
     'create-windows-installer': {
-      appDirectory: 'dist/Kitematic-win32/',
+      appDirectory: 'dist/' + APPNAME + '-win32/',
       authors: 'Docker Inc.',
       loadingGif: 'util/loading.gif',
       setupIcon: 'util/kitematic.ico',
-      description: 'Kitematic',
-      title: 'Kitematic',
+      description: APPNAME,
+      title: APPNAME,
+      exe: APPNAME + '.exe',
       version: packagejson.version,
       certificateFile: certificateFile,
       certificatePassword: certificatePassword
@@ -159,7 +169,7 @@ module.exports = function (grunt) {
           expand: true,
           cwd: 'resources',
           src: ['docker*', 'boot2docker.iso', 'ssh.exe', 'OPENSSH_LICENSE', 'msys-*'],
-          dest: 'dist/Kitematic-win32/resources/resources/'
+          dest: 'dist/' + APPNAME + '-win32/resources/resources/'
         }],
         options: {
           mode: true
@@ -184,7 +194,7 @@ module.exports = function (grunt) {
     rename: {
       installer: {
         src: 'installer/Setup.exe',
-        dest: 'installer/KitematicSetup-' + packagejson.version + '.exe'
+        dest: 'installer/' + BASENAME + 'Setup-' + packagejson.version + '.exe'
       }
     },
 
@@ -267,7 +277,7 @@ module.exports = function (grunt) {
         ].join(' && '),
       },
       zip: {
-        command: 'ditto -c -k --sequesterRsrc --keepParent <%= OSX_FILENAME_ESCAPED %> <%= OSX_OUT %>/Kitematic-' + packagejson.version + '.zip',
+        command: 'ditto -c -k --sequesterRsrc --keepParent <%= OSX_FILENAME_ESCAPED %> <%= OSX_OUT %>/' + BASENAME + '-' + packagejson.version + '.zip',
       }
     },
 
