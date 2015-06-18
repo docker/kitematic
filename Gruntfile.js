@@ -64,7 +64,7 @@ module.exports = function (grunt) {
     electron: {
       windows: {
         options: {
-          name: APPNAME,
+          name: BASENAME,
           dir: 'build/',
           out: 'dist/',
           version: packagejson['electron-version'],
@@ -92,20 +92,20 @@ module.exports = function (grunt) {
       exes: {
         files: [{
           expand: true,
-          cwd: 'dist/' + APPNAME + '-win32',
-          src: [APPNAME + '.exe']
+          cwd: 'dist/' + BASENAME + '-win32',
+          src: [BASENAME + '.exe']
         }],
         options: {
           icon: 'util/kitematic.ico',
           'file-version': packagejson.version,
           'product-version': packagejson.version,
           'version-string': {
-            'CompanyName': 'Docker, Inc',
+            'CompanyName': 'Docker Inc',
             'ProductVersion': packagejson.version,
             'ProductName': APPNAME,
             'FileDescription': APPNAME,
-            'InternalName': APPNAME + '.exe',
-            'OriginalFilename': APPNAME + '.exe',
+            'InternalName': BASENAME + '.exe',
+            'OriginalFilename': BASENAME + '.exe',
             'LegalCopyright': 'Copyright 2015 Docker Inc. All rights reserved.'
           }
         }
@@ -113,16 +113,15 @@ module.exports = function (grunt) {
     },
 
     'create-windows-installer': {
-      appDirectory: 'dist/' + APPNAME + '-win32/',
+      appDirectory: 'dist/' + BASENAME + '-win32/',
       authors: 'Docker Inc.',
       loadingGif: 'util/loading.gif',
       setupIcon: 'util/kitematic.ico',
       description: APPNAME,
       title: APPNAME,
-      exe: APPNAME + '.exe',
+      exe: BASENAME + '.exe',
       version: packagejson.version,
-      certificateFile: certificateFile,
-      certificatePassword: certificatePassword
+      signWithParams: '/f ' + certificateFile + ' /p ' + certificatePassword + ' /tr http://timestamp.comodoca.com/rfc3161'
     },
 
     // docker binaries
@@ -169,7 +168,7 @@ module.exports = function (grunt) {
           expand: true,
           cwd: 'resources',
           src: ['docker*', 'boot2docker.iso', 'ssh.exe', 'OPENSSH_LICENSE', 'msys-*'],
-          dest: 'dist/' + APPNAME + '-win32/resources/resources/'
+          dest: 'dist/' + BASENAME + '-win32/resources/resources/'
         }],
         options: {
           mode: true
