@@ -169,7 +169,7 @@ module.exports = {
         subscribe
       }
     }, (err, response, body) => {
-      if (response.statusCode === 204) {
+      if (response && response.statusCode === 204) {
         accountServerActions.signedup({username, verified: false});
         accountServerActions.prompted({prompted: true});
         localStorage.setItem('auth.username', username);
