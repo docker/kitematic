@@ -25,7 +25,7 @@ Let's get to it!
 #### Running the Nginx Web Server Container
 
 First, if you haven't yet done so, [download and start
-Kitematic](./kitematic-overview.md). Once installed and running, the app should look like this:
+Kitematic](/). Once installed and running, the app should look like this:
 
 ![Nginx create](../images/nginx-create.png)
 

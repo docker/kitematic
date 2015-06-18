@@ -38,17 +38,16 @@ container!
 Kitematic is a self-contained .app, with an exception:
 
 - It will install VirtualBox if it's not already installed.
-  convenience.
 
 ### Why does Kitematic need my root password?
 
 Kitematic needs your root password for two reasons:
 
-- Installing VirtualBox requires root as it includes Mac OS X kernel extensions.
+- Installing VirtualBox requires root access as it includes Mac OS X kernel extensions.
 - Copying `docker` and `docker-machine` to `/usr/local/bin` may require root
   permission if the default permissions for this directory have been changed
   prior to installing Kitematic.
 
 ## Next Steps
 
-For information about using Kitematic, take a look at the [User Guide](../userguide).
+For information about using Kitematic, take a look at the [User Guide](/userguide).
