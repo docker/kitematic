@@ -46,8 +46,10 @@ var ContainerSettingsAdvanced = React.createClass({
       <div className="settings-panel">
         <div className="settings-section">
           <h3>Advanced Options</h3>
-          <p><input type="checkbox" checked={this.state.tty} onChange={this.handleChangeTty}/> Attach standard streams to a tty, including stdin if it is not closed</p>
-          <p><input type="checkbox" checked={this.state.openStdin} onChange={this.handleChangeOpenStdin}/> Keep STDIN open even if not attached</p>
+          <div className="checkboxes">
+            <p><input type="checkbox" checked={this.state.tty} onChange={this.handleChangeTty}/>Allocate a TTY for this container</p>
+            <p><input type="checkbox" checked={this.state.openStdin} onChange={this.handleChangeOpenStdin}/>Keep STDIN open even if not attached</p>
+          </div>
           <a className="btn btn-action" disabled={this.props.container.State.Updating} onClick={this.handleSaveAdvancedOptions}>Save</a>
         </div>
       </div>
