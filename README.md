@@ -1,18 +1,17 @@
 [![Build Status](https://travis-ci.org/kitematic/kitematic.svg?branch=master)](https://travis-ci.org/kitematic/kitematic)
-[![bitHound Score](https://www.bithound.io/github/kitematic/kitematic/badges/score.svg)](https://www.bithound.io/github/kitematic/kitematic)
 
 
 [![Kitematic Logo](https://cloud.githubusercontent.com/assets/251292/5269258/1b229c3c-7a2f-11e4-96f1-e7baf3c86d73.png)](https://kitematic.com)
 
-Kitematic is a simple application for managing Docker containers on Mac OS X and Windows (coming soon).
+Kitematic is a simple application for managing Docker containers on Mac and Windows.
 
 ![Kitematic Screenshot](https://cloud.githubusercontent.com/assets/251292/8246120/d3ab271a-15ed-11e5-8736-9a730a27c79a.png)
 
 ## Installing Kitematic
 
-[Download the latest version](https://kitematic.com/download) of Kitematic. 
+[Download the latest version](https://kitematic.com/download) of Kitematic.
 
-On the Mac, Kitematic can copy the binaries for Docker, Docker Machine and Docker Compose into `/usr/local/bin` for command line use outside of Kitematic. 
+On the Mac, Kitematic can copy the binaries for Docker, Docker Machine and Docker Compose into `/usr/local/bin` for command line use outside of Kitematic.
 
 To do so please click on the Kitematic dropdown menu and select `Install Docker Commands`
 
@@ -24,9 +23,7 @@ Kitematic's documentation and other information can be found at [http://kitemati
 
 ## Security Disclosure
 
-Security is very important to us. If you have any issue regarding security, 
-please disclose the information responsibly by sending an email to 
-security@docker.com and not by creating a github issue.
+Security is very important to us. If you have any issue regarding security, please disclose the information responsibly by sending an email to security@docker.com and not by creating a github issue.
 
 ## Bugs and Feature Requests
 
@@ -47,7 +44,7 @@ Please read through our [Contributing Guidelines](https://github.com/kitematic/k
 
 ## Uninstalling
 
-**Mac** 
+**Mac**
 
 - Remove Kitematic.app
 - Remove any unwanted Virtual Machines in VirtualBox
@@ -61,7 +58,7 @@ rm -rf ~/Library/Application\ Support/Kitematic
 Open `Programs and Features` from `Control Panel`
 
 - Uninstall Kitematic
-- Uninstall Oracle VM VirtualBox 
+- Uninstall Oracle VM VirtualBox
 
 ## Copyright and License
 
