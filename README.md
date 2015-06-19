@@ -2,7 +2,7 @@
 [![bitHound Score](https://www.bithound.io/github/kitematic/kitematic/badges/score.svg)](https://www.bithound.io/github/kitematic/kitematic)
 
 
-![Kitematic Logo](https://cloud.githubusercontent.com/assets/251292/5269258/1b229c3c-7a2f-11e4-96f1-e7baf3c86d73.png)
+[![Kitematic Logo](https://cloud.githubusercontent.com/assets/251292/5269258/1b229c3c-7a2f-11e4-96f1-e7baf3c86d73.png)](https://kitematic.com)
 
 Kitematic is a simple application for managing Docker containers on Mac OS X and Windows (coming soon).
 
@@ -10,7 +10,8 @@ Kitematic is a simple application for managing Docker containers on Mac OS X and
 
 ## Installing Kitematic
 
-[Download the latest version](https://kitematic.com/download) of Kitematic.
+[Download the latest version](https://kitematic.com/download) of Kitematic. 
+
 
 ## Documentation
 
@@ -38,9 +39,10 @@ Please read through our [Contributing Guidelines](https://github.com/kitematic/k
 - Ask questions on our [user forum](https://forums.docker.com/c/kitematic).
 - **#kitematic** on IRC. [Join the channel](http://webchat.freenode.net/?channels=%23kitematic&uio=d4).
 - Follow [@kitematic on Twitter](https://twitter.com/kitematic).
-- Read and subscribe to [the Kitematic Blog](http://blog.kitematic.com).
 
 ## Uninstalling
+
+**Mac** 
 
 - Remove Kitematic.app
 - Remove any unwanted Virtual Machines in VirtualBox
@@ -48,6 +50,13 @@ Please read through our [Contributing Guidelines](https://github.com/kitematic/k
 # remove app data
 rm -rf ~/Library/Application\ Support/Kitematic
 ```
+
+**Windows**
+
+Open `Programs and Features` from `Control Panel`
+
+- Uninstall Kitematic
+- Uninstall Oracle VM VirtualBox 
 
 ## Copyright and License
 
