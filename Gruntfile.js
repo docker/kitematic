@@ -31,7 +31,7 @@ module.exports = function (grunt) {
   grunt.registerTask('download-boot2docker-iso', 'Downloads provided boot2docker version', function () {
     var version = grunt.config('version');
     try {
-      var data = fs.readFileSync(path);
+      var data = fs.readFileSync(path.join('resources', 'boot2docker.iso'));
       var match = data.match(/Boot2Docker-v(\d+\.\d+\.\d+)/);
       if (match && match[1] !== version) {
         grunt.task.run('curl:boot2docker-iso');
@@ -110,7 +110,7 @@ module.exports = function (grunt) {
           src: [BASENAME + '.exe']
         }],
         options: {
-          icon: 'util/setup.ico',
+          icon: 'util/kitematic.ico',
           'file-version': packagejson.version,
           'product-version': packagejson.version,
           'version-string': {
@@ -130,7 +130,8 @@ module.exports = function (grunt) {
       appDirectory: 'dist/' + BASENAME + '-win32/',
       authors: 'Docker Inc.',
       loadingGif: 'util/loading.gif',
-      setupIcon: 'util/kitematic.ico',
+      setupIcon: 'util/setup.ico',
+      iconUrl: 'util/kitematic.ico',
       description: APPNAME,
       title: APPNAME,
       exe: BASENAME + '.exe',
@@ -325,9 +326,9 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['download-binary', 'download-boot2docker-iso', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean', 'download-binary', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename:installer']);
+    grunt.registerTask('release', ['clean:release', 'download-binary', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename:installer']);
   } else {
-    grunt.registerTask('release', ['clean', 'download-binary', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
+    grunt.registerTask('release', ['clean:release', 'download-binary', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
   }
 
   process.on('SIGINT', function () {
