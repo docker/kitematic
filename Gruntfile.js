@@ -110,7 +110,7 @@ module.exports = function (grunt) {
           src: [BASENAME + '.exe']
         }],
         options: {
-          icon: 'util/kitematic.ico',
+          icon: 'util/setup.ico',
           'file-version': packagejson.version,
           'product-version': packagejson.version,
           'version-string': {
