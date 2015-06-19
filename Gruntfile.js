@@ -29,11 +29,10 @@ module.exports = function (grunt) {
   };
 
   grunt.registerTask('download-boot2docker-iso', 'Downloads provided boot2docker version', function () {
-    var version = grunt.config('version');
     try {
-      var data = fs.readFileSync(path.join('resources', 'boot2docker.iso'));
+      var data = fs.readFileSync(path.join('resources', 'boot2docker.iso'), {encoding: 'utf-8'});
       var match = data.match(/Boot2Docker-v(\d+\.\d+\.\d+)/);
-      if (match && match[1] !== version) {
+      if (match && match[1] !== packagejson['docker-version']) {
         grunt.task.run('curl:boot2docker-iso');
       }
     } catch (err) {
@@ -52,6 +51,7 @@ module.exports = function (grunt) {
         grunt.task.run('chmod');
       }
       done();
+
     });
   });
 
@@ -131,7 +131,7 @@ module.exports = function (grunt) {
       authors: 'Docker Inc.',
       loadingGif: 'util/loading.gif',
       setupIcon: 'util/setup.ico',
-      iconUrl: 'util/kitematic.ico',
+      iconUrl: 'https://raw.githubusercontent.com/kitematic/kitematic/master/util/kitematic.ico',
       description: APPNAME,
       title: APPNAME,
       exe: BASENAME + '.exe',
