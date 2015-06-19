@@ -34,7 +34,7 @@ Have a bug or a feature request? Please first read the [Issue Guidelines](https:
 
 ## Roadmap & Contributing
 
-We welcome all pull requests and contributions that anyone would like to make. The Kitematic team is super happy to support anyone who wants to get involved. Please checkout our [roadmap](ROADMAP.md) that we keep up to date for ideas to help you with contributing. We would love to talk to you about contributing. Please ask us questions and discuss contributions on our [dedicated contributors forum](https://dev.dockerproject.com/c/kitematic).
+We welcome all pull requests and contributions that anyone would like to make. The Kitematic team is super happy to support anyone who wants to get involved. Please checkout our [roadmap](ROADMAP.md) that we keep up to date for ideas to help you with contributing. We would love to talk to you about contributing.
 
 Please read through our [Contributing Guidelines](https://github.com/kitematic/kitematic/blob/master/CONTRIBUTING.md). Included are directions for opening issues, coding standards, and notes on development.
 
