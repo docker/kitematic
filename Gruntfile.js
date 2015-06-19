@@ -322,12 +322,12 @@ module.exports = function (grunt) {
       }
     }
   });
-  grunt.registerTask('default', ['download-binary', 'if-missing:curl:boot2docker-iso', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+  grunt.registerTask('default', ['download-binary', 'download-boot2docker-iso', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean', 'download-binary', 'if-missing:curl:boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename:installer']);
+    grunt.registerTask('release', ['clean', 'download-binary', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename:installer']);
   } else {
-    grunt.registerTask('release', ['clean', 'download-binary', 'if-missing:curl:boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
+    grunt.registerTask('release', ['clean', 'download-binary', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
   }
 
   process.on('SIGINT', function () {
