@@ -9,16 +9,14 @@ describe('HubUtil Integration Tests', () => {
    describe('auth', () => {
     pit('successfully authenticates', () => {
       return new Promise((resolve) => {
-        setTimeout(() => {
-          hubUtil.auth(process.env.INTEGRATION_USER, process.env.INTEGRATION_PASSWORD, (error, response, body) => {
-            expect(response.statusCode).toBe(200);
-            expect(error).toBe(null);
+        hubUtil.auth(process.env.INTEGRATION_USER, process.env.INTEGRATION_PASSWORD, (error, response, body) => {
+          expect(response.statusCode).toBe(200);
+          expect(error).toBe(null);
 
-            let data = JSON.parse(body);
-            expect(data.token).toBeTruthy();
-            resolve();
-          });
-        }, 5000);
+          let data = JSON.parse(body);
+          expect(data.token).toBeTruthy();
+          resolve();
+        });
       });
     });
 
