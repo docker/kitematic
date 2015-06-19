@@ -211,6 +211,7 @@ var ContainerSettingsGeneral = React.createClass({
           <div className="env-vars">
             {vars}
           </div>
+          <a className="btn btn-action" disabled={this.props.container.State.Updating} onClick={this.handleSaveEnvVars}>Save</a>
         </div>
         <div className="settings-section">
           <h3>Delete Container</h3>
