@@ -10,8 +10,10 @@ var settings;
 
 try {
   settings = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
+  console.log("settings read")
 } catch (err) {
   settings = {};
+  console.log("settings error")
 }
 
 var token = process.env.NODE_ENV === 'development' ? settings['mixpanel-dev'] : settings.mixpanel;
@@ -21,19 +23,12 @@ if (!token) {
 
 var mixpanel = Mixpanel.init(token);
 
-if (localStorage.getItem('metrics.enabled') === null) {
-  localStorage.setItem('metrics.enabled', true);
-}
-
 var Drivers = {
-  vboxEnabled: function () {
-    return localStorage.getItem('vbox.enabled') === 'true';
-  },
-  docEnabled: function () {
-    return localStorage.getItem('doc.enabled') === 'true';
+  enabled: function () {
+    return localStorage.getItem('drivers.enabled') === 'true';
   },
   setEnabled: function (enabled) {
-    localStorage.setItem('metrics.enabled', !!enabled);
+    localStorage.setItem('drivers.enabled', !!enabled);
   },
   track: function (name, data) {
     data = data || {};
