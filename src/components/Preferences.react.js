@@ -34,6 +34,12 @@ var Preferences = React.createClass({
       enabled: checked
     });
   },
+  handleVirtualBoxConfiguration: function(e) {
+    // TODO
+  },
+  handleDigitalOceanConfiguration: function(e) {
+    // TODO
+  },
   render: function () {
     return (
       <div className="preferences">
@@ -55,6 +61,41 @@ var Preferences = React.createClass({
             </div>
             <div className="option-value">
               <input type="checkbox" checked={this.state.metricsEnabled} onChange={this.handleChangeMetricsEnabled}/>
+            </div>
+          </div>
+          <tr />
+          <div className="title">Machine settings</div>
+          <div className="option">
+            <div className="option-name">
+               VirtualBox enabled
+            </div>
+            <div className="option-value">
+              <input type="checkbox" onChange={this.handleVirtualBoxConfiguration}/>
+            </div>
+          </div>
+          <div className="option">
+            <div className="option-name">
+               VirtualBox parameters
+            </div>
+            <div className="option-value">
+              <input type="text" onChange={this.handleVirtualBoxConfiguration}/>
+            </div>
+          </div>
+          <div className="option">
+            <div className="option-name">
+               DigitalOcean enabled
+            </div>
+            <div className="option-value">
+              <input type="checkbox" onChange={this.handleVirtualBoxConfiguration}/>
+            </div>
+          </div>
+
+          <div className="option">
+            <div className="option-name">
+               DigitalOcean parameters
+            </div>
+            <div className="option-value">
+              <input type="text" onChange={this.handleDigitalOceanConfiguration}/>
             </div>
           </div>
         </div>

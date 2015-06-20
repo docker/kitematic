@@ -160,12 +160,11 @@ var ImageCard = React.createClass({
           </div>
           <div className="menu-item" onClick={this.handleMachineDriverSelection}>
             <span className="text">Select the machine driver</span>
+            <br />
             <span className="">
                 <select>
                     <option value="virtualbox">VirtualBox</option>
-                    <option value="rackspace">Rackspace</option>
-                    <option value="openstack">OpenStack</option>
-                    <option value="Other">Etc</option>
+                    <option value="openstack">DigitalOcean</option>
                 </select>
             </span>
           </div>
