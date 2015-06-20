@@ -97,7 +97,8 @@ module.exports = function (grunt) {
           platform: 'darwin',
           arch: 'x64',
           asar: true,
-          'app-bundle-id': 'com.kitematic.kitematic'
+          'app-bundle-id': 'com.kitematic.kitematic',
+          'app-version': packagejson.version
         }
       }
     },
@@ -269,6 +270,41 @@ module.exports = function (grunt) {
       }
     },
 
+    plistbuddy: {
+      addBundleURLTypes: {
+        method: 'Add',
+        entry: 'CFBundleURLTypes',
+        type: 'array',
+        src: '<%= OSX_FILENAME %>/Contents/Info.plist'
+      },
+      addBundleURLTypesDict: {
+        method: 'Add',
+        entry: 'CFBundleURLTypes:0',
+        type: 'dict',
+        src: '<%= OSX_FILENAME %>/Contents/Info.plist'
+      },
+      addBundleURLTypesDictName: {
+        method: 'Add',
+        entry: 'CFBundleURLTypes:0:CFBundleURLName',
+        type: 'string',
+        value: 'Docker App Protocol',
+        src: '<%= OSX_FILENAME %>/Contents/Info.plist'
+      },
+      addBundleURLTypesDictSchemes: {
+        method: 'Add',
+        entry: 'CFBundleURLTypes:0:CFBundleURLSchemes',
+        type: 'array',
+        src: '<%= OSX_FILENAME %>/Contents/Info.plist'
+      },
+      addBundleURLTypesDictSchemesDocker: {
+        method: 'Add',
+        entry: 'CFBundleURLTypes:0:CFBundleURLSchemes:0',
+        type: 'string',
+        value: 'docker',
+        src: '<%= OSX_FILENAME %>/Contents/Info.plist'
+      }
+    },
+
     shell: {
       electron: {
         command: electron + ' ' + 'build',
@@ -287,7 +323,7 @@ module.exports = function (grunt) {
           'codesign --deep -v -f -s "<%= IDENTITY %>" <%= OSX_FILENAME_ESCAPED %>/Contents/Frameworks/*',
           'codesign -v -f -s "<%= IDENTITY %>" <%= OSX_FILENAME_ESCAPED %>',
           'codesign -vvv --display <%= OSX_FILENAME_ESCAPED %>',
-          'codesign -v --verify <%= OSX_FILENAME_ESCAPED %>',
+          'codesign -v --verify <%= OSX_FILENAME_ESCAPED %>'
         ].join(' && '),
       },
       zip: {
@@ -328,7 +364,7 @@ module.exports = function (grunt) {
   if (process.platform === 'win32') {
     grunt.registerTask('release', ['clean:release', 'download-binary', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename:installer']);
   } else {
-    grunt.registerTask('release', ['clean:release', 'download-binary', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
+    grunt.registerTask('release', ['clean:release', 'download-binary', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'plistbuddy', 'shell:sign', 'shell:zip']);
   }
 
   process.on('SIGINT', function () {
