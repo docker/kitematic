@@ -22,6 +22,7 @@ module.exports = function (grunt) {
   var BASENAME = 'Kitematic';
   var OSX_APPNAME = BASENAME + ' (Beta)';
   var WINDOWS_APPNAME = BASENAME + ' (Alpha)';
+  var LINUX_APPNAME = BASENAME + ' (Alpha)';
   var OSX_OUT = './dist';
   var OSX_OUT_X64 = OSX_OUT + '/' + OSX_APPNAME + '-darwin-x64';
   var OSX_FILENAME = OSX_OUT_X64 + '/' + OSX_APPNAME + '.app';
@@ -52,6 +53,19 @@ module.exports = function (grunt) {
           out: 'dist',
           version: packagejson['electron-version'],
           platform: 'darwin',
+          arch: 'x64',
+          asar: true,
+          'app-bundle-id': 'com.kitematic.kitematic',
+          'app-version': packagejson.version
+        }
+      },
+      linux: {
+        options: {
+          name: LINUX_APPNAME,
+          dir: 'build/',
+          out: 'dist/linux/',
+          version: packagejson['electron-version'],
+          platform: 'linux',
           arch: 'x64',
           asar: true,
           'app-bundle-id': 'com.kitematic.kitematic',
@@ -243,7 +257,11 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('default', ['newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
-  grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress']);
+  if(process.platform === 'linux') {
+    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:linux']);
+  } else {
+    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress']);
+  }
 
   process.on('SIGINT', function () {
     grunt.task.run(['shell:electron:kill']);

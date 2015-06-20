@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import dockerode from 'dockerode';
 import _ from 'underscore';
+import child_process from 'child_process';
 import util from './Util';
 import hubUtil from './HubUtil';
 import metrics from '../utils/MetricsUtil';
@@ -20,20 +21,25 @@ export default {
       throw new Error('Falsy ip or name passed to docker client setup');
     }
 
-    let certDir = path.join(util.home(), '.docker/machine/machines/', name);
-    if (!fs.existsSync(certDir)) {
-      throw new Error('Certificate directory does not exist');
-    }
+    if (util.isLinux()) {
+      this.host = 'localhost';
+      this.client = new dockerode({socketPath: '/var/run/docker.sock'});
+    } else {
+      let certDir = path.join(util.home(), '.docker/machine/machines/', name);
+      if (!fs.existsSync(certDir)) {
+        throw new Error('Certificate directory does not exist');
+      }
 
-    this.host = ip;
-    this.client = new dockerode({
-      protocol: 'https',
-      host: ip,
-      port: 2376,
-      ca: fs.readFileSync(path.join(certDir, 'ca.pem')),
-      cert: fs.readFileSync(path.join(certDir, 'cert.pem')),
-      key: fs.readFileSync(path.join(certDir, 'key.pem'))
-    });
+      this.host = ip;
+      this.client = new dockerode({
+        protocol: 'https',
+        host: ip,
+        port: 2376,
+        ca: fs.readFileSync(path.join(certDir, 'ca.pem')),
+        cert: fs.readFileSync(path.join(certDir, 'cert.pem')),
+        key: fs.readFileSync(path.join(certDir, 'key.pem'))
+      });
+    }
   },
 
   init () {
@@ -64,6 +70,14 @@ export default {
         });
       });
     });
+  },
+
+  isDockerRunning () {
+    try {
+      child_process.execSync('ps ax | grep "docker daemon" | grep -v grep');
+    } catch (error) {
+      throw new Error('Cannot connect to the Docker daemon. The daemon is not running.');
+    }
   },
 
   startContainer (name, containerData) {
