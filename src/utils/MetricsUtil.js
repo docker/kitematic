@@ -42,16 +42,21 @@ var Metrics = {
       return;
     }
 
-    var id = localStorage.getItem('metrics.id');
+    let id = localStorage.getItem('metrics.id');
     if (!id) {
-      localStorage.setItem('metrics.id', uuid.v4());
+      id = uuid.v4();
+      localStorage.setItem('metrics.id', id);
     }
+
+    let osName = os.platform();
+    let osVersion = util.isWindows() ? os.release() : osxRelease(os.release()).version;
 
     mixpanel.track(name, assign({
       distinct_id: id,
       version: util.packagejson().version,
-      'Operating System': os.platform(),
-      'Operating System Version': osxRelease(os.release())
+      'Operating System': osName,
+      'Operating System Version': osVersion,
+      'Operating System Architecture': os.arch()
     }, data));
   },
 
