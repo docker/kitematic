@@ -35,10 +35,11 @@ var Preferences = React.createClass({
     });
   },
   render: function () {
-    return (
-      <div className="preferences">
-        <div className="preferences-content">
-          <a onClick={this.handleGoBackClick}>Go Back</a>
+    var vmSettings;
+
+    if (process.platform !== 'linux') {
+      vmSettings = (
+        <div>
           <div className="title">VM Settings</div>
           <div className="option">
             <div className="option-name">
@@ -48,6 +49,15 @@ var Preferences = React.createClass({
               <input type="checkbox" checked={this.state.closeVMOnQuit} onChange={this.handleChangeCloseVMOnQuit}/>
             </div>
           </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="preferences">
+        <div className="preferences-content">
+          <a onClick={this.handleGoBackClick}>Go Back</a>
+          {vmSettings}
           <div className="title">App Settings</div>
           <div className="option">
             <div className="option-name">
