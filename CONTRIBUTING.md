@@ -2,7 +2,7 @@
 
 Thanks for contributing and supporting the Kitematic project!
 
-Before you fil an issue or a pull request, quickly read of the following tips on how to keep development of the project awesome for all of the contributors:
+Before you file an issue or a pull request, read the following tips on how to keep development of the project awesome for all of the contributors:
 
 ## Table of Contents
 
