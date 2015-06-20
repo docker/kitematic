@@ -9,7 +9,11 @@ module.exports = {
     return path.join(this.resourceDir(), 'macsudo');
   },
   terminal: function () {
-    return path.join(this.resourceDir(), 'terminal');
+    if (util.isLinux()) {
+      return util.linuxTerminal();
+    } else {
+      return path.join(this.resourceDir(), 'terminal');
+    }
   },
   docker: function () {
     return path.join(this.resourceDir(), 'docker' + util.binsEnding());

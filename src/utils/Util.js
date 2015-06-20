@@ -160,5 +160,12 @@ module.exports = {
   linuxToWindowsPath: function (linuxAbsPath) {
     return linuxAbsPath.replace('/c', 'C:').split('/').join('\\');
   },
+  linuxTerminal: function () {
+    if (fs.existsSync('/usr/bin/gnome-terminal')) {
+      return ['/usr/bin/gnome-terminal', '-e'];
+    } else {
+      return [''];
+    }
+  },
   webPorts: ['80', '8000', '8080', '3000', '5000', '2368', '9200', '8983']
 };
