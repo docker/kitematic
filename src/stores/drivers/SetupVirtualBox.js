@@ -31,8 +31,8 @@ var _steps = [{
   }
 }, {
   name: 'install',
-  title: 'Installing VirtualBox & Docker',
-  message: 'VirtualBox & Docker are being installed or upgraded in the background. We may need you to type in your password to continue.',
+  title: 'Installing VirtualBox',
+  message: 'VirtualBox are being installed or upgraded in the background. We may need you to type in your password to continue.',
   totalPercent: 5,
   percent: 0,
   seconds: 5,
