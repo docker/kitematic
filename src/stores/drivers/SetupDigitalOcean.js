@@ -8,6 +8,10 @@ var setupUtil = require('../../utils/SetupUtil');
 var util = require('../../utils/Util');
 var SetupStore = require('../SetupStore.js');
 var request = require('request');
+var assign = require('object-assign');
+var metrics = require('../../utils/MetricsUtil');
+var bugsnag = require('bugsnag-js');
+var docker = require('../../utils/DockerUtil');
 var NAME = "digitalocean";
 
 var _currentStep = null;

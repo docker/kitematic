@@ -6,7 +6,12 @@ var Promise = require('bluebird');
 var machine = require('../../utils/DockerMachineUtil');
 var setupUtil = require('../../utils/SetupUtil');
 var util = require('../../utils/Util');
-var SetupStore = require('../SetupStore.js')
+var SetupStore = require('../SetupStore.js');
+var assign = require('object-assign');
+var metrics = require('../../utils/MetricsUtil');
+var bugsnag = require('bugsnag-js');
+var docker = require('../../utils/DockerUtil');
+var NAME = "vmwarefusion";
 
 var _currentStep = null;
 var _error = null;
