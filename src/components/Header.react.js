@@ -12,6 +12,7 @@ var accountStore = require('../stores/AccountStore');
 var accountActions = require('../actions/AccountActions');
 var Router = require('react-router');
 var classNames = require('classnames');
+var dockerMachineUtil = require('../utils/DockerMachineUtil');
 
 var Header = React.createClass({
   mixins: [Router.Navigation],
@@ -20,13 +21,26 @@ var Header = React.createClass({
       fullscreen: false,
       updateAvailable: false,
       username: accountStore.getState().username,
-      verified: accountStore.getState().verified
+      verified: accountStore.getState().verified,
+      enabledProviders: [],
     };
   },
   componentDidMount: function () {
     document.addEventListener('keyup', this.handleDocumentKeyUp, false);
 
     accountStore.listen(this.update);
+
+    let enabledProviders = [];
+    ['virtualbox', 'digitalocean', 'vmwarefusion'].forEach(m => {
+      dockerMachineUtil.ip(m).then(ip => {
+        if (ip) {
+          enabledProviders.push(m);
+          this.setState({
+            enabledProviders: enabledProviders
+          });
+        }
+      }).catch(() => {});
+    });
 
     ipc.on('application:update-available', () => {
       this.setState({
@@ -183,9 +197,9 @@ var Header = React.createClass({
           <div className="machine">
             <div className="machine-label">MACHINE</div >
             <select className="form-control" id="machineDriver" onChange={this.props.onDriverChange}>
-              <option value="virtualbox">Virtual Box</option>
-              <option value="digitalocean">DigitalOcean</option>
-              <option value="vmwarefusion">VMWare Fusion</option>
+              <option value="virtualbox" disabled={this.state.enabledProviders.indexOf('virtualbox') === -1}>Virtual Box</option>
+              <option value="digitalocean" disabled={this.state.enabledProviders.indexOf('digitalocean') === -1}>DigitalOcean</option>
+              <option value="vmwarefusion"  disabled={this.state.enabledProviders.indexOf('vmwarefusion') === -1}>VMWare Fusion</option>
             </select>
           </div>
           {util.isWindows () ? this.renderWindowButtons() : this.renderLogo()}
