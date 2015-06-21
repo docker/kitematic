@@ -34,7 +34,7 @@ var DockerMachine = {
           state: tokens[2],
           url: tokens[3] || ''
         };
-        machines[machine.name] = machine;
+        machines[name] = machine;
       });
       if (machines[name]) {
         return Promise.resolve(machines[name]);

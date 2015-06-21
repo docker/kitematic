@@ -22,7 +22,7 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
     if (!containerName) {
       return;
     }
-    docker.getContainer(containerName).logs({
+    docker.client.getContainer(containerName).logs({
       stdout: true,
       stderr: true,
       timestamps: false,
@@ -49,7 +49,7 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
     if (!containerName || !docker.activeClient || _streams[containerName]) {
       return;
     }
-    docker.getContainer(containerName).attach({
+    docker.client.getContainer(containerName).attach({
       stdout: true,
       stderr: true,
       logs: false,

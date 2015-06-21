@@ -13,6 +13,7 @@ var accountActions = require('../actions/AccountActions');
 var Router = require('react-router');
 var classNames = require('classnames');
 var dockerMachineUtil = require('../utils/DockerMachineUtil');
+var dockerUtil = require('../utils/DockerUtil');
 
 var Header = React.createClass({
   mixins: [Router.Navigation],
@@ -33,13 +34,20 @@ var Header = React.createClass({
     let enabledProviders = [];
     ['virtualbox', 'digitalocean', 'vmwarefusion'].forEach(m => {
       dockerMachineUtil.ip(m).then(ip => {
+        console.log(m, ip);
         if (ip) {
+          // HACK: initialize first provider that works
           enabledProviders.push(m);
           this.setState({
             enabledProviders: enabledProviders
           });
+          if (!dockerUtil.host) {
+            dockerUtil.setup(m, ip);
+            dockerUtil.init();
+          }
         }
-      }).catch(() => {});
+      }).catch(err => {
+      });
     });
 
     ipc.on('application:update-available', () => {
@@ -197,6 +205,7 @@ var Header = React.createClass({
           <div className="machine">
             <div className="machine-label">MACHINE</div >
             <select className="form-control" id="machineDriver" onChange={this.props.onDriverChange}>
+              <option value="none" disabled={true}>No Provider</option>
               <option value="virtualbox" disabled={this.state.enabledProviders.indexOf('virtualbox') === -1}>Virtual Box</option>
               <option value="digitalocean" disabled={this.state.enabledProviders.indexOf('digitalocean') === -1}>DigitalOcean</option>
               <option value="vmwarefusion"  disabled={this.state.enabledProviders.indexOf('vmwarefusion') === -1}>VMWare Fusion</option>

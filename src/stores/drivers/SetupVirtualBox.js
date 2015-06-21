@@ -215,8 +215,8 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
             ip: ip
           };
         }
-        docker.addClient(NAME, ip, machine.name());
-        yield docker.clients[NAME].waitForConnection();
+        docker.setup(NAME, ip);
+        docker.init();
         metrics.track('Setup Finished');
         break;
       } catch (err) {
