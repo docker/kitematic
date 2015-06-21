@@ -35,6 +35,10 @@ var Preferences = React.createClass({
 
       fusionEnabled: localStorage.getItem('settings.fusionEnabled') === 'true',
       fusionBoot2DockerURL: localStorage.getItem('settings.vmwarefusion-boot2docker-url')  || "",
+      fusionCpu: localStorage.getItem('settings.vmwarefusion-cpu-count')  || "1",
+      fusionMemory: localStorage.getItem('settings.vmwarefusion-memory-size')  || "1024",
+      fusionDisk: localStorage.getItem('settings.vmwarefusion-disk-size')  || "",
+
     };
   },
   handleGoBackClick: function () {
@@ -112,6 +116,9 @@ var Preferences = React.createClass({
     // fusion flags
     localStorage.setItem('settings.vmwarefusion', this.state.fusionEnabled);
     localStorage.setItem('settings.vmwarefusion-boot2docker-url', this.state.fusionBoot2DockerURL);
+    localStorage.setItem('settings.vmwarefusion-cpu-count', this.state.fusionCpu);
+    localStorage.setItem('settings.vmwarefusion-disk-size', this.state.fusionDisk);
+    localStorage.setItem('settings.vmwarefusion-memory-size', this.state.fusionMemory);
 
     // Check for vbox enabling and transition as appropriate
     if (this.state.vboxEnabled) {
@@ -200,6 +207,24 @@ var Preferences = React.createClass({
     var tmpvalue = e.target.value;
     this.setState({
         fusionBoot2DockerURL: tmpvalue
+    });
+  },
+  handleFusionCpu: function(e) {
+    var tmpvalue = e.target.value;
+    this.setState({
+        fusionCpu: tmpvalue
+    });
+  },
+  handleFusionMemory: function(e) {
+    var tmpvalue = e.target.value;
+    this.setState({
+        fusionMemory: tmpvalue
+    });
+  },
+  handleFusionDisk: function(e) {
+    var tmpvalue = e.target.value;
+    this.setState({
+        fusionDisk: tmpvalue
     });
   },
   render: function () {
@@ -346,8 +371,31 @@ var Preferences = React.createClass({
                     <input type="text" value={this.state.fusionBoot2DockerURL} onChange={this.handleFusionBoxBoot2DockerURL} />
                   </div>
               </div>
+              <div className="option">
+                  <div className="option-name">
+                     vmwarefusion-cpu-count
+                  </div>
+                  <div className="option-value">
+                    <input type="text" value={this.state.fusionCpu} onChange={this.handleFusionCpu} />
+                  </div>
+              </div>
+              <div className="option">
+                  <div className="option-name">
+                     vmwarefusion-memory-size
+                  </div>
+                  <div className="option-value">
+                    <input type="text" value={this.state.fusionMemory} onChange={this.handleFusionMemory} />
+                  </div>
+              </div>
+              <div className="option">
+                  <div className="option-name">
+                     vmwarefusion-disk-size
+                  </div>
+                  <div className="option-value">
+                    <input type="text" value={this.state.fusionDisk} onChange={this.handleFusionDisk} />
+                  </div>
+              </div>
           </div>
-
         <div className="save-preferences">
           <button type="button" onClick={this.handleApplyClicked}>Apply</button>
         </div>
