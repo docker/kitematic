@@ -187,128 +187,139 @@ var Preferences = React.createClass({
       <div className="preferences">
         <div className="preferences-content">
           <a onClick={this.handleGoBackClick}>Go Back</a>
-          <div className="title">VM Settings</div>
-          <div className="option">
-            <div className="option-name">
-              Shut Down Linux VM on closing Kitematic
-            </div>
-            <div className="option-value">
-              <input type="checkbox" checked={this.state.closeVMOnQuit} onChange={this.handleChangeCloseVMOnQuit}/>
-            </div>
-          </div>
-          <div className="title">App Settings</div>
-          <div className="option">
-            <div className="option-name">
-              Report anonymous usage analytics
-            </div>
-            <div className="option-value">
-              <input type="checkbox" checked={this.state.metricsEnabled} onChange={this.handleChangeMetricsEnabled}/>
-            </div>
-          </div>
-          <tr />
-          <div className="title">Machine settings</div>
-          <div className="option">
-            <div className="option-name">
-               VirtualBox enabled
-            </div>
-            <div className="option-value">
-              <input type="checkbox" checked={this.state.vboxEnabled} onChange={this.handleVirtualBoxEnabled} />
-            </div>
-          </div>
-          <div className="virtualbox-options">
+          <div className="settings-box">
+              <div className="title">VM Settings</div>
               <div className="option">
                 <div className="option-name">
-                   virtualbox-boot2docker-url
+                  Shut Down Linux VM on closing Kitematic
                 </div>
                 <div className="option-value">
-                  <input type="text" value={this.state.vboxBoot2DockerURL} onChange={this.handleVirtualBoxBoot2DockerURL} />
-                </div>
-              </div>
-              <div className="option">
-                <div className="option-name">
-                   virtualbox-cpu-count
-                </div>
-                <div className="option-value">
-                  <input type="text" value={this.state.vboxCpu} name="vboxCpu" onChange={this.handleVboxCpu} />
-                </div>
-              </div>
-              <div className="option">
-                <div className="option-name">
-                   virtualbox-disk-size
-                </div>
-                <div className="option-value">
-                  <input type="text" value={this.state.vboxDisk} name="vboxDisk" onChange={this.handleVboxDisk} />
-                </div>
-              </div>
-              <div className="option">
-                <div className="option-name">
-                   virtualbox-hostonly-cidr
-                </div>
-                <div className="option-value">
-                  <input type="text" value={this.state.vboxCidr} name="vboxCidr" onChange={this.handleVboxCidr} />
-                </div>
-              </div>
-              <div className="option">
-                <div className="option-name">
-                   virtualbox-memory
-                </div>
-                <div className="option-value">
-                  <input type="text" value={this.state.vboxMemory} name="vboxMemory" onChange={this.handleVboxMemory} />
+                  <input type="checkbox" checked={this.state.closeVMOnQuit} onChange={this.handleChangeCloseVMOnQuit}/>
                 </div>
               </div>
           </div>
-          <div className="option">
-            <div className="option-name">
-               DigitalOcean enabled
-            </div>
-            <div className="option-value">
-              <input type="checkbox" checked={this.state.docEnabled} onChange={this.handleDigitalOceanEnabled}/>
-            </div>
-          </div>
-          <div className="digitalocean-parameters">
+          <div className="settings-box">
+              <div className="title">App Settings</div>
               <div className="option">
                 <div className="option-name">
-                   digitalocean-access-token
+                  Report anonymous usage analytics
                 </div>
                 <div className="option-value">
-                  <input type="text" value={this.state.docAccessToken} name="docAccessToken" onChange={this.handleDocAccessToken}/>
-                </div>
-              </div>
-              <div className="option">
-                <div className="option-name">
-                   digitalocean-region
-                </div>
-                <div className="option-value">
-                  <input type="text" value={this.state.docRegion} name="docRegion" onChange={this.handleDocRegion}/>
-                </div>
-              </div>
-              <div className="option">
-                <div className="option-name">
-                   digitalocean-size
-                </div>
-                <div className="option-value">
-                  <input type="text" value={this.state.docSize} name="docSize" onChange={this.handleDocSize} />
-                </div>
-              </div>
-              <div className="option">
-                <div className="option-name">
-                   digitalocean-image
-                </div>
-                <div className="option-value">
-                  <input type="text" value={this.state.docImage} name="docImage" onChange={this.handleDocImage}/>
+                  <input type="checkbox" checked={this.state.metricsEnabled} onChange={this.handleChangeMetricsEnabled}/>
                 </div>
               </div>
           </div>
-          <div className="option">
-            <div className="option-name">
-               VMware Fusion enabled
-            </div>
-            <div className="option-value">
-              <input type="checkbox" checked={this.state.fusionEnabled} onChange={this.handleFusionEnabled}/>
-            </div>
+          <div className="settings-box">
+              <div className="title">VirtualBox settings</div>
+              <div className="option">
+                <div className="option-name">
+                   VirtualBox enabled
+                </div>
+                <div className="option-value">
+                  <input type="checkbox" checked={this.state.vboxEnabled} onChange={this.handleVirtualBoxEnabled} />
+                </div>
+              </div>
+              <div className="virtualbox-options">
+                  <div className="option">
+                    <div className="option-name">
+                       virtualbox-boot2docker-url
+                    </div>
+                    <div className="option-value">
+                      <input type="text" value={this.state.vboxBoot2DockerURL} onChange={this.handleVirtualBoxBoot2DockerURL} />
+                    </div>
+                  </div>
+                  <div className="option">
+                    <div className="option-name">
+                       virtualbox-cpu-count
+                    </div>
+                    <div className="option-value">
+                      <input type="text" value={this.state.vboxCpu} name="vboxCpu" onChange={this.handleVboxCpu} />
+                    </div>
+                  </div>
+                  <div className="option">
+                    <div className="option-name">
+                       virtualbox-disk-size
+                    </div>
+                    <div className="option-value">
+                      <input type="text" value={this.state.vboxDisk} name="vboxDisk" onChange={this.handleVboxDisk} />
+                    </div>
+                  </div>
+                  <div className="option">
+                    <div className="option-name">
+                       virtualbox-hostonly-cidr
+                    </div>
+                    <div className="option-value">
+                      <input type="text" value={this.state.vboxCidr} name="vboxCidr" onChange={this.handleVboxCidr} />
+                    </div>
+                  </div>
+                  <div className="option">
+                    <div className="option-name">
+                       virtualbox-memory
+                    </div>
+                    <div className="option-value">
+                      <input type="text" value={this.state.vboxMemory} name="vboxMemory" onChange={this.handleVboxMemory} />
+                    </div>
+                  </div>
+              </div>
+          </div>
+          <div className="settings-box">
+              <div className="title">DigitalOcean settings</div>
+              <div className="option">
+                <div className="option-name">
+                   DigitalOcean enabled
+                </div>
+                <div className="option-value">
+                  <input type="checkbox" checked={this.state.docEnabled} onChange={this.handleDigitalOceanEnabled}/>
+                </div>
+              </div>
+              <div className="digitalocean-parameters">
+                  <div className="option">
+                    <div className="option-name">
+                       digitalocean-access-token
+                    </div>
+                    <div className="option-value">
+                      <input type="text" value={this.state.docAccessToken} name="docAccessToken" onChange={this.handleDocAccessToken}/>
+                    </div>
+                  </div>
+                  <div className="option">
+                    <div className="option-name">
+                       digitalocean-region
+                    </div>
+                    <div className="option-value">
+                      <input type="text" value={this.state.docRegion} name="docRegion" onChange={this.handleDocRegion}/>
+                    </div>
+                  </div>
+                  <div className="option">
+                    <div className="option-name">
+                       digitalocean-size
+                    </div>
+                    <div className="option-value">
+                      <input type="text" value={this.state.docSize} name="docSize" onChange={this.handleDocSize} />
+                    </div>
+                  </div>
+                  <div className="option">
+                    <div className="option-name">
+                       digitalocean-image
+                    </div>
+                    <div className="option-value">
+                      <input type="text" value={this.state.docImage} name="docImage" onChange={this.handleDocImage}/>
+                    </div>
+                  </div>
+              </div>
+          </div>
+          <div className="settings-box">
+              <div className="title">VMware Fusion settings</div>
+              <div className="option">
+                <div className="option-name">
+                   VMware Fusion enabled
+                </div>
+                <div className="option-value">
+                  <input type="checkbox" checked={this.state.fusionEnabled} onChange={this.handleFusionEnabled}/>
+                </div>
+              </div>
           </div>
 
-        <div>
+        <div className="save-preferences">
           <button type="button" onClick={this.handleApplyClicked}>Apply</button>
         </div>
         </div>

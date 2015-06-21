@@ -15,8 +15,14 @@
     display: flex;
     flex-direction: column;
 
+    .settings-box {
+        border: 1px solid #777;
+        padding: 10px;
+        margin: 5px;
+    }
+
     .title {
-      margin-top: 40px;
+      margin-top: 10px;
       text-align: left;
       font-size: 18px;
       font-weight: 400;
@@ -36,6 +42,18 @@
         flex: 1 auto;
         text-align: right;
       }
+    }
+
+    .save-preferences {
+        text-align: right;
+        margin: 10px;
+
+        button {
+           background-color:green;
+           color: white;
+           font-size:200%;
+           text-align: right;
+        }
     }
   }
 }
