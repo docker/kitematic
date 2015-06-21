@@ -37,28 +37,6 @@ var Drivers = {
     if (!name) {
       return;
     }
-/*
-    if (localStorage.getItem('metrics.enabled') !== 'true') {
-      return;
-    }
-
-    let id = localStorage.getItem('metrics.id');
-    if (!id) {
-      id = uuid.v4();
-      localStorage.setItem('metrics.id', id);
-    }
-
-    let osName = os.platform();
-    let osVersion = util.isWindows() ? os.release() : osxRelease(os.release()).version;
-
-    mixpanel.track(name, assign({
-      distinct_id: id,
-      version: util.packagejson().version,
-      'Operating System': osName,
-      'Operating System Version': osVersion,
-      'Operating System Architecture': os.arch()
-    }, data));
-  */
   },
 };
 module.exports = Drivers;
