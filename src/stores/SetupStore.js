@@ -1,3 +1,5 @@
+// TODO this is no longer in use on startup
+// This will need to either be generalized or removed once the driver-specific setup is in place
 var EventEmitter = require('events').EventEmitter;
 var _ = require('underscore');
 var path = require('path');
