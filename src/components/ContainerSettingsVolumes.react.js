@@ -30,16 +30,29 @@ var ContainerSettingsVolumes = React.createClass({
       newVolumePath: null
     }
   },
-
-  // Update the container Binds and Volumes from the `volumes` variable
+  // Update the container Binds and Volumes from a updated copy of the 'Volumes'
+  // container attribute (not the this.state.volumes variable)
   updateContainerBindsAndVolumes: function (volumes) {
     var binds = [];
     _.pairs(volumes).map(function (pair) {
       if (pair[1]) { binds.push(pair[1] + ':' + pair[0]) }
     });
+
     containerActions.update(this.props.container.Name, {Binds: binds, Volumes: volumes});
   },
+  updateVolumeDirectory: function(dockerVol, directory) {
+    // Update the `volumes` variable in order to refresh the screen and show the
+    // selected path
+    let volumes = _.map(this.state.volumes, _.clone);
+    _.map(volumes, (kvp, index) => {
+      let [id, val, key] = kvp;
+      if (key === dockerVol) { volumes[index][1] = directory; }
+    });
 
+    this.setState({
+      volumes: volumes
+    });
+  },
   handleChooseVolumeClick: function (dockerVol) {
     dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']}, (filenames) => {
       if (!filenames) {
@@ -62,10 +75,11 @@ var ContainerSettingsVolumes = React.createClass({
         directory = util.escapePath(util.windowsToLinuxPath(directory));
       }
 
-      var volumes = _.clone(this.props.container.Volumes);
-      volumes[dockerVol] = directory;
+      var containerVolumes = _.clone(this.props.container.Volumes);
+      containerVolumes[dockerVol] = directory;
 
-      this.updateContainerBindsAndVolumes(volumes);
+      this.updateContainerBindsAndVolumes(containerVolumes);
+      this.updateVolumeDirectory(dockerVol, directory);
     });
   },
   handleRemoveVolumeClick: function (dockerVol) {
@@ -73,10 +87,11 @@ var ContainerSettingsVolumes = React.createClass({
       from: 'settings'
     });
 
-    var volumes = _.clone(this.props.container.Volumes);
-    volumes[dockerVol] = null;
+    var containerVolumes = _.clone(this.props.container.Volumes);
+    containerVolumes[dockerVol] = null;
 
-    this.updateContainerBindsAndVolumes(volumes);
+    this.updateContainerBindsAndVolumes(containerVolumes);
+    this.updateVolumeDirectory(dockerVol, '');
   },
   handleOpenVolumeClick: function (path) {
     metrics.track('Opened Volume Directory', {
