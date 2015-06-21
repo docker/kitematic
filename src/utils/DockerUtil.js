@@ -61,7 +61,7 @@ export default {
 
             delete this.placeholders[container.Name];
             localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
-            //this.createContainer(container.Name, {Image: container.Config.Image});
+            this.createContainer(container.Name, {Image: container.Config.Image});
             });
         });
       }
@@ -323,29 +323,31 @@ export default {
   },
 
   listen () {
-    //this.client.getEvents((error, stream) => {
-    //  if (error || !stream) {
-    //    // TODO: Add app-wide error handler
-    //    return;
-    //  }
+    if (this.client) {
+      this.client.getEvents((error, stream) => {
+        if (error || !stream) {
+          // TODO: Add app-wide error handler
+          return;
+        }
 
-    //  stream.setEncoding('utf8');
-    //  stream.on('data', json => {
-    //    let data = JSON.parse(json);
+        stream.setEncoding('utf8');
+        stream.on('data', json => {
+          let data = JSON.parse(json);
 
-    //    if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete') {
-    //      return;
-    //    }
+          if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete') {
+          return;
+          }
 
-    //    if (data.status === 'destroy') {
-    //      containerServerActions.destroyed({name: data.id});
-    //    } else if (data.status === 'create') {
-    //      //this.fetchAllContainers();
-    //    } else {
-    //      //this.fetchContainer(data.id);
-    //    }
-    //  });
-    //});
+          if (data.status === 'destroy') {
+          containerServerActions.destroyed({name: data.id});
+          } else if (data.status === 'create') {
+          this.fetchAllContainers();
+          } else {
+          this.fetchContainer(data.id);
+          }
+        });
+      });
+    }
   },
 
   pullImage (repository, tag, callback, progressCallback, blockedCallback) {
