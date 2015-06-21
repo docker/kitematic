@@ -10,10 +10,8 @@ var settings;
 
 try {
   settings = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
-  console.log("settings read")
 } catch (err) {
   settings = {};
-  console.log("settings error")
 }
 
 var token = process.env.NODE_ENV === 'development' ? settings['mixpanel-dev'] : settings.mixpanel;
@@ -22,6 +20,10 @@ if (!token) {
 }
 
 var mixpanel = Mixpanel.init(token);
+
+if (localStorage.getItem('drivers.enabled') === null) {
+  localStorage.setItem('drivers.enabled', true);
+}
 
 var Drivers = {
   enabled: function () {

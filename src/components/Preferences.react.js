@@ -1,5 +1,6 @@
 var React = require('react/addons');
 var metrics = require('../utils/MetricsUtil');
+var drivers = require('../utils/DriversUtil')
 var Router = require('react-router');
 
 var Preferences = React.createClass({
@@ -7,7 +8,10 @@ var Preferences = React.createClass({
   getInitialState: function () {
     return {
       closeVMOnQuit: localStorage.getItem('settings.closeVMOnQuit') === 'true',
-      metricsEnabled: metrics.enabled()
+      metricsEnabled: metrics.enabled(),
+      driversEnabled: drivers.enabled(),
+      vboxEnabled: localStorage.getItem('settings.vboxEnabled') === 'true',
+      // TODO @fsoppelsa to load drivers configurations
     };
   },
   handleGoBackClick: function () {
@@ -34,11 +38,31 @@ var Preferences = React.createClass({
       enabled: checked
     });
   },
+  handleVirtualBoxEnabled: function(e) {
+    var checked = e.target.checked;
+    this.setState({
+      vboxEnabled: checked
+    });
+    localStorage.setItem('settings.vboxEnabled', checked);
+    metrics.track('toggled vbox', {
+      close: checked
+    });
+  },
+  handleDigitalOceanEnabled: function(e) {
+    var checked = e.target.checked;
+    this.setState({
+        vboxenabled: checked
+      });
+    localStorage.setItem('settings.docenabled', checked);
+    metrics.track('toggled doc', {
+      close: checked
+    });
+  },
   handleVirtualBoxConfiguration: function(e) {
-    // TODO
+    // TODO @fsoppelsa save in persistent conf
   },
   handleDigitalOceanConfiguration: function(e) {
-    // TODO
+    // TODO @fsoppelsa save in persistent conf
   },
   render: function () {
     return (
@@ -70,7 +94,7 @@ var Preferences = React.createClass({
                VirtualBox enabled
             </div>
             <div className="option-value">
-              <input type="checkbox" onChange={this.handleVirtualBoxConfiguration}/>
+              <input type="checkbox" checked={this.state.vboxEnabled} onChange={this.handleVirtualBoxEnabled}/>
             </div>
           </div>
           <div className="option">
@@ -79,6 +103,7 @@ var Preferences = React.createClass({
             </div>
             <div className="option-value">
               <input type="text" onChange={this.handleVirtualBoxConfiguration}/>
+              <button type="button">Save</button>
             </div>
           </div>
           <div className="option">
@@ -86,7 +111,7 @@ var Preferences = React.createClass({
                DigitalOcean enabled
             </div>
             <div className="option-value">
-              <input type="checkbox" onChange={this.handleVirtualBoxConfiguration}/>
+              <input type="checkbox" checked={this.state.docEnabled} onChange={this.handleDigitalOceanEnabled}/>
             </div>
           </div>
 
@@ -96,6 +121,7 @@ var Preferences = React.createClass({
             </div>
             <div className="option-value">
               <input type="text" onChange={this.handleDigitalOceanConfiguration}/>
+              <button type="button">Save</button>
             </div>
           </div>
         </div>
