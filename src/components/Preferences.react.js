@@ -63,8 +63,6 @@ var Preferences = React.createClass({
     });
   },
   handleApplyClicked: function(e) {
-    console.log("Apply was clicked");
-    console.log("mem = " + this.state.vboxMemory)
     localStorage.setItem('settings.vboxBoot2DockerURL', this.state.vboxBoot2DockerURL || "");
     localStorage.setItem('settings.vboxMemory', this.state.vboxMemory || "0");
     //var SetupVirtualBox = require('./stores/drivers/SetupVirtualBox');
