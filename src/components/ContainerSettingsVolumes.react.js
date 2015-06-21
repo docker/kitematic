@@ -125,7 +125,7 @@ var ContainerSettingsVolumes = React.createClass({
       if (!alreadyExists)
       {
         volumes[index][2] = this.state.newVolumePath;
-        volumes[index][1] = '/var/lib/docker/volumes/' + volumes[index][0] + '/_data';
+        volumes[index][1] = '';
 
         volumes.push([util.randomId(), '', '']);
 
