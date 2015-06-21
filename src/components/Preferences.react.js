@@ -66,13 +66,13 @@ var Preferences = React.createClass({
   handleApplyClicked: function(e) {
     console.log("Apply was clicked");
     SetupVirtualBox.setup().then(() => {
-      Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
-      docker.init();
-      if (!hub.prompted() && !hub.loggedin()) {
-        router.transitionTo('login');
-      } else {
-        router.transitionTo('search');
-      }
+      //Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
+      //docker.init();
+      //if (!hub.prompted() && !hub.loggedin()) {
+      //  router.transitionTo('login');
+      //} else {
+      //  router.transitionTo('search');
+      //}
     }).catch(err => {
       metrics.track('Setup Failed', {
         step: 'catch',

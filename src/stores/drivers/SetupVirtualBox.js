@@ -21,7 +21,7 @@ var _requiredSteps = [];
 var _steps = [{
   name: 'download',
   title: 'Downloading VirtualBox',
-  message: 'VirtualBox is being downloaded. You have selected the VirtualBox driver.',
+  message: 'VirtualBox is being downloaded. Kitematic requires VirtualBox to run containers.',
   totalPercent: 35,
   percent: 0,
   run: function (progressCallback) {
@@ -31,8 +31,8 @@ var _steps = [{
   }
 }, {
   name: 'install',
-  title: 'Installing VirtualBox',
-  message: 'VirtualBox is being installed or upgraded in the background. We may need you to type in your password to continue.',
+  title: 'Installing VirtualBox & Docker',
+  message: 'VirtualBox & Docker are being installed or upgraded in the background. We may need you to type in your password to continue.',
   totalPercent: 5,
   percent: 0,
   seconds: 5,
@@ -56,7 +56,7 @@ var _steps = [{
 }, {
   name: 'init',
   title: 'Starting Docker VM',
-  message: 'To run Docker containers on VirtualBox, Kitematic is starting a Linux virtual machine. This may take a minute...',
+  message: 'To run Docker containers on your computer, Kitematic is starting a Linux virtual machine. This may take a minute...',
   totalPercent: 60,
   percent: 0,
   seconds: 110,
