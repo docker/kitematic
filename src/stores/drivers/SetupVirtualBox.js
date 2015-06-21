@@ -17,6 +17,7 @@ var _error = null;
 var _cancelled = false;
 var _retryPromise = null;
 var _requiredSteps = [];
+var NAME = "vbox"
 
 var _steps = [{
   name: 'download',
@@ -214,8 +215,8 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
             ip: ip
           };
         }
-        docker.setup(ip, machine.name());
-        yield docker.waitForConnection();
+        docker.addClient(NAME, ip, machine.name());
+        yield docker.clients[NAME].waitForConnection();
         metrics.track('Setup Finished');
         break;
       } catch (err) {
