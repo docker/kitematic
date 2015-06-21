@@ -8,6 +8,7 @@ var containerActions = require('../actions/ContainerActions');
 var containerStore = require('../stores/ContainerStore');
 var tagStore = require('../stores/TagStore');
 var tagActions = require('../actions/TagActions');
+var util = require('util');
 
 var ImageCard = React.createClass({
   mixins: [Router.Navigation],
@@ -50,13 +51,20 @@ var ImageCard = React.createClass({
       userowned: this.props.image.is_user_repo,
       recommended: this.props.image.is_recommended
     });
-    console.log("====")
-    console.log("====")
-    console.log("====")
-    value = this.refs.machineDriver.getValue();
-    console.log("Dropdown selection = " + value);
+    var dropdown = "";
+    var machineDriverId = "";
+    var machineDriver = "";
+    dropdown = document.getElementById("machineDriver");
+    machineDriverId = dropdown.value;
+    switch (machineDriverId)
+    {
+        case "1": machineDriver = "digitalocean"; break;
+        case "2": machineDriver = "virtualbox"; break;
+    }
     let name = containerStore.generateName(this.props.image.name);
     let repo = this.props.image.namespace === 'library' ? this.props.image.name : this.props.image.namespace + '/' + this.props.image.name;
+    // DRIVER NAME
+    this.props.driverName = machineDriver;
     containerActions.run(name, repo, this.state.chosenTag);
     this.transitionTo('containerHome', {name});
   },
@@ -87,13 +95,6 @@ var ImageCard = React.createClass({
       repoUri = repoUri + 'u/' + this.props.image.namespace + '/' + this.props.image.name;
     }
     shell.openExternal(repoUri);
-  },
-  handleMachineDriverSelection: function () {
-    // TODO @fsoppelsa
-  },
-  handleDriversSelection: function(e) {
-//    console.log("DriverSelection = " + e);
-    console.log("DriverSelection");
   },
   render: function () {
     var self = this;
@@ -158,26 +159,6 @@ var ImageCard = React.createClass({
         <span className="icon icon-badge-private"></span>
       );
     }
-    var docdropdown = null;
-    if (localStorage.getItem('settings.docEnabled') == 'true') {
-        docdropdown = (
-            <option value="digitalocean">Digital Ocean</option>
-        )
-    }
-    var vboxdropdown = null;
-    if (localStorage.getItem('settings.vboxEnabled') == 'true') {
-        vboxdropdown = (
-            <option value="virtualbox">Virtual Box</option>
-        )
-    }
-    var driversSelect = null;
-    driversSelect = (
-        <select ref="machineDriver"
-        onChange={this.handleDriversSelection(this)}>
-            {vboxdropdown}
-            {docdropdown}
-        </select>
-    );
     return (
       <div className="image-item">
         <div className="overlay menu-overlay">
@@ -188,11 +169,6 @@ var ImageCard = React.createClass({
           <div className="menu-item" onClick={this.handleRepoClick}>
             <span className="icon icon-open-external"></span>
             <span className="text">VIEW ON DOCKER HUB</span>
-          </div>
-          <div className="menu-item">
-            <span className="icon icon-tag"></span>
-            <span className="text">Select the machine driver</span>
-            {driversSelect}
           </div>
           <div className="close-overlay">
             <a className="btn btn-action circular" onClick={self.handleCloseMenuOverlay}><span className="icon icon-delete"></span></a>

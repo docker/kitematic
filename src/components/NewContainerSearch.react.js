@@ -100,6 +100,10 @@ module.exports = React.createClass({
       from: 'search'
     });
   },
+  handleDriversSelection: function(e) {
+//    console.log("DriverSelection = " + e);
+//    console.log("DriverSelection");
+  },
   render: function () {
     let filter = this.getQuery().filter || 'all';
     let repos = _.values(this.state.repos)
@@ -216,6 +220,26 @@ module.exports = React.createClass({
       'search-icon': true
     });
 
+    var docdropdown = null;
+    if (localStorage.getItem('settings.docEnabled') == 'true') {
+        docdropdown = (
+            <option value="1">Digital Ocean</option>
+        )
+    }
+    var vboxdropdown = null;
+    if (localStorage.getItem('settings.vboxEnabled') == 'true') {
+        vboxdropdown = (
+            <option value="2">Virtual Box</option>
+        )
+    }
+    var driversSelect = null;
+    driversSelect = (
+        <select id="machineDriver">
+            {vboxdropdown}
+            {docdropdown}
+        </select>
+    );
+
     return (
       <div className="details">
         <div className="new-container">
@@ -233,6 +257,10 @@ module.exports = React.createClass({
               <span className={`results-filter results-recommended tab ${filter === 'recommended' ? 'active' : ''}`} onClick={this.handleFilter.bind(this, 'recommended')}>Recommended</span>
               <span className={`results-filter results-userrepos tab ${filter === 'userrepos' ? 'active' : ''}`} onClick={this.handleFilter.bind(this, 'userrepos')}>My Repos</span>
             </div>
+          </div>
+          <div className="dropdownDriver">
+            Select the machine driver&nbsp;&nbsp;
+            {driversSelect}
           </div>
           <div className="results">
             {results}
