@@ -177,13 +177,16 @@ var Header = React.createClass({
           {username}
         </div>
         <div className="right-header">
-          <select id="machineDriver" onChange={this.props.handleDriverChange}>
-            <option value="virtualbox">Virtual Box</option>
-            <option value="digitalocean">DigitalOcean</option>
-            <option value="vmwarefusion">VMWare Fusion</option>
-          </select>
           <div className="updates">
             {updateWidget}
+          </div>
+          <div className="machine">
+            <div className="machine-label">MACHINE</div >
+            <select className="form-control" id="machineDriver" onChange={this.props.onDriverChange}>
+              <option value="virtualbox">Virtual Box</option>
+              <option value="digitalocean">DigitalOcean</option>
+              <option value="vmwarefusion">VMWare Fusion</option>
+            </select>
           </div>
           {util.isWindows () ? this.renderWindowButtons() : this.renderLogo()}
         </div>

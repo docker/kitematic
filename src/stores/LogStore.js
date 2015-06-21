@@ -19,10 +19,10 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
     return div.innerHTML;
   },
   fetch: function (containerName) {
-    if (!containerName || !docker.clients[driverName]) {
+    if (!containerName) {
       return;
     }
-    docker.activeClient.getContainer(containerName).logs({
+    docker.getContainer(containerName).logs({
       stdout: true,
       stderr: true,
       timestamps: false,
@@ -49,7 +49,7 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
     if (!containerName || !docker.activeClient || _streams[containerName]) {
       return;
     }
-    docker.activeClient.getContainer(containerName).attach({
+    docker.getContainer(containerName).attach({
       stdout: true,
       stderr: true,
       logs: false,

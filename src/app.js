@@ -12,7 +12,6 @@ var hubUtil = require('./utils/HubUtil');
 var urlUtil = require ('./utils/URLUtil');
 var app = remote.require('app');
 var request = require('request');
-var docker = require('./utils/DockerUtil');
 var hub = require('./utils/HubUtil');
 var Router = require('react-router');
 var routes = require('./routes');
@@ -48,9 +47,6 @@ routerContainer.set(router);
 
 // Set up app main menu
 Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
-Object.keys(docker.clients).forEach(function (key) {
-  docker.clients[key].init();
-});
 
 if (!hub.prompted() && !hub.loggedin()) {
   router.transitionTo('login');

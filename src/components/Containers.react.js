@@ -8,7 +8,8 @@ var Header = require('./Header.react');
 var metrics = require('../utils/MetricsUtil');
 var shell = require('shell');
 var machine = require('../utils/DockerMachineUtil');
-var dockerUtil = require('../utils/DockerUtils.js');
+var dockerUtil = require('../utils/DockerUtil.js');
+var dockerMachineUtil = require('../utils/DockerMachineUtil.js');
 
 var Containers = React.createClass({
   contextTypes: {
@@ -148,9 +149,11 @@ var Containers = React.createClass({
   },
 
   handleDriverChange: function (e) {
-    this.setState({driverName: e.target.value()});
-    dockerUtils.clients[driverName].init();
-    dockerUtils.activeDriver = dockerUtils.clients[driverName];
+    let driverName = e.target.value;
+    dockerMachineUtil.ip(driverName).then(ip => {
+      dockerUtil.setup(ip, driverName);
+      dockerUtil.init(ip, driverName);
+    });
   },
 
   render: function () {

@@ -68,7 +68,7 @@ var _steps = [{
       if (exists && (yield machine.state()) === 'Error') {
         yield machine.rm();
       }
-      yield machine.create(NAME, ["--virtualbox-boot2docker-url", path.join(process.env.RESOURCES_PATH, 'boot2docker.iso'), "--virtualbox-memory", "2048"]);// This will be refactored to dynmaically get and pass flags
+      yield machine.create('virtualbox', ["--virtualbox-boot2docker-url", path.join(process.env.RESOURCES_PATH, 'boot2docker.iso'), "--virtualbox-memory", "2048"]);// This will be refactored to dynmaically get and pass flags
       return;
     }
 
@@ -202,7 +202,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
       }
     }
     _currentStep = null;
-    return yield machine.ip();
+    return yield machine.ip('virtualbox');
   }),
   setup: Promise.coroutine(function * () {
     while (true) {

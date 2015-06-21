@@ -10,7 +10,7 @@ import containerServerActions from '../actions/ContainerServerActions';
 import Promise from 'bluebird';
 import rimraf from 'rimraf';
 
-var Docker = {
+module.exports = {
   host: null,
   client: null,
   placeholders: {},
@@ -496,27 +496,4 @@ var Docker = {
       });
     });
   }
-};
-
-var dockerClients = {};
-
-var addClient = function(driverName, ip, machineName) {
-  dockerClients[driverName] = Object.create(Docker);
-  dockerClients[driverName].setup(ip, machineName);
-};
-
-var activeClient = null;
-
-module.exports.clients = dockerClients;
-module.exports.addClient = addClient;
-module.exports.activeClient = activeClient
-
-var activeClientDriverName = function() {
-    name = '';
-    Object.keys(dockerClients).forEach(function (key) {
-        if (dockerClients[key] === activeClient) {
-            name = key;
-        }
-    });
-    return name;
 };

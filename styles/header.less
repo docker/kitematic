@@ -3,6 +3,28 @@
   -webkit-app-region: drag;
   -webkit-user-select: none;
 
+  .machine {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: row;
+    .machine-label {
+      text-align: right;
+      min-width: 120px;
+      margin-top: 8px;
+      margin-right: 8px;
+      color: @gray-lighter;
+    }
+    select {
+      -webkit-app-region: no-drag;
+      flex: 0 auto;
+      width: 160px;
+      margin-top: 6px;
+      height: 24px;
+    }
+    margin-right: 20px;
+  }
+
+
   &.bordered {
     border-bottom: 1px solid @color-divider;
   }
