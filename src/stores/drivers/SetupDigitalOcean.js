@@ -15,7 +15,7 @@ var _cancelled = false;
 var _retryPromise = null;
 var _requiredSteps = [];
 
-var _steps = [{
+var _steps = {
   name: 'check',
   title: 'Checking Digital Ocean',
   message: 'Kitematic is checking your Digital Ocean credentials. Please make sure your token is registered.',
@@ -26,14 +26,14 @@ var _steps = [{
     client = new Client();
     let digitaloceantoken = localStorage.getItem('digitalocean.token');
     args = {
-      parameters:{token:digitaloceantoken}
+      parameters:{token:digitaloceantoken},
       headers:{"Content-Type":"application/json","Authorization":"Bearer"}// fix here
     }
     client.get("https://api.digitalocean.com/v2/account", args,
       function(data, response){
           var response = console.log(response);
-      )}
+      })
     if (!response === "200")
       return;
-  }
-}];
+  })
+};
