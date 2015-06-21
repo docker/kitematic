@@ -38,7 +38,7 @@ export default {
 
   init () {
     this.placeholders = JSON.parse(localStorage.getItem('placeholders')) || {};
-    //this.fetchAllContainers();
+    this.fetchAllContainers();
     this.listen();
 
     // Resume pulling containers that were previously being pulled
@@ -133,28 +133,30 @@ export default {
   },
 
   fetchAllContainers () {
-    this.client.listContainers({all: true}, (err, containers) => {
-      if (err) {
-        return;
-      }
-      async.map(containers, (container, callback) => {
-        this.client.getContainer(container.Id).inspect((error, container) => {
-          if (error) {
-            callback(null, null);
-            return;
-          }
-          container.Name = container.Name.replace('/', '');
-          callback(null, container);
+    if (this.client) {
+        this.client.listContainers({all: true}, (err, containers) => {
+            if (err) {
+                return;
+            }
+            async.map(containers, (container, callback) => {
+                this.client.getContainer(container.Id).inspect((error, container) => {
+                if (error) {
+                    callback(null, null);
+                    return;
+                }
+                container.Name = container.Name.replace('/', '');
+                callback(null, container);
+                });
+            }, (err, containers) => {
+                containers = containers.filter(c => c !== null);
+                if (err) {
+                // TODO: add a global error handler for this
+                return;
+                }
+                containerServerActions.allUpdated({containers: _.indexBy(containers.concat(_.values(this.placeholders)), 'Name')});
+            });
         });
-      }, (err, containers) => {
-        containers = containers.filter(c => c !== null);
-        if (err) {
-          // TODO: add a global error handler for this
-          return;
-        }
-        containerServerActions.allUpdated({containers: _.indexBy(containers.concat(_.values(this.placeholders)), 'Name')});
-      });
-    });
+    }
   },
 
   run (name, repository, tag) {
