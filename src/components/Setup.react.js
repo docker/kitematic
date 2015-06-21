@@ -1,5 +1,4 @@
 // TODO this should be the only place that calls SetupStore now
-// We will want to generalize this to call Setup for all the drivers supported
 var React = require('react/addons');
 var Router = require('react-router');
 var Radial = require('./Radial.react.js');
