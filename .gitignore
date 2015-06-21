@@ -12,6 +12,8 @@ integration
 
 # Resources
 resources/docker*
+!resources/docker-machine
+!resources/docker-machine_*
 resources/boot2docker*
 
 # Cache
