@@ -177,6 +177,11 @@ var Header = React.createClass({
           {username}
         </div>
         <div className="right-header">
+          <select id="machineDriver" onChange={this.props.handleDriverChange}>
+            <option value="2">Virtual Box</option>
+            <option value="3">DigitalOcean</option>
+            <option value="4">VMWare Fusion</option>
+          </select>
           <div className="updates">
             {updateWidget}
           </div>

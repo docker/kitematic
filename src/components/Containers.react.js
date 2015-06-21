@@ -145,6 +145,12 @@ var Containers = React.createClass({
     });
   },
 
+  handleDriverChange: function () {
+    this.setState({
+      currentButtonLabel: ''
+    });
+  },
+
   render: function () {
     var sidebarHeaderClass = 'sidebar-header';
     if (this.state.sidebarOffset) {
@@ -154,7 +160,7 @@ var Containers = React.createClass({
     var container = this.context.router.getCurrentParams().name ? this.state.containers[this.context.router.getCurrentParams().name] : {};
     return (
       <div className="containers">
-        <Header />
+        <Header onDriverChange={this.handleDriverChange}/>
         <div className="containers-body">
           <div className="sidebar">
             <section className={sidebarHeaderClass}>
