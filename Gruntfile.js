@@ -209,7 +209,7 @@ module.exports = function (grunt) {
     rename: {
       installer: {
         src: 'installer/Setup.exe',
-        dest: 'installer/' + BASENAME + 'Setup-' + packagejson.version + '-Windows.exe'
+        dest: 'installer/' + BASENAME + 'Setup-' + packagejson.version + '-Windows-Alpha.exe'
       }
     },
 
