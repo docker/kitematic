@@ -38,6 +38,9 @@ class ContainerActions {
   }
 
   run (driverName, name, repo, tag) {
+    console.log("ContainerActions: driverName: " + driverName)
+    this.dispatch({driverName, name, repo, tag});
+    console.log("ContainerActions: clients: " + JSON.stringify(dockerUtil.clients))
     dockerUtil.clients[driverName].run(name, repo, tag);
   }
 }
