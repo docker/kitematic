@@ -65,6 +65,7 @@ var SetupUtil = {
     }
   },
   macSudoCmd: function (cmd) {
+    console.log("Calling Mac Command: " + cmd)
     return `${util.escapePath(resources.macsudo())} -p "Kitematic requires administrative privileges to install docker binaries and VM drivers." sh -c \"${cmd}\"`;
   },
   simulateProgress(estimateSeconds, progress) {

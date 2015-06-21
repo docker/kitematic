@@ -2,6 +2,7 @@ var React = require('react/addons');
 var metrics = require('../utils/MetricsUtil');
 var drivers = require('../utils/DriversUtil')
 var Router = require('react-router');
+var SetupVirtualBox = require('../stores/drivers/SetupVirtualBox');
 
 var Preferences = React.createClass({
   mixins: [Router.Navigation],
@@ -62,9 +63,23 @@ var Preferences = React.createClass({
   handleVirtualBoxConfiguration: function(e) {
     // TODO @fsoppelsa save in persistent conf
   },
-   handleApplyClicked: function(e) {
+  handleApplyClicked: function(e) {
     console.log("Apply was clicked");
-    //var SetupVirtualBox = require('./stores/drivers/SetupVirtualBox');
+    SetupVirtualBox.setup().then(() => {
+      Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
+      docker.init();
+      if (!hub.prompted() && !hub.loggedin()) {
+        router.transitionTo('login');
+      } else {
+        router.transitionTo('search');
+      }
+    }).catch(err => {
+      metrics.track('Setup Failed', {
+        step: 'catch',
+        message: err.message
+      });
+      throw err;
+    });
   },
   handleDigitalOceanConfiguration: function(e) {
     // TODO @fsoppelsa save in persistent conf

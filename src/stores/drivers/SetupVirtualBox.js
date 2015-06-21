@@ -3,14 +3,14 @@ var _ = require('underscore');
 var path = require('path');
 var fs = require('fs');
 var Promise = require('bluebird');
-var machine = require('../utils/DockerMachineUtil');
-var virtualBox = require('../utils/VirtualBoxUtil');
-var setupUtil = require('../utils/SetupUtil');
-var util = require('../utils/Util');
+var machine = require('../../utils/DockerMachineUtil');
+var virtualBox = require('../../utils/VirtualBoxUtil');
+var setupUtil = require('../../utils/SetupUtil');
+var util = require('../../utils/Util');
 var assign = require('object-assign');
-var metrics = require('../utils/MetricsUtil');
+var metrics = require('../../utils/MetricsUtil');
 var bugsnag = require('bugsnag-js');
-var docker = require('../utils/DockerUtil');
+var docker = require('../../utils/DockerUtil');
 
 var _currentStep = null;
 var _error = null;
@@ -83,7 +83,7 @@ var _steps = [{
   })
 }];
 
-var SetupStore = assign(Object.create(EventEmitter.prototype), {
+var SetupVirtualBox = assign(Object.create(EventEmitter.prototype), {
   PROGRESS_EVENT: 'setup_progress',
   STEP_EVENT: 'setup_step',
   ERROR_EVENT: 'setup_error',
@@ -236,4 +236,4 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
   })
 });
 
-module.exports = SetupStore;
+module.exports = SetupVirtualBox;
