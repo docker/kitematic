@@ -338,7 +338,7 @@ export default {
 
         if (data.status === 'destroy') {
           containerServerActions.destroyed({id: data.id});
-        } else {
+        } else if (data.id) {
           this.fetchContainer(data.id);
         }
       });
