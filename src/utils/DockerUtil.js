@@ -505,5 +505,18 @@ var addClient = function(driverName, ip, machineName) {
   dockerClients[driverName].setup(ip, machineName);
 };
 
+var activeClient = null;
+
 module.exports.clients = dockerClients;
 module.exports.addClient = addClient;
+module.exports.activeClient = activeClient
+
+var activeClientDriverName = function() {
+    name = '';
+    Object.keys(dockerClients).forEach(function (key) {
+        if (dockerClients[key] === activeClient) {
+            name = key;
+        }
+    });
+    return name;
+};

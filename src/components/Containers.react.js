@@ -8,6 +8,7 @@ var Header = require('./Header.react');
 var metrics = require('../utils/MetricsUtil');
 var shell = require('shell');
 var machine = require('../utils/DockerMachineUtil');
+var dockerUtil = require('../utils/DockerUtils.js');
 
 var Containers = React.createClass({
   contextTypes: {
@@ -17,6 +18,7 @@ var Containers = React.createClass({
   getInitialState: function () {
     return {
       sidebarOffset: 0,
+      driverName: null,
       containers: containerStore.getState().containers,
       sorted: this.sorted(containerStore.getState().containers)
     };
@@ -145,10 +147,10 @@ var Containers = React.createClass({
     });
   },
 
-  handleDriverChange: function () {
-    this.setState({
-      currentButtonLabel: ''
-    });
+  handleDriverChange: function (e) {
+    this.setState({driverName: e.target.value()});
+    dockerUtils.clients[driverName].init();
+    dockerUtils.activeDriver = dockerUtils.clients[driverName];
   },
 
   render: function () {

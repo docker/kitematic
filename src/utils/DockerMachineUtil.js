@@ -4,6 +4,7 @@ var Promise = require('bluebird');
 var fs = require('fs');
 var util = require('./Util');
 var resources = require('./ResourcesUtil');
+var dockerUtil = require('./dockerUtil');
 
 var NAME = util.isWindows () ? 'kitematic' : 'dev';
 
@@ -55,8 +56,8 @@ var DockerMachine = {
       return false;
     });
   },
-  create: function (driverName, driverFlags) {
-    var cmd = [this.command(), '-D', 'create', '-d', driverName];
+  create: function (driverFlags) {
+    var cmd = [this.command(), '-D', 'create', '-d', dockerUtil.activeClientDriverName()];
     cmd.push.apply(cmd, driverFlags);
     cmd.push(NAME);
     return util.exec(cmd);
