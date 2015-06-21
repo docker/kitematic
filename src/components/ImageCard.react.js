@@ -60,6 +60,7 @@ var ImageCard = React.createClass({
     {
         case "1": machineDriver = "digitalocean"; break;
         case "2": machineDriver = "virtualbox"; break;
+        case "3": machineDriver = "vmwarefusion"; break;
     }
     let name = containerStore.generateName(this.props.image.name);
     let repo = this.props.image.namespace === 'library' ? this.props.image.name : this.props.image.namespace + '/' + this.props.image.name;

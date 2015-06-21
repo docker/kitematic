@@ -30,6 +30,8 @@ var Preferences = React.createClass({
       docImage: localStorage.getItem('settings.digitalocean-image') || "",
       docRegion: localStorage.getItem('settings.digitalocean-region') || "",
       docSize: localStorage.getItem('settings.digitalocean-size')  || "512mb",
+
+      fusionEnabled: localStorage.getItem('settings.fusionEnabled') === 'true',
     };
   },
   handleGoBackClick: function () {
@@ -76,6 +78,16 @@ var Preferences = React.createClass({
       close: checked
     });
   },
+  handleFusionEnabled: function(e) {
+    var checked = e.target.checked;
+    this.setState({
+        fusionEnabled: checked
+      });
+    localStorage.setItem('settings.fusionEnabled', checked);
+    metrics.track('toggled fusion', {
+      close: checked
+    });
+  },
   handleApplyClicked: function(e) {
     console.log("Apply was clicked");
 
@@ -87,12 +99,15 @@ var Preferences = React.createClass({
     localStorage.setItem('settings.virtualbox-hostonly-cidr', this.state.vboxCidr);
     localStorage.setItem('settings.virtualbox-memory', this.state.vboxMemory);
 
-    // digital ocean driver flag
+    // digital ocean driver flags
     localStorage.setItem('settings.digitalocean-enabled', this.state.docEnabled);
     localStorage.setItem('settings.digitalocean-access-token', this.state.docAccessToken);
     localStorage.setItem('settings.digitalocean-image', this.state.docImage);
     localStorage.setItem('settings.digitalocean-region', this.state.docRegion);
     localStorage.setItem('settings.digitalocean-size', this.state.docSize);
+
+    // fusion flags
+    localStorage.setItem('settings.vmwarefusion', this.state.fusionEnabled);
 
     // Check for vbox enabling and transition as appropriate
     if (this.state.vboxEnabled) {
@@ -283,6 +298,14 @@ var Preferences = React.createClass({
                   <input type="text" value={this.state.docImage} name="docImage" onChange={this.handleDocImage}/>
                 </div>
               </div>
+          </div>
+          <div className="option">
+            <div className="option-name">
+               VMware Fusion enabled
+            </div>
+            <div className="option-value">
+              <input type="checkbox" checked={this.state.fusionEnabled} onChange={this.handleFusionEnabled}/>
+            </div>
           </div>
 
         <div>

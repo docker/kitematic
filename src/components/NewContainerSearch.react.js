@@ -232,11 +232,18 @@ module.exports = React.createClass({
             <option value="2">Virtual Box</option>
         )
     }
+    var fusiondropdown = null;
+    if (localStorage.getItem('settings.fusionEnabled') == 'true') {
+        fusiondropdown = (
+            <option value="3">VMware Fusion</option>
+        )
+    }
     var driversSelect = null;
     driversSelect = (
         <select id="machineDriver">
             {vboxdropdown}
             {docdropdown}
+            {fusiondropdown}
         </select>
     );
 

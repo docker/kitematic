@@ -31,7 +31,7 @@ var MenuTemplate = function () {
       {
         label: 'Preferences',
         accelerator: util.CommandOrCtrl() + '+,',
-        enabled: anyDockerHostSet(),
+        enabled: true,
         click: function () {
           metrics.track('Opened Preferences', {
             from: 'menu'
