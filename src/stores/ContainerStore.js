@@ -83,7 +83,7 @@ class ContainerStore {
 
   updated ({container}) {
     let containers = this.containers;
-    if (!containers[container.Name] || containers[container.Name].State.Updating) {
+    if (containers[container.Name] && containers[container.Name].State.Updating) {
       return;
     }
     // Trigger log update
@@ -111,16 +111,10 @@ class ContainerStore {
     this.setState({containers});
   }
 
-  destroy ({name}) {
-    let containers = this.containers;
-    delete containers[name];
-    this.setState({containers});
-  }
-
-  destroyed ({name}) {
+  destroyed ({id}) {
     let containers = this.containers;
     let container = _.find(_.values(this.containers), container => {
-      return container.Id === name || container.Name === name;
+      return container.Id === id || container.Name === id;
     });
 
     if (container && container.State && container.State.Updating) {

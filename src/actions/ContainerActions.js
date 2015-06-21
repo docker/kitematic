@@ -4,7 +4,6 @@ import dockerUtil from '../utils/DockerUtil';
 class ContainerActions {
 
   destroy (name) {
-    this.dispatch({name});
     dockerUtil.destroy(name);
   }
 
