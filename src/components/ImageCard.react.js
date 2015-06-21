@@ -84,7 +84,7 @@ var ImageCard = React.createClass({
     shell.openExternal(repoUri);
   },
   handleMachineDriverSelection: function () {
-    // TODO
+    // TODO @fsoppelsa
   },
   render: function () {
     var self = this;
@@ -149,13 +149,25 @@ var ImageCard = React.createClass({
         <span className="icon icon-badge-private"></span>
       );
     }
-    var driversSelect = "";
-    if (localStorage.getItem('settings.vboxEnabled') == 'true') {
-        driversSelect += "<option value=\"virtualbox\">VirtualBox</option>"
-    }
+    var docdropdown = null;
     if (localStorage.getItem('settings.docEnabled') == 'true') {
-        driversSelect += "<option value=\"digitalocean\">Digital Ocean</option>"
+        docdropdown = (
+            <option value="digitalocean">Digital Ocean</option>
+        )
     }
+    var vboxdropdown = null;
+    if (localStorage.getItem('settings.vboxEnabled') == 'true') {
+        vboxdropdown = (
+            <option value="virtualbox">Virtual Box</option>
+        )
+    }
+    var driversSelect = null;
+    driversSelect = (
+        <select value="virtualbox">
+            {vboxdropdown}
+            {docdropdown}
+        </select>
+    );
     return (
       <div className="image-item">
         <div className="overlay menu-overlay">
@@ -170,9 +182,7 @@ var ImageCard = React.createClass({
           <div className="menu-item">
             <span className="icon icon-tag"></span>
             <span className="text">Select the machine driver</span>
-            <select>
             {driversSelect}
-            </select>
           </div>
           <div className="close-overlay">
             <a className="btn btn-action circular" onClick={self.handleCloseMenuOverlay}><span className="icon icon-delete"></span></a>
