@@ -5,7 +5,7 @@ var router = require('./router');
 var util = require('./utils/Util');
 var setupUtil = require('./utils/SetupUtil');
 var metrics = require('./utils/MetricsUtil');
-var machine = require('./utils/DockerMachineUtil');
+var machine = require('../utils/DockerMachineUtil');
 var dialog = remote.require('dialog');
 import docker from './utils/DockerUtil';
 
