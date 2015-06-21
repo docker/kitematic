@@ -62,6 +62,10 @@ var Preferences = React.createClass({
   handleVirtualBoxConfiguration: function(e) {
     // TODO @fsoppelsa save in persistent conf
   },
+   handleApplyClicked: function(e) {
+    console.log("Apply was clicked");
+    //var SetupVirtualBox = require('./stores/drivers/SetupVirtualBox');
+  },
   handleDigitalOceanConfiguration: function(e) {
     // TODO @fsoppelsa save in persistent conf
   },
@@ -125,7 +129,7 @@ var Preferences = React.createClass({
           </div>
 
           <div>
-            <button type="button">Apply</button>
+            <button type="button" onClick={this.handleApplyClicked}>Apply</button>
         </div>
         </div>
       </div>
