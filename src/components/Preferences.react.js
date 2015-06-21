@@ -4,6 +4,10 @@ var drivers = require('../utils/DriversUtil')
 var Router = require('react-router');
 var vboxBoot2DockerURL = "";
 var vboxMemory = "";
+var docAccessToken = "";
+var docRegeion = "";
+var docSize = "";
+var docImage = "";
 
 var Preferences = React.createClass({
   mixins: [Router.Navigation],
@@ -16,6 +20,10 @@ var Preferences = React.createClass({
       docEnabled: localStorage.getItem('settings.docEnabled') === 'true',
       vboxBoot2DockerURL: localStorage.getItem('settings.vboxBoot2DockerURL'),
       vboxMemory: localStorage.getItem('settings.vboxMemory'),
+      docAccessToken: localStorage.getItem('settings.docAccessToken'),
+      docRegion: localStorage.getItem('settings.docRegion'),
+      docSize: localStorage.getItem('settings.docSize'),
+      docImage: localStorage.getItem('settings.docImage'),
     };
   },
   handleGoBackClick: function () {
@@ -65,6 +73,10 @@ var Preferences = React.createClass({
   handleApplyClicked: function(e) {
     localStorage.setItem('settings.vboxBoot2DockerURL', this.state.vboxBoot2DockerURL || "");
     localStorage.setItem('settings.vboxMemory', this.state.vboxMemory || "0");
+    localStorage.setItem('settings.docAccessToken', this.state.docAccessToken || "");
+    localStorage.setItem('settings.docRegion', this.state.docRegion || "");
+    localStorage.setItem('settings.docSize', this.state.docSize || "");
+    localStorage.setItem('settings.docImage', this.state.docImage || "");
     //var SetupVirtualBox = require('./stores/drivers/SetupVirtualBox');
   },
   // No idea why these events work - DO NOT TOUCH
@@ -78,6 +90,30 @@ var Preferences = React.createClass({
     var tmpvalue = e.target.value;
     this.setState({
         vboxMemory: tmpvalue
+    });
+  },
+  handleDocAccessToken: function(e) {
+    var tmpvalue = e.target.value;
+    this.setState({
+        docAccessToken: tmpvalue
+    });
+  },
+  handleDocRegion: function(e) {
+    var tmpvalue = e.target.value;
+    this.setState({
+        docRegion: tmpvalue
+    });
+  },
+  handleDocSize: function(e) {
+    var tmpvalue = e.target.value;
+    this.setState({
+        docSize: tmpvalue
+    });
+  },
+  handleDocImage: function(e) {
+    var tmpvalue = e.target.value;
+    this.setState({
+        docImage: tmpvalue
     });
   },
   render: function () {
@@ -140,15 +176,40 @@ var Preferences = React.createClass({
               <input type="checkbox" checked={this.state.docEnabled} onChange={this.handleDigitalOceanEnabled}/>
             </div>
           </div>
-          <div className="option">
-            <div className="option-name">
-               DigitalOcean parameters
-            </div>
-            <div className="option-value">
-              <input type="text" onChange={this.handleDigitalOceanConfiguration}/>
-            </div>
+          <div class="digitalocean-parameters">
+              <div className="option">
+                <div className="option-name">
+                   digitalocean-access-token
+                </div>
+                <div className="option-value">
+                  <input type="text" value={this.state.docAccessToken} name="docAccessToken" onChange={this.handleDocAccessToken}/>
+                </div>
+              </div>
+              <div className="option">
+                <div className="option-name">
+                   digitalocean-region
+                </div>
+                <div className="option-value">
+                  <input type="text" value={this.state.docRegion} name="docRegion" onChange={this.handleDocRegion}/>
+                </div>
+              </div>
+              <div className="option">
+                <div className="option-name">
+                   digitalocean-size
+                </div>
+                <div className="option-value">
+                  <input type="text" value={this.state.docSize} name="docSize" onChange={this.handleDocSize}/>
+                </div>
+              </div>
+              <div className="option">
+                <div className="option-name">
+                   digitalocean-image
+                </div>
+                <div className="option-value">
+                  <input type="text" value={this.state.docImage} name="docImage" onChange={this.handleDocImage}/>
+                </div>
+              </div>
           </div>
-
           <div>
             <button type="button" onClick={this.handleApplyClicked}>Apply</button>
         </div>

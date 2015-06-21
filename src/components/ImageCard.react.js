@@ -50,6 +50,11 @@ var ImageCard = React.createClass({
       userowned: this.props.image.is_user_repo,
       recommended: this.props.image.is_recommended
     });
+    console.log("====")
+    console.log("====")
+    console.log("====")
+    value = this.refs.machineDriver.getValue();
+    console.log("Dropdown selection = " + value);
     let name = containerStore.generateName(this.props.image.name);
     let repo = this.props.image.namespace === 'library' ? this.props.image.name : this.props.image.namespace + '/' + this.props.image.name;
     containerActions.run(name, repo, this.state.chosenTag);
@@ -85,6 +90,10 @@ var ImageCard = React.createClass({
   },
   handleMachineDriverSelection: function () {
     // TODO @fsoppelsa
+  },
+  handleDriversSelection: function(e) {
+//    console.log("DriverSelection = " + e);
+    console.log("DriverSelection");
   },
   render: function () {
     var self = this;
@@ -163,7 +172,8 @@ var ImageCard = React.createClass({
     }
     var driversSelect = null;
     driversSelect = (
-        <select value="virtualbox">
+        <select ref="machineDriver"
+        onChange={this.handleDriversSelection(this)}>
             {vboxdropdown}
             {docdropdown}
         </select>
