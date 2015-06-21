@@ -10,7 +10,7 @@ import containerServerActions from '../actions/ContainerServerActions';
 import Promise from 'bluebird';
 import rimraf from 'rimraf';
 
-var Docker = {
+module.exports = {
   host: null,
   client: null,
   placeholders: {},
@@ -497,13 +497,3 @@ var Docker = {
     });
   }
 };
-
-var dockerClients = {};
-
-var addClient = function(driverName, ip, machineName) {
-  dockerClients[driverName] = Object.create(Docker);
-  dockerClients[driverName].setup(ip, machineName);
-};
-
-module.exports.clients = dockerClients;
-module.exports.addClient = addClient;

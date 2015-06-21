@@ -76,7 +76,7 @@ var ContainerSettingsGeneral = React.createClass({
       return;
     }
 
-    containerActions.rename(this.props.container.driverName, this.props.container.Name, newName);
+    containerActions.rename(this.props.container.Name, newName);
     this.context.router.transitionTo('containerSettingsGeneral', {name: newName});
     metrics.track('Changed Container Name');
   },
@@ -90,7 +90,7 @@ var ContainerSettingsGeneral = React.createClass({
         list.push(key + '=' + value);
       }
     });
-    containerActions.update(this.props.container.driverName, this.props.container.Name, {Env: list});
+    containerActions.update(this.props.container.Name, {Env: list});
   },
 
   handleChangeEnvKey: function (index, event) {
@@ -143,7 +143,7 @@ var ContainerSettingsGeneral = React.createClass({
           from: 'settings',
           type: 'existing'
         });
-        containerActions.destroy(this.props.container.driverName, this.props.container.Name);
+        containerActions.destroy(this.props.container.Name);
       }
     });
   },
