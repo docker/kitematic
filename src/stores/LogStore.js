@@ -18,11 +18,11 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
     div.appendChild(text);
     return div.innerHTML;
   },
-  fetch: function (name) {
-    if (!name || !docker.client) {
+  fetch: function (driverName, containerName) {
+    if (!containerName || !docker.clients[driverName]) {
       return;
     }
-    docker.client.getContainer(name).logs({
+    docker.clients[driverName].getContainer(containerName).logs({
       stdout: true,
       stderr: true,
       timestamps: false,
@@ -39,17 +39,17 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
         logs.push(_convert.toHtml(this._escape(chunk)));
       });
       logStream.on('end', () => {
-        _logs[name] = logs;
+        _logs[containerName] = logs;
         this.emit(this.SERVER_LOGS_EVENT);
-        this.attach(name);
+        this.attach(containerName);
       });
     });
   },
-  attach: function (name) {
-    if (!name || !docker.client || _streams[name]) {
+  attach: function (driverName, containerName) {
+    if (!containerName || !docker.clients[driverName] || _streams[containerName]) {
       return;
     }
-    docker.client.getContainer(name).attach({
+    docker.clients[driverName].getContainer(containerName).attach({
       stdout: true,
       stderr: true,
       logs: false,
@@ -58,28 +58,28 @@ module.exports = assign(Object.create(EventEmitter.prototype), {
       if (err) {
         return;
       }
-      _streams[name] = logStream;
+      _streams[containerName] = logStream;
       var outstream = new stream.PassThrough();
       docker.client.modem.demuxStream(logStream, outstream, outstream);
       outstream.on('data', (chunk) => {
-        _logs[name].push(_convert.toHtml(this._escape(chunk)));
-        if (_logs[name].length > MAX_LOG_SIZE) {
-           _logs[name] = _logs[name].slice(_logs[name].length - MAX_LOG_SIZE, MAX_LOG_SIZE);
+        _logs[containerName].push(_convert.toHtml(this._escape(chunk)));
+        if (_logs[containerName].length > MAX_LOG_SIZE) {
+           _logs[containerName] = _logs[containerName].slice(_logs[containerName].length - MAX_LOG_SIZE, MAX_LOG_SIZE);
         }
         this.emit(this.SERVER_LOGS_EVENT);
       });
       logStream.on('end', () => {
-        this.detach(name);
+        this.detach(driverName, containerName);
       });
     });
   },
-  detach: function (name) {
-    if (_streams[name]) {
-      _streams[name].destroy();
-      delete _streams[name];
+  detach: function (driverName, containerName) {
+    if (_streams[containerName]) {
+      _streams[containerName].destroy();
+      delete _streams[containerName];
     }
   },
-  logs: function (name) {
-    return _logs[name] || [];
+  logs: function (driverName, containerName) {
+    return _logs[containerName] || [];
   }
 });

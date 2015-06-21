@@ -9,6 +9,12 @@ var machine = require('./utils/DockerMachineUtil');
 var dialog = remote.require('dialog');
 import docker from './utils/DockerUtil';
 
+var anyDockerHostSet = function() {
+    return Object.keys(docker.clients).some(function (key) {
+      return !!docker.clients[key].host;
+    });
+};
+
 // main.js
 var MenuTemplate = function () {
   return [
@@ -25,7 +31,7 @@ var MenuTemplate = function () {
       {
         label: 'Preferences',
         accelerator: util.CommandOrCtrl() + '+,',
-        enabled: !!docker.host,
+        enabled: anyDockerHostSet(),
         click: function () {
           metrics.track('Opened Preferences', {
             from: 'menu'
@@ -100,7 +106,7 @@ var MenuTemplate = function () {
       {
         label: 'Open Docker Command Line Terminal',
         accelerator: util.CommandOrCtrl() + '+Shift+T',
-        enabled: !!docker.host,
+        enabled: anyDockerHostSet(),
         click: function() {
           metrics.track('Opened Docker Terminal', {
             from: 'menu'
