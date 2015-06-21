@@ -142,8 +142,7 @@ var Setup = React.createClass({
     );
   },
   render: function () {
-    //if (this.state.cancelled) {
-    if (false) {
+    if (this.state.cancelled) {
       return this.renderCancelled();
     } else if (this.state.error) {
       return this.renderError();
