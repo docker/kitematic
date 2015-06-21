@@ -2,6 +2,7 @@ var _ = require('underscore');
 var request = require('request');
 var accountServerActions = require('../actions/AccountServerActions');
 var metrics = require('./MetricsUtil');
+var drivers = require('./DriversUtil')
 
 let HUB2_ENDPOINT = process.env.HUB2_ENDPOINT || 'https://hub.docker.com/v2';
 
