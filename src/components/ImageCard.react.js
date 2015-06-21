@@ -149,29 +149,30 @@ var ImageCard = React.createClass({
         <span className="icon icon-badge-private"></span>
       );
     }
-    var driversSelect = '<select>';
+    var driversSelect = "";
     if (localStorage.getItem('settings.vboxEnabled') == 'true') {
-        driversSelect += '<option value="virtualbox">VirtualBox</option>'
+        driversSelect += "<option value=\"virtualbox\">VirtualBox</option>"
     }
     if (localStorage.getItem('settings.docEnabled') == 'true') {
-        driversSelect += '<option value="digitalocean">Digital Ocean</option>'
+        driversSelect += "<option value=\"digitalocean\">Digital Ocean</option>"
     }
-    driversSelect += '</select>';
     return (
       <div className="image-item">
         <div className="overlay menu-overlay">
           <div className="menu-item" onClick={this.handleTagOverlayClick.bind(this, this.props.image.name)}>
-            <span className="icon icon-tag"></span><span className="text">SELECTED TAG: <span className="selected-tag">{this.state.chosenTag}</span></span>
+            <span className="icon icon-tag"></span>
+            <span className="text">SELECTED TAG: <span className="selected-tag">{this.state.chosenTag}</span></span>
           </div>
           <div className="menu-item" onClick={this.handleRepoClick}>
-            <span className="icon icon-open-external"></span><span className="text">VIEW ON DOCKER HUB</span>
+            <span className="icon icon-open-external"></span>
+            <span className="text">VIEW ON DOCKER HUB</span>
           </div>
-          <div className="menu-item" onClick={this.handleMachineDriverSelection}>
+          <div className="menu-item">
+            <span className="icon icon-tag"></span>
             <span className="text">Select the machine driver</span>
-            <br />
-            <span className="">
-                {driversSelect}
-            </span>
+            <select>
+            {driversSelect}
+            </select>
           </div>
           <div className="close-overlay">
             <a className="btn btn-action circular" onClick={self.handleCloseMenuOverlay}><span className="icon icon-delete"></span></a>
