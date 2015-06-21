@@ -135,23 +135,27 @@ export default {
       if (err) {
         return;
       }
-      async.map(containers, (container, callback) => {
-        this.client.getContainer(container.Id).inspect((error, container) => {
-          if (error) {
-            callback(null, null);
-            return;
-          }
-          container.Name = container.Name.replace('/', '');
-          callback(null, container);
-        });
-      }, (err, containers) => {
-        containers = containers.filter(c => c !== null);
-        if (err) {
-          // TODO: add a global error handler for this
-          return;
+
+      let modifiedContainers = _.map(containers, container => {
+        container.Name = container.Names[0].replace('/', '');
+        delete container.Names;
+
+        // HACK: fill in some data based on simple list data
+        container.State = {};
+        container.Config = {
+          Image: container.Image
+        };
+        if (container.Status.indexOf('Exited') !== -1) {
+          container.State.Stopped = true;
+        } else if (container.Status.indexOf('Paused') !== -1) {
+          container.State.Stopped = true;
+        } else if (container.Status.indexOf('Up') !== -1) {
+          container.State.Running = true;
         }
-        containerServerActions.allUpdated({containers: _.indexBy(containers.concat(_.values(this.placeholders)), 'Name')});
+        return container;
       });
+      console.log(modifiedContainers);
+      containerServerActions.allUpdated({containers: _.indexBy(modifiedContainers.concat(_.values(this.placeholders)), 'Name')});
     });
   },
 
@@ -333,10 +337,10 @@ export default {
           return;
         }
 
+        console.log(data);
+
         if (data.status === 'destroy') {
-          containerServerActions.destroyed({name: data.id});
-        } else if (data.status === 'create') {
-          this.fetchAllContainers();
+          containerServerActions.destroyed({id: data.id});
         } else {
           this.fetchContainer(data.id);
         }

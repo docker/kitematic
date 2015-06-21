@@ -21,8 +21,8 @@ var ContainerListItem = React.createClass({
     e.preventDefault();
     e.stopPropagation();
     dialog.showMessageBox({
-      message: 'Are you sure you want to delete this container?',
-      buttons: ['Delete', 'Cancel']
+      message: 'Are you sure you want to stop & remove this container?',
+      buttons: ['Remove', 'Cancel']
     }, function (index) {
       if (index === 0) {
         metrics.track('Deleted Container', {
