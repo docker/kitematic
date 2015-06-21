@@ -71,13 +71,20 @@ var Preferences = React.createClass({
     });
   },
   handleApplyClicked: function(e) {
-    localStorage.setItem('settings.vboxBoot2DockerURL', this.state.vboxBoot2DockerURL || "");
-    localStorage.setItem('settings.vboxMemory', this.state.vboxMemory || "0");
-    localStorage.setItem('settings.docAccessToken', this.state.docAccessToken || "");
-    localStorage.setItem('settings.docRegion', this.state.docRegion || "");
-    localStorage.setItem('settings.docSize', this.state.docSize || "");
-    localStorage.setItem('settings.docImage', this.state.docImage || "");
-    //var SetupVirtualBox = require('./stores/drivers/SetupVirtualBox');
+    // virtualbox driver flags
+    localStorage.setItem('settings.virtualbox-enabled', this.state.vboxEnabled || "false");
+    localStorage.setItem('settings.virtualbox-boot2docker-url', this.state.vboxBoot2DockerURL || "");
+    localStorage.setItem('settings.virtualbox-cpu-count', this.state.vboxCpu || "1");
+    localStorage.setItem('settings.virtualbox-disk-size', this.state.vboxDisk || "20000");
+    localStorage.setItem('settings.virtualbox-hostonly-cidr', this.state.vboxCidr || "192.168.99.1/24");
+    localStorage.setItem('settings.virtualbox-memory', this.state.vboxMemory || "1024");
+
+    // digital ocean driver flag
+    localStorage.setItem('settings.digitalocean-enabled', this.state.docEnabled || "false");
+    localStorage.setItem('settings.digitalocean-access-token', this.state.docAccessToken || "");
+    localStorage.setItem('settings.digitalocean-image', this.state.docImage || "");
+    localStorage.setItem('settings.digitalocean-region', this.state.docRegion || "");
+    localStorage.setItem('settings.digitalocean-size', this.state.docSize || "512mb");
   },
   // No idea why these events work - DO NOT TOUCH
   handleVirtualBoxBoot2DockerURL: function(e) {
@@ -86,7 +93,25 @@ var Preferences = React.createClass({
         vboxBoot2DockerURL: tmpvalue
     });
   },
-  handleVirtualBoxMemory: function(e) {
+  handleVboxCpu: function(e) {
+    var tmpvalue = e.target.value;
+    this.setState({
+        vboxCpu: tmpvalue
+    });
+  },
+  handleVboxDisk: function(e) {
+    var tmpvalue = e.target.value;
+    this.setState({
+        vboxDisk: tmpvalue
+    });
+  },
+  handleVboxCidr: function(e) {
+    var tmpvalue = e.target.value;
+    this.setState({
+        vboxCidr: tmpvalue
+    });
+  },
+  handleVboxMemory: function(e) {
     var tmpvalue = e.target.value;
     this.setState({
         vboxMemory: tmpvalue
@@ -147,7 +172,7 @@ var Preferences = React.createClass({
                VirtualBox enabled
             </div>
             <div className="option-value">
-              <input type="checkbox" checked={this.state.vboxEnabled} onChange={this.handleVirtualBoxEnabled}/>
+              <input type="checkbox" checked={this.state.vboxEnabled} onChange={this.handleVirtualBoxEnabled} />
             </div>
           </div>
           <div class="virtualbox-options">
@@ -156,7 +181,31 @@ var Preferences = React.createClass({
                    virtualbox-boot2docker-url
                 </div>
                 <div className="option-value">
-                  <input type="text" value={this.state.vboxBoot2DockerURL} name="vboxBoot2DockerURL" onChange={this.handleVirtualBoxBoot2DockerURL}/>
+                  <input type="text" value={this.state.vboxBoot2DockerURL} onChange={this.handleVirtualBoxBoot2DockerURL} />
+                </div>
+              </div>
+              <div className="option">
+                <div className="option-name">
+                   virtualbox-cpu-count
+                </div>
+                <div className="option-value">
+                  <input type="text" value={this.state.vboxCpu} name="vboxCpu" onChange={this.handleVboxCpu} value="1" />
+                </div>
+              </div>
+              <div className="option">
+                <div className="option-name">
+                   virtualbox-disk-size
+                </div>
+                <div className="option-value">
+                  <input type="text" value={this.state.vboxDisk} name="vboxDisk" onChange={this.handleVboxDisk} value="20000" />
+                </div>
+              </div>
+              <div className="option">
+                <div className="option-name">
+                   virtualbox-hostonly-cidr
+                </div>
+                <div className="option-value">
+                  <input type="text" value={this.state.vboxCidr} name="vboxCidr" onChange={this.handleVboxCidr} value="192.168.99.1/24"/>
                 </div>
               </div>
               <div className="option">
@@ -164,7 +213,7 @@ var Preferences = React.createClass({
                    virtualbox-memory
                 </div>
                 <div className="option-value">
-                  <input type="text" value={this.state.vboxMemory} name="vboxMemory" onChange={this.handleVirtualBoxMemory}/>
+                  <input type="text" value={this.state.vboxMemory} name="vboxMemory" onChange={this.handleVboxMemory} value="1024" />
                 </div>
               </div>
           </div>
@@ -198,7 +247,7 @@ var Preferences = React.createClass({
                    digitalocean-size
                 </div>
                 <div className="option-value">
-                  <input type="text" value={this.state.docSize} name="docSize" onChange={this.handleDocSize}/>
+                  <input type="text" value={this.state.docSize} name="docSize" onChange={this.handleDocSize} value="512mb" />
                 </div>
               </div>
               <div className="option">
