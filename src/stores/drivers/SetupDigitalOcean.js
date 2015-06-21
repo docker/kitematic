@@ -36,10 +36,8 @@ var _steps = [{
       if (!error && response.statusCode == 200){
         return;
       }
-      catch (err){
-        throw null;
-      }
-    })
+      throw null;
+    });
   })
 }, {
   name: 'install',
