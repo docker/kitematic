@@ -1,9 +1,9 @@
 jest.autoMockOff();
 
+jasmine.getEnv().defaultTimeoutInterval = 60000;
+
 let hubUtil = require('../src/utils/HubUtil');
 let Promise = require('bluebird');
-
-jasmine.getEnv().DEFAULT_TIMEOUT_INTERVAL = 60000;
 
 describe('HubUtil Integration Tests', () => {
    describe('auth', () => {

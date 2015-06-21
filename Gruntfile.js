@@ -307,15 +307,22 @@ module.exports = function (grunt) {
       }
     }
   });
-  grunt.registerTask('default', ['newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename:installer']);
+    grunt.registerTask('default', ['download-binary:docker', 'download-binary:docker-machine', 'download-boot2docker-iso', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+  } else if(process.platform === 'linux') {
+    grunt.registerTask('default', ['clean', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+  } else {
+    grunt.registerTask('default', ['download-binary', 'download-boot2docker-iso', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+  }
+
+  if (process.platform === 'win32') {
+    grunt.registerTask('release', ['clean:release', 'download-binary:docker', 'download-binary:docker-machine', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename:installer']);
   } else if(process.platform === 'linux') {
     // TODO : Add 'copy:linux' when will do the packaging
     grunt.registerTask('release', ['clean', 'babel', 'less', 'copy:dev', 'electron:linux']);
   } else {
-    grunt.registerTask('release', ['clean', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
+    grunt.registerTask('release', ['clean:release', 'download-binary', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'plistbuddy', 'shell:sign', 'shell:zip']);
   }
 
   process.on('SIGINT', function () {
