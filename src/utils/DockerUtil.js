@@ -154,7 +154,6 @@ export default {
         }
         return container;
       });
-      console.log(modifiedContainers);
       containerServerActions.allUpdated({containers: _.indexBy(modifiedContainers.concat(_.values(this.placeholders)), 'Name')});
     });
   },
@@ -336,8 +335,6 @@ export default {
         if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete') {
           return;
         }
-
-        console.log(data);
 
         if (data.status === 'destroy') {
           containerServerActions.destroyed({id: data.id});
