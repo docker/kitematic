@@ -8,6 +8,8 @@ var setupUtil = require('../../utils/SetupUtil');
 var util = require('../../utils/Util');
 var SetupStore = require('../SetupStore.js');
 var request = require('request');
+var NAME = "digitalocean";
+var DIGITAL_OCEAN_ACCESS_TOKEN = localStorage.getItem('settings.digitalocean-access-token');
 
 var _currentStep = null;
 var _error = null;
@@ -23,12 +25,11 @@ var _steps = [{
   percent: 0,
   seconds: 60,
   run: Promise.coroutine(function* (progressCallback) {
-    var digitaloceantoken = "7fe94b8a2a2751ae5b8373684e62119742e9ce02c2e0fb2314ea3b71c7cda24d";// hardcore remove!
     var options = {
       url: 'https://api.digitalocean.com/v2/account',
       headers: {
         'Content-Type':'application/json',
-        'Authorization':'Bearer ' + digitaloceantoken
+        'Authorization':'Bearer ' + DIGITAL_OCEAN_ACCESS_TOKEN
       }
     };
     request(options, function(error, response, body){
@@ -130,8 +131,6 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var packagejson = util.packagejson();
     var isoversion = machine.isoversion();
     var required = {};
-    var vboxfile = path.join(util.supportDir(), virtualBox.filename());
-    var vboxNeedsInstall = !virtualBox.installed();
 
     required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== virtualBox.checksum());
     required.install = vboxNeedsInstall || (!util.isWindows() && !virtualBox.active());
