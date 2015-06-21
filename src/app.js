@@ -2,7 +2,6 @@ require.main.paths.splice(0, 0, process.env.NODE_PATH);
 var remote = require('remote');
 var Menu = remote.require('menu');
 var React = require('react');
-var SetupStore = require('./stores/SetupStore');
 var ipc = require('ipc');
 var machine = require('./utils/DockerMachineUtil');
 var metrics = require('./utils/MetricsUtil');
@@ -47,21 +46,14 @@ var router = Router.create({
 router.run(Handler => React.render(<Handler/>, document.body));
 routerContainer.set(router);
 
-SetupStore.setup().then(() => {
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
-  docker.init();
-  if (!hub.prompted() && !hub.loggedin()) {
-    router.transitionTo('login');
-  } else {
-    router.transitionTo('search');
-  }
-}).catch(err => {
-  metrics.track('Setup Failed', {
-    step: 'catch',
-    message: err.message
-  });
-  throw err;
-});
+// Set up app main menu
+Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
+docker.init();
+if (!hub.prompted() && !hub.loggedin()) {
+  router.transitionTo('login');
+} else {
+  router.transitionTo('search');
+}
 
 ipc.on('application:quitting', () => {
   if (localStorage.getItem('settings.closeVMOnQuit') === 'true') {

@@ -1,3 +1,4 @@
+// TODO this should be the only place that calls SetupStore now
 var React = require('react/addons');
 var Router = require('react-router');
 var Radial = require('./Radial.react.js');
