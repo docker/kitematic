@@ -4,7 +4,6 @@ var path = require('path');
 var fs = require('fs');
 var Promise = require('bluebird');
 var machine = require('../utils/DockerMachineUtil');
-var virtualBox = require('../utils/VirtualBoxUtil');
 var setupUtil = require('../utils/SetupUtil');
 var util = require('../utils/Util');
 var assign = require('object-assign');
@@ -68,7 +67,7 @@ var _steps = [{
       if (exists && (yield machine.state()) === 'Error') {
         yield machine.rm();
       }
-      yield machine.create("virtualbox", ["--virtualbox-boot2docker-url", path.join(process.env.RESOURCES_PATH, 'boot2docker.iso'), "--virtualbox-memory", "2048"]);
+      yield machine.create(NAME, ["--virtualbox-boot2docker-url", path.join(process.env.RESOURCES_PATH, 'boot2docker.iso'), "--virtualbox-memory", "2048"]);// This will be refactored to dynmaically get and pass flags
       return;
     }
 

@@ -40,7 +40,7 @@ var _steps = [{
     });
   })
 }, {
-  name: 'install',
+  name: 'init',
   title: 'Installing Docker on Digital Ocean',
   message: 'Kinematic is install Docker components on Digital Ocean. Please wait...',
   totalPercent: 50,
@@ -131,8 +131,6 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var isoversion = machine.isoversion();
     var required = {};
 
-    required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== virtualBox.checksum());
-    required.install = vboxNeedsInstall || (!util.isWindows() && !virtualBox.active());
     required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0;
 
     var exists = yield machine.exists();
