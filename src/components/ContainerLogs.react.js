@@ -17,14 +17,14 @@ module.exports = React.createClass({
     this.update();
     this.scrollToBottom();
     LogStore.on(LogStore.SERVER_LOGS_EVENT, this.update);
-    LogStore.fetch(this.props.container.driverName, this.props.container.Name);
+    LogStore.fetch(this.props.container.Name);
   },
   componentWillUnmount: function() {
     if (!this.props.container) {
       return;
     }
 
-    LogStore.detach(this.props.container.driverName, this.props.container.Name);
+    LogStore.detach();
     LogStore.removeListener(LogStore.SERVER_LOGS_EVENT, this.update);
   },
   componentDidUpdate: function () {
@@ -42,7 +42,7 @@ module.exports = React.createClass({
       return;
     }
     this.setState({
-      logs: LogStore.logs(this.props.container.driverName, this.props.container.Name)
+      logs: LogStore.logs(this.props.container.Name)
     });
   },
   render: function () {

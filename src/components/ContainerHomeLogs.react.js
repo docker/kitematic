@@ -20,12 +20,12 @@ module.exports = React.createClass({
     this.update();
     this.scrollToBottom();
     LogStore.on(LogStore.SERVER_LOGS_EVENT, this.update);
-    LogStore.fetch(this.props.container.driverName, this.props.container.Name);
+    LogStore.fetch(this.props.container.Name);
   },
 
   componentWillReceiveProps: function (nextProps) {
     if (this.props.container && nextProps.container && this.props.container.Name !== nextProps.container.Name) {
-      LogStore.detach(this.props.container.driverName, this.props.container.Name);
+      LogStore.detach(this.props.container.Name);
       LogStore.fetch(nextProps.container.driverName, nextProps.container.Name);
     }
   },
@@ -35,7 +35,7 @@ module.exports = React.createClass({
       return;
     }
 
-    LogStore.detach(this.props.container.driverName, this.props.container.Name);
+    LogStore.detach(this.props.container.Name);
     LogStore.removeListener(LogStore.SERVER_LOGS_EVENT, this.update);
   },
   componentDidUpdate: function () {
@@ -59,7 +59,7 @@ module.exports = React.createClass({
       return;
     }
     this.setState({
-      logs: LogStore.logs(this.props.container.driverName, this.props.container.Name)
+      logs: LogStore.logs(this.props.container.Name)
     });
   },
   render: function () {

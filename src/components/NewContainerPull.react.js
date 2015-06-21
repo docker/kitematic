@@ -26,7 +26,7 @@ module.exports = React.createClass({
     });
     containerActions.clearPending();
     let name = containerStore.generateName(this.props.pending.repo);
-    containerActions.run(this.props.driverName, name, this.props.pending.repo, this.props.pending.tag);
+    containerActions.run(name, this.props.pending.repo, this.props.pending.tag);
     this.transitionTo('containerHome', {name});
   },
   render: function () {

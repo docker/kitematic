@@ -8,6 +8,8 @@ var Header = require('./Header.react');
 var metrics = require('../utils/MetricsUtil');
 var shell = require('shell');
 var machine = require('../utils/DockerMachineUtil');
+var dockerUtil = require('../utils/DockerUtil.js');
+var dockerMachineUtil = require('../utils/DockerMachineUtil.js');
 
 var Containers = React.createClass({
   contextTypes: {
@@ -17,6 +19,7 @@ var Containers = React.createClass({
   getInitialState: function () {
     return {
       sidebarOffset: 0,
+      driverName: null,
       containers: containerStore.getState().containers,
       sorted: this.sorted(containerStore.getState().containers)
     };
@@ -145,6 +148,14 @@ var Containers = React.createClass({
     });
   },
 
+  handleDriverChange: function (e) {
+    let driverName = e.target.value;
+    dockerMachineUtil.ip(driverName).then(ip => {
+      dockerUtil.setup(ip, driverName);
+      dockerUtil.init(ip, driverName);
+    });
+  },
+
   render: function () {
     var sidebarHeaderClass = 'sidebar-header';
     if (this.state.sidebarOffset) {
@@ -154,7 +165,7 @@ var Containers = React.createClass({
     var container = this.context.router.getCurrentParams().name ? this.state.containers[this.context.router.getCurrentParams().name] : {};
     return (
       <div className="containers">
-        <Header />
+        <Header onDriverChange={this.handleDriverChange}/>
         <div className="containers-body">
           <div className="sidebar">
             <section className={sidebarHeaderClass}>

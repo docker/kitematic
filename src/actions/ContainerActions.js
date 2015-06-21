@@ -3,45 +3,43 @@ import dockerUtil from '../utils/DockerUtil';
 
 class ContainerActions {
 
-  destroy (driverName, containerName) {
-    this.dispatch({driverName, containerName});
-    dockerUtil.clients[driverName].destroy(containerName);
+  destroy ( containerName) {
+    this.dispatch({ containerName});
+    dockerUtil.destroy(containerName);
   }
 
-  rename (driverName, containerName, newContainerName) {
-    this.dispatch({driverName, containerName, newContainerName});
-    dockerUtil.clients[driverName].rename(containerName, newContainerName);
+  rename ( containerName, newContainerName) {
+    this.dispatch({ containerName, newContainerName});
+    dockerUtil.rename(containerName, newContainerName);
   }
 
-  start (driverName, containerName) {
-    this.dispatch({driverName, containerName});
-    dockerUtil.clients[driverName].start(containerName);
+  start ( containerName) {
+    this.dispatch({ containerName});
+    dockerUtil.start(containerName);
   }
 
-  stop (driverName, containerName) {
-    this.dispatch({driverName, containerName});
-    dockerUtil.clients[driverName].stop(containerName);
+  stop ( containerName) {
+    this.dispatch({ containerName});
+    dockerUtil.stop(containerName);
   }
 
-  restart (driverName, containerName) {
-    this.dispatch({driverName, containerName});
-    dockerUtil.clients[driverName].restart(containerName);
+  restart ( containerName) {
+    this.dispatch({ containerName});
+    dockerUtil.restart(containerName);
   }
 
-  update (driverName, name, container) {
-    this.dispatch({driverName, name, container});
-    dockerUtil.clients[driverName].updateContainer(name, container);
+  update ( name, container) {
+    this.dispatch({ name, container});
+    dockerUtil.updateContainer(name, container);
   }
 
   clearPending () {
     this.dispatch();
   }
 
-  run (driverName, name, repo, tag) {
-    console.log("ContainerActions: driverName: " + driverName)
-    this.dispatch({driverName, name, repo, tag});
-    console.log("ContainerActions: clients: " + JSON.stringify(dockerUtil.clients))
-    dockerUtil.clients[driverName].run(name, repo, tag);
+  run ( name, repo, tag) {
+    this.dispatch({ name, repo, tag});
+    dockerUtil.run(name, repo, tag);
   }
 }
 

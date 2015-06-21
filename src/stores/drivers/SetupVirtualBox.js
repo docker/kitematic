@@ -68,12 +68,7 @@ var _steps = [{
       if (exists && (yield machine.state()) === 'Error') {
         yield machine.rm();
       }
-      let BOOT2DOCKER_URL = localStorage.getItem('settings.virtualbox-boot2docker-url');
-      let CPU_COUNT = localStorage.getItem('settings.virtualbox-cpu-count');
-      let DISK_SIZE = localStorage.getItem('settings.virtualbox-disk-size');
-      let HOSTONLY_CIDR = localStorage.getItem('settings.virtualbox-hostonly-cidr');
-      let MEMORY = localStorage.getItem('settings.virtualbox-memory');
-      yield machine.create(NAME, ["--virtualbox-boot2docker-url", BOOT2DOCKER_URL,"--virtualbox-cpu-count", CPU_COUNT, "--virtualbox-disk-size", DISK_SIZE,  "--virtualbox-memory", MEMORY]);// This will be refactored to dynmaically get and pass flags
+      yield machine.create('virtualbox', ["--virtualbox-boot2docker-url", path.join(process.env.RESOURCES_PATH, 'boot2docker.iso'), "--virtualbox-memory", "2048"]);// This will be refactored to dynmaically get and pass flags
       return;
     }
 
@@ -207,7 +202,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
       }
     }
     _currentStep = null;
-    return yield machine.ip();
+    return yield machine.ip('virtualbox');
   }),
   setup: Promise.coroutine(function * () {
     while (true) {
@@ -220,8 +215,8 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
             ip: ip
           };
         }
-        docker.addClient(NAME, ip, machine.name());
-        yield docker.clients[NAME].waitForConnection();
+        docker.setup(NAME, ip);
+        docker.init();
         metrics.track('Setup Finished');
         break;
       } catch (err) {

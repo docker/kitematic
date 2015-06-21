@@ -5,18 +5,13 @@ var fs = require('fs');
 var util = require('./Util');
 var resources = require('./ResourcesUtil');
 
-var NAME = util.isWindows () ? 'kitematic' : 'dev';
-
 var DockerMachine = {
   command: function () {
     return resources.dockerMachine();
   },
-  name: function () {
-    return NAME;
-  },
-  isoversion: function () {
+  isoversion: function (name) {
     try {
-      var data = fs.readFileSync(path.join(util.home(), '.docker', 'machine', 'machines', NAME, 'boot2docker.iso'), 'utf8');
+      var data = fs.readFileSync(path.join(util.home(), '.docker', 'machine', 'machines', name, 'boot2docker.iso'), 'utf8');
       var match = data.match(/Boot2Docker-v(\d+\.\d+\.\d+)/);
       if (match) {
         return match[1];
@@ -27,7 +22,7 @@ var DockerMachine = {
       return null;
     }
   },
-  info: function () {
+  info: function (name) {
     return util.exec([this.command(), 'ls']).then(stdout => {
       var lines = stdout.trim().split('\n').filter(line => line.indexOf('time=') === -1);
       var machines = {};
@@ -39,55 +34,55 @@ var DockerMachine = {
           state: tokens[2],
           url: tokens[3] || ''
         };
-        machines[machine.name] = machine;
+        machines[name] = machine;
       });
-      if (machines[NAME]) {
-        return Promise.resolve(machines[NAME]);
+      if (machines[name]) {
+        return Promise.resolve(machines[name]);
       } else {
         return Promise.reject(new Error('Machine does not exist.'));
       }
     });
   },
-  exists: function () {
-    return this.info().then(() => {
+  exists: function (name) {
+    return this.info(name).then(() => {
       return true;
     }).catch(() => {
       return false;
     });
   },
-  create: function (driverName, driverFlags) {
-    var cmd = [this.command(), '-D', 'create', '-d', driverName];
+  create: function (driver, driverFlags) {
+    var cmd = [this.command(), '-D', 'create', '-d', driver];
     cmd.push.apply(cmd, driverFlags);
-    cmd.push(NAME);
+    cmd.push(driver);
     return util.exec(cmd);
   },
-  start: function () {
-    return util.exec([this.command(), '-D', 'start', NAME]);
+  start: function (name) {
+    return util.exec([this.command(), '-D', 'start', name]);
   },
-  stop: function () {
-    return util.exec([this.command(), 'stop', NAME]);
+  stop: function (name) {
+    return util.exec([this.command(), 'stop', name]);
   },
-  upgrade: function () {
-    return util.exec([this.command(), 'upgrade', NAME]);
+  upgrade: function (name) {
+    return util.exec([this.command(), 'upgrade', name]);
   },
-  rm: function () {
-    return util.exec([this.command(), 'rm', '-f', NAME]);
+  rm: function (name) {
+    return util.exec([this.command(), 'rm', '-f', name]);
   },
-  ip: function () {
-    return util.exec([this.command(), 'ip', NAME]).then(stdout => {
+  ip: function (name) {
+    return util.exec([this.command(), 'ip', name]).then(stdout => {
       return Promise.resolve(stdout.trim().replace('\n', ''));
     });
   },
-  regenerateCerts: function () {
-    return util.exec([this.command(), 'tls-regenerate-certs', '-f', NAME]);
+  regenerateCerts: function (name) {
+    return util.exec([this.command(), 'tls-regenerate-certs', '-f', name]);
   },
-  state: function () {
-    return this.info().then(info => {
+  state: function (name) {
+    return this.info(name).then(info => {
       return info ? info.state : null;
     });
   },
-  disk: function () {
-    return util.exec([this.command(), 'ssh', NAME, 'df']).then(stdout => {
+  disk: function (name) {
+    return util.exec([this.command(), 'ssh', name, 'df']).then(stdout => {
       try {
         var lines = stdout.split('\n');
         var dataline = _.find(lines, function (line) {
@@ -101,7 +96,7 @@ var DockerMachine = {
         var totalGb = parseInt(tokens[3], 10) / 1000000;
         var percent = parseInt(tokens[4].replace('%', ''), 10);
         return {
-          used_gb: usedGb.toFixed(2),
+
           total_gb: totalGb.toFixed(2),
           percent: percent
         };
@@ -110,8 +105,8 @@ var DockerMachine = {
       }
     });
   },
-  memory: function () {
-    return util.exec([this.command(), 'ssh', NAME, 'free -m']).then(stdout => {
+  memory: function (name) {
+    return util.exec([this.command(), 'ssh', name, 'free -m']).then(stdout => {
       try {
         var lines = stdout.split('\n');
         var dataline = _.find(lines, function (line) {
@@ -136,8 +131,8 @@ var DockerMachine = {
       }
     });
   },
-  stats: function () {
-    this.state().then(state => {
+  stats: function (name) {
+    this.state(name).then(state => {
       if (state === 'Stopped') {
         return Promise.resolve({state: state});
       }
@@ -151,14 +146,14 @@ var DockerMachine = {
       });
     });
   },
-  dockerTerminal: function (cmd) {
+  dockerTerminal: function (name, cmd) {
     if(util.isWindows()) {
       cmd = cmd || '';
-      this.info().then(machine => {
+      this.info(name).then(machine => {
         util.exec('start powershell.exe ' + cmd,
           {env: {
             'DOCKER_HOST' : machine.url,
-            'DOCKER_CERT_PATH' : path.join(util.home(), '.docker/machine/machines/' + machine.name),
+            'DOCKER_CERT_PATH' : path.join(util.home(), '.docker/machine/machines/' + name),
             'DOCKER_TLS_VERIFY': 1
           }
         });
@@ -166,7 +161,7 @@ var DockerMachine = {
     } else {
       cmd = cmd || process.env.SHELL;
       this.info().then(machine => {
-        util.exec([resources.terminal(), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 ${cmd}`]).then(() => {});
+        util.exec([resources.terminal(), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + name)} DOCKER_TLS_VERIFY=1 ${cmd}`]).then(() => {});
       });
     }
   },
