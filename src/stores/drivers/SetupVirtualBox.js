@@ -17,7 +17,7 @@ var _error = null;
 var _cancelled = false;
 var _retryPromise = null;
 var _requiredSteps = [];
-var NAME = "vbox"
+var NAME = "virtualbox"
 
 var _steps = [{
   name: 'download',
