@@ -1,3 +1,4 @@
+var SetupDigitalOcean = require('../stores/drivers/SetupDigitalOcean');
 var React = require('react/addons');
 var metrics = require('../utils/MetricsUtil');
 var drivers = require('../utils/DriversUtil');
@@ -123,8 +124,19 @@ var Preferences = React.createClass({
         });
         throw err;
       });
-    } else {
-      console.log("TODO: handle case where no providers were selected")
+    }
+    if (this.state.docEnabled) {
+      this.transitionTo('setup');
+      SetupDigitalOcean.setup().then(() => {
+        console.log("SetupDigitalOcean.setup() called");
+        this.transitionTo('search');
+      }).catch(err => {
+        metrics.track('Setup Failed', {
+          step: 'catch',
+          message: err.message
+        });
+        throw err;
+      });
     }
   },
   // No idea why these events work - DO NOT TOUCH
