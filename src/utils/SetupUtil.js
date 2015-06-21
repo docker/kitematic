@@ -88,6 +88,7 @@ var SetupUtil = {
         var existingChecksum = this.checksum(filename);
         if (existingChecksum === checksum) {
           resolve();
+          return;
 
         } else {
           fs.unlinkSync(filename);
