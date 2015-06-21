@@ -3,42 +3,42 @@ import dockerUtil from '../utils/DockerUtil';
 
 class ContainerActions {
 
-  destroy (name) {
-    this.dispatch({name});
-    dockerUtil.destroy(name);
+  destroy (driverName, containerName) {
+    this.dispatch({driverName, containerName});
+    dockerUtil.clients[driverName].destroy(containerName);
   }
 
-  rename (name, newName) {
-    this.dispatch({name, newName});
-    dockerUtil.rename(name, newName);
+  rename (driverName, containerName, newContainerName) {
+    this.dispatch({driverName, containerName, newContainerName});
+    dockerUtil.clients[driverName].rename(containerName, newContainerName);
   }
 
-  start (name) {
-    this.dispatch({name});
-    dockerUtil.start(name);
+  start (driverName, containerName) {
+    this.dispatch({driverName, containerName});
+    dockerUtil.clients[driverName].start(containerName);
   }
 
-  stop (name) {
-    this.dispatch({name});
-    dockerUtil.stop(name);
+  stop (driverName, containerName) {
+    this.dispatch({driverName, containerName});
+    dockerUtil.clients[driverName].stop(containerName);
   }
 
-  restart (name) {
-    this.dispatch({name});
-    dockerUtil.restart(name);
+  restart (driverName, containerName) {
+    this.dispatch({driverName, containerName});
+    dockerUtil.clients[driverName].restart(containerName);
   }
 
-  update (name, container) {
-    this.dispatch({name, container});
-    dockerUtil.updateContainer(name, container);
+  update (driverName, name, container) {
+    this.dispatch({driverName, name, container});
+    dockerUtil.clients[driverName].updateContainer(name, container);
   }
 
   clearPending () {
     this.dispatch();
   }
 
-  run (name, repo, tag) {
-    dockerUtil.run(name, repo, tag);
+  run (driverName, name, repo, tag) {
+    dockerUtil.clients[driverName].run(name, repo, tag);
   }
 }
 

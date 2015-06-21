@@ -29,7 +29,7 @@ var ContainerListItem = React.createClass({
           from: 'list',
           type: 'existing'
         });
-        containerActions.destroy(this.props.container.Name);
+        containerActions.destroy(this.props.container.driverName, this.props.container.Name);
       }
     }.bind(this));
   },

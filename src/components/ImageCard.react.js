@@ -65,7 +65,7 @@ var ImageCard = React.createClass({
     let repo = this.props.image.namespace === 'library' ? this.props.image.name : this.props.image.namespace + '/' + this.props.image.name;
     // DRIVER NAME
     this.props.driverName = machineDriver;
-    containerActions.run(name, repo, this.state.chosenTag);
+    containerActions.run(this.props.driverName, name, repo, this.state.chosenTag);
     this.transitionTo('containerHome', {name});
   },
   handleMenuOverlayClick: function () {
