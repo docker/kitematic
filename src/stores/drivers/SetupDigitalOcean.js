@@ -9,7 +9,6 @@ var util = require('../../utils/Util');
 var SetupStore = require('../SetupStore.js');
 var request = require('request');
 var NAME = "digitalocean";
-var DIGITAL_OCEAN_ACCESS_TOKEN = localStorage.getItem('settings.digitalocean-access-token');
 
 var _currentStep = null;
 var _error = null;
@@ -25,6 +24,7 @@ var _steps = [{
   percent: 0,
   seconds: 60,
   run: Promise.coroutine(function* (progressCallback) {
+    var DIGITAL_OCEAN_ACCESS_TOKEN = localStorage.getItem('settings.digitalocean-access-token');
     var options = {
       url: 'https://api.digitalocean.com/v2/account',
       headers: {
@@ -46,13 +46,14 @@ var _steps = [{
   totalPercent: 50,
   percent: 0,
   run: Promise.coroutine(function* (progressCallback) {
+    var DIGITAL_OCEAN_ACCESS_TOKEN = localStorage.getItem('settings.digitalocean-access-token');
     setupUtil.simulateProgress(this.seconds, progressCallback);
     var exists = yield machine.exists();
     if (!exists || (yield machine.state()) === 'Error') {
       if (exists && (yield machine.state()) === 'Error') {
         yield machine.rm();
       }
-      yield machine.create();
+      yield machine.create(NAME, ["--digitalocean-access-token", DIGITAL_OCEAN_ACCESS_TOKEN]);
       return;
     }
 
