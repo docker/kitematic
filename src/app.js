@@ -48,7 +48,10 @@ routerContainer.set(router);
 
 // Set up app main menu
 Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
-docker.init();
+Object.keys(docker.clients).forEach(function (key) {
+  docker.clients[key].init();
+});
+
 if (!hub.prompted() && !hub.loggedin()) {
   router.transitionTo('login');
 } else {
