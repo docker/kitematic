@@ -38,31 +38,33 @@ export default {
 
   init () {
     this.placeholders = JSON.parse(localStorage.getItem('placeholders')) || {};
-    this.fetchAllContainers();
+    //this.fetchAllContainers();
     this.listen();
 
     // Resume pulling containers that were previously being pulled
     _.each(_.values(this.placeholders), container => {
       containerServerActions.added({container});
 
-      this.client.pull(container.Config.Image, (error, stream) => {
-        if (error) {
-          containerServerActions.error({name: container.Name, error});
-          return;
-        }
-
-        stream.setEncoding('utf8');
-        stream.on('data', function () {});
-        stream.on('end', () => {
-          if (!this.placeholders[container.Name]) {
+      if (this.client) {
+        this.client.pull(container.Config.Image, (error, stream) => {
+            if (error) {
+            containerServerActions.error({name: container.Name, error});
             return;
-          }
+            }
 
-          delete this.placeholders[container.Name];
-          localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
-          this.createContainer(container.Name, {Image: container.Config.Image});
+            stream.setEncoding('utf8');
+            stream.on('data', function () {});
+            stream.on('end', () => {
+            if (!this.placeholders[container.Name]) {
+                return;
+            }
+
+            delete this.placeholders[container.Name];
+            localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
+            //this.createContainer(container.Name, {Image: container.Config.Image});
+            });
         });
-      });
+      }
     });
   },
 
@@ -319,29 +321,29 @@ export default {
   },
 
   listen () {
-    this.client.getEvents((error, stream) => {
-      if (error || !stream) {
-        // TODO: Add app-wide error handler
-        return;
-      }
+    //this.client.getEvents((error, stream) => {
+    //  if (error || !stream) {
+    //    // TODO: Add app-wide error handler
+    //    return;
+    //  }
 
-      stream.setEncoding('utf8');
-      stream.on('data', json => {
-        let data = JSON.parse(json);
+    //  stream.setEncoding('utf8');
+    //  stream.on('data', json => {
+    //    let data = JSON.parse(json);
 
-        if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete') {
-          return;
-        }
+    //    if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete') {
+    //      return;
+    //    }
 
-        if (data.status === 'destroy') {
-          containerServerActions.destroyed({name: data.id});
-        } else if (data.status === 'create') {
-          this.fetchAllContainers();
-        } else {
-          this.fetchContainer(data.id);
-        }
-      });
-    });
+    //    if (data.status === 'destroy') {
+    //      containerServerActions.destroyed({name: data.id});
+    //    } else if (data.status === 'create') {
+    //      //this.fetchAllContainers();
+    //    } else {
+    //      //this.fetchContainer(data.id);
+    //    }
+    //  });
+    //});
   },
 
   pullImage (repository, tag, callback, progressCallback, blockedCallback) {
