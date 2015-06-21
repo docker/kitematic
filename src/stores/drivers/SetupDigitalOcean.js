@@ -42,7 +42,7 @@ var _steps = [{
 }, {
   name: 'install',
   title: 'Installing Docker on Digital Ocean',
-  message: 'Kinematic is install Docker components on Digital Ocean. Please wait...',
+  message: 'Kitematic is installing Docker components on Digital Ocean. Please wait...',
   totalPercent: 50,
   percent: 0,
   run: Promise.coroutine(function* (progressCallback) {
