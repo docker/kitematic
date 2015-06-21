@@ -8,6 +8,10 @@ var setupUtil = require('../../utils/SetupUtil');
 var util = require('../../utils/Util');
 var SetupStore = require('../SetupStore.js');
 var request = require('request');
+var assign = require('object-assign');
+var metrics = require('../../utils/MetricsUtil');
+var bugsnag = require('bugsnag-js');
+var docker = require('../../utils/DockerUtil');
 var NAME = "digitalocean";
 
 var _currentStep = null;
@@ -147,6 +151,71 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     });
     return Promise.resolve(_requiredSteps);
   }),
+  run: Promise.coroutine(function* () {// Readd metrics.track to this step
+    var steps = yield this.requiredSteps();
+    for (let step of steps) {
+      _currentStep = step;
+      step.percent = 0;
+      while (true) {
+        try {
+          this.emit(this.STEP_EVENT);
+          yield step.run(percent => {
+            if (_currentStep) {
+              step.percent = percent;
+              this.emit(this.PROGRESS_EVENT);
+            }
+          });
+          metrics.track('Setup Completed Step', {
+            name: step.name
+          });
+          step.percent = 100;
+          break;
+        } catch (err) {
+          if (err) {
+            throw err;
+          } else {
+            metrics.track('Setup Cancelled');
+            _cancelled = true;
+            this.emit(this.STEP_EVENT);
+          }
+          yield this.pause();
+        }
+      }
+    }
+    _currentStep = null;
+    return yield machine.ip();
+  }),
+  setup: Promise.coroutine(function * () {
+    while (true) {
+      try {
+        var ip = yield this.run();
+        if (!ip || !ip.length) {
+          throw {
+            message: 'Machine IP could not be fetched. Please retry the setup. If this fails please file a ticket on our GitHub repo.',
+            machine: yield machine.info(),
+            ip: ip
+          };
+        }
+        docker.addClient(NAME, ip, machine.name());
+        yield docker.clients[NAME].waitForConnection();
+        metrics.track('Setup Finished');
+        break;
+      } catch (err) {
+        err.message = util.removeSensitiveData(err.message);
+        metrics.track('Setup Failed', {
+          step: _currentStep,
+        });
+        console.log(err);
+        bugsnag.notify('SetupError', err.message, {
+          error: err,
+          output: err.message
+        }, 'info');
+        _error = err;
+        this.emit(this.ERROR_EVENT);
+        yield this.pause();
+      }
+    }
+  })
 });
 
 module.exports = SetupStore;

@@ -1,6 +1,7 @@
 var React = require('react/addons');
 var metrics = require('../utils/MetricsUtil');
-var drivers = require('../utils/DriversUtil')
+var drivers = require('../utils/DriversUtil');
+var path = require('path');
 var Router = require('react-router');
 var SetupVirtualBox = require('../stores/drivers/SetupVirtualBox');
 var vboxBoot2DockerURL = "";
@@ -19,11 +20,11 @@ var Preferences = React.createClass({
       driversEnabled: drivers.enabled(),
 
       vboxEnabled: localStorage.getItem('settings.vboxEnabled') === 'true',
-      vboxBoot2DockerURL: localStorage.getItem('settings.virtualbox-boot2docker-url') || "",
+      vboxBoot2DockerURL: localStorage.getItem('settings.virtualbox-boot2docker-url') || path.join(process.env.RESOURCES_PATH, 'boot2docker.iso'),
       vboxCpu: localStorage.getItem('settings.virtualbox-cpu-count') || "1",
       vboxDisk: localStorage.getItem('settings.virtualbox-disk-size') || "20000",
       vboxCidr: localStorage.getItem('settings.virtualbox-hostonly-cidr') || "192.168.99.1/24",
-      vboxMemory: localStorage.getItem('settings.virtualbox-memory') || "1024",
+      vboxMemory: localStorage.getItem('settings.virtualbox-memory') || "2048",
 
       docEnabled: localStorage.getItem('settings.digitalocean-enabled') === 'true',
       docAccessToken: localStorage.getItem('settings.digitalocean-access-token') || "",
