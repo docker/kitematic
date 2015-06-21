@@ -17,7 +17,7 @@ var _error = null;
 var _cancelled = false;
 var _retryPromise = null;
 var _requiredSteps = [];
-var NAME = "vbox"
+var NAME = "virtualbox"
 
 var _steps = [{
   name: 'download',
@@ -68,7 +68,7 @@ var _steps = [{
       if (exists && (yield machine.state()) === 'Error') {
         yield machine.rm();
       }
-      yield machine.create();
+      yield machine.create("virtualbox", ["--virtualbox-boot2docker-url", path.join(process.env.RESOURCES_PATH, 'boot2docker.iso'), "--virtualbox-memory", "2048"]);
       return;
     }
 
