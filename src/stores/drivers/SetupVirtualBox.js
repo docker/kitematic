@@ -4,6 +4,7 @@ var path = require('path');
 var fs = require('fs');
 var Promise = require('bluebird');
 var machine = require('../../utils/DockerMachineUtil');
+var virtualBox = require('../../utils/VirtualBoxUtil');
 var setupUtil = require('../../utils/SetupUtil');
 var util = require('../../utils/Util');
 var assign = require('object-assign');

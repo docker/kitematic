@@ -17,14 +17,19 @@ var Preferences = React.createClass({
       closeVMOnQuit: localStorage.getItem('settings.closeVMOnQuit') === 'true',
       metricsEnabled: metrics.enabled(),
       driversEnabled: drivers.enabled(),
+
       vboxEnabled: localStorage.getItem('settings.vboxEnabled') === 'true',
-      docEnabled: localStorage.getItem('settings.docEnabled') === 'true',
-      vboxBoot2DockerURL: localStorage.getItem('settings.vboxBoot2DockerURL'),
-      vboxMemory: localStorage.getItem('settings.vboxMemory'),
-      docAccessToken: localStorage.getItem('settings.docAccessToken'),
-      docRegion: localStorage.getItem('settings.docRegion'),
-      docSize: localStorage.getItem('settings.docSize'),
-      docImage: localStorage.getItem('settings.docImage'),
+      vboxBoot2DockerURL: localStorage.getItem('settings.virtualbox-boot2docker-url') || "",
+      vboxCpu: localStorage.getItem('settings.virtualbox-cpu-count') || "1",
+      vboxDisk: localStorage.getItem('settings.virtualbox-disk-size') || "20000",
+      vboxCidr: localStorage.getItem('settings.virtualbox-hostonly-cidr') || "192.168.99.1/24",
+      vboxMemory: localStorage.getItem('settings.virtualbox-memory') || "1024",
+
+      docEnabled: localStorage.getItem('settings.digitalocean-enabled') === 'true',
+      docAccessToken: localStorage.getItem('settings.digitalocean-access-token') || "",
+      docImage: localStorage.getItem('settings.digitalocean-image') || "",
+      docRegion: localStorage.getItem('settings.digitalocean-region') || "",
+      docSize: localStorage.getItem('settings.digitalocean-size')  || "512mb",
     };
   },
   handleGoBackClick: function () {
@@ -75,19 +80,19 @@ var Preferences = React.createClass({
     console.log("Apply was clicked");
 
     // virtualbox driver flags
-    localStorage.setItem('settings.virtualbox-enabled', this.state.vboxEnabled || "false");
-    localStorage.setItem('settings.virtualbox-boot2docker-url', this.state.vboxBoot2DockerURL || "");
-    localStorage.setItem('settings.virtualbox-cpu-count', this.state.vboxCpu || "1");
-    localStorage.setItem('settings.virtualbox-disk-size', this.state.vboxDisk || "20000");
-    localStorage.setItem('settings.virtualbox-hostonly-cidr', this.state.vboxCidr || "192.168.99.1/24");
-    localStorage.setItem('settings.virtualbox-memory', this.state.vboxMemory || "1024");
+    localStorage.setItem('settings.virtualbox-enabled', this.state.vboxEnabled);
+    localStorage.setItem('settings.virtualbox-boot2docker-url', this.state.vboxBoot2DockerURL);
+    localStorage.setItem('settings.virtualbox-cpu-count', this.state.vboxCpu);
+    localStorage.setItem('settings.virtualbox-disk-size', this.state.vboxDisk);
+    localStorage.setItem('settings.virtualbox-hostonly-cidr', this.state.vboxCidr);
+    localStorage.setItem('settings.virtualbox-memory', this.state.vboxMemory);
 
     // digital ocean driver flag
-    localStorage.setItem('settings.digitalocean-enabled', this.state.docEnabled || "false");
-    localStorage.setItem('settings.digitalocean-access-token', this.state.docAccessToken || "");
-    localStorage.setItem('settings.digitalocean-image', this.state.docImage || "");
-    localStorage.setItem('settings.digitalocean-region', this.state.docRegion || "");
-    localStorage.setItem('settings.digitalocean-size', this.state.docSize || "512mb");
+    localStorage.setItem('settings.digitalocean-enabled', this.state.docEnabled);
+    localStorage.setItem('settings.digitalocean-access-token', this.state.docAccessToken);
+    localStorage.setItem('settings.digitalocean-image', this.state.docImage);
+    localStorage.setItem('settings.digitalocean-region', this.state.docRegion);
+    localStorage.setItem('settings.digitalocean-size', this.state.docSize);
 
     // Check for vbox enabling and transition as appropriate
     if (this.state.vboxEnabled) {
@@ -209,7 +214,7 @@ var Preferences = React.createClass({
                    virtualbox-cpu-count
                 </div>
                 <div className="option-value">
-                  <input type="text" value={this.state.vboxCpu} name="vboxCpu" onChange={this.handleVboxCpu} value="1" />
+                  <input type="text" value={this.state.vboxCpu} name="vboxCpu" onChange={this.handleVboxCpu} />
                 </div>
               </div>
               <div className="option">
@@ -217,7 +222,7 @@ var Preferences = React.createClass({
                    virtualbox-disk-size
                 </div>
                 <div className="option-value">
-                  <input type="text" value={this.state.vboxDisk} name="vboxDisk" onChange={this.handleVboxDisk} value="20000" />
+                  <input type="text" value={this.state.vboxDisk} name="vboxDisk" onChange={this.handleVboxDisk} />
                 </div>
               </div>
               <div className="option">
@@ -225,7 +230,7 @@ var Preferences = React.createClass({
                    virtualbox-hostonly-cidr
                 </div>
                 <div className="option-value">
-                  <input type="text" value={this.state.vboxCidr} name="vboxCidr" onChange={this.handleVboxCidr} value="192.168.99.1/24"/>
+                  <input type="text" value={this.state.vboxCidr} name="vboxCidr" onChange={this.handleVboxCidr} />
                 </div>
               </div>
               <div className="option">
@@ -233,7 +238,7 @@ var Preferences = React.createClass({
                    virtualbox-memory
                 </div>
                 <div className="option-value">
-                  <input type="text" value={this.state.vboxMemory} name="vboxMemory" onChange={this.handleVboxMemory} value="1024" />
+                  <input type="text" value={this.state.vboxMemory} name="vboxMemory" onChange={this.handleVboxMemory} />
                 </div>
               </div>
           </div>
@@ -267,7 +272,7 @@ var Preferences = React.createClass({
                    digitalocean-size
                 </div>
                 <div className="option-value">
-                  <input type="text" value={this.state.docSize} name="docSize" onChange={this.handleDocSize} value="512mb" />
+                  <input type="text" value={this.state.docSize} name="docSize" onChange={this.handleDocSize} />
                 </div>
               </div>
               <div className="option">

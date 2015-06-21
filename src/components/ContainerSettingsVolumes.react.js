@@ -35,7 +35,7 @@ var ContainerSettingsVolumes = React.createClass({
         return pair[1] + ':' + pair[0];
       });
 
-      containerActions.update(this.props.container.Name, {Binds: binds, Volumes: volumes});
+      containerActions.update(this.props.container.driverName, this.props.container.Name, {Binds: binds, Volumes: volumes});
     });
   },
   handleRemoveVolumeClick: function (dockerVol) {
@@ -51,7 +51,7 @@ var ContainerSettingsVolumes = React.createClass({
     if (index >= 0) {
       binds.splice(index, 1);
     }
-    containerActions.update(this.props.container.Name, {HostConfig: hostConfig, Binds: binds, Volumes: volumes});
+    containerActions.update(this.props.container.driverName, this.props.container.Name, {HostConfig: hostConfig, Binds: binds, Volumes: volumes});
   },
   handleOpenVolumeClick: function (path) {
     metrics.track('Opened Volume Directory', {
