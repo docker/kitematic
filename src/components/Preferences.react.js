@@ -104,7 +104,6 @@ var Preferences = React.createClass({
             </div>
             <div className="option-value">
               <input type="text" onChange={this.handleVirtualBoxConfiguration}/>
-              <button type="button">Save</button>
             </div>
           </div>
           <div className="option">
@@ -122,9 +121,12 @@ var Preferences = React.createClass({
             </div>
             <div className="option-value">
               <input type="text" onChange={this.handleDigitalOceanConfiguration}/>
-              <button type="button">Save</button>
             </div>
           </div>
+
+          <div>
+            <button type="button">Apply</button>
+        </div>
         </div>
       </div>
     );
