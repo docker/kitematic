@@ -72,19 +72,19 @@ var ContainerDetailsSubheader = React.createClass({
   handleRestart: function () {
     if (!this.disableRestart()) {
       metrics.track('Restarted Container');
-      containerActions.restart(this.props.container.Name);
+      containerActions.restart(this.props.container.driverName, this.props.container.Name);
     }
   },
   handleStop: function () {
     if (!this.disableStop()) {
       metrics.track('Stopped Container');
-      containerActions.stop(this.props.container.Name);
+      containerActions.stop(this.props.container.driverName, this.props.container.Name);
     }
   },
   handleStart: function () {
     if (!this.disableStart()) {
       metrics.track('Started Container');
-      containerActions.start(this.props.container.Name);
+      containerActions.start(this.props.container.driverName, this.props.container.Name);
     }
   },
   handleTerminal: function () {

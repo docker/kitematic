@@ -22,7 +22,7 @@ var ContainerSettingsAdvanced = React.createClass({
     metrics.track('Saved Advanced Options');
     let tty = this.state.tty;
     let openStdin = this.state.openStdin;
-    containerActions.update(this.props.container.Name, {Tty: tty, OpenStdin: openStdin});
+    containerActions.update(this.props.container.driverName, this.props.container.Name, {Tty: tty, OpenStdin: openStdin});
   },
 
   handleChangeTty: function () {

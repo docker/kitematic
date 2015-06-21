@@ -27,6 +27,7 @@ var ContainerUtil = {
       return {};
     }
     var res = {};
+    console.log("PROBLEM: container.driverName is: " + container.driverName);
     var ip = docker.clients[container.driverName].host;
     _.each(container.NetworkSettings.Ports, function (value, key) {
       var dockerPort = key.split('/')[0];
