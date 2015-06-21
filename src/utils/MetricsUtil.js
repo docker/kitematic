@@ -33,6 +33,7 @@ var Metrics = {
     localStorage.setItem('metrics.enabled', !!enabled);
   },
   track: function (name, data) {
+    console.log("Metrics.track LOG: " + name + ": " + data)
     data = data || {};
     if (!name) {
       return;

@@ -65,6 +65,7 @@ var SetupUtil = {
     }
   },
   macSudoCmd: function (cmd) {
+    console.log("Calling Mac Command: " + cmd)
     return `${util.escapePath(resources.macsudo())} -p "Kitematic requires administrative privileges to install docker binaries and VM drivers." sh -c \"${cmd}\"`;
   },
   simulateProgress(estimateSeconds, progress) {
@@ -81,12 +82,14 @@ var SetupUtil = {
     return crypto.createHash('sha256').update(fs.readFileSync(filename), 'utf8').digest('hex');
   },
   download(url, filename, checksum, percentCallback) {
+    console.log("Downloading url:" + url + ", filename:" + filename)
     return new Promise((resolve, reject) => {
       if (fs.existsSync(filename)) {
         var existingChecksum = this.checksum(filename);
         if (existingChecksum === checksum) {
           resolve();
           return;
+
         } else {
           fs.unlinkSync(filename);
         }
