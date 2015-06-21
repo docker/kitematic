@@ -149,6 +149,14 @@ var ImageCard = React.createClass({
         <span className="icon icon-badge-private"></span>
       );
     }
+    var driversSelect = '<select>';
+    if (localStorage.getItem('settings.vboxEnabled') == 'true') {
+        driversSelect += '<option value="virtualbox">VirtualBox</option>'
+    }
+    if (localStorage.getItem('settings.docEnabled') == 'true') {
+        driversSelect += '<option value="digitalocean">Digital Ocean</option>'
+    }
+    driversSelect += '</select>';
     return (
       <div className="image-item">
         <div className="overlay menu-overlay">
@@ -162,10 +170,7 @@ var ImageCard = React.createClass({
             <span className="text">Select the machine driver</span>
             <br />
             <span className="">
-                <select>
-                    <option value="virtualbox">VirtualBox</option>
-                    <option value="openstack">DigitalOcean</option>
-                </select>
+                {driversSelect}
             </span>
           </div>
           <div className="close-overlay">

@@ -11,6 +11,7 @@ var Preferences = React.createClass({
       metricsEnabled: metrics.enabled(),
       driversEnabled: drivers.enabled(),
       vboxEnabled: localStorage.getItem('settings.vboxEnabled') === 'true',
+      docEnabled: localStorage.getItem('settings.docEnabled') === 'true',
       // TODO @fsoppelsa to load drivers configurations
     };
   },
@@ -51,9 +52,9 @@ var Preferences = React.createClass({
   handleDigitalOceanEnabled: function(e) {
     var checked = e.target.checked;
     this.setState({
-        vboxenabled: checked
+        docEnabled: checked
       });
-    localStorage.setItem('settings.docenabled', checked);
+    localStorage.setItem('settings.docEnabled', checked);
     metrics.track('toggled doc', {
       close: checked
     });
