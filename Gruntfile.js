@@ -151,6 +151,11 @@ module.exports = function (grunt) {
         version: packagejson['docker-machine-version'],
         binary: path.join('resources', 'docker-machine'),
         download: 'curl:docker-machine'
+      },
+      'docker-compose': {
+        version: packagejson['docker-compose-version'],
+        binary: path.join('resources', 'docker-compose'),
+        download: 'curl:docker-compose'
       }
     },
 
@@ -359,10 +364,15 @@ module.exports = function (grunt) {
       }
     }
   });
-  grunt.registerTask('default', ['download-binary', 'download-boot2docker-iso', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean:release', 'download-binary', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename:installer']);
+    grunt.registerTask('default', ['download-binary:docker', 'download-binary:docker-machine', 'download-boot2docker-iso', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+  } else {
+    grunt.registerTask('default', ['download-binary', 'download-boot2docker-iso', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+  }
+
+  if (process.platform === 'win32') {
+    grunt.registerTask('release', ['clean:release', 'download-binary:docker', 'download-binary:docker-machine', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename:installer']);
   } else {
     grunt.registerTask('release', ['clean:release', 'download-binary', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'plistbuddy', 'shell:sign', 'shell:zip']);
   }
