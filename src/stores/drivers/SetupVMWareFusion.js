@@ -15,44 +15,9 @@ var _retryPromise = null;
 var _requiredSteps = [];
 
 var _steps = [{
-  name: 'download',
-  title: 'Downloading VMWare Fusion',
-  message: 'VMWare Fusion is being downloaded. You have selected the VMWare Fusion driver.',
-  totalPercent: 35,
-  percent: 0,
-  run: function (progressCallback) {
-    return setupUtil.download(virtualBox.url(), path.join(util.supportDir(), virtualBox.filename()), virtualBox.checksum(), percent => {
-      progressCallback(percent);
-    });
-  }
-}, {
-  name: 'install',
-  title: 'Installing VMWare Fusion',
-  message: 'VMWare Fusion is being installed or upgraded in the background. We may need you to type in your password to continue.',
-  totalPercent: 5,
-  percent: 0,
-  seconds: 5,
-  run: Promise.coroutine(function* (progressCallback) {
-    if (!virtualBox.installed()) {
-      yield virtualBox.killall();
-      progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
-      try {
-        if (util.isWindows()) {
-          yield util.exec([path.join(util.supportDir(), virtualBox.filename()), '-msiparams', 'REBOOT=ReallySuppress', 'LIMITUI=INSTALLUILEVEL_PROGRESSONLY']);
-        } else {
-          yield util.exec(setupUtil.macSudoCmd(setupUtil.installVirtualBoxCmd()));
-        }
-      } catch (err) {
-        throw null;
-      }
-    } else if (!util.isWindows() && !virtualBox.active()) {
-      yield util.exec(setupUtil.macSudoCmd(util.escapePath('/Library/Application Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh') + ' restart'));
-    }
-  })
-}, {
   name: 'init',
   title: 'Starting Docker VM',
-  message: 'To run Docker containers on VirtualBox locally, Kitematic is starting a Linux virtual machine in VirtualBox. This may take a minute...',
+  message: 'To run Docker containers on Fusion locally, Kitematic is starting a Linux virtual machine in Fusion. This may take a minute...',
   totalPercent: 60,
   percent: 0,
   seconds: 110,
@@ -63,7 +28,7 @@ var _steps = [{
       if (exists && (yield machine.state()) === 'Error') {
         yield machine.rm();
       }
-      yield machine.create();
+      yield machine.create(NAME, ["--vmwarefusion-boot2docker-url", path.join(process.env.RESOURCES_PATH, 'boot2docker.iso'), "--vmwarefusion-memory-size", "2048"]);
       return;
     }
 
@@ -78,3 +43,90 @@ var _steps = [{
     }
   })
 }];
+
+var SetupStore = assign(Object.create(EventEmitter.prototype), {
+  PROGRESS_EVENT: 'setup_progress',
+  STEP_EVENT: 'setup_step',
+  ERROR_EVENT: 'setup_error',
+  step: function () {
+    return _currentStep;
+  },
+  steps: function () {
+    return _.indexBy(_steps, 'name');
+  },
+  stepCount: function () {
+    return _requiredSteps.length;
+  },
+  number: function () {
+    return _.indexOf(_requiredSteps, _currentStep) + 1;
+  },
+  percent: function () {
+    var sofar = 0;
+    var totalPercent = _requiredSteps.reduce((prev, step) => prev + step.totalPercent, 0);
+    _.each(_requiredSteps, step => {
+      sofar += step.totalPercent * step.percent / 100;
+    });
+    return Math.min(Math.round(100 * sofar / totalPercent), 99);
+  },
+  error: function () {
+    return _error;
+  },
+  cancelled: function () {
+    return _cancelled;
+  },
+  retry: function (remove) {
+    _error = null;
+    _cancelled = false;
+    if (!_retryPromise) {
+      return;
+    }
+    this.emit(this.ERROR_EVENT);
+    if (remove) {
+      machine.rm().finally(() => {
+        _retryPromise.resolve();
+      });
+    } else {
+      machine.stop().finally(() => {
+        _retryPromise.resolve();
+      });
+    }
+  },
+  setError: function (error) {
+    _error = error;
+    this.emit(this.ERROR_EVENT);
+  },
+  pause: function () {
+    _retryPromise = Promise.defer();
+    return _retryPromise.promise;
+  },
+  requiredSteps: Promise.coroutine(function* () {
+    if (_requiredSteps.length) {
+      return Promise.resolve(_requiredSteps);
+    }
+    var packagejson = util.packagejson();
+    var isoversion = machine.isoversion();
+    var required = {};
+    var vboxfile = path.join(util.supportDir(), virtualBox.filename());
+    var vboxNeedsInstall = !virtualBox.installed();
+
+    required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== virtualBox.checksum());
+    required.install = vboxNeedsInstall || (!util.isWindows() && !virtualBox.active());
+    required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0;
+
+    var exists = yield machine.exists();
+    if (isoversion && util.compareVersions(isoversion, packagejson['docker-version']) < 0) {
+      this.steps().init.seconds = 33;
+    } else if (exists && (yield machine.state()) === 'Saved') {
+      this.steps().init.seconds = 8;
+    } else if (exists && (yield machine.state()) !== 'Error') {
+      this.steps().init.seconds = 23;
+    }
+
+    _requiredSteps = _steps.filter(function (step) {
+      return required[step.name];
+    });
+    return Promise.resolve(_requiredSteps);
+  }),
+});
+
+module.exports = SetupStore;
