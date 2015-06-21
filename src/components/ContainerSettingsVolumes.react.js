@@ -112,14 +112,18 @@ var ContainerSettingsVolumes = React.createClass({
   // Add the new volume in the `volumes` and add a new line for the next new
   // volume
   handleAddVolume: function (index) {
-    let volumes = _.map(this.state.volumes, _.clone);
-    volumes[index][2] = this.state.newVolumePath;
-    volumes[index][1] = '/var/lib/docker/volumes/' + volumes[index][0] + '/_data';
-    volumes.push([util.randomId(), '', '']);
-    this.setState({
-      volumes: volumes
-    });
-    metrics.track('Added Pending Volume');
+    if (this.state.newVolumePath)
+    {
+      let volumes = _.map(this.state.volumes, _.clone);
+      volumes[index][2] = this.state.newVolumePath;
+      volumes[index][1] = '/var/lib/docker/volumes/' + volumes[index][0] + '/_data';
+      volumes.push([util.randomId(), '', '']);
+      this.setState({
+        volumes: volumes,
+        newVolumePath: null
+      });
+      metrics.track('Added Pending Volume');
+    }
   },
   // Remove the clicked volume from the `volume` variable
   handleRemoveVolume: function(index) {
