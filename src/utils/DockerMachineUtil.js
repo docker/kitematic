@@ -56,13 +56,10 @@ var DockerMachine = {
     });
   },
   create: function (driverName, driverFlags) {
-    if (util.isWindows()) {
-      return util.exec([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', NAME]);
-    } else {
-      var cmd = [this.command(), '-D', 'create', '-d', driverName];
-      cmd.push.apply(cmd, driverFlags);
-      return util.exec(cmd);
-    }
+    var cmd = [this.command(), '-D', 'create', '-d', driverName];
+    cmd.push.apply(cmd, driverFlags);
+    cmd.push(NAME);
+    return util.exec(cmd);
   },
   start: function () {
     return util.exec([this.command(), '-D', 'start', NAME]);
