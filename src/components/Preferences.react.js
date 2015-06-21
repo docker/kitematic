@@ -170,7 +170,7 @@ var Preferences = React.createClass({
               <input type="checkbox" checked={this.state.vboxEnabled} onChange={this.handleVirtualBoxEnabled}/>
             </div>
           </div>
-          <div class="virtualbox-options">
+          <div className="virtualbox-options">
               <div className="option">
                 <div className="option-name">
                    virtualbox-boot2docker-url
@@ -196,7 +196,7 @@ var Preferences = React.createClass({
               <input type="checkbox" checked={this.state.docEnabled} onChange={this.handleDigitalOceanEnabled}/>
             </div>
           </div>
-          <div class="digitalocean-parameters">
+          <div className="digitalocean-parameters">
               <div className="option">
                 <div className="option-name">
                    digitalocean-access-token
