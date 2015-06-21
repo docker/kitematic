@@ -45,24 +45,26 @@ export default {
     _.each(_.values(this.placeholders), container => {
       containerServerActions.added({container});
 
-      this.client.pull(container.Config.Image, (error, stream) => {
-        if (error) {
-          containerServerActions.error({name: container.Name, error});
-          return;
-        }
-
-        stream.setEncoding('utf8');
-        stream.on('data', function () {});
-        stream.on('end', () => {
-          if (!this.placeholders[container.Name]) {
+      if (this.client) {
+        this.client.pull(container.Config.Image, (error, stream) => {
+            if (error) {
+            containerServerActions.error({name: container.Name, error});
             return;
-          }
+            }
 
-          delete this.placeholders[container.Name];
-          localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
-          this.createContainer(container.Name, {Image: container.Config.Image});
+            stream.setEncoding('utf8');
+            stream.on('data', function () {});
+            stream.on('end', () => {
+            if (!this.placeholders[container.Name]) {
+                return;
+            }
+
+            delete this.placeholders[container.Name];
+            localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
+            this.createContainer(container.Name, {Image: container.Config.Image});
+            });
         });
-      });
+      }
     });
   },
 
@@ -131,28 +133,30 @@ export default {
   },
 
   fetchAllContainers () {
-    this.client.listContainers({all: true}, (err, containers) => {
-      if (err) {
-        return;
-      }
-      async.map(containers, (container, callback) => {
-        this.client.getContainer(container.Id).inspect((error, container) => {
-          if (error) {
-            callback(null, null);
-            return;
-          }
-          container.Name = container.Name.replace('/', '');
-          callback(null, container);
+    if (this.client) {
+        this.client.listContainers({all: true}, (err, containers) => {
+            if (err) {
+                return;
+            }
+            async.map(containers, (container, callback) => {
+                this.client.getContainer(container.Id).inspect((error, container) => {
+                if (error) {
+                    callback(null, null);
+                    return;
+                }
+                container.Name = container.Name.replace('/', '');
+                callback(null, container);
+                });
+            }, (err, containers) => {
+                containers = containers.filter(c => c !== null);
+                if (err) {
+                // TODO: add a global error handler for this
+                return;
+                }
+                containerServerActions.allUpdated({containers: _.indexBy(containers.concat(_.values(this.placeholders)), 'Name')});
+            });
         });
-      }, (err, containers) => {
-        containers = containers.filter(c => c !== null);
-        if (err) {
-          // TODO: add a global error handler for this
-          return;
-        }
-        containerServerActions.allUpdated({containers: _.indexBy(containers.concat(_.values(this.placeholders)), 'Name')});
-      });
-    });
+    }
   },
 
   run (name, repository, tag) {
@@ -319,29 +323,31 @@ export default {
   },
 
   listen () {
-    this.client.getEvents((error, stream) => {
-      if (error || !stream) {
-        // TODO: Add app-wide error handler
-        return;
-      }
-
-      stream.setEncoding('utf8');
-      stream.on('data', json => {
-        let data = JSON.parse(json);
-
-        if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete') {
+    if (this.client) {
+      this.client.getEvents((error, stream) => {
+        if (error || !stream) {
+          // TODO: Add app-wide error handler
           return;
         }
 
-        if (data.status === 'destroy') {
+        stream.setEncoding('utf8');
+        stream.on('data', json => {
+          let data = JSON.parse(json);
+
+          if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete') {
+          return;
+          }
+
+          if (data.status === 'destroy') {
           containerServerActions.destroyed({name: data.id});
-        } else if (data.status === 'create') {
+          } else if (data.status === 'create') {
           this.fetchAllContainers();
-        } else {
+          } else {
           this.fetchContainer(data.id);
-        }
+          }
+        });
       });
-    });
+    }
   },
 
   pullImage (repository, tag, callback, progressCallback, blockedCallback) {
