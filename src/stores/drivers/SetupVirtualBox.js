@@ -4,7 +4,6 @@ var path = require('path');
 var fs = require('fs');
 var Promise = require('bluebird');
 var machine = require('../../utils/DockerMachineUtil');
-var virtualBox = require('../../utils/VirtualBoxUtil');
 var setupUtil = require('../../utils/SetupUtil');
 var util = require('../../utils/Util');
 var assign = require('object-assign');
@@ -22,19 +21,18 @@ var NAME = "virtualbox"
 var _steps = [{
   name: 'download',
   title: 'Downloading VirtualBox',
-  message: 'VirtualBox is being downloaded. Kitematic requires VirtualBox to run containers.',
+  message: 'VirtualBox is being downloaded. You have selected the VirtualBox driver.',
   totalPercent: 35,
   percent: 0,
   run: function (progressCallback) {
-    console.log("Running download for VirtualBox. virtualBox.url(): " + virtualBox.url())
     return setupUtil.download(virtualBox.url(), path.join(util.supportDir(), virtualBox.filename()), virtualBox.checksum(), percent => {
       progressCallback(percent);
     });
   }
 }, {
   name: 'install',
-  title: 'Installing VirtualBox & Docker',
-  message: 'VirtualBox & Docker are being installed or upgraded in the background. We may need you to type in your password to continue.',
+  title: 'Installing VirtualBox',
+  message: 'VirtualBox is being installed or upgraded in the background. We may need you to type in your password to continue.',
   totalPercent: 5,
   percent: 0,
   seconds: 5,
@@ -58,7 +56,7 @@ var _steps = [{
 }, {
   name: 'init',
   title: 'Starting Docker VM',
-  message: 'To run Docker containers on your computer, Kitematic is starting a Linux virtual machine. This may take a minute...',
+  message: 'To run Docker containers on VirtualBox, Kitematic is starting a Linux virtual machine. This may take a minute...',
   totalPercent: 60,
   percent: 0,
   seconds: 110,
@@ -69,11 +67,7 @@ var _steps = [{
       if (exists && (yield machine.state()) === 'Error') {
         yield machine.rm();
       }
-      // TODO fix call arguments - needs dynamic args from a config
-      // call lives in DockerMachineUtil.js
-      // create: function (driverName, driverFlags) {
-      // <driverName> is a string, <driverFlags> is a list
-      yield machine.create("virtualbox", ["--virtualbox-boot2docker-url", path.join(process.env.RESOURCES_PATH, 'boot2docker.iso'), "--virtualbox-memory", "2048"]);
+      yield machine.create(NAME, ["--virtualbox-boot2docker-url", path.join(process.env.RESOURCES_PATH, 'boot2docker.iso'), "--virtualbox-memory", "2048"]);// This will be refactored to dynmaically get and pass flags
       return;
     }
 
@@ -89,7 +83,7 @@ var _steps = [{
   })
 }];
 
-var SetupVirtualBox = assign(Object.create(EventEmitter.prototype), {
+var SetupStore = assign(Object.create(EventEmitter.prototype), {
   PROGRESS_EVENT: 'setup_progress',
   STEP_EVENT: 'setup_step',
   ERROR_EVENT: 'setup_error',
@@ -176,13 +170,8 @@ var SetupVirtualBox = assign(Object.create(EventEmitter.prototype), {
     metrics.track('Started Setup', {
       virtualbox: virtualBox.installed() ? yield virtualBox.version() : 'Not Installed'
     });
-    console.log("Iterating through steps")
     var steps = yield this.requiredSteps();
-    console.log("Got required steps")
-    var counter = 0;
     for (let step of steps) {
-      counter += 1;
-      console.log("Step " + counter + " has name: " + step.name)
       _currentStep = step;
       step.percent = 0;
       while (true) {
@@ -194,7 +183,6 @@ var SetupVirtualBox = assign(Object.create(EventEmitter.prototype), {
               this.emit(this.PROGRESS_EVENT);
             }
           });
-          console.log("Setup Completed step " + step.name)
           metrics.track('Setup Completed Step', {
             name: step.name
           });
@@ -218,7 +206,6 @@ var SetupVirtualBox = assign(Object.create(EventEmitter.prototype), {
   setup: Promise.coroutine(function * () {
     while (true) {
       try {
-        console.log("Calling SetupVirtualBox run()")
         var ip = yield this.run();
         if (!ip || !ip.length) {
           throw {
@@ -249,4 +236,4 @@ var SetupVirtualBox = assign(Object.create(EventEmitter.prototype), {
   })
 });
 
-module.exports = SetupVirtualBox;
+module.exports = SetupStore;
