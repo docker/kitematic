@@ -27,7 +27,7 @@ var _steps = [{
     let digitaloceantoken = localStorage.getItem('digitalocean.token');
     args = {
       parameters:{token:digitaloceantoken}
-      headers:{"Content-Type":"application/json","Authorization":"Bearer ${token}"}
+      headers:{"Content-Type":"application/json","Authorization":"Bearer"}// fix here
     }
     client.get("https://api.digitalocean.com/v2/account", args,
       function(data, response){
