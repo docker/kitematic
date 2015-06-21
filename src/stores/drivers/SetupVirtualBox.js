@@ -25,6 +25,7 @@ var _steps = [{
   totalPercent: 35,
   percent: 0,
   run: function (progressCallback) {
+    console.log("Running download for VirtualBox. virtualBox.url(): " + virtualBox.url())
     return setupUtil.download(virtualBox.url(), path.join(util.supportDir(), virtualBox.filename()), virtualBox.checksum(), percent => {
       progressCallback(percent);
     });
@@ -67,7 +68,11 @@ var _steps = [{
       if (exists && (yield machine.state()) === 'Error') {
         yield machine.rm();
       }
-      yield machine.create();
+      // TODO fix call arguments - needs dynamic args from a config
+      // call lives in DockerMachineUtil.js
+      // create: function (driverName, driverFlags) {
+      // <driverName> is a string, <driverFlags> is a list
+      yield machine.create("virtualbox", ["--virtualbox-boot2docker-url", path.join(process.env.RESOURCES_PATH, 'boot2docker.iso'), "--virtualbox-memory", "2048"]);
       return;
     }
 
@@ -170,8 +175,13 @@ var SetupVirtualBox = assign(Object.create(EventEmitter.prototype), {
     metrics.track('Started Setup', {
       virtualbox: virtualBox.installed() ? yield virtualBox.version() : 'Not Installed'
     });
+    console.log("Iterating through steps")
     var steps = yield this.requiredSteps();
+    console.log("Got required steps")
+    var counter = 0;
     for (let step of steps) {
+      counter += 1;
+      console.log("Step " + counter + " has name: " + step.name)
       _currentStep = step;
       step.percent = 0;
       while (true) {
@@ -183,6 +193,7 @@ var SetupVirtualBox = assign(Object.create(EventEmitter.prototype), {
               this.emit(this.PROGRESS_EVENT);
             }
           });
+          console.log("Setup Completed step " + step.name)
           metrics.track('Setup Completed Step', {
             name: step.name
           });
@@ -206,6 +217,7 @@ var SetupVirtualBox = assign(Object.create(EventEmitter.prototype), {
   setup: Promise.coroutine(function * () {
     while (true) {
       try {
+        console.log("Calling SetupVirtualBox run()")
         var ip = yield this.run();
         if (!ip || !ip.length) {
           throw {

@@ -82,12 +82,13 @@ var SetupUtil = {
     return crypto.createHash('sha256').update(fs.readFileSync(filename), 'utf8').digest('hex');
   },
   download(url, filename, checksum, percentCallback) {
+    console.log("Downloading url:" + url + ", filename:" + filename)
     return new Promise((resolve, reject) => {
       if (fs.existsSync(filename)) {
         var existingChecksum = this.checksum(filename);
         if (existingChecksum === checksum) {
           resolve();
-          return;
+
         } else {
           fs.unlinkSync(filename);
         }

@@ -65,21 +65,21 @@ var Preferences = React.createClass({
   },
   handleApplyClicked: function(e) {
     console.log("Apply was clicked");
-    SetupVirtualBox.setup().then(() => {
-      //Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
-      //docker.init();
-      //if (!hub.prompted() && !hub.loggedin()) {
-      //  router.transitionTo('login');
-      //} else {
-      //  router.transitionTo('search');
-      //}
-    }).catch(err => {
-      metrics.track('Setup Failed', {
-        step: 'catch',
-        message: err.message
+    if (this.state.vboxEnabled) {
+      this.transitionTo('setup');
+      SetupVirtualBox.setup().then(() => {
+        console.log("SetupVirtualBox.setup() called");
+        this.transitionTo('search');
+      }).catch(err => {
+        metrics.track('Setup Failed', {
+          step: 'catch',
+          message: err.message
+        });
+        throw err;
       });
-      throw err;
-    });
+    } else {
+      console.log("TODO: handle case where no providers were selected")
+    }
   },
   handleDigitalOceanConfiguration: function(e) {
     // TODO @fsoppelsa save in persistent conf
@@ -143,8 +143,8 @@ var Preferences = React.createClass({
             </div>
           </div>
 
-          <div>
-            <button type="button" onClick={this.handleApplyClicked}>Apply</button>
+        <div>
+          <button type="button" onClick={this.handleApplyClicked}>Apply</button>
         </div>
         </div>
       </div>
