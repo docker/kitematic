@@ -73,7 +73,7 @@ var _steps = [{
       let DISK_SIZE = localStorage.getItem('settings.virtualbox-disk-size');
       let HOSTONLY_CIDR = localStorage.getItem('settings.virtualbox-hostonly-cidr');
       let MEMORY = localStorage.getItem('settings.virtualbox-memory');
-      yield machine.create(NAME, ["--virtualbox-boot2docker-url", BOOT2DOCKER_URL,"--virtualbox-cpu-count", CPU_COUNT, "--virtualbox-disk-size", DISK_SIZE, "--virtualbox-hostonly-cidr", HOSTONLY-CIDR, "--virtualbox-memory", MEMORY]);// This will be refactored to dynmaically get and pass flags
+      yield machine.create(NAME, ["--virtualbox-boot2docker-url", BOOT2DOCKER_URL,"--virtualbox-cpu-count", CPU_COUNT, "--virtualbox-disk-size", DISK_SIZE,  "--virtualbox-memory", MEMORY]);// This will be refactored to dynmaically get and pass flags
       return;
     }
 
