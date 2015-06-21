@@ -2,6 +2,7 @@ var React = require('react/addons');
 var metrics = require('../utils/MetricsUtil');
 var drivers = require('../utils/DriversUtil')
 var Router = require('react-router');
+var SetupVirtualBox = require('../stores/drivers/SetupVirtualBox');
 var vboxBoot2DockerURL = "";
 var vboxMemory = "";
 var docAccessToken = "";
@@ -71,6 +72,8 @@ var Preferences = React.createClass({
     });
   },
   handleApplyClicked: function(e) {
+    console.log("Apply was clicked");
+
     // virtualbox driver flags
     localStorage.setItem('settings.virtualbox-enabled', this.state.vboxEnabled || "false");
     localStorage.setItem('settings.virtualbox-boot2docker-url', this.state.vboxBoot2DockerURL || "");
@@ -85,6 +88,23 @@ var Preferences = React.createClass({
     localStorage.setItem('settings.digitalocean-image', this.state.docImage || "");
     localStorage.setItem('settings.digitalocean-region', this.state.docRegion || "");
     localStorage.setItem('settings.digitalocean-size', this.state.docSize || "512mb");
+
+    // Check for vbox enabling and transition as appropriate
+    if (this.state.vboxEnabled) {
+      this.transitionTo('setup');
+      SetupVirtualBox.setup().then(() => {
+        console.log("SetupVirtualBox.setup() called");
+        this.transitionTo('search');
+      }).catch(err => {
+        metrics.track('Setup Failed', {
+          step: 'catch',
+          message: err.message
+        });
+        throw err;
+      });
+    } else {
+      console.log("TODO: handle case where no providers were selected")
+    }
   },
   // No idea why these events work - DO NOT TOUCH
   handleVirtualBoxBoot2DockerURL: function(e) {
@@ -175,7 +195,7 @@ var Preferences = React.createClass({
               <input type="checkbox" checked={this.state.vboxEnabled} onChange={this.handleVirtualBoxEnabled} />
             </div>
           </div>
-          <div class="virtualbox-options">
+          <div className="virtualbox-options">
               <div className="option">
                 <div className="option-name">
                    virtualbox-boot2docker-url
@@ -225,7 +245,7 @@ var Preferences = React.createClass({
               <input type="checkbox" checked={this.state.docEnabled} onChange={this.handleDigitalOceanEnabled}/>
             </div>
           </div>
-          <div class="digitalocean-parameters">
+          <div className="digitalocean-parameters">
               <div className="option">
                 <div className="option-name">
                    digitalocean-access-token
@@ -259,8 +279,9 @@ var Preferences = React.createClass({
                 </div>
               </div>
           </div>
-          <div>
-            <button type="button" onClick={this.handleApplyClicked}>Apply</button>
+
+        <div>
+          <button type="button" onClick={this.handleApplyClicked}>Apply</button>
         </div>
         </div>
       </div>

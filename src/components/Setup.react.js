@@ -1,8 +1,7 @@
-// TODO this should be the only place that calls SetupStore now
 var React = require('react/addons');
 var Router = require('react-router');
 var Radial = require('./Radial.react.js');
-var SetupStore = require('../stores/SetupStore');
+var SetupVirtualBox = require('../stores/drivers/SetupVirtualBox');
 var RetinaImage = require('react-retina-image');
 var Header = require('./Header.react');
 var Util = require('../utils/Util');
@@ -17,52 +16,57 @@ var Setup = React.createClass({
     };
   },
   componentWillMount: function () {
-    SetupStore.on(SetupStore.PROGRESS_EVENT, this.update);
-    SetupStore.on(SetupStore.STEP_EVENT, this.update);
-    SetupStore.on(SetupStore.ERROR_EVENT, this.update);
+    SetupVirtualBox.on(SetupVirtualBox.PROGRESS_EVENT, this.update);
+    SetupVirtualBox.on(SetupVirtualBox.STEP_EVENT, this.update);
+    SetupVirtualBox.on(SetupVirtualBox.ERROR_EVENT, this.update);
   },
   componentDidMount: function () {
     this.update();
   },
   componentDidUnmount: function () {
-    SetupStore.removeListener(SetupStore.PROGRESS_EVENT, this.update);
-    SetupStore.removeListener(SetupStore.STEP_EVENT, this.update);
-    SetupStore.removeListener(SetupStore.ERROR_EVENT, this.update);
+    SetupVirtualBox.removeListener(SetupVirtualBox.PROGRESS_EVENT, this.update);
+    SetupVirtualBox.removeListener(SetupVirtualBox.STEP_EVENT, this.update);
+    SetupVirtualBox.removeListener(SetupVirtualBox.ERROR_EVENT, this.update);
   },
   handleCancelRetry: function () {
     metrics.track('Setup Retried', {
       from: 'cancel'
     });
-    SetupStore.retry();
+    SetupVirtualBox.retry();
   },
   handleErrorRetry: function () {
     metrics.track('Setup Retried', {
       from: 'error',
       removeVM: false
     });
-    SetupStore.retry(false);
+    SetupVirtualBox.retry(false);
   },
   handleErrorRemoveRetry: function () {
     metrics.track('Setup Retried', {
       from: 'error',
       removeVM: true
     });
-    SetupStore.retry(true);
+    SetupVirtualBox.retry(true);
   },
   handleOpenWebsite: function () {
     Util.exec(['open', 'https://www.virtualbox.org/wiki/Downloads']);
   },
   update: function () {
-    this.setState({
-      progress: SetupStore.percent(),
-      step: SetupStore.step(),
-      error: SetupStore.error(),
-      cancelled: SetupStore.cancelled()
-    });
+    if (this.isMounted()) {
+      //console.log("Mounted FOO")
+      this.setState({
+        progress: SetupVirtualBox.percent(),
+        step: SetupVirtualBox.step(),
+        error: SetupVirtualBox.error(),
+        cancelled: SetupVirtualBox.cancelled()
+      });
+    } else {
+      //console.log("Not mounted FOO!" + JSON.stringify(this))
+    }
   },
   renderContents: function () {
     var img = 'virtualbox.png';
-    if (SetupStore.step().name === 'init' || SetupStore.step().name === 'start') {
+    if (SetupVirtualBox.step().name === 'init' || SetupVirtualBox.step().name === 'start') {
       img = 'boot2docker.png';
     }
     return (
@@ -84,9 +88,9 @@ var Setup = React.createClass({
           </div>
           <div className="desc">
             <div className="content">
-              <h4>Step {SetupStore.number()} out of {SetupStore.stepCount()}</h4>
-              <h1>{SetupStore.step().title}</h1>
-              <p>{SetupStore.step().message}</p>
+              <h4>Step {SetupVirtualBox.number()} out of {SetupVirtualBox.stepCount()}</h4>
+              <h1>{SetupVirtualBox.step().title}</h1>
+              <p>{SetupVirtualBox.step().message}</p>
             </div>
           </div>
         </div>
@@ -147,7 +151,7 @@ var Setup = React.createClass({
       return this.renderCancelled();
     } else if (this.state.error) {
       return this.renderError();
-    } else if (SetupStore.step()) {
+    } else if (SetupVirtualBox.step()) {
       return this.renderStep();
     } else {
       return false;
