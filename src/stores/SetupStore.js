@@ -19,68 +19,68 @@ var _retryPromise = null;
 var _requiredSteps = [];
 
 var _steps = [{
-//  name: 'download',
-//  title: 'Downloading VirtualBox',
-//  message: 'VirtualBox is being downloaded. Kitematic requires VirtualBox to run containers.',
-//  totalPercent: 35,
-//  percent: 0,
-//  run: function (progressCallback) {
-//    return setupUtil.download(virtualBox.url(), path.join(util.supportDir(), virtualBox.filename()), virtualBox.checksum(), percent => {
-//      progressCallback(percent);
-//    });
-//  }
-//}, {
-//  name: 'install',
-//  title: 'Installing VirtualBox & Docker',
-//  message: 'VirtualBox & Docker are being installed or upgraded in the background. We may need you to type in your password to continue.',
-//  totalPercent: 5,
-//  percent: 0,
-//  seconds: 5,
-//  run: Promise.coroutine(function* (progressCallback) {
-//    if (!virtualBox.installed()) {
-//      yield virtualBox.killall();
-//      progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
-//      try {
-//        if (util.isWindows()) {
-//          yield util.exec([path.join(util.supportDir(), virtualBox.filename()), '-msiparams', 'REBOOT=ReallySuppress', 'LIMITUI=INSTALLUILEVEL_PROGRESSONLY']);
-//        } else {
-//          yield util.exec(setupUtil.macSudoCmd(setupUtil.installVirtualBoxCmd()));
-//        }
-//      } catch (err) {
-//        throw null;
-//      }
-//    } else if (!util.isWindows() && !virtualBox.active()) {
-//      yield util.exec(setupUtil.macSudoCmd(util.escapePath('/Library/Application Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh') + ' restart'));
-//    }
-//  })
-//}, {
-//  name: 'init',
-//  title: 'Starting Docker VM',
-//  message: 'To run Docker containers on your computer, Kitematic is starting a Linux virtual machine. This may take a minute...',
-//  totalPercent: 60,
-//  percent: 0,
-//  seconds: 110,
-//  run: Promise.coroutine(function* (progressCallback) {
-//    setupUtil.simulateProgress(this.seconds, progressCallback);
-//    var exists = yield machine.exists();
-//    if (!exists || (yield machine.state()) === 'Error') {
-//      if (exists && (yield machine.state()) === 'Error') {
-//        yield machine.rm();
-//      }
-//      yield machine.create();
-//      return;
-//    }
-//
-//    var isoversion = machine.isoversion();
-//    var packagejson = util.packagejson();
-//    if (!isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0) {
-//      yield machine.start();
-//      yield machine.upgrade();
-//    }
-//    if ((yield machine.state()) !== 'Running') {
-//      yield machine.start();
-//    }
-//  })
+  name: 'download',
+  title: 'Downloading VirtualBox',
+  message: 'VirtualBox is being downloaded. Kitematic requires VirtualBox to run containers.',
+  totalPercent: 35,
+  percent: 0,
+  run: function (progressCallback) {
+    return setupUtil.download(virtualBox.url(), path.join(util.supportDir(), virtualBox.filename()), virtualBox.checksum(), percent => {
+      progressCallback(percent);
+    });
+  }
+}, {
+  name: 'install',
+  title: 'Installing VirtualBox & Docker',
+  message: 'VirtualBox & Docker are being installed or upgraded in the background. We may need you to type in your password to continue.',
+  totalPercent: 5,
+  percent: 0,
+  seconds: 5,
+  run: Promise.coroutine(function* (progressCallback) {
+    if (!virtualBox.installed()) {
+      yield virtualBox.killall();
+      progressCallback(50); // TODO: detect when the installation has started so we can simulate progress
+      try {
+        if (util.isWindows()) {
+          yield util.exec([path.join(util.supportDir(), virtualBox.filename()), '-msiparams', 'REBOOT=ReallySuppress', 'LIMITUI=INSTALLUILEVEL_PROGRESSONLY']);
+        } else {
+          yield util.exec(setupUtil.macSudoCmd(setupUtil.installVirtualBoxCmd()));
+        }
+      } catch (err) {
+        throw null;
+      }
+    } else if (!util.isWindows() && !virtualBox.active()) {
+      yield util.exec(setupUtil.macSudoCmd(util.escapePath('/Library/Application Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh') + ' restart'));
+    }
+  })
+}, {
+  name: 'init',
+  title: 'Starting Docker VM',
+  message: 'To run Docker containers on your computer, Kitematic is starting a Linux virtual machine. This may take a minute...',
+  totalPercent: 60,
+  percent: 0,
+  seconds: 110,
+  run: Promise.coroutine(function* (progressCallback) {
+    setupUtil.simulateProgress(this.seconds, progressCallback);
+    var exists = yield machine.exists();
+    if (!exists || (yield machine.state()) === 'Error') {
+      if (exists && (yield machine.state()) === 'Error') {
+        yield machine.rm();
+      }
+      yield machine.create();
+      return;
+    }
+
+    var isoversion = machine.isoversion();
+    var packagejson = util.packagejson();
+    if (!isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0) {
+      yield machine.start();
+      yield machine.upgrade();
+    }
+    if ((yield machine.state()) !== 'Running') {
+      yield machine.start();
+    }
+  })
 }];
 
 var SetupStore = assign(Object.create(EventEmitter.prototype), {
@@ -143,23 +143,23 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
       return Promise.resolve(_requiredSteps);
     }
     var packagejson = util.packagejson();
-    //var isoversion = machine.isoversion();
+    var isoversion = machine.isoversion();
     var required = {};
-    //var vboxfile = path.join(util.supportDir(), virtualBox.filename());
-    //var vboxNeedsInstall = !virtualBox.installed();
+    var vboxfile = path.join(util.supportDir(), virtualBox.filename());
+    var vboxNeedsInstall = !virtualBox.installed();
 
-    //required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== virtualBox.checksum());
-    //required.install = vboxNeedsInstall || (!util.isWindows() && !virtualBox.active());
-    //required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0;
+    required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== virtualBox.checksum());
+    required.install = vboxNeedsInstall || (!util.isWindows() && !virtualBox.active());
+    required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0;
 
-    //var exists = yield machine.exists();
-    //if (isoversion && util.compareVersions(isoversion, packagejson['docker-version']) < 0) {
-    //  this.steps().init.seconds = 33;
-    //} else if (exists && (yield machine.state()) === 'Saved') {
-    //  this.steps().init.seconds = 8;
-    //} else if (exists && (yield machine.state()) !== 'Error') {
-    //  this.steps().init.seconds = 23;
-    //}
+    var exists = yield machine.exists();
+    if (isoversion && util.compareVersions(isoversion, packagejson['docker-version']) < 0) {
+      this.steps().init.seconds = 33;
+    } else if (exists && (yield machine.state()) === 'Saved') {
+      this.steps().init.seconds = 8;
+    } else if (exists && (yield machine.state()) !== 'Error') {
+      this.steps().init.seconds = 23;
+    }
 
     _requiredSteps = _steps.filter(function (step) {
       return required[step.name];
