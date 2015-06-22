@@ -5,6 +5,7 @@ var fs = require('fs');
 var path = require('path');
 var crypto = require('crypto');
 var remote = require('remote');
+var dialog = remote.require('dialog');
 var app = remote.require('app');
 
 module.exports = {
@@ -164,7 +165,12 @@ module.exports = {
     if (fs.existsSync('/usr/bin/gnome-terminal')) {
       return ['/usr/bin/gnome-terminal', '-e'];
     } else {
-      return [''];
+      dialog.showMessageBox({
+        type: 'warning',
+        buttons: ['OK'],
+        message: 'Unknow terminal emulator. Please open an issue at https://github.com/kitematic/kitematic/issues/new.'
+      });
+      return;
     }
   },
   webPorts: ['80', '8000', '8080', '3000', '5000', '2368', '9200', '8983']

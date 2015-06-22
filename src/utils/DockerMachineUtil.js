@@ -166,7 +166,9 @@ var DockerMachine = {
       });
     } else if (util.isLinux()) {
       cmd = cmd || process.env.SHELL;
-      util.exec(resources.terminal().concat([cmd])).then(() => {});
+      var terminal = resources.terminal();
+      if (terminal)
+        util.exec(terminal.concat([cmd])).then(() => {});
     } else {
       cmd = cmd || process.env.SHELL;
       this.info().then(machine => {
