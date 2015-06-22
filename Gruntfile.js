@@ -1,9 +1,10 @@
 var path = require('path');
+var fs = require('fs');
 var execFile = require('child_process').execFile;
 var packagejson = require('./package.json');
 var electron = require('electron-prebuilt');
 
-var WINDOWS_DOCKER_URL = 'https://get.docker.com/builds/Windows/x86_64/docker-1.6.2.exe';
+var WINDOWS_DOCKER_URL = 'https://get.docker.com/builds/Windows/x86_64/docker-' + packagejson['docker-version'] + '.exe';
 var DARWIN_DOCKER_URL = 'https://get.docker.com/builds/Darwin/x86_64/docker-' + packagejson['docker-version'];
 var WINDOWS_DOCKER_MACHINE_URL = 'https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_windows-amd64.exe';
 var DARWIN_DOCKER_MACHINE_URL = 'https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_darwin-amd64';
@@ -26,6 +27,18 @@ module.exports = function (grunt) {
     var match = str.match(/(\d+\.\d+\.\d+)/);
     return match ? match[1] : null;
   };
+
+  grunt.registerTask('download-boot2docker-iso', 'Downloads provided boot2docker version', function () {
+    try {
+      var data = fs.readFileSync(path.join('resources', 'boot2docker.iso'), {encoding: 'utf-8'});
+      var match = data.match(/Boot2Docker-v(\d+\.\d+\.\d+)/);
+      if (match && match[1] !== packagejson['docker-version']) {
+        grunt.task.run('curl:boot2docker-iso');
+      }
+    } catch (err) {
+      grunt.task.run('curl:boot2docker-iso');
+    }
+  });
 
   grunt.registerMultiTask('download-binary', 'Downloads binary unless version up to date', function () {
     var target = grunt.task.current.target;
@@ -83,7 +96,8 @@ module.exports = function (grunt) {
           platform: 'darwin',
           arch: 'x64',
           asar: true,
-          'app-bundle-id': 'com.kitematic.kitematic'
+          'app-bundle-id': 'com.kitematic.kitematic',
+          'app-version': packagejson.version
         }
       }
     },
@@ -116,7 +130,8 @@ module.exports = function (grunt) {
       appDirectory: 'dist/' + BASENAME + '-win32/',
       authors: 'Docker Inc.',
       loadingGif: 'util/loading.gif',
-      setupIcon: 'util/kitematic.ico',
+      setupIcon: 'util/setup.ico',
+      iconUrl: 'https://raw.githubusercontent.com/kitematic/kitematic/master/util/kitematic.ico',
       description: APPNAME,
       title: APPNAME,
       exe: BASENAME + '.exe',
@@ -135,6 +150,11 @@ module.exports = function (grunt) {
         version: packagejson['docker-machine-version'],
         binary: path.join('resources', 'docker-machine'),
         download: 'curl:docker-machine'
+      },
+      'docker-compose': {
+        version: packagejson['docker-compose-version'],
+        binary: path.join('resources', 'docker-compose'),
+        download: 'curl:docker-compose'
       }
     },
 
@@ -193,7 +213,7 @@ module.exports = function (grunt) {
     rename: {
       installer: {
         src: 'installer/Setup.exe',
-        dest: 'installer/' + BASENAME + 'Setup-' + packagejson.version + '.exe'
+        dest: 'installer/' + BASENAME + 'Setup-' + packagejson.version + '-Windows-Alpha.exe'
       }
     },
 
@@ -213,7 +233,7 @@ module.exports = function (grunt) {
       },
       'boot2docker-iso': {
         src: BOOT2DOCKER_ISO_URL,
-        dest: path.join('resources', 'boot2docker-' + packagejson['docker-version'])
+        dest: path.join('resources', 'boot2docker.iso')
       }
     },
 
@@ -254,6 +274,41 @@ module.exports = function (grunt) {
       }
     },
 
+    plistbuddy: {
+      addBundleURLTypes: {
+        method: 'Add',
+        entry: 'CFBundleURLTypes',
+        type: 'array',
+        src: '<%= OSX_FILENAME %>/Contents/Info.plist'
+      },
+      addBundleURLTypesDict: {
+        method: 'Add',
+        entry: 'CFBundleURLTypes:0',
+        type: 'dict',
+        src: '<%= OSX_FILENAME %>/Contents/Info.plist'
+      },
+      addBundleURLTypesDictName: {
+        method: 'Add',
+        entry: 'CFBundleURLTypes:0:CFBundleURLName',
+        type: 'string',
+        value: 'Docker App Protocol',
+        src: '<%= OSX_FILENAME %>/Contents/Info.plist'
+      },
+      addBundleURLTypesDictSchemes: {
+        method: 'Add',
+        entry: 'CFBundleURLTypes:0:CFBundleURLSchemes',
+        type: 'array',
+        src: '<%= OSX_FILENAME %>/Contents/Info.plist'
+      },
+      addBundleURLTypesDictSchemesDocker: {
+        method: 'Add',
+        entry: 'CFBundleURLTypes:0:CFBundleURLSchemes:0',
+        type: 'string',
+        value: 'docker',
+        src: '<%= OSX_FILENAME %>/Contents/Info.plist'
+      }
+    },
+
     shell: {
       electron: {
         command: electron + ' ' + 'build',
@@ -272,16 +327,17 @@ module.exports = function (grunt) {
           'codesign --deep -v -f -s "<%= IDENTITY %>" <%= OSX_FILENAME_ESCAPED %>/Contents/Frameworks/*',
           'codesign -v -f -s "<%= IDENTITY %>" <%= OSX_FILENAME_ESCAPED %>',
           'codesign -vvv --display <%= OSX_FILENAME_ESCAPED %>',
-          'codesign -v --verify <%= OSX_FILENAME_ESCAPED %>',
+          'codesign -v --verify <%= OSX_FILENAME_ESCAPED %>'
         ].join(' && '),
       },
       zip: {
-        command: 'ditto -c -k --sequesterRsrc --keepParent <%= OSX_FILENAME_ESCAPED %> <%= OSX_OUT %>/' + BASENAME + '-' + packagejson.version + '.zip',
+        command: 'ditto -c -k --sequesterRsrc --keepParent <%= OSX_FILENAME_ESCAPED %> <%= OSX_OUT %>/' + BASENAME + '-' + packagejson.version + '-Mac.zip',
       }
     },
 
     clean: {
       release: ['build/', 'dist/', 'installer/'],
+      isos: ['resources/boot2docker*']
     },
 
     // livereload
