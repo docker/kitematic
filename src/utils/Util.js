@@ -164,6 +164,8 @@ module.exports = {
   linuxTerminal: function () {
     if (fs.existsSync('/usr/bin/gnome-terminal')) {
       return ['/usr/bin/gnome-terminal', '-e'];
+    } else if (fs.existsSync('/usr/bin/mate-terminal')) {
+      return ['/usr/bin/mate-terminal', '-e'];
     } else {
       dialog.showMessageBox({
         type: 'warning',
