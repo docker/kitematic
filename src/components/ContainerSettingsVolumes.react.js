@@ -38,9 +38,9 @@ var ContainerSettingsVolumes = React.createClass({
       if (pair[1]) { binds.push(pair[1] + ':' + pair[0]) }
     });
 
-    containerActions.update(this.props.container.Name, {Binds: binds, Volumes: volumes});
+    containerActions.update(this.props.container.Name, {HostConfig: {Binds: binds}, Volumes: volumes});
   },
-  updateVolumeDirectory: function(dockerVol, directory) {
+  updateVolumeDirectory: function (dockerVol, directory) {
     // Update the `volumes` variable in order to refresh the screen and show the
     // selected path
     let volumes = _.map(this.state.volumes, _.clone);
@@ -52,6 +52,18 @@ var ContainerSettingsVolumes = React.createClass({
     this.setState({
       volumes: volumes
     });
+  },
+  removeVolume: function (dockerVol, deleteContainer) {
+    var containerVolumes = _.clone(this.props.container.Volumes);
+    if (deleteContainer)
+    {
+      delete containerVolumes[dockerVol];
+    } else {
+      containerVolumes[dockerVol] = '';
+    }
+
+    this.updateContainerBindsAndVolumes(containerVolumes);
+    this.updateVolumeDirectory(dockerVol, '');
   },
   handleChooseVolumeClick: function (dockerVol) {
     dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']}, (filenames) => {
@@ -87,11 +99,7 @@ var ContainerSettingsVolumes = React.createClass({
       from: 'settings'
     });
 
-    var containerVolumes = _.clone(this.props.container.Volumes);
-    containerVolumes[dockerVol] = null;
-
-    this.updateContainerBindsAndVolumes(containerVolumes);
-    this.updateVolumeDirectory(dockerVol, '');
+    this.removeVolume(dockerVol, false);
   },
   handleOpenVolumeClick: function (path) {
     metrics.track('Opened Volume Directory', {
@@ -104,7 +112,7 @@ var ContainerSettingsVolumes = React.createClass({
     }
   },
   // Store temporarily the typed path for the new volume
-  handleChangeNewVolumePath: function(index, event) {
+  handleChangeNewVolumePath: function (index, event) {
     this.setState({
       newVolumePath: event.target.value
     });
@@ -138,8 +146,17 @@ var ContainerSettingsVolumes = React.createClass({
     }
   },
   // Remove the clicked volume from the `volume` variable
-  handleRemoveVolume: function(index) {
+  handleRemoveVolume: function (index) {
     let volumes = _.map(this.state.volumes, _.clone);
+
+    // Remove the volume from the container and update the `volume` variable
+    // if the user choosed a folder
+    if (volumes[index][1] !== '')
+    {
+      this.removeVolume(volumes[index][2], true);
+    }
+
+    // Remove the volume from the `volume` variable
     volumes.splice(index, 1);
 
     if (volumes.length === 0) {
@@ -166,7 +183,7 @@ var ContainerSettingsVolumes = React.createClass({
   },
   // Replace the `volumes` variable by a copy of `originalVolumes` where are
   // stored the original volumes
-  handleResetVolumes: function() {
+  handleResetVolumes: function () {
     let volumes = _.clone(this.state.originalVolumes);
     this.setState({
       volumes: volumes
