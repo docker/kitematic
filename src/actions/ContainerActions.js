@@ -39,6 +39,12 @@ class ContainerActions {
   run (name, repo, tag) {
     dockerUtil.run(name, repo, tag);
   }
+
+  inspect (name, component, callback) {
+    dockerUtil.inspectContainer(name, function (result) {
+      callback(result, component);
+    });
+  }
 }
 
 export default alt.createActions(ContainerActions);

@@ -7,6 +7,7 @@ var Preferences = React.createClass({
   getInitialState: function () {
     return {
       closeVMOnQuit: localStorage.getItem('settings.closeVMOnQuit') === 'true',
+      debugEnabled: localStorage.getItem('settings.debugEnabled') === 'true',
       metricsEnabled: metrics.enabled()
     };
   },
@@ -34,6 +35,16 @@ var Preferences = React.createClass({
       enabled: checked
     });
   },
+  handleChangeDebugEnabled: function (e) {
+    var checked = e.target.checked;
+    this.setState({
+      debugEnabled: checked
+    });
+    localStorage.setItem('settings.debugEnabled', checked);
+    metrics.track('Toggled Enable "Debug" tab', {
+      enabled: checked
+    });
+  },
   render: function () {
     return (
       <div className="preferences">
@@ -55,6 +66,15 @@ var Preferences = React.createClass({
             </div>
             <div className="option-value">
               <input type="checkbox" checked={this.state.metricsEnabled} onChange={this.handleChangeMetricsEnabled}/>
+            </div>
+          </div>
+          <div className="title">Developer tools</div>
+          <div className="option">
+            <div className="option-name">
+              Enable "Debug" tab
+            </div>
+            <div className="option-value">
+              <input type="checkbox" checked={this.state.debugEnabled} onChange={this.handleChangeDebugEnabled}/>
             </div>
           </div>
         </div>
