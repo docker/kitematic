@@ -20,7 +20,7 @@ var ContainerHomeFolder = React.createClass({
 
     if (hostVolume.indexOf(util.windowsToLinuxPath(util.home())) === -1) {
       dialog.showMessageBox({
-        message: 'Enable all volumes to edit files via Finder? This may not work with all database containers.',
+        message: `Enable all volumes to edit files? This may not work with all database containers.`,
         buttons: ['Enable Volumes', 'Cancel']
       }, (index) => {
         if (index === 0) {
