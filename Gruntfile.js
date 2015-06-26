@@ -21,7 +21,6 @@ module.exports = function (grunt) {
   env.NODE_ENV = target;
 
   var certificateFile = grunt.option('certificateFile');
-  var certificatePassword = grunt.option('certificatePassword');
 
   var version = function (str) {
     var match = str.match(/(\d+\.\d+\.\d+)/);
@@ -103,6 +102,20 @@ module.exports = function (grunt) {
       }
     },
 
+    prompt: {
+      'create-windows-installer': {
+        options: {
+          questions: [
+            {
+              config: 'certificatePassword',
+              type: 'password',
+              message: 'Certificate Password: '
+            }
+          ]
+        }
+      }
+    },
+
     rcedit: {
       exes: {
         files: [{
@@ -137,7 +150,7 @@ module.exports = function (grunt) {
       title: APPNAME,
       exe: BASENAME + '.exe',
       version: packagejson.version,
-      signWithParams: '/f ' + certificateFile + ' /p ' + certificatePassword + ' /tr http://timestamp.comodoca.com/rfc3161'
+      signWithParams: '/f ' + certificateFile + ' /p <%= certificatePassword %> /tr http://timestamp.comodoca.com/rfc3161'
     },
 
     // docker binaries
@@ -372,7 +385,7 @@ module.exports = function (grunt) {
   }
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean:release', 'download-binary:docker', 'download-binary:docker-machine', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename:installer']);
+    grunt.registerTask('release', ['clean:release', 'download-binary:docker', 'download-binary:docker-machine', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'prompt:create-windows-installer', 'create-windows-installer', 'rename:installer']);
   } else {
     grunt.registerTask('release', ['clean:release', 'download-binary', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'plistbuddy', 'shell:sign', 'shell:zip']);
   }
