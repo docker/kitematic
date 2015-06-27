@@ -166,11 +166,13 @@ module.exports = {
       return ['/usr/bin/gnome-terminal', '-e'];
     } else if (fs.existsSync('/usr/bin/mate-terminal')) {
       return ['/usr/bin/mate-terminal', '-e'];
-    } else {
+    } else if (fs.existsSync('/usr/bin/konsole')) {
+      return ['/usr/bin/konsole', '-e'];
+    }else {
       dialog.showMessageBox({
         type: 'warning',
         buttons: ['OK'],
-        message: 'Unknow terminal emulator. Please open an issue at https://github.com/kitematic/kitematic/issues/new.'
+        message: 'Unknown terminal emulator. Please open an issue at https://github.com/kitematic/kitematic/issues/new.'
       });
       return;
     }
