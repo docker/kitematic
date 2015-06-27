@@ -168,7 +168,7 @@ module.exports = {
       return ['/usr/bin/mate-terminal', '-e'];
     } else if (fs.existsSync('/usr/bin/konsole')) {
       return ['/usr/bin/konsole', '-e'];
-    }else {
+    } else {
       dialog.showMessageBox({
         type: 'warning',
         buttons: ['OK'],
