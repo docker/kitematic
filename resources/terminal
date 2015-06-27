@@ -36,6 +36,28 @@ function open_iterm () {
 EOF
 }
 
+function open_iterm_new () {
+  osascript > /dev/null <<EOF
+  tell application "iTerm"
+  	activate
+  	try
+  		tell the last window
+  			tell the current session
+  				write text "bash -c \"$CMD\""
+  			end tell
+  		end tell
+  	on error
+  		create window with default profile
+  		tell the last window
+  			tell the current session
+  				write text "bash -c \"$CMD\""
+  			end tell
+  		end tell
+  	end try
+  end tell
+EOF
+}
+
 function open_terminal () {
   osascript > /dev/null <<EOF
   tell application "Terminal" to activate
@@ -48,7 +70,7 @@ EOF
 }
 
 if [ "$ITERM_EXISTS" == "true" ]; then
-  open_iterm "$@" || open_terminal "$@"
+  open_iterm "$@" || open_iterm_new "$@" || open_terminal "$@"
 else
   open_terminal "$@"
 fi
