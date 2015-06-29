@@ -112,9 +112,9 @@ var ImageCard = React.createClass({
     };
     var imgsrc;
     if (this.props.image.img) {
-      imgsrc = `http://kitematic.com/recommended/${this.props.image.img}`;
+      imgsrc = `https://kitematic.com/recommended/${this.props.image.img}`;
     } else {
-      imgsrc = 'http://kitematic.com/recommended/kitematic_html.png';
+      imgsrc = 'https://kitematic.com/recommended/kitematic_html.png';
     }
     var tags;
     if (self.state.loading) {
@@ -122,7 +122,8 @@ var ImageCard = React.createClass({
     } else if (self.state.tags.length === 0) {
       tags = <div className="no-tags">No Tags</div>;
     } else {
-      var tagDisplay = self.state.tags.map(function (t) {
+      var tagDisplay = self.state.tags.map(function (tag) {
+        let t = tag.name;
         if (t === self.state.chosenTag) {
           return <div className="tag active" key={t} onClick={self.handleTagClick.bind(self, t)}>{t}</div>;
         } else {

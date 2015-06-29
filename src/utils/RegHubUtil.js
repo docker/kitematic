@@ -56,6 +56,12 @@ module.exports = {
     request.get('https://kitematic.com/recommended.json', (error, response, body) => {
       if (error) {
         repositoryServerActions.error({error});
+        return;
+      }
+
+      if (response.statusCode !== 200) {
+        repositoryServerActions.error({error: new Error('Could not fetch recommended repo list. Please try again later.')});
+        return;
       }
 
       let data = JSON.parse(body);
@@ -97,8 +103,8 @@ module.exports = {
     }, (error, response, body) => {
       if (response.statusCode === 200) {
         let data = JSON.parse(body);
-        tagServerActions.tagsUpdated({repo, tags: data.tags});
-        if (callback) { callback(null, data.tags); }
+        tagServerActions.tagsUpdated({repo, tags: data});
+        if (callback) { callback(null, data); }
       } else if (error || response.statusCode === 401) {
         repositoryServerActions.error({repo});
         if (callback) { callback(new Error('Failed to fetch repos')); }

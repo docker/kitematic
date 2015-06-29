@@ -129,6 +129,7 @@ export default {
       containerData.Env = containerData.Config.Env;
     }
 
+
     containerData.Volumes = _.mapObject(containerData.Volumes, () => {return {};});
 
     let existing = this.client.getContainer(name);
@@ -147,9 +148,9 @@ export default {
   },
 
   fetchContainer (id) {
-   this.client.getContainer(id).inspect((error, container) => {
+    this.client.getContainer(id).inspect((error, container) => {
       if (error) {
-       containerServerActions.error({name: id, error});
+        containerServerActions.error({name: id, error});
       } else {
         container.Name = container.Name.replace('/', '');
         containerServerActions.updated({container});
@@ -164,10 +165,15 @@ export default {
       }
       async.map(containers, (container, callback) => {
         this.client.getContainer(container.Id).inspect((error, container) => {
+          if (error) {
+            callback(null, null);
+            return;
+          }
           container.Name = container.Name.replace('/', '');
           callback(null, container);
         });
       }, (err, containers) => {
+        containers = containers.filter(c => c !== null);
         if (err) {
           // TODO: add a global error handler for this
           return;
@@ -188,6 +194,8 @@ export default {
       Config: {
         Image: imageName,
       },
+      Tty: true,
+      OpenStdin: true,
       State: {
         Downloading: true
       }
@@ -209,7 +217,7 @@ export default {
 
       delete this.placeholders[name];
       localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
-      this.createContainer(name, {Image: imageName});
+      this.createContainer(name, {Image: imageName, Tty: true, OpenStdin: true});
     },
 
     // progress is actually the progression PER LAYER (combined in columns)
@@ -362,10 +370,8 @@ export default {
         }
 
         if (data.status === 'destroy') {
-          containerServerActions.destroyed({name: data.id});
-        } else if (data.status === 'create') {
-          this.fetchAllContainers();
-        } else {
+          containerServerActions.destroyed({id: data.id});
+        } else if (data.id) {
           this.fetchContainer(data.id);
         }
       });
@@ -403,13 +409,14 @@ export default {
       let columns = {};
       columns.amount = 4; // arbitrary
       columns.toFill = 0; // the current column index, waiting for layer IDs to be displayed
+      let error = null;
 
       // data is associated with one layer only (can be identified with id)
       stream.on('data', str => {
         var data = JSON.parse(str);
 
         if (data.error) {
-          callback(data.error);
+          error = data.error;
           return;
         }
 
@@ -483,7 +490,7 @@ export default {
         }
       });
       stream.on('end', function () {
-        callback();
+        callback(error);
       });
     });
   },

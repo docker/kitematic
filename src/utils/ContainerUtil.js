@@ -13,6 +13,7 @@ var ContainerUtil = {
     });
   },
 
+  // Get existing links
   links: function (container) {
     if (!container || !container.HostConfig || !container.HostConfig.Links) {
       return [];
@@ -33,6 +34,14 @@ var ContainerUtil = {
       var splits = [link.slice(keyStart, i), link.slice(valStart)];
       return splits;
     });
+  },
+
+  // Provide Foreground options
+  mode: function (container) {
+    if (!container || !container.Config) {
+      return [true, true];
+    }
+    return [container.Config.Tty, container.Config.OpenStdin];
   },
 
   // TODO: inject host here instead of requiring Docker

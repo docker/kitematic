@@ -4,7 +4,6 @@ import dockerUtil from '../utils/DockerUtil';
 class ContainerActions {
 
   destroy (name) {
-    this.dispatch({name});
     dockerUtil.destroy(name);
   }
 
@@ -28,9 +27,9 @@ class ContainerActions {
     dockerUtil.restart(name);
   }
 
-  update (name, containerOpts) {
-    this.dispatch({name, containerOpts});
-    dockerUtil.updateContainer(name, containerOpts);
+  update (name, container) {
+    this.dispatch({name, container});
+    dockerUtil.updateContainer(name, container);
   }
 
   clearPending () {

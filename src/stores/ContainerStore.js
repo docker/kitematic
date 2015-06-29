@@ -1,9 +1,7 @@
 import _ from 'underscore';
-import deepExtend from 'deep-extend';
 import alt from '../alt';
 import containerServerActions from '../actions/ContainerServerActions';
 import containerActions from '../actions/ContainerActions';
-var LogStore = require('./LogStore');
 
 class ContainerStore {
   constructor () {
@@ -74,7 +72,7 @@ class ContainerStore {
       return;
     }
 
-    deepExtend(containers[name], container);
+    _.extend(containers[name], container);
 
     if (containers[name].State) {
       containers[name].State.Updating = true;
@@ -85,11 +83,12 @@ class ContainerStore {
 
   updated ({container}) {
     let containers = this.containers;
-    if (!containers[container.Name] || containers[container.Name].State.Updating) {
+    if (containers[container.Name] && containers[container.Name].State.Updating) {
       return;
     }
     // Trigger log update
-    LogStore.fetch(container.Name);
+    // TODO: fix this loading multiple times
+    // LogStore.fetch(container.Name);
 
     containers[container.Name] = container;
 
@@ -112,16 +111,10 @@ class ContainerStore {
     this.setState({containers});
   }
 
-  destroy ({name}) {
-    let containers = this.containers;
-    delete containers[name];
-    this.setState({containers});
-  }
-
-  destroyed ({name}) {
+  destroyed ({id}) {
     let containers = this.containers;
     let container = _.find(_.values(this.containers), container => {
-      return container.Id === name || container.Name === name;
+      return container.Id === id || container.Name === id;
     });
 
     if (container && container.State && container.State.Updating) {

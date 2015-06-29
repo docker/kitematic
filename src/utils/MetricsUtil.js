@@ -4,10 +4,12 @@ var uuid = require('node-uuid');
 var fs = require('fs');
 var path = require('path');
 var util = require('./Util');
+var os = require('os');
+var osxRelease = require('osx-release');
 var settings;
 
 try {
-  settings = JSON.parse(fs.readFileSync(path.join(__dirname, '../..', 'settings.json'), 'utf8'));
+  settings = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
 } catch (err) {
   settings = {};
 }
@@ -40,24 +42,21 @@ var Metrics = {
       return;
     }
 
-    var id = localStorage.getItem('metrics.id');
+    let id = localStorage.getItem('metrics.id');
     if (!id) {
-      localStorage.setItem('metrics.id', uuid.v4());
+      id = uuid.v4();
+      localStorage.setItem('metrics.id', id);
     }
 
-    var os;
-
-    if(util.isWindows()) {
-      os = navigator.userAgent;
-    } else {
-      os = navigator.userAgent.match(/Mac OS X (\d+_\d+_\d+)/)[1].replace(/_/g, '.');
-    }
+    let osName = os.platform();
+    let osVersion = util.isWindows() ? os.release() : osxRelease(os.release()).version;
 
     mixpanel.track(name, assign({
       distinct_id: id,
       version: util.packagejson().version,
-      'Operating System Version': os,
-      beta: !!settings.beta
+      'Operating System': osName,
+      'Operating System Version': osVersion,
+      'Operating System Architecture': os.arch()
     }, data));
   },
 

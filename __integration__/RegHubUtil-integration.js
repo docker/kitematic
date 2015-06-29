@@ -1,7 +1,6 @@
 jest.autoMockOff();
 
-// One minute timeout for integration tests
-jasmine.getEnv().DEFAULT_TIMEOUT_INTERVAL = 60000;
+jasmine.getEnv().defaultTimeoutInterval = 60000;
 
 let _ = require('underscore');
 let regHubUtil = require('../src/utils/RegHubUtil');
@@ -26,7 +25,8 @@ describe('RegHubUtil Integration Tests', () => {
         hubUtil.login(process.env.INTEGRATION_USER, process.env.INTEGRATION_PASSWORD, () => {
           regHubUtil.tags(`${process.env.INTEGRATION_USER}/test_private`, (error, tags) => {
             expect(error).toBeFalsy();
-            expect(tags).toEqual(['latest']);
+            expect(tags.length).toEqual(1);
+            expect(tags[0].name).toEqual('latest');
             resolve();
           });
         });
@@ -51,7 +51,8 @@ describe('RegHubUtil Integration Tests', () => {
         hubUtil.login(process.env.INTEGRATION_USER, process.env.INTEGRATION_PASSWORD, () => {
           regHubUtil.tags(`${process.env.INTEGRATION_USER}/test`, (error, tags) => {
             expect(error).toBeFalsy();
-            expect(tags).toEqual(['latest']);
+            expect(tags.length).toEqual(1);
+            expect(tags[0].name).toEqual('latest');
             resolve();
           });
         });
