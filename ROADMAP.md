@@ -29,3 +29,8 @@
 **June 2015**
 
 * Microsoft Windows port
+
+**July 2015**
+
+* Refactor to Flux Architecture
+* Stability & code quality improvements
