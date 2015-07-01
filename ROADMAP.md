@@ -28,7 +28,7 @@
 
 **June 2015**
 
-* Microsoft Windows port
+* Microsoft Windows alpha
 
 **July 2015**
 
