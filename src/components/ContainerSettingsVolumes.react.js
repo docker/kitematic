@@ -53,7 +53,7 @@ var ContainerSettingsVolumes = React.createClass({
       volumes: volumes
     });
   },
-  removeVolume: function (dockerVol, deleteContainer) {
+  removeVolume: function (dockerVol, deleteContainer = false) {
     var containerVolumes = _.clone(this.props.container.Volumes);
     if (deleteContainer)
     {
@@ -99,7 +99,7 @@ var ContainerSettingsVolumes = React.createClass({
       from: 'settings'
     });
 
-    this.removeVolume(dockerVol, false);
+    this.removeVolume(dockerVol);
   },
   handleOpenVolumeClick: function (path) {
     metrics.track('Opened Volume Directory', {
