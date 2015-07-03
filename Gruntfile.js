@@ -51,6 +51,7 @@ module.exports = function (grunt) {
         grunt.task.run('chmod');
       }
       done();
+
     });
   });
 
@@ -373,7 +374,7 @@ module.exports = function (grunt) {
   }
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean:release', 'download-binary:docker', 'download-binary:docker-machine', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename:installer']);
+    grunt.registerTask('release', ['clean:release', 'download-binary:docker', 'download-binary:docker-machine', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'prompt:create-windows-installer', 'create-windows-installer', 'rename:installer']);
   } else if(process.platform === 'linux') {
     // TODO : Add 'copy:linux' when will do the packaging
     grunt.registerTask('release', ['clean', 'babel', 'less', 'copy:dev', 'electron:linux']);
