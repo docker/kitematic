@@ -59,7 +59,7 @@ var ContainerSettingsVolumes = React.createClass({
     {
       delete containerVolumes[dockerVol];
     } else {
-      containerVolumes[dockerVol] = '';
+      containerVolumes[dockerVol] = null;
     }
 
     this.updateContainerBindsAndVolumes(containerVolumes);
