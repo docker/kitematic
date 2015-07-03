@@ -120,9 +120,9 @@ export default {
   },
 
   fetchContainer (id) {
-   this.client.getContainer(id).inspect((error, container) => {
+    this.client.getContainer(id).inspect((error, container) => {
       if (error) {
-       containerServerActions.error({name: id, error});
+        containerServerActions.error({name: id, error});
       } else {
         container.Name = container.Name.replace('/', '');
         containerServerActions.updated({container});
@@ -135,26 +135,23 @@ export default {
       if (err) {
         return;
       }
-
-      let modifiedContainers = _.map(containers, container => {
-        container.Name = container.Names[0].replace('/', '');
-        delete container.Names;
-
-        // HACK: fill in some data based on simple list data
-        container.State = {};
-        container.Config = {
-          Image: container.Image
-        };
-        if (container.Status.indexOf('Exited') !== -1) {
-          container.State.Stopped = true;
-        } else if (container.Status.indexOf('Paused') !== -1) {
-          container.State.Stopped = true;
-        } else if (container.Status.indexOf('Up') !== -1) {
-          container.State.Running = true;
+      async.map(containers, (container, callback) => {
+        this.client.getContainer(container.Id).inspect((error, container) => {
+          if (error) {
+            callback(null, null);
+            return;
+          }
+          container.Name = container.Name.replace('/', '');
+          callback(null, container);
+        });
+      }, (err, containers) => {
+        containers = containers.filter(c => c !== null);
+        if (err) {
+          // TODO: add a global error handler for this
+          return;
         }
-        return container;
+        containerServerActions.allUpdated({containers: _.indexBy(containers.concat(_.values(this.placeholders)), 'Name')});
       });
-      containerServerActions.allUpdated({containers: _.indexBy(modifiedContainers.concat(_.values(this.placeholders)), 'Name')});
     });
   },
 
