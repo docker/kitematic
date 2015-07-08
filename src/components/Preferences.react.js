@@ -1,6 +1,6 @@
-var React = require('react/addons');
-var metrics = require('../utils/MetricsUtil');
-var Router = require('react-router');
+import React from 'react/addons';
+import metrics from '../utils/MetricsUtil';
+import Router from 'react-router';
 
 var Preferences = React.createClass({
   mixins: [Router.Navigation],

@@ -1,6 +1,6 @@
-var fs = require('fs');
-var util = require('./Util');
-var Promise = require('bluebird');
+import fs from 'fs';
+import util from './Util';
+import Promise from 'bluebird';
 
 var VirtualBox = {
   command: function () {

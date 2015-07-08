@@ -1,9 +1,9 @@
-var React = require('react/addons');
-var Router = require('react-router');
-var shell = require('shell');
-var containerActions = require('../actions/ContainerActions');
-var containerStore = require('../stores/ContainerStore');
-var metrics = require('../utils/MetricsUtil');
+import React from 'react/addons';
+import Router from 'react-router';
+import shell from 'shell';
+import containerActions from '../actions/ContainerActions';
+import containerStore from '../stores/ContainerStore';
+import metrics from '../utils/MetricsUtil';
 
 module.exports = React.createClass({
   mixins: [Router.Navigation],

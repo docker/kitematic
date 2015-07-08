@@ -1,17 +1,16 @@
-var React = require('react/addons');
-var remote = require('remote');
-var RetinaImage = require('react-retina-image');
-var remote = require('remote');
-var ipc = require('ipc');
+import React from 'react/addons';
+import remote from 'remote';
+import RetinaImage from 'react-retina-image';
+import ipc from 'ipc';
 var autoUpdater = remote.require('auto-updater');
-var util = require('../utils/Util');
-var metrics = require('../utils/MetricsUtil');
+import util from '../utils/Util';
+import metrics from '../utils/MetricsUtil';
 var Menu = remote.require('menu');
 var MenuItem = remote.require('menu-item');
-var accountStore = require('../stores/AccountStore');
-var accountActions = require('../actions/AccountActions');
-var Router = require('react-router');
-var classNames = require('classnames');
+import accountStore from '../stores/AccountStore';
+import accountActions from '../actions/AccountActions';
+import Router from 'react-router';
+import classNames from 'classnames';
 
 var Header = React.createClass({
   mixins: [Router.Navigation],
