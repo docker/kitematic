@@ -61,6 +61,12 @@ var ContainerDetailsSubheader = React.createClass({
       this.context.router.transitionTo('containerSettings', {name: this.context.router.getCurrentParams().name});
     }
   },
+  showDebug: function () {
+    if (!this.disableTab()) {
+      metrics.track('Viewed Debug');
+      this.context.router.transitionTo('containerDebug', {name: this.context.router.getCurrentParams().name});
+    }
+  },
   handleRun: function () {
     if (this.props.defaultPort && !this.disableRun()) {
       metrics.track('Opened In Browser', {
@@ -133,6 +139,11 @@ var ContainerDetailsSubheader = React.createClass({
       'active': currentRoutes && (currentRoutes.indexOf('containerSettings') >= 0),
       disabled: this.disableTab()
     });
+    var tabDebugClasses = classNames({
+      'details-tab': true,
+      'active': currentRoutes && (currentRoutes.indexOf('containerDebug') >= 0),
+      disabled: this.disableTab()
+    });
     var startStopToggle;
     if (this.disableStop()) {
       startStopToggle = (
@@ -149,6 +160,14 @@ var ContainerDetailsSubheader = React.createClass({
         </div>
       );
     }
+
+    let debugTab;
+    if (localStorage.getItem('settings.debugEnabled') === 'true') {
+      debugTab = (
+        <span className={tabDebugClasses} onClick={this.showDebug}>Debug</span>
+      );
+    }
+
     return (
       <div className="details-subheader">
         <div className="details-header-actions">
@@ -165,6 +184,7 @@ var ContainerDetailsSubheader = React.createClass({
         <div className="details-subheader-tabs">
           <span className={tabHomeClasses} onClick={this.showHome}>Home</span>
           <span className={tabSettingsClasses} onClick={this.showSettings}>Settings</span>
+          {debugTab}
         </div>
       </div>
     );

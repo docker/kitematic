@@ -230,6 +230,13 @@ export default {
     });
   },
 
+  inspectContainer (name, callback) {
+    let existing = this.client.getContainer(name);
+    existing.inspect((error, existingData) => {
+      callback(existingData);
+    });
+  },
+
   rename (name, newName) {
     this.client.getContainer(name).rename({name: newName}, error => {
       if (error && error.statusCode !== 204) {

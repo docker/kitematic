@@ -12,6 +12,7 @@ var ContainerSettingsGeneral = require('./components/ContainerSettingsGeneral.re
 var ContainerSettingsPorts = require('./components/ContainerSettingsPorts.react');
 var ContainerSettingsVolumes = require('./components/ContainerSettingsVolumes.react');
 var ContainerSettingsAdvanced = require('./components/ContainerSettingsAdvanced.react');
+var ContainerDebug = require('./components/ContainerDebug.react');
 var Preferences = require('./components/Preferences.react');
 var NewContainerSearch = require('./components/NewContainerSearch.react');
 var NewContainerPull = require('./components/NewContainerPull.react');
@@ -45,6 +46,7 @@ var routes = (
           <Route name="containerSettingsVolumes" path="containers/details/:name/settings/volumes" handler={ContainerSettingsVolumes}/>
           <Route name="containerSettingsAdvanced" path="containers/details/:name/settings/advanced" handler={ContainerSettingsAdvanced}/>
         </Route>
+        <Route name="containerDebug" path="containers/details/:name/debug" handler={ContainerDebug}/>
       </Route>
       <Route name="new" path="containers/new">
         <DefaultRoute name="search" handler={NewContainerSearch}/>
