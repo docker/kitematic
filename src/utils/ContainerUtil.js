@@ -13,6 +13,16 @@ var ContainerUtil = {
     });
   },
 
+  volumes: function (container) {
+    if (!container || !container.Volumes) {
+      return [];
+    }
+    return _.map(container.Volumes, (key, value) => {
+      var splits = [key, value];
+      return splits;
+    });
+  },
+
   // Provide Foreground options
   mode: function (container) {
     if (!container || !container.Config) {
