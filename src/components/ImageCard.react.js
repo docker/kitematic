@@ -1,13 +1,13 @@
-var $ = require('jquery');
-var React = require('react/addons');
-var Router = require('react-router');
-var shell = require('shell');
-var RetinaImage = require('react-retina-image');
-var metrics = require('../utils/MetricsUtil');
-var containerActions = require('../actions/ContainerActions');
-var containerStore = require('../stores/ContainerStore');
-var tagStore = require('../stores/TagStore');
-var tagActions = require('../actions/TagActions');
+import $ from 'jquery';
+import React from 'react/addons';
+import Router from 'react-router';
+import shell from 'shell';
+import RetinaImage from 'react-retina-image';
+import metrics from '../utils/MetricsUtil';
+import containerActions from '../actions/ContainerActions';
+import containerStore from '../stores/ContainerStore';
+import tagStore from '../stores/TagStore';
+import tagActions from '../actions/TagActions';
 
 var ImageCard = React.createClass({
   mixins: [Router.Navigation],

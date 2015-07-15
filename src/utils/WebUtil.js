@@ -1,9 +1,10 @@
-var app = require('remote').require('app');
-var fs = require('fs');
-var util = require('./Util');
-var path = require('path');
-var bugsnag = require('bugsnag-js');
-var metrics = require('./MetricsUtil');
+import remote from 'remote';
+var app = remote.require('app');
+import fs from 'fs';
+import util from './Util';
+import path from 'path';
+import bugsnag from 'bugsnag-js';
+import metrics from './MetricsUtil';
 
 var WebUtil = {
   addWindowSizeSaving: function () {

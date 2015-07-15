@@ -1,5 +1,5 @@
-var React = require('react/addons');
-var ContainerListItem = require('./ContainerListItem.react');
+import React from 'react/addons';
+import ContainerListItem from './ContainerListItem.react';
 
 var ContainerList = React.createClass({
   componentWillMount: function () {

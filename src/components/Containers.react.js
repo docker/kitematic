@@ -1,13 +1,13 @@
-var $ = require('jquery');
-var _ = require('underscore');
-var React = require('react');
-var Router = require('react-router');
-var containerStore = require('../stores/ContainerStore');
-var ContainerList = require('./ContainerList.react');
-var Header = require('./Header.react');
-var metrics = require('../utils/MetricsUtil');
-var shell = require('shell');
-var machine = require('../utils/DockerMachineUtil');
+import $ from 'jquery';
+import _ from 'underscore';
+import React from 'react';
+import Router from 'react-router';
+import containerStore from '../stores/ContainerStore';
+import ContainerList from './ContainerList.react';
+import Header from './Header.react';
+import metrics from '../utils/MetricsUtil';
+import shell from 'shell';
+import machine from '../utils/DockerMachineUtil';
 
 var Containers = React.createClass({
   contextTypes: {

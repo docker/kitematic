@@ -1,12 +1,11 @@
-var $ = require('jquery');
-var React = require('react/addons');
-var Router = require('react-router');
-var remote = require('remote');
+import $ from 'jquery';
+import React from 'react/addons';
+import Router from 'react-router';
+import remote from 'remote';
 var dialog = remote.require('dialog');
-var metrics = require('../utils/MetricsUtil');
-var OverlayTrigger = require('react-bootstrap').OverlayTrigger;
-var Tooltip = require('react-bootstrap').Tooltip;
-var containerActions = require('../actions/ContainerActions');
+import metrics from '../utils/MetricsUtil';
+import {OverlayTrigger, Tooltip} from 'react-bootstrap';
+import containerActions from '../actions/ContainerActions';
 
 var ContainerListItem = React.createClass({
   handleItemMouseEnter: function () {

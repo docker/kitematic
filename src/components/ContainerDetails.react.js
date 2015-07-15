@@ -1,10 +1,10 @@
-var React = require('react/addons');
-var Router = require('react-router');
-var ContainerDetailsHeader = require('./ContainerDetailsHeader.react');
-var ContainerDetailsSubheader = require('./ContainerDetailsSubheader.react');
-var containerUtil = require('../utils/ContainerUtil');
-var util = require('../utils/Util');
-var _ = require('underscore');
+import React from 'react/addons';
+import Router from 'react-router';
+import ContainerDetailsHeader from './ContainerDetailsHeader.react';
+import ContainerDetailsSubheader from './ContainerDetailsSubheader.react';
+import containerUtil from '../utils/ContainerUtil';
+import util from '../utils/Util';
+import _ from 'underscore';
 
 var ContainerDetails = React.createClass({
   contextTypes: {

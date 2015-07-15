@@ -1,8 +1,8 @@
-var EventEmitter = require('events').EventEmitter;
-var assign = require('object-assign');
-var Convert = require('ansi-to-html');
-var docker = require('../utils/DockerUtil');
-var stream = require('stream');
+import {EventEmitter} from 'events';
+import assign from 'object-assign';
+import Convert from 'ansi-to-html';
+import docker from '../utils/DockerUtil';
+import stream from 'stream';
 
 var _convert = new Convert();
 var _logs = {};

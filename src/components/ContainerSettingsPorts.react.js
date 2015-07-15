@@ -1,9 +1,9 @@
-var _ = require('underscore');
-var React = require('react/addons');
-var shell = require('shell');
-var ContainerUtil = require('../utils/ContainerUtil');
-var metrics = require('../utils/MetricsUtil');
-var webPorts = require('../utils/Util').webPorts;
+import _ from 'underscore';
+import React from 'react/addons';
+import shell from 'shell';
+import ContainerUtil from '../utils/ContainerUtil';
+import metrics from '../utils/MetricsUtil';
+import {webPorts} from '../utils/Util';
 
 var ContainerSettingsPorts = React.createClass({
   contextTypes: {

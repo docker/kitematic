@@ -1,6 +1,6 @@
-var $ = require('jquery');
-var React = require('react/addons');
-var LogStore = require('../stores/LogStore');
+import $ from 'jquery';
+import React from 'react/addons';
+import LogStore from '../stores/LogStore';
 
 var _prevBottom = 0;
 
