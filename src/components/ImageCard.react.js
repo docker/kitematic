@@ -5,6 +5,7 @@ import shell from 'shell';
 import RetinaImage from 'react-retina-image';
 import metrics from '../utils/MetricsUtil';
 import containerActions from '../actions/ContainerActions';
+import imageActions from '../actions/ImageActions';
 import containerStore from '../stores/ContainerStore';
 import tagStore from '../stores/TagStore';
 import tagActions from '../actions/TagActions';
@@ -14,8 +15,8 @@ var ImageCard = React.createClass({
   mixins: [Router.Navigation],
   getInitialState: function () {
     return {
-      tags: [],
-      chosenTag: 'latest'
+      tags: this.props.tags || [],
+      chosenTag: this.props.chosenTag || 'latest'
     };
   },
   componentDidMount: function () {
@@ -49,11 +50,14 @@ var ImageCard = React.createClass({
       private: this.props.image.is_private,
       official: this.props.image.namespace === 'library',
       userowned: this.props.image.is_user_repo,
-      recommended: this.props.image.is_recommended
+      recommended: this.props.image.is_recommended,
+      local: this.props.image.is_local || false
     });
     let name = containerStore.generateName(this.props.image.name);
-    let repo = this.props.image.namespace === 'library' ? this.props.image.name : this.props.image.namespace + '/' + this.props.image.name;
-    containerActions.run(name, repo, this.state.chosenTag);
+    let localImage = this.props.image.is_local || false;
+    let repo = (this.props.image.namespace === 'library' || this.props.image.namespace === 'local') ? this.props.image.name : this.props.image.namespace + '/' + this.props.image.name;
+
+    containerActions.run(name, repo, this.state.chosenTag, localImage);
     this.transitionTo('containerHome', {name});
   },
   handleMenuOverlayClick: function () {
@@ -67,13 +71,23 @@ var ImageCard = React.createClass({
   handleTagOverlayClick: function () {
     let $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
     $tagOverlay.fadeIn(300);
-    tagActions.tags(this.props.image.namespace + '/' + this.props.image.name);
+    let localImage = this.props.image.is_local || false;
+    if (localImage) {
+      tagActions.localTags(this.props.image.namespace + '/' + this.props.image.name, this.props.tags);
+    } else {
+      tagActions.tags(this.props.image.namespace + '/' + this.props.image.name);
+    }
   },
   handleCloseTagOverlay: function () {
     let $menuOverlay = $(this.getDOMNode()).find('.menu-overlay');
     $menuOverlay.hide();
     var $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
     $tagOverlay.fadeOut(300);
+  },
+  handleDeleteImgClick: function (image) {
+    if (this.state.chosenTag) {
+      imageActions.destroy(image.RepoTags[0].split(':')[0] + ':' + this.state.chosenTag);
+    }
   },
   handleRepoClick: function () {
     var repoUri = 'https://hub.docker.com/';
@@ -108,10 +122,9 @@ var ImageCard = React.createClass({
     } else if(this.props.image.short_description){
       description = this.props.image.short_description;
     } else {
-      description = "No description.";
+      description = 'No description.';
     }
     var logoStyle = {
-      //backgroundImage: `linear-gradient(-180deg, ${this.props.image.gradient_start} 4%, ${this.props.image.gradient_end}  100%)`
       backgroundColor: this.props.image.gradient_start
     };
     var imgsrc;
@@ -150,21 +163,75 @@ var ImageCard = React.createClass({
         <span className="icon icon-badge-private"></span>
       );
     }
-    let favCount = (this.props.image.star_count < 1000) ? numeral(this.props.image.star_count).value() : numeral(this.props.image.star_count).format('0.0a').toUpperCase();
-    let pullCount = (this.props.image.pull_count < 1000) ? numeral(this.props.image.pull_count).value() : numeral(this.props.image.pull_count).format('0a').toUpperCase();
-    return (
-      <div className="image-item">
+
+    let create;
+    let overlay;
+    if (this.props.image.is_local) {
+      create = (
+        <div className="actions">
+          <div className="favorites">
+            <span className="icon icon-tag"> {this.state.chosenTag}</span>
+            <span className="text"></span>
+          </div>
+          <div className="more-menu" onClick={self.handleMenuOverlayClick}>
+            <span className="icon icon-more"></span>
+          </div>
+          <div className="action" onClick={self.handleClick}>
+            CREATE
+          </div>
+        </div>
+      );
+      overlay = (
         <div className="overlay menu-overlay">
           <div className="menu-item" onClick={this.handleTagOverlayClick.bind(this, this.props.image.name)}>
             <span className="icon icon-tag"></span><span className="text">SELECTED TAG: <span className="selected-tag">{this.state.chosenTag}</span></span>
           </div>
-          <div className="menu-item" onClick={this.handleRepoClick}>
-            <span className="icon icon-open-external"></span><span className="text">VIEW ON DOCKER HUB</span>
+          <div className="remove" onClick={this.handleDeleteImgClick.bind(this, this.props.image)}>
+            <span className="btn btn-delete btn-action has-icon btn-hollow"><span className="icon icon-delete"></span>Delete Tag</span>
           </div>
+          <p className="small">Prior to delete, stop all containers<br/>using the above tag</p>
           <div className="close-overlay">
             <a className="btn btn-action circular" onClick={self.handleCloseMenuOverlay}><span className="icon icon-delete"></span></a>
           </div>
         </div>
+      );
+    } else {
+      let favCount = (this.props.image.star_count < 1000) ? numeral(this.props.image.star_count).value() : numeral(this.props.image.star_count).format('0.0a').toUpperCase();
+      let pullCount = (this.props.image.pull_count < 1000) ? numeral(this.props.image.pull_count).value() : numeral(this.props.image.pull_count).format('0a').toUpperCase();
+      create = (
+        <div className="actions">
+          <div className="favorites">
+            <span className="icon icon-favorite"></span>
+            <span className="text">{favCount}</span>
+            <span className="icon icon-download"></span>
+            <span className="text">{pullCount}</span>
+          </div>
+          <div className="more-menu" onClick={self.handleMenuOverlayClick}>
+            <span className="icon icon-more"></span>
+          </div>
+          <div className="action" onClick={self.handleClick}>
+            CREATE
+          </div>
+        </div>
+      );
+
+      overlay = (
+          <div className="overlay menu-overlay">
+            <div className="menu-item" onClick={this.handleTagOverlayClick.bind(this, this.props.image.name)}>
+              <span className="icon icon-tag"></span><span className="text">SELECTED TAG: <span className="selected-tag">{this.state.chosenTag}</span></span>
+            </div>
+            <div className="menu-item" onClick={this.handleRepoClick}>
+              <span className="icon icon-open-external"></span><span className="text">VIEW ON DOCKER HUB</span>
+            </div>
+            <div className="close-overlay">
+              <a className="btn btn-action circular" onClick={self.handleCloseMenuOverlay}><span className="icon icon-delete"></span></a>
+            </div>
+          </div>
+      );
+    }
+    return (
+      <div className="image-item">
+        {overlay}
         <div className="overlay tag-overlay">
           <p>Please select an image tag.</p>
           {tags}
@@ -187,20 +254,7 @@ var ImageCard = React.createClass({
               {description}
             </div>
           </div>
-          <div className="actions">
-            <div className="favorites">
-              <span className="icon icon-favorite"></span>
-              <span className="text">{favCount}</span>
-              <span className="icon icon-download"></span>
-              <span className="text">{pullCount}</span>
-            </div>
-            <div className="more-menu" onClick={self.handleMenuOverlayClick}>
-              <span className="icon icon-more"></span>
-            </div>
-            <div className="action" onClick={self.handleClick}>
-              CREATE
-            </div>
-          </div>
+          {create}
         </div>
       </div>
     );

@@ -10,6 +10,8 @@ import repositoryActions from '../actions/RepositoryActions';
 import repositoryStore from '../stores/RepositoryStore';
 import accountStore from '../stores/AccountStore';
 import accountActions from '../actions/AccountActions';
+import imageActions from '../actions/ImageActions';
+import imageStore from '../stores/ImageStore';
 
 var _searchPromise = null;
 
@@ -20,6 +22,8 @@ module.exports = React.createClass({
       query: '',
       loading: repositoryStore.loading(),
       repos: repositoryStore.all(),
+      images: imageStore.all(),
+      imagesErr: imageStore.error,
       username: accountStore.getState().username,
       verified: accountStore.getState().verified,
       accountLoading: accountStore.getState().loading,
@@ -34,6 +38,7 @@ module.exports = React.createClass({
     this.refs.searchInput.getDOMNode().focus();
     repositoryStore.listen(this.update);
     accountStore.listen(this.updateAccount);
+    imageStore.listen(this.updateImage);
     repositoryActions.search();
   },
   componentWillUnmount: function () {
@@ -51,7 +56,14 @@ module.exports = React.createClass({
       currentPage: repositoryStore.getState().currentPage,
       totalPage: repositoryStore.getState().totalPage,
       previousPage: repositoryStore.getState().previousPage,
-      nextPage: repositoryStore.getState().nextPage
+      nextPage: repositoryStore.getState().nextPage,
+      error: repositoryStore.getState().error
+    });
+  },
+  updateImage: function (imgStore) {
+    this.setState({
+      images: imgStore.images,
+      error: imgStore.error
     });
   },
   updateAccount: function () {
@@ -79,7 +91,8 @@ module.exports = React.createClass({
       currentPage: page,
       previousPage: previousPage,
       nextPage: nextPage,
-      totalPage: totalPage
+      totalPage: totalPage,
+      error: null
     });
 
     _searchPromise = Promise.delay(200).cancellable().then(() => {
@@ -101,9 +114,15 @@ module.exports = React.createClass({
   },
   handleFilter: function (filter) {
 
+    this.setState({error: null});
+
     // If we're clicking on the filter again - refresh
     if (filter === 'userrepos' && this.getQuery().filter === 'userrepos') {
       repositoryActions.repos();
+    }
+
+    if (filter === 'userimages' && this.getQuery().filter === 'userimages') {
+      imageActions.all();
     }
 
     if (filter === 'recommended' && this.getQuery().filter === 'recommended') {
@@ -187,10 +206,16 @@ module.exports = React.createClass({
         </ul>
       </nav>
     ) : null;
+    let errorMsg = null;
+    if (this.state.error === null || this.state.error.message.indexOf('getaddrinfo ENOTFOUND') !== -1) {
+      errorMsg = 'There was an error contacting Docker Hub.';
+    } else {
+      errorMsg = this.state.error.message.replace('HTTP code is 409 which indicates error: conflict - ', '');
+    }
     if (this.state.error) {
       results = (
         <div className="no-results">
-          <h2>There was an error contacting Docker Hub.</h2>
+          <h2 className="error">{errorMsg}</h2>
         </div>
       );
       paginateResults = null;
@@ -268,6 +293,32 @@ module.exports = React.createClass({
           {otherResults}
         </div>
       );
+    } else if (filter === 'userimages') {
+      let userImageItems = this.state.images.map(image => {
+        let repo = image.RepoTags[0].split(':')[0];
+        if (repo.indexOf('/') === -1) {
+          repo = 'local/' + repo;
+        }
+        [image.namespace, image.name] = repo.split('/');
+        image.description = null;
+        let tags = image.tags.join('-');
+        image.star_count = 0;
+        image.is_local = true;
+        return (<ImageCard key={image.namespace + '/' + image.name + ':' + tags} image={image} chosenTag={image.tags[0]} tags={image.tags} />);
+      });
+      let userImageResults = userImageItems.length ? (
+        <div>
+          <h4>My Images</h4>
+          <div className="result-grid">
+            {userImageItems}
+          </div>
+        </div>
+      ) : null;
+      results = (
+        <div className="result-grids">
+          {userImageResults}
+        </div>
+      );
     } else {
       if (this.state.query.length) {
         results = (
@@ -316,6 +367,7 @@ module.exports = React.createClass({
               <span className={`results-filter results-all tab ${filter === 'all' ? 'active' : ''}`} onClick={this.handleFilter.bind(this, 'all')}>All</span>
               <span className={`results-filter results-recommended tab ${filter === 'recommended' ? 'active' : ''}`} onClick={this.handleFilter.bind(this, 'recommended')}>Recommended</span>
               <span className={`results-filter results-userrepos tab ${filter === 'userrepos' ? 'active' : ''}`} onClick={this.handleFilter.bind(this, 'userrepos')}>My Repos</span>
+              <span className={`results-filter results-userimages tab ${filter === 'userimages' ? 'active' : ''}`} onClick={this.handleFilter.bind(this, 'userimages')}>My Images</span>
             </div>
           </div>
           <div className="results">
