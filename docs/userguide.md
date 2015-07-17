@@ -100,7 +100,7 @@ on your Mac by clicking on the folders in the "Edit Files" section of the
 container summary screen.
 
 This allows you to manage files in volumes via the Finder.
-Kitematic exposes a container's volume data under `~/Kitematic/Documents/<container's name>/`.
+Kitematic exposes a container's volume data under `~/Documents/Kitematic/<container's name>/`.
 Quick access to this folder (or directory) is available via the app:
 
 ![Accessing the volumes directory](../images/volumes-dir.png)
