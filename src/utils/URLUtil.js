@@ -1,6 +1,6 @@
-var util = require('./Util');
-var parseUri = require('parseUri');
-var containerServerActions = require('../actions/ContainerServerActions');
+import util from './Util';
+import parseUri from 'parseUri';
+import containerServerActions from '../actions/ContainerServerActions';
 
 module.exports = {
   TYPE_WHITELIST: ['repository'],

@@ -1,9 +1,9 @@
-var _ = require('underscore');
-var React = require('react/addons');
-var Router = require('react-router');
-var validator = require('validator');
-var accountActions = require('../actions/AccountActions');
-var metrics = require('../utils/MetricsUtil');
+import _ from 'underscore';
+import React from 'react/addons';
+import Router from 'react-router';
+import validator from 'validator';
+import accountActions from '../actions/AccountActions';
+import metrics from '../utils/MetricsUtil';
 
 module.exports = React.createClass({
   mixins: [Router.Navigation, React.addons.LinkedStateMixin],

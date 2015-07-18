@@ -1,8 +1,8 @@
-var $ = require('jquery');
-var React = require('react/addons');
-var LogStore = require('../stores/LogStore');
-var Router = require('react-router');
-var metrics = require('../utils/MetricsUtil');
+import $ from 'jquery';
+import React from 'react/addons';
+import LogStore from '../stores/LogStore';
+import Router from 'react-router';
+import metrics from '../utils/MetricsUtil';
 
 var _prevBottom = 0;
 

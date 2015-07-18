@@ -1,13 +1,13 @@
-var fs = require('fs');
-var util = require('./Util');
-var Promise = require('bluebird');
+import fs from 'fs';
+import util from './Util';
+import Promise from 'bluebird';
 
 var VirtualBox = {
   command: function () {
     if(util.isWindows()) {
       return 'C:\\Program Files\\Oracle\\VirtualBox\\VBoxManage.exe';
     } else {
-      return '/usr/bin/VBoxManage';
+      return '/Applications/VirtualBox.app/Contents/MacOS/VBoxManage';
     }
   },
   filename: function () {
@@ -23,7 +23,7 @@ var VirtualBox = {
     if(util.isWindows()) {
       return fs.existsSync('C:\\Program Files\\Oracle\\VirtualBox\\VBoxManage.exe') && fs.existsSync('C:\\Program Files\\Oracle\\VirtualBox\\VirtualBox.exe');
     } else {
-      return fs.existsSync('/usr/bin/VBoxManage') && fs.existsSync('/Applications/VirtualBox.app') && fs.existsSync('/Applications/VirtualBox.app/Contents/MacOS/VBoxManage');
+      return fs.existsSync('/Applications/VirtualBox.app') && fs.existsSync('/Applications/VirtualBox.app/Contents/MacOS/VBoxManage');
     }
   },
   active: function () {

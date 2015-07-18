@@ -1,9 +1,9 @@
-var _ = require('underscore');
-var path = require('path');
-var Promise = require('bluebird');
-var fs = require('fs');
-var util = require('./Util');
-var resources = require('./ResourcesUtil');
+import _ from 'underscore';
+import path from 'path';
+import Promise from 'bluebird';
+import fs from 'fs';
+import util from './Util';
+import resources from './ResourcesUtil';
 
 var NAME = util.isWindows () ? 'kitematic' : 'dev';
 

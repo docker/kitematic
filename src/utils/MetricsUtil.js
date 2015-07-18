@@ -1,11 +1,11 @@
-var assign = require('object-assign');
-var Mixpanel = require('mixpanel');
-var uuid = require('node-uuid');
-var fs = require('fs');
-var path = require('path');
-var util = require('./Util');
-var os = require('os');
-var osxRelease = require('osx-release');
+import assign from 'object-assign';
+import Mixpanel from 'mixpanel';
+import uuid from 'node-uuid';
+import fs from 'fs';
+import path from 'path';
+import util from './Util';
+import os from 'os';
+import osxRelease from 'osx-release';
 var settings;
 
 try {

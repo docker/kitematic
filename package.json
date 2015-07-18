@@ -1,6 +1,6 @@
 {
   "name": "Kitematic",
-  "version": "0.7.4",
+  "version": "0.7.6",
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X.",
   "homepage": "https://kitematic.com/",
@@ -22,15 +22,15 @@
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   ],
-  "docker-version": "1.7.0",
-  "docker-machine-version": "0.3.0-rc2",
+  "docker-version": "1.7.1",
+  "docker-machine-version": "0.3.1-rc1",
   "docker-compose-version": "1.3.0",
-  "electron-version": "0.27.2",
-  "virtualbox-version": "4.3.28",
-  "virtualbox-filename": "VirtualBox-4.3.28.pkg",
-  "virtualbox-filename-win": "VirtualBox-4.3.28.exe",
-  "virtualbox-checksum": "60521caff652fc32ad733eee2eea27f03d0b4f7239af3bf4b21dc6f0251cf47a",
-  "virtualbox-checksum-win": "82039b615bf18dfff92ac1d9a15b2cbd5c59c608631ccf77e2371d0fd67a6cf7",
+  "electron-version": "0.30.0",
+  "virtualbox-version": "5.0.0",
+  "virtualbox-filename": "VirtualBox-5.0.0.pkg",
+  "virtualbox-filename-win": "VirtualBox-5.0.0.exe",
+  "virtualbox-checksum": "9aa3746c508643cfd70093f484ac0a64e02438d740020e294d65a7fd409bdb3d",
+  "virtualbox-checksum-win": "0ca898eb23e20506a28bf84514536ba5455cc6a35234ea096245e42ee113e617",
   "dependencies": {
     "alt": "^0.16.2",
     "ansi-to-html": "0.3.0",
@@ -65,7 +65,7 @@
   "devDependencies": {
     "babel": "^5.1.10",
     "babel-jest": "^5.2.0",
-    "electron-prebuilt": "^0.27.3",
+    "electron-prebuilt": "^0.30.0",
     "grunt": "^0.4.5",
     "grunt-babel": "^5.0.1",
     "grunt-chmod": "^1.0.3",

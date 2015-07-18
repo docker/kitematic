@@ -1,13 +1,14 @@
-var _ = require('underscore');
-var React = require('react/addons');
-var RetinaImage = require('react-retina-image');
-var path = require('path');
-var shell = require('shell');
-var util = require('../utils/Util');
-var metrics = require('../utils/MetricsUtil');
-var containerActions = require('../actions/ContainerActions');
-var dialog = require('remote').require('dialog');
-var mkdirp = require('mkdirp');
+import _ from 'underscore';
+import React from 'react/addons';
+import RetinaImage from 'react-retina-image';
+import path from 'path';
+import shell from 'shell';
+import util from '../utils/Util';
+import metrics from '../utils/MetricsUtil';
+import containerActions from '../actions/ContainerActions';
+import remote from 'remote';
+var dialog = remote.require('dialog');
+import mkdirp from 'mkdirp';
 
 var ContainerHomeFolder = React.createClass({
   contextTypes: {

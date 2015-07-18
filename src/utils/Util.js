@@ -1,11 +1,10 @@
-var exec = require('exec');
-var child_process = require('child_process');
-var Promise = require('bluebird');
-var fs = require('fs');
-var path = require('path');
-var crypto = require('crypto');
-var remote = require('remote');
-var dialog = remote.require('dialog');
+import exec from 'exec';
+import child_process from 'child_process';
+import Promise from 'bluebird';
+import fs from 'fs';
+import path from 'path';
+import crypto from 'crypto';
+import remote from 'remote';
 var app = remote.require('app');
 
 module.exports = {

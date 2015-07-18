@@ -231,6 +231,11 @@ export default {
         existingData.Env = existingData.Config.Env;
       }
 
+      if ((!existingData.Tty || !existingData.OpenStdin) && existingData.Config && (existingData.Config.Tty || existingData.Config.OpenStdin)) {
+        existingData.Tty = existingData.Config.Tty;
+        existingData.OpenStdin = existingData.Config.OpenStdin;
+      }
+
       var fullData = _.extend(existingData, data);
       this.createContainer(name, fullData);
     });

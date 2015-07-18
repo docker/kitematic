@@ -1,10 +1,10 @@
-var _ = require('underscore');
-var request = require('request');
-var async = require('async');
-var util = require('../utils/Util');
-var hubUtil = require('../utils/HubUtil');
-var repositoryServerActions = require('../actions/RepositoryServerActions');
-var tagServerActions = require('../actions/TagServerActions');
+import _ from 'underscore';
+import request from 'request';
+import async from 'async';
+import util from '../utils/Util';
+import hubUtil from '../utils/HubUtil';
+import repositoryServerActions from '../actions/RepositoryServerActions';
+import tagServerActions from '../actions/TagServerActions';
 
 let REGHUB2_ENDPOINT = process.env.REGHUB2_ENDPOINT || 'https://registry.hub.docker.com/v2';
 let searchReq = null;
@@ -103,11 +103,11 @@ module.exports = {
     }, (error, response, body) => {
       if (response.statusCode === 200) {
         let data = JSON.parse(body);
-        tagServerActions.tagsUpdated({repo, tags: data});
-        if (callback) { callback(null, data); }
-      } else if (error || response.statusCode === 401) {
+        tagServerActions.tagsUpdated({repo, tags: data.results || []});
+        if (callback) { callback(null, data.results || []); }
+      } else {
         repositoryServerActions.error({repo});
-        if (callback) { callback(new Error('Failed to fetch repos')); }
+        if (callback) { callback(new Error('Failed to fetch tags for repo')); }
       }
     });
   },
