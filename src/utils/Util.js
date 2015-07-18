@@ -5,6 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import remote from 'remote';
+var dialog = remote.require('dialog');
 var app = remote.require('app');
 
 module.exports = {
@@ -161,17 +162,13 @@ module.exports = {
     return linuxAbsPath.replace('/c', 'C:').split('/').join('\\');
   },
   linuxTerminal: function () {
-    if (fs.existsSync('/usr/bin/gnome-terminal')) {
-      return ['/usr/bin/gnome-terminal', '-e'];
-    } else if (fs.existsSync('/usr/bin/mate-terminal')) {
-      return ['/usr/bin/mate-terminal', '-e'];
-    } else if (fs.existsSync('/usr/bin/konsole')) {
-      return ['/usr/bin/konsole', '-e'];
+    if (fs.existsSync('/usr/bin/x-terminal-emulator')) {
+      return ['/usr/bin/x-terminal-emulator', '-e'];
     } else {
       dialog.showMessageBox({
         type: 'warning',
         buttons: ['OK'],
-        message: 'Unknown terminal emulator. Please open an issue at https://github.com/kitematic/kitematic/issues/new.'
+        message: 'The terminal emulator symbolic link doesn\'t exists. Please read the Wiki at https://github.com/kitematic/kitematic/issues/new.'
       });
       return;
     }
