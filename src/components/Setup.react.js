@@ -114,6 +114,13 @@ var Setup = React.createClass({
     );
   },
   renderError: function () {
+    let deleteVmAndRetry;
+
+    if (!Util.isLinux()) {
+      deleteVmAndRetry = (
+        <button className="btn btn-action" onClick={this.handleErrorRemoveRetry}>Delete VM and Retry Setup</button>
+      );
+    }
     return (
       <div className="setup">
         <Header hideLogin={true}/>
@@ -133,7 +140,7 @@ var Setup = React.createClass({
               <p className="error">{this.state.error.message || this.state.error}</p>
               <p className="setup-actions">
                 <button className="btn btn-action" onClick={this.handleErrorRetry}>Retry Setup</button>
-                <button className="btn btn-action" onClick={this.handleErrorRemoveRetry}>Delete VM and Retry Setup</button>
+                {{deleteVmAndRetry}}
               </p>
             </div>
           </div>

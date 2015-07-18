@@ -477,7 +477,9 @@ export default {
 
   // TODO: move this to machine health checks
   waitForConnection (tries, delay) {
-    tries = tries || 10;
+    // On Linux there is no need to retry as Docker is running nativerly.
+    // It is started or not.
+    tries = tries || (util.isLinux() ? 0 : 10);
     delay = delay || 1000;
     let tryCount = 1, connected = false;
     return new Promise((resolve, reject) => {
@@ -485,7 +487,13 @@ export default {
         this.client.listContainers(error => {
           if (error) {
             if (tryCount > tries) {
-              callback(Error('Cannot connect to the Docker Engine. Either the VM is not responding or the connection may be blocked (VPN or Proxy): ' + error.message));
+              var message;
+              if (util.isLinux()) {
+                message = 'Cannot connect to the Docker daemon. The daemon is not running: ';
+              } else {
+                message = 'Cannot connect to the Docker Engine. Either the VM is not responding or the connection may be blocked (VPN or Proxy): ';
+              }
+              callback(Error(message + error.message));
             } else {
               tryCount += 1;
               setTimeout(callback, delay);

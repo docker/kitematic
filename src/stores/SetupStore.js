@@ -120,14 +120,18 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
       return;
     }
     this.emit(this.ERROR_EVENT);
-    if (remove) {
-      machine.rm().finally(() => {
-        _retryPromise.resolve();
-      });
+    if (util.isLinux()) {
+      _retryPromise.resolve();
     } else {
-      machine.stop().finally(() => {
-        _retryPromise.resolve();
-      });
+      if (remove) {
+        machine.rm().finally(() => {
+          _retryPromise.resolve();
+        });
+      } else {
+        machine.stop().finally(() => {
+          _retryPromise.resolve();
+        });
+      }
     }
   },
   setError: function (error) {
