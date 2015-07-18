@@ -103,11 +103,11 @@ module.exports = {
     }, (error, response, body) => {
       if (response.statusCode === 200) {
         let data = JSON.parse(body);
-        tagServerActions.tagsUpdated({repo, tags: data});
-        if (callback) { callback(null, data); }
-      } else if (error || response.statusCode === 401) {
+        tagServerActions.tagsUpdated({repo, tags: data.results || []});
+        if (callback) { callback(null, data.results || []); }
+      } else {
         repositoryServerActions.error({repo});
-        if (callback) { callback(new Error('Failed to fetch repos')); }
+        if (callback) { callback(new Error('Failed to fetch tags for repo')); }
       }
     });
   },
