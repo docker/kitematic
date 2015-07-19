@@ -100,6 +100,19 @@ module.exports = function (grunt) {
           'app-bundle-id': 'com.kitematic.kitematic',
           'app-version': packagejson.version
         }
+      },
+      linux: {
+        options: {
+          name: APPNAME,
+          dir: 'build/',
+          out: 'dist/',
+          version: packagejson['electron-version'],
+          platform: 'linux',
+          arch: 'x64',
+          asar: true,
+          'app-bundle-id': 'com.kitematic.kitematic', //not sure if these still apply
+          'app-version': packagejson.version
+        }
       }
     },
 
