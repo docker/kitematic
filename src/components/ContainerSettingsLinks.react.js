@@ -1,13 +1,13 @@
-var _ = require('underscore');
-var React = require('react/addons');
-var remote = require('remote');
-var metrics = require('../utils/MetricsUtil');
+import _ from 'underscore';
+import React from 'react/addons';
+import remote from 'remote';
+import metrics from '../utils/MetricsUtil';
 var dialog = remote.require('dialog');
-var ContainerUtil = require('../utils/ContainerUtil');
-var containerActions = require('../actions/ContainerActions');
-var containerStore = require('../stores/ContainerStore');
-var util = require('../utils/Util');
-var Typeahead = require('react-typeahead').Typeahead;
+import ContainerUtil from '../utils/ContainerUtil';
+import containerActions from '../actions/ContainerActions';
+import containerStore from '../stores/ContainerStore';
+import util from '../utils/Util';
+import {Typeahead} from 'react-typeahead';
 
 var ContainerSettingsLinks = React.createClass({
   mixins: [React.addons.LinkedStateMixin],
