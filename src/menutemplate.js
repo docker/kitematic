@@ -17,7 +17,6 @@ var MenuTemplate = function () {
       submenu: [
       {
         label: 'About Kitematic',
-        //selector: 'orderFrontStandardAboutPanel:'
         click: function () {
           metrics.track('Opened About', {
             from: 'menu'
