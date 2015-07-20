@@ -1,4 +1,4 @@
-var React = require('react/addons');
+import React from 'react/addons';
 
 var ContainerDetailsHeader = React.createClass({
   render: function () {

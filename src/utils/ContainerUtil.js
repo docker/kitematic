@@ -1,5 +1,5 @@
-var _ = require('underscore');
-var docker = require('../utils/DockerUtil');
+import _ from 'underscore';
+import docker from '../utils/DockerUtil';
 
 var ContainerUtil = {
   env: function (container) {

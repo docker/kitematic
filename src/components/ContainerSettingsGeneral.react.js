@@ -1,11 +1,11 @@
-var _ = require('underscore');
-var React = require('react/addons');
-var remote = require('remote');
-var metrics = require('../utils/MetricsUtil');
+import _ from 'underscore';
+import React from 'react/addons';
+import metrics from '../utils/MetricsUtil';
+import remote from 'remote';
 var dialog = remote.require('dialog');
-var ContainerUtil = require('../utils/ContainerUtil');
-var containerActions = require('../actions/ContainerActions');
-var util = require('../utils/Util');
+import ContainerUtil from '../utils/ContainerUtil';
+import containerActions from '../actions/ContainerActions';
+import util from '../utils/Util';
 
 var ContainerSettingsGeneral = React.createClass({
   mixins: [React.addons.LinkedStateMixin],

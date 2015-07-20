@@ -1,11 +1,11 @@
-var _ = require('underscore');
-var React = require('react');
-var shell = require('shell');
-var metrics = require('../utils/MetricsUtil');
-var ContainerUtil = require('../utils/ContainerUtil');
-var classNames = require('classnames');
-var containerActions = require('../actions/ContainerActions');
-var dockerMachineUtil = require('../utils/DockerMachineUtil');
+import _ from 'underscore';
+import React from 'react';
+import shell from 'shell';
+import metrics from '../utils/MetricsUtil';
+import ContainerUtil from '../utils/ContainerUtil';
+import classNames from 'classnames';
+import containerActions from '../actions/ContainerActions';
+import dockerMachineUtil from '../utils/DockerMachineUtil';
 
 var ContainerDetailsSubheader = React.createClass({
   contextTypes: {

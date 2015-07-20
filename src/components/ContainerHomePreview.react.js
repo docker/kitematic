@@ -1,8 +1,8 @@
-var _ = require('underscore');
-var React = require('react/addons');
-var request = require('request');
-var shell = require('shell');
-var metrics = require('../utils/MetricsUtil');
+import _ from 'underscore';
+import React from 'react/addons';
+import request from 'request';
+import shell from 'shell';
+import metrics from '../utils/MetricsUtil';
 
 var ContainerHomePreview = React.createClass({
   contextTypes: {
