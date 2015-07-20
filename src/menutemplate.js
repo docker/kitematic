@@ -95,6 +95,11 @@ var MenuTemplate = function () {
       label: 'File',
       submenu: [
       {
+        label: 'Open File',
+        accelerator: util.CommandOrCtrl() + '+O',
+        selector: 'openDocument:'
+      },
+      {
         type: 'separator'
       },
       {
