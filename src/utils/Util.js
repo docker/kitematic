@@ -168,7 +168,7 @@ module.exports = {
       dialog.showMessageBox({
         type: 'warning',
         buttons: ['OK'],
-        message: 'The terminal emulator symbolic link doesn\'t exists. Please read the Wiki at https://github.com/kitematic/kitematic/issues/new.'
+        message: 'The terminal emulator symbolic link doesn\'t exists. Please read the Wiki at https://github.com/kitematic/kitematic/wiki/Common-Issues-and-Fixes#early-linux-support-from-zedtux.'
       });
       return;
     }
