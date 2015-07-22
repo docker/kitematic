@@ -103,7 +103,7 @@ module.exports = {
     }, (error, response, body) => {
       if (response.statusCode === 200) {
         let data = JSON.parse(body);
-        tagServerActions.tagsUpdated({repo, tags: data.results || []});
+        tagServerActions.tagsUpdated({repo, tags: data || []});
         if (callback) { callback(null, data.results || []); }
       } else {
         repositoryServerActions.error({repo});
