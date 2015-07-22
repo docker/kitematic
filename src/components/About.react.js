@@ -25,39 +25,40 @@ var Preferences = React.createClass({
   render: function () {
     return (
       <div className="preferences">
-        <div className="preferences-content">
+        <div className="about-content">
           <a onClick={this.handleGoBackClick}>Go Back</a>
-          <RetinaImage src="banner.png"/>
-          <table className="table">
-            <thead>
-              <tr>
-                <th>APP NAME</th>
-                <th>VERSION</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>{packages.name}</td>
-                <td>{packages.version}</td>
-              </tr>
-              <tr>
-                <td>Docker</td>
-                <td>{packages["docker-version"]}</td>
-              </tr>
-              <tr>
-                <td>Docker Machine</td>
-                <td>{packages["docker-machine-version"]}</td>
-              </tr>
-              <tr>
-                <td>Docker Compose</td>
-                <td>{packages["docker-compose-version"]}</td>
-              </tr>
-              <tr>
-                <td>VirtualBox</td>
-                <td>{packages["virtualbox-version"]}</td>
-              </tr>
-            </tbody>
-          </table>
+          <h2>Installed Software</h2>
+          <div className="row">
+            <div className="col-md-6">
+              <RetinaImage src="cartoon-kitematic.png"/>
+              <h3>{packages.name}</h3>
+              <p>{packages.version}</p>
+            </div>
+            <div className="col-md-6">
+              <RetinaImage src="cartoon-docker.png"/>
+              <h3>Docker</h3>
+              <p>{packages["docker-version"]}</p>
+            </div>
+          </div>
+          <div className="row">
+            <div className="col-md-6">
+              <RetinaImage src="cartoon-docker-machine.png"/>
+              <h3>Docker Machine</h3>
+              <p>{packages["docker-machine-version"]}</p>
+            </div>
+            <div className="col-md-6">
+              <RetinaImage src="cartoon-docker-compose.png"/>
+              <h3>Docker Compose</h3>
+              <p>{packages["docker-compose-version"]}</p>
+            </div>
+          </div>
+          <h2>Third-Party Software</h2>
+          <div className="row">
+            <div className="col-md-6 col-md-offset-3">
+              <h3>VirtualBox</h3>
+              <p>{packages["virtualbox-version"]}</p>
+            </div>
+          </div>
         </div>
       </div>
     );
