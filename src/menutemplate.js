@@ -17,7 +17,12 @@ var MenuTemplate = function () {
       submenu: [
       {
         label: 'About Kitematic',
-        selector: 'orderFrontStandardAboutPanel:'
+        click: function () {
+          metrics.track('Opened About', {
+            from: 'menu'
+          });
+          router.get().transitionTo('about');
+        }
       },
       {
         type: 'separator'

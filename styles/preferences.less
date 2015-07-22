@@ -6,7 +6,7 @@
   align-items: flex-start;
   justify-content: center;
 
-  .preferences-content {
+  .preferences-content, .about-content {
     flex: 1 auto;
     margin-top: 45px;
     padding: 50px;
@@ -35,6 +35,24 @@
         flex: 1 auto;
         text-align: right;
       }
+    }
+  }
+  .about-content {
+    margin-top: 0px;
+    h2 {
+      font-size: 3rem;
+      text-align: center;
+    }
+    .row {
+      text-align: center;
+    }
+    h3 {
+      font-size: 2rem;
+      text-align: center;
+    }
+    p {
+      color: @gray-normal;
+      font-size: 1.5rem;
     }
   }
 }
