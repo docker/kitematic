@@ -5,7 +5,7 @@ import fs from 'fs';
 import util from './Util';
 import resources from './ResourcesUtil';
 
-var NAME = util.isWindows () ? 'kitematic' : 'dev';
+var NAME = 'docker-vm';
 
 var DockerMachine = {
   command: function () {
