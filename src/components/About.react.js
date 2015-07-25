@@ -27,35 +27,33 @@ var Preferences = React.createClass({
       <div className="preferences">
         <div className="about-content">
           <a onClick={this.handleGoBackClick}>Go Back</a>
-          <h2>Installed Software</h2>
-          <div className="row">
-            <div className="col-md-6">
+          <h3>Installed Software</h3>
+          <div className="items">
+            <div className="item">
               <RetinaImage src="cartoon-kitematic.png"/>
-              <h3>{packages.name}</h3>
+              <h4>Docker {packages.name}</h4>
               <p>{packages.version}</p>
             </div>
-            <div className="col-md-6">
+            <div className="item">
               <RetinaImage src="cartoon-docker.png"/>
-              <h3>Docker</h3>
+              <h4>Docker Engine</h4>
               <p>{packages["docker-version"]}</p>
             </div>
-          </div>
-          <div className="row">
-            <div className="col-md-6">
+            <div className="item">
               <RetinaImage src="cartoon-docker-machine.png"/>
-              <h3>Docker Machine</h3>
+              <h4>Docker Machine</h4>
               <p>{packages["docker-machine-version"]}</p>
             </div>
-            <div className="col-md-6">
+            <div className="item">
               <RetinaImage src="cartoon-docker-compose.png"/>
-              <h3>Docker Compose</h3>
+              <h4>Docker Compose</h4>
               <p>{packages["docker-compose-version"]}</p>
             </div>
           </div>
-          <h2>Third-Party Software</h2>
-          <div className="row">
-            <div className="col-md-6 col-md-offset-3">
-              <h3>VirtualBox</h3>
+          <h3>Third-Party Software</h3>
+          <div className="items">
+            <div className="item">
+              <h4>VirtualBox</h4>
               <p>{packages["virtualbox-version"]}</p>
             </div>
           </div>
