@@ -120,14 +120,18 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
       return;
     }
     this.emit(this.ERROR_EVENT);
-    if (remove) {
-      machine.rm().finally(() => {
-        _retryPromise.resolve();
-      });
+    if (util.isLinux()) {
+      _retryPromise.resolve();
     } else {
-      machine.stop().finally(() => {
-        _retryPromise.resolve();
-      });
+      if (remove) {
+        machine.rm().finally(() => {
+          _retryPromise.resolve();
+        });
+      } else {
+        machine.stop().finally(() => {
+          _retryPromise.resolve();
+        });
+      }
     }
   },
   setError: function (error) {
@@ -146,19 +150,23 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
     var isoversion = machine.isoversion();
     var required = {};
     var vboxfile = path.join(util.supportDir(), virtualBox.filename());
-    var vboxNeedsInstall = !virtualBox.installed();
+    var vboxNeedsInstall = !util.isLinux() && !virtualBox.installed();
 
     required.download = vboxNeedsInstall && (!fs.existsSync(vboxfile) || setupUtil.checksum(vboxfile) !== virtualBox.checksum());
-    required.install = vboxNeedsInstall || (!util.isWindows() && !virtualBox.active());
-    required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0;
+    required.install = vboxNeedsInstall || (!util.isWindows() && !util.isLinux() && !virtualBox.active());
+    if (util.isLinux()) {
+      required.init = false;
+    } else {
+      required.init = required.install || !(yield machine.exists()) || (yield machine.state()) !== 'Running' || !isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0;
 
-    var exists = yield machine.exists();
-    if (isoversion && util.compareVersions(isoversion, packagejson['docker-version']) < 0) {
-      this.steps().init.seconds = 33;
-    } else if (exists && (yield machine.state()) === 'Saved') {
-      this.steps().init.seconds = 8;
-    } else if (exists && (yield machine.state()) !== 'Error') {
-      this.steps().init.seconds = 23;
+      var exists = yield machine.exists();
+      if (isoversion && util.compareVersions(isoversion, packagejson['docker-version']) < 0) {
+        this.steps().init.seconds = 33;
+      } else if (exists && (yield machine.state()) === 'Saved') {
+        this.steps().init.seconds = 8;
+      } else if (exists && (yield machine.state()) !== 'Error') {
+        this.steps().init.seconds = 23;
+      }
     }
 
     _requiredSteps = _steps.filter(function (step) {
@@ -201,7 +209,7 @@ var SetupStore = assign(Object.create(EventEmitter.prototype), {
       }
     }
     _currentStep = null;
-    return yield machine.ip();
+    return util.isLinux() ? 'localhost' : (yield machine.ip());
   }),
   setup: Promise.coroutine(function * () {
     while (true) {

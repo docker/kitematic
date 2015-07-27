@@ -21,6 +21,7 @@ module.exports = function (grunt) {
   env.NODE_ENV = target;
 
   var certificateFile = grunt.option('certificateFile');
+  var certificatePassword = grunt.option('certificatePassword');
 
   var version = function (str) {
     var match = str.match(/(\d+\.\d+\.\d+)/);
@@ -99,19 +100,18 @@ module.exports = function (grunt) {
           'app-bundle-id': 'com.kitematic.kitematic',
           'app-version': packagejson.version
         }
-      }
-    },
-
-    prompt: {
-      'create-windows-installer': {
+      },
+      linux: {
         options: {
-          questions: [
-            {
-              config: 'certificatePassword',
-              type: 'password',
-              message: 'Certificate Password: '
-            }
-          ]
+          name: APPNAME,
+          dir: 'build/',
+          out: 'dist/',
+          version: packagejson['electron-version'],
+          platform: 'linux',
+          arch: 'x64',
+          asar: true,
+          'app-bundle-id': 'com.kitematic.kitematic', //not sure if these still apply
+          'app-version': packagejson.version
         }
       }
     },
@@ -150,7 +150,7 @@ module.exports = function (grunt) {
       title: APPNAME,
       exe: BASENAME + '.exe',
       version: packagejson.version,
-      signWithParams: '/f ' + certificateFile + ' /p <%= certificatePassword %> /tr http://timestamp.comodoca.com/rfc3161'
+      signWithParams: '/f ' + certificateFile + ' /p ' + certificatePassword + ' /tr http://timestamp.comodoca.com/rfc3161'
     },
 
     // docker binaries
@@ -380,12 +380,17 @@ module.exports = function (grunt) {
 
   if (process.platform === 'win32') {
     grunt.registerTask('default', ['download-binary:docker', 'download-binary:docker-machine', 'download-boot2docker-iso', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+  } else if(process.platform === 'linux') {
+    grunt.registerTask('default', ['clean', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
   } else {
     grunt.registerTask('default', ['download-binary', 'download-boot2docker-iso', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
   }
 
   if (process.platform === 'win32') {
     grunt.registerTask('release', ['clean:release', 'download-binary:docker', 'download-binary:docker-machine', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'prompt:create-windows-installer', 'create-windows-installer', 'rename:installer']);
+  } else if(process.platform === 'linux') {
+    // TODO : Add 'copy:linux' when will do the packaging
+    grunt.registerTask('release', ['clean', 'babel', 'less', 'copy:dev', 'electron:linux']);
   } else {
     grunt.registerTask('release', ['clean:release', 'download-binary', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'plistbuddy', 'shell:sign', 'shell:zip']);
   }

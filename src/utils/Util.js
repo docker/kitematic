@@ -5,6 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import remote from 'remote';
+var dialog = remote.require('dialog');
 var app = remote.require('app');
 
 module.exports = {
@@ -33,6 +34,9 @@ module.exports = {
   },
   isWindows: function () {
     return process.platform === 'win32';
+  },
+  isLinux: function () {
+    return process.platform === 'linux';
   },
   binsPath: function () {
     return this.isWindows() ? path.join(this.home(), 'Kitematic-bins') : path.join('/usr/local/bin');
@@ -71,8 +75,7 @@ module.exports = {
     }
     return str.replace(/-----BEGIN CERTIFICATE-----.*-----END CERTIFICATE-----/mg, '<redacted>')
       .replace(/-----BEGIN RSA PRIVATE KEY-----.*-----END RSA PRIVATE KEY-----/mg, '<redacted>')
-      .replace(/\/Users\/[^\/]*\//mg, '/Users/<redacted>/')
-      .replace(/\\Users\\[^\/]*\\/mg, '\\Users\\<redacted>\\');
+      .replace(/\/Users\/[^\/]*\//mg, '/Users/<redacted>/');
   },
   packagejson: function () {
     return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
@@ -157,6 +160,18 @@ module.exports = {
   },
   linuxToWindowsPath: function (linuxAbsPath) {
     return linuxAbsPath.replace('/c', 'C:').split('/').join('\\');
+  },
+  linuxTerminal: function () {
+    if (fs.existsSync('/usr/bin/x-terminal-emulator')) {
+      return ['/usr/bin/x-terminal-emulator', '-e'];
+    } else {
+      dialog.showMessageBox({
+        type: 'warning',
+        buttons: ['OK'],
+        message: 'The terminal emulator symbolic link doesn\'t exists. Please read the Wiki at https://github.com/kitematic/kitematic/issues/new.'
+      });
+      return;
+    }
   },
   webPorts: ['80', '8000', '8080', '3000', '5000', '2368', '9200', '8983']
 };
