@@ -1,11 +1,12 @@
 var path = require('path');
-var fs = require('fs');
 var execFile = require('child_process').execFile;
 var packagejson = require('./package.json');
 var electron = require('electron-prebuilt');
 
-var WINDOWS_DOCKER_URL = 'https://get.docker.com/builds/Windows/x86_64/docker-' + packagejson['docker-version'] + '.exe';
-var DARWIN_DOCKER_URL = 'https://get.docker.com/builds/Darwin/x86_64/docker-' + packagejson['docker-version'];
+var dockerHostname = packagejson['docker-version'].indexOf('rc') !== -1 ? 'test.docker.com' : 'get.docker.com';
+
+var WINDOWS_DOCKER_URL = 'https://' + dockerHostname + '/builds/Windows/x86_64/docker-' + packagejson['docker-version'] + '.exe';
+var DARWIN_DOCKER_URL = 'https://' + dockerHostname + '/builds/Darwin/x86_64/docker-' + packagejson['docker-version'];
 var WINDOWS_DOCKER_MACHINE_URL = 'https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_windows-amd64.exe';
 var DARWIN_DOCKER_MACHINE_URL = 'https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_darwin-amd64';
 var DARWIN_COMPOSE_URL = 'https://github.com/docker/compose/releases/download/' + packagejson['docker-compose-version'] + '/docker-compose-Darwin-x86_64';
