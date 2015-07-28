@@ -1,15 +1,15 @@
 var path = require('path');
-var fs = require('fs');
 var execFile = require('child_process').execFile;
 var packagejson = require('./package.json');
 var electron = require('electron-prebuilt');
 
-var WINDOWS_DOCKER_URL = 'https://get.docker.com/builds/Windows/x86_64/docker-' + packagejson['docker-version'] + '.exe';
-var DARWIN_DOCKER_URL = 'https://get.docker.com/builds/Darwin/x86_64/docker-' + packagejson['docker-version'];
+var dockerHostname = packagejson['docker-version'].indexOf('rc') !== -1 ? 'test.docker.com' : 'get.docker.com';
+
+var WINDOWS_DOCKER_URL = 'https://' + dockerHostname + '/builds/Windows/x86_64/docker-' + packagejson['docker-version'] + '.exe';
+var DARWIN_DOCKER_URL = 'https://' + dockerHostname + '/builds/Darwin/x86_64/docker-' + packagejson['docker-version'];
 var WINDOWS_DOCKER_MACHINE_URL = 'https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_windows-amd64.exe';
 var DARWIN_DOCKER_MACHINE_URL = 'https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_darwin-amd64';
 var DARWIN_COMPOSE_URL = 'https://github.com/docker/compose/releases/download/' + packagejson['docker-compose-version'] + '/docker-compose-Darwin-x86_64';
-var BOOT2DOCKER_ISO_URL = 'https://github.com/boot2docker/boot2docker/releases/download/v' + packagejson['docker-version'] + '/boot2docker.iso';
 
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
@@ -26,18 +26,6 @@ module.exports = function (grunt) {
     var match = str.match(/(\d+\.\d+\.\d+)/);
     return match ? match[1] : null;
   };
-
-  grunt.registerTask('download-boot2docker-iso', 'Downloads provided boot2docker version', function () {
-    try {
-      var data = fs.readFileSync(path.join('resources', 'boot2docker.iso'), {encoding: 'utf-8'});
-      var match = data.match(/Boot2Docker-v(\d+\.\d+\.\d+)/);
-      if (match && match[1] !== packagejson['docker-version']) {
-        grunt.task.run('curl:boot2docker-iso');
-      }
-    } catch (err) {
-      grunt.task.run('curl:boot2docker-iso');
-    }
-  });
 
   grunt.registerMultiTask('download-binary', 'Downloads binary unless version up to date', function () {
     var target = grunt.task.current.target;
@@ -201,7 +189,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: 'resources',
-          src: ['docker*', 'boot2docker.iso', 'ssh.exe', 'OPENSSH_LICENSE', 'msys-*'],
+          src: ['docker*', 'ssh.exe', 'OPENSSH_LICENSE', 'msys-*'],
           dest: 'dist/' + BASENAME + '-win32/resources/resources/'
         }],
         options: {
@@ -212,7 +200,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: 'resources',
-          src: ['docker*', 'boot2docker.iso', 'macsudo', 'terminal'],
+          src: ['docker*', 'macsudo', 'terminal'],
           dest: '<%= OSX_FILENAME %>/Contents/Resources/resources/'
         }, {
           src: 'util/kitematic.icns',
@@ -244,10 +232,6 @@ module.exports = function (grunt) {
       'docker-compose': {
         src: DARWIN_COMPOSE_URL,
         dest: 'resources/docker-compose'
-      },
-      'boot2docker-iso': {
-        src: BOOT2DOCKER_ISO_URL,
-        dest: path.join('resources', 'boot2docker.iso')
       }
     },
 
@@ -351,7 +335,6 @@ module.exports = function (grunt) {
 
     clean: {
       release: ['build/', 'dist/', 'installer/'],
-      isos: ['resources/boot2docker*']
     },
 
     // livereload
@@ -379,15 +362,15 @@ module.exports = function (grunt) {
   });
 
   if (process.platform === 'win32') {
-    grunt.registerTask('default', ['download-binary:docker', 'download-binary:docker-machine', 'download-boot2docker-iso', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+    grunt.registerTask('default', ['download-binary:docker', 'download-binary:docker-machine', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
   } else {
-    grunt.registerTask('default', ['download-binary', 'download-boot2docker-iso', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+    grunt.registerTask('default', ['download-binary', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
   }
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean:release', 'download-binary:docker', 'download-binary:docker-machine', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'prompt:create-windows-installer', 'create-windows-installer', 'rename:installer']);
+    grunt.registerTask('release', ['clean:release', 'download-binary:docker', 'download-binary:docker-machine', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'prompt:create-windows-installer', 'create-windows-installer', 'rename:installer']);
   } else {
-    grunt.registerTask('release', ['clean:release', 'download-binary', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'plistbuddy', 'shell:sign', 'shell:zip']);
+    grunt.registerTask('release', ['clean:release', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'plistbuddy', 'shell:sign', 'shell:zip']);
   }
 
   process.on('SIGINT', function () {
