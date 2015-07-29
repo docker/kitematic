@@ -116,7 +116,7 @@ module.exports = function (grunt) {
           'file-version': packagejson.version,
           'product-version': packagejson.version,
           'version-string': {
-            'CompanyName': 'Docker Inc',
+            'CompanyName': 'Docker',
             'ProductVersion': packagejson.version,
             'ProductName': APPNAME,
             'FileDescription': APPNAME,
