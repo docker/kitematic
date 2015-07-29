@@ -368,7 +368,7 @@ module.exports = function (grunt) {
   }
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean:release', 'download-binary:docker', 'download-binary:docker-machine', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'prompt:create-windows-installer', 'create-windows-installer', 'rename:installer']);
+    grunt.registerTask('release', ['clean:release', 'download-binary:docker', 'download-binary:docker-machine', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'prompt:create-windows-installer', 'create-windows-installer', 'rename:installer']);
   } else {
     grunt.registerTask('release', ['clean:release', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'plistbuddy', 'shell:sign', 'shell:zip']);
   }
