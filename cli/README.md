@@ -80,6 +80,10 @@ drupal:
 
   Stops the container(s) defined in the Kitematicfile.
 
+* `kitematic remove`
+
+  Removes the container(s) defined in the Kitematicfile.
+
 * `kitematic restart`
 
   Restart the container(s) defined in the Kitematicfile.
