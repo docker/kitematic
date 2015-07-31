@@ -8,23 +8,19 @@ var format = require('util').format;
 
 exports.read = function() {
   var configJson;
-  var configJSONPath = path.resolve('Kitematic.json');
-  var configYAMLPath = path.resolve('Kitematic.yaml');
-  if (fs.existsSync(configJSONPath)) {
-    configJson = cjson.load(configJSONPath);
-  }
-  else if (fs.existsSync(configYAMLPath)) {
+  var configYAMLPath = path.resolve('docker-compose.yaml');
+  if (fs.existsSync(configYAMLPath)) {
     configJson = YAML.load(configYAMLPath);
   }
   else {
-    console.error('A Kitematic.json or Kitematic.yaml file does not exist!'.red.bold);
+    console.error('A docker-compose.yaml file does not exist!'.red.bold);
     helpers.printHelp();
     process.exit(1);
   }
 
   // Validate configuration.
   if (!_.isObject(configJson)) {
-    configErrorLog('Check your Kitematicfile, its not valid configuration.');
+    configErrorLog('Check your docker-compose.yaml, its not valid configuration.');
     helpers.printHelp();
     process.exit(1);
   }
@@ -36,17 +32,30 @@ exports.read = function() {
         helpers.printHelp();
         process.exit(1);
       }
+      var volumes = {};
       if (config.volumes) {
-        _.mapObject(config.volumes, function(volume, dir) {
+        for(dir in config.volumes) {
+          volume = _.clone(config.volumes[dir]);
           //rewrite ~ with $HOME
-          volume.folder = rewriteHome(volume.folder);
+          var parts = dir.split(/:(.+)?/);
+          var localDir = "";
+          if (parts[0] != 0) {
+            localDir = path.resolve(rewriteHome(parts[0]));
+          }
+          if (parts[1]) {
+            dir = localDir + (parts[1] ? ":" + parts[1] : "");
+          }
+          else {
+            dir = volume;
+          }
           if (config.volumes.vm_folder) {
             //rewrite ~ with $HOME
             volume.vm_folder = volume.vm_folder.replace('~', process.env.HOME);
           }
-          return volume;
-        });
+          volumes[dir] = volume;
+        }
       }
+      config.volumes = volumes;
 
       return config;
     });
@@ -64,7 +73,7 @@ function rewriteHome(location) {
 }
 
 function configErrorLog(message) {
-  var errorMessage = 'Invalid Kitematic.json file: ' + message;
+  var errorMessage = 'Invalid docker-compose.yaml file: ' + message;
   console.error(errorMessage.red.bold);
   process.exit(1);
 }
