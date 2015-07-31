@@ -2,23 +2,39 @@ var cjson = require('cjson');
 var path = require('path');
 var fs = require('fs');
 var _ = require('underscore');
+YAML = require('yamljs');
 var helpers = require('./helpers');
 var format = require('util').format;
 
 exports.read = function() {
-  var configJsonPath = path.resolve('Kitematic.json');
-  if (fs.existsSync(configJsonPath)) {
-    var configJson = cjson.load(configJsonPath);
+  var configJson;
+  var configJSONPath = path.resolve('Kitematic.json');
+  var configYAMLPath = path.resolve('Kitematic.yaml');
+  if (fs.existsSync(configJSONPath)) {
+    configJson = cjson.load(configJSONPath);
+  }
+  else if (fs.existsSync(configYAMLPath)) {
+    configJson = YAML.load(configYAMLPath);
+  }
+  else {
+    console.error('A Kitematic.json or Kitematic.yaml file does not exist!'.red.bold);
+    helpers.printHelp();
+    process.exit(1);
+  }
 
-    // Validate json or cjson.
-    if (!_.isObject(configJson)) {
-      configErrorLog('Your Kitematic.json doesn\t look like valid configuration.');
-    }
-
+  // Validate configuration.
+  if (!_.isObject(configJson)) {
+    configErrorLog('Check your Kitematicfile, its not valid configuration.');
+    helpers.printHelp();
+    process.exit(1);
+  }
+  else {
     // Validate containers.
     _.mapObject(configJson, function(config, name) {
       if(!config.image) {
-        configErrorLog(name + ': Image does not exist');
+        configErrorLog(name + ': Missing required "image" parameter');
+        helpers.printHelp();
+        process.exit(1);
       }
       if (config.volumes) {
         _.mapObject(config.volumes, function(volume, dir) {
@@ -35,10 +51,6 @@ exports.read = function() {
     });
 
     return configJson;
-  } else {
-    console.error('Kitematic.json file does not exist!'.red.bold);
-    helpers.printHelp();
-    process.exit(1);
   }
 };
 
