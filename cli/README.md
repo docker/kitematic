@@ -7,7 +7,9 @@ Store configuration for a projects container(s) in the repository and start all 
 ### Kitematic.yaml
 ```yaml
 mysql:
-  image: "mysql"
+  image: "mysql/mysql-server:5.7"
+  env:
+    MYSQL_ROOT_PASSWORD: "none"
 drupal:
   image: "timbrandin/drupal"
   ports: # (optional) Ports definitions.
@@ -28,7 +30,10 @@ drupal:
 ```json
 {
   "mysql": {
-    "image": "mysql"
+    "image": "mysql/mysql-server:5.7",
+    "env": {
+      "MYSQL_ROOT_PASSWORD": "none"
+    }
   },
   "drupal": {
     "image": "timbrandin/drupal",
