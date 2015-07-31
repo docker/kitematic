@@ -39,11 +39,12 @@ exports.read = function() {
       if (config.volumes) {
         _.mapObject(config.volumes, function(volume, dir) {
           //rewrite ~ with $HOME
-          config.volumes.folder = rewriteHome(config.volumes.folder);
+          volume.folder = rewriteHome(volume.folder);
           if (config.volumes.vm_folder) {
             //rewrite ~ with $HOME
-            config.volumes.vm_folder = config.volumes.vm_folder.replace('~', process.env.HOME);
+            volume.vm_folder = volume.vm_folder.replace('~', process.env.HOME);
           }
+          return volume;
         });
       }
 
