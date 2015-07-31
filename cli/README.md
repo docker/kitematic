@@ -14,8 +14,9 @@ drupal:
   image: "timbrandin/drupal"
   ports: # (optional) Ports definitions.
     80:
-      host: 80
+      port: 80
       forward: 8080 # (optional) Port forwarded on OSX/Windows
+      host: "0.0.0.0" # (optional) Assign the ports to a different network interface.
   volumes: # (optional) Shared volumes/folders.
     "/var/www":
       folder: "./web"
@@ -39,8 +40,9 @@ drupal:
     "image": "timbrandin/drupal",
     "ports": {
       "80": {
-        "host": 80,
-        "forward": 8080
+        "port": 80,
+        "forward": 8080,
+        "host": "0.0.0.0"
       }
     },
     "volumes": {
