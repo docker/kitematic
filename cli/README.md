@@ -14,7 +14,7 @@ drupal:
   image: "timbrandin/drupal"
   ports: # (optional) Ports definitions.
     80:
-      port: 80
+      port: 80 # (optional) Port on the virtual machine.
       forward: 8080 # (optional) Port forwarded on OSX/Windows
       host: "0.0.0.0" # (optional) Assign the ports to a different network interface.
   volumes: # (optional) Shared volumes/folders.
