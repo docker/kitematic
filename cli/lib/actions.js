@@ -72,6 +72,10 @@ Actions.prototype.remove = function() {
   this._executePararell("remove", [this.config]);
 };
 
+Actions.prototype.restart = function() {
+  this._executePararell("restart", [this.config]);
+};
+
 function storeLastNChars(vars, field, limit, color) {
   return function(data) {
     vars[field] += data.toString();

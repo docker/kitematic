@@ -13,8 +13,7 @@ exports.run = function(config) {
       script: path.resolve(SCRIPT_DIR, 'run.sh'),
       vars: {
         name: name,
-        image: container.image,
-        env: container.env
+        config: container
       }
     });
   });
@@ -45,6 +44,22 @@ exports.remove = function(config) {
       script: path.resolve(SCRIPT_DIR, 'remove.sh'),
       vars: {
         name: name
+      }
+    });
+  });
+
+  return taskList;
+};
+
+exports.restart = function(config) {
+  var taskList = nodemiral.taskList('Restart (Linux)');
+
+  _.mapObject(config, function(container, name) {
+    taskList.executeScript('Restarting ' + name, {
+      script: path.resolve(SCRIPT_DIR, 'run.sh'),
+      vars: {
+        name: name,
+        config: container
       }
     });
   });
