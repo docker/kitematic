@@ -10,7 +10,7 @@ require('colors');
 
 var action = process.argv[2];
 
-if (action != 'open') {
+if (action && action != 'open') {
   console.log('\nKitematic: The easiest way to start using Docker on Mac & Windows'.bold.blue);
   console.log('-----------------------------------------------------------------\n'.bold.blue);
 
