@@ -16,7 +16,10 @@ function Actions(config, cwd) {
 
 Actions.prototype._createSessionsMap = function(config) {
   var sessionsMap = {};
-  var machineName = 'dev';
+  var machineName = 'docker-vm';
+  if (process.env.DOCKERMACHINE) {
+    machineName = process.env.DOCKERMACHINE;
+  }
 
   var machineInfo = shell.exec("docker-machine inspect " + machineName, {silent: true}).output;
   if (machineInfo) {
