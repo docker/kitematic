@@ -72,7 +72,7 @@ Actions.prototype._executeNow = function(actionName, args) {
       async.map(
         sessionsInfo.sessions,
         function(session, cb) {
-          var taskList = sessionsInfo.taskListsBuilder['list']
+          var taskList = sessionsInfo.taskListsBuilder[actionName]
             .apply(sessionsInfo.taskListsBuilder, [self.config, session, cb]);
         },
         whenAfterCompleted
