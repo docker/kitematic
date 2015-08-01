@@ -63,6 +63,25 @@ Actions.prototype._executePararell = function(actionName, args) {
   );
 };
 
+Actions.prototype._executeNow = function(actionName, args) {
+  var self = this;
+  var sessionInfoList = _.values(self.sessionsMap);
+  async.map(
+    sessionInfoList,
+    function(sessionsInfo, callback) {
+      async.map(
+        sessionsInfo.sessions,
+        function(session, cb) {
+          var taskList = sessionsInfo.taskListsBuilder['list']
+            .apply(sessionsInfo.taskListsBuilder, [self.config, session, cb]);
+        },
+        whenAfterCompleted
+      );
+    },
+    whenAfterCompleted
+  );
+};
+
 Actions.prototype.run = function() {
   this._executePararell("run", [this.config]);
 };
@@ -77,6 +96,10 @@ Actions.prototype.remove = function() {
 
 Actions.prototype.restart = function() {
   this._executePararell("restart", [this.config]);
+};
+
+Actions.prototype.list = function() {
+  this._executeNow("list", [this.config]);
 };
 
 function storeLastNChars(vars, field, limit, color) {

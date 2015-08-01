@@ -4,19 +4,19 @@ var path = require('path');
 var _ = require('underscore');
 var ejs = require('ejs');
 var shell = require("shelljs");
+var async = require('async');
+var session = require('nodemiral').session;
 
 var SCRIPT_DIR = path.resolve(__dirname, '../../scripts/linux');
 
 exports.run = function(config) {
-  var taskList = nodemiral.taskList('Run (Linux)', {series: true});
+  var taskList = nodemiral.taskList('Run (Linux)');
 
   _.mapObject(config, function(container, name) {
 
     // Setup volume shares.
     _.mapObject(container.volumes, function(config, volume) {
       // console.log(virtualBox);
-
-
       // VBoxManage sharedfolder add
     });
 
@@ -83,6 +83,21 @@ exports.restart = function(config) {
   });
 
   return taskList;
+};
+
+exports.list = function(config, session, callback) {
+  if (process.env.DEBUG) {
+    debugScriptTemplate('list.sh', { config: config });
+  }
+
+  session.executeScript(path.resolve(SCRIPT_DIR, 'list.sh'), {
+    vars: {
+      config: config
+    }
+  }, function(err, code, options) {
+    console.log(options.stdout);
+    callback();
+  });
 };
 
 function debugScriptTemplate(script, vars) {

@@ -30,49 +30,17 @@ drupal:
 
   Starts the container(s) with it's setup from the docker-compose.yml.
 
-* `kitematic run CONTAINER`
-
-  Starts the container with it's setup from the docker-compose.yml.
-
 * `kitematic stop`
 
   Stops the container(s) defined in the docker-compose.yml.
 
-* `kitematic stop CONTAINER`
-
-  Stops the container.
-
 * `kitematic remove`
-
-  Removes the container(s) defined in the docker-compose.yml.
-
-* `kitematic remove CONTAINER`
 
   Removes the container(s) defined in the docker-compose.yml.
 
 * `kitematic restart`
 
   Restart the container(s) defined in the docker-compose.yml.
-
-* `kitematic remove CONTAINER`
-
-  Removes the container(s) defined in the docker-compose.yml.
-
-* `kitematic exec`
-
-  Opens a shell to the container(s). Though it should warn if there are multiple containers running.
-
-* `kitematic exec CONTAINER`
-
-  Opens a shell to the container. Though it should warn if there are multiple containers running.
-
-* `kitematic exec COMMAND`
-
-  Executes a command in the container(s). Though it should warn if there are multiple containers running.
-
-* `kitematic exec CONTAINER COMMAND`
-
-  Executes a command in the container.
 
 * `kitematic cli`
 
@@ -81,3 +49,5 @@ drupal:
 * `kitematic init`
 
   Create an example docker-compose.yml
+
+> NOTICE! If you're using the public beta version of the Kitematic tool => Then your docker-machine's name will be "dev". Change the docker machine by exporting "dev" for your DOCKERMACHINE environment variable: `export DOCKERMACHINE="dev"`. If you think it is something else you can always run: `docker-machine list`.
