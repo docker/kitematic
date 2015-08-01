@@ -102,6 +102,26 @@ Actions.prototype.list = function() {
   this._executeNow("list", [this.config]);
 };
 
+Actions.init = function() {
+  var destComposeYaml = path.resolve('docker-compose.yml');
+
+  if(fs.existsSync(destComposeYaml)) {
+    console.error('docker-compose.yml Already Exists'.bold.red);
+    process.exit(1);
+  }
+
+  var exampleConfigYaml = path.resolve(__dirname, '../example/docker-compose.yml');
+
+  copyFile(exampleConfigYaml, destComposeYaml);
+
+  console.log('Example docker-compose.yml Created!'.bold.green);
+
+  function copyFile(src, dest) {
+    var content = fs.readFileSync(src, 'utf8');
+    fs.writeFileSync(dest, content);
+  }
+};
+
 function storeLastNChars(vars, field, limit, color) {
   return function(data) {
     vars[field] += data.toString();

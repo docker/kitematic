@@ -8,19 +8,19 @@ var format = require('util').format;
 
 exports.read = function() {
   var configJson;
-  var configYAMLPath = path.resolve('docker-compose.yaml');
+  var configYAMLPath = path.resolve('docker-compose.yml');
   if (fs.existsSync(configYAMLPath)) {
     configJson = YAML.load(configYAMLPath);
   }
   else {
-    console.error('A docker-compose.yaml file does not exist!'.red.bold);
+    console.error('A docker-compose.yml file does not exist!'.red.bold);
     helpers.printHelp();
     process.exit(1);
   }
 
   // Validate configuration.
   if (!_.isObject(configJson)) {
-    configErrorLog('Check your docker-compose.yaml, its not valid configuration.');
+    configErrorLog('Check your docker-compose.yml, its not valid configuration.');
     helpers.printHelp();
     process.exit(1);
   }
@@ -37,9 +37,10 @@ exports.read = function() {
         for(dir in config.volumes) {
           volume = _.clone(config.volumes[dir]);
           //rewrite ~ with $HOME
-          var parts = dir.split(/:(.+)?/);
+          var parts = (/^\d+$/.test(dir) ? volume : dir).split(/:(.+)?/);
           var localDir = "";
-          if (parts[0] != 0) {
+          console.log(parts[0]);
+          if (parts[0]) {
             localDir = path.resolve(rewriteHome(parts[0]));
           }
           if (parts[1]) {
@@ -73,7 +74,7 @@ function rewriteHome(location) {
 }
 
 function configErrorLog(message) {
-  var errorMessage = 'Invalid docker-compose.yaml file: ' + message;
+  var errorMessage = 'Invalid docker-compose.yml file: ' + message;
   console.error(errorMessage.red.bold);
   process.exit(1);
 }
