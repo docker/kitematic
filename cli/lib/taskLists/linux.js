@@ -9,6 +9,21 @@ var session = require('nodemiral').session;
 
 var SCRIPT_DIR = path.resolve(__dirname, '../../scripts/linux');
 
+exports.list = function(config, session, callback) {
+  if (process.env.DEBUG) {
+    debugScriptTemplate('list.sh', { config: config });
+  }
+
+  session.executeScript(path.resolve(SCRIPT_DIR, 'list.sh'), {
+    vars: {
+      config: config
+    }
+  }, function(err, code, options) {
+    console.log(options.stdout);
+    callback();
+  });
+};
+
 exports.run = function(config) {
   var taskList = nodemiral.taskList('Run (Linux)');
 
@@ -85,29 +100,19 @@ exports.restart = function(config) {
   return taskList;
 };
 
-exports.list = function(config, session, callback) {
-  if (process.env.DEBUG) {
-    debugScriptTemplate('list.sh', { config: config });
-  }
-
-  session.executeScript(path.resolve(SCRIPT_DIR, 'list.sh'), {
-    vars: {
-      config: config
-    }
-  }, function(err, code, options) {
-    console.log(options.stdout);
-    callback();
-  });
-};
-
-function debugScriptTemplate(script, vars) {
+function debugScriptTemplate(script, vars, callback) {
   fs.readFile(path.resolve(SCRIPT_DIR, script), {encoding: 'utf8'}, function(err, content) {
     if(err) {
       callback(err);
     } else {
       if(vars) {
         var content = ejs.compile(content)(vars);
-        console.log(content);
+        if (!callback) {
+          console.log(content);
+        }
+        else {
+          callback(null, content);
+        }
       }
     }
   });
