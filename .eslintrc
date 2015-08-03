@@ -3,6 +3,9 @@ root: true
 ecmaFeatures:
     modules: true
     jsx: true
+    arrowFunctions: true
+    blockBindings: true
+
 env:
     node: true
     es6: true
