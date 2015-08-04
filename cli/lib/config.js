@@ -39,7 +39,6 @@ exports.read = function() {
           //rewrite ~ with $HOME
           var parts = (/^\d+$/.test(dir) ? volume : dir).split(/:(.+)?/);
           var localDir = "";
-          console.log(parts[0]);
           if (parts[0]) {
             localDir = path.resolve(rewriteHome(parts[0]));
           }
