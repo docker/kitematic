@@ -5,19 +5,17 @@ import fs from 'fs';
 import util from './Util';
 import resources from './ResourcesUtil';
 
-var NAME = 'docker-vm';
-
 var DockerMachine = {
   command: function () {
     return resources.dockerMachine();
   },
   name: function () {
-    return NAME;
+    return 'docker-vm';
   },
   isoversion: function (machineName = this.name()) {
     try {
-      var data = fs.readFileSync(path.join(util.home(), '.docker', 'machine', 'machines', machineName, 'boot2docker-virtualbox.iso'), 'utf8');
-      var match = data.match(/Docker v(\d+\.\d+\.\d+)/);
+      var data = fs.readFileSync(path.join(util.home(), '.docker', 'machine', 'machines', machineName, 'boot2docker.iso'), 'utf8');
+      var match = data.match(/Boot2Docker-v(\d+\.\d+\.\d+)/);
       if (match) {
         return match[1];
       } else {
