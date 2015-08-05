@@ -24,8 +24,8 @@ exports.list = function(config, session, callback) {
   });
 };
 
-exports.run = function(config) {
-  var taskList = nodemiral.taskList('Run (Linux)');
+exports.start = function(config) {
+  var taskList = nodemiral.taskList('Starting (Linux)');
 
   _.mapObject(config, function(container, name) {
 
@@ -36,14 +36,14 @@ exports.run = function(config) {
     });
 
     if (process.env.DEBUG) {
-      debugScriptTemplate('run.sh', {
+      debugScriptTemplate('start.sh', {
         name: name,
         config: container
       });
     }
 
     taskList.executeScript('Starting ' + name, {
-      script: path.resolve(SCRIPT_DIR, 'run.sh'),
+      script: path.resolve(SCRIPT_DIR, 'start.sh'),
       vars: {
         name: name,
         config: container
@@ -89,7 +89,7 @@ exports.restart = function(config) {
 
   _.mapObject(config, function(container, name) {
     taskList.executeScript('Restarting ' + name, {
-      script: path.resolve(SCRIPT_DIR, 'run.sh'),
+      script: path.resolve(SCRIPT_DIR, 'start.sh'),
       vars: {
         name: name,
         config: container

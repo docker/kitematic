@@ -82,8 +82,8 @@ Actions.prototype._executeNow = function(actionName, args) {
   );
 };
 
-Actions.prototype.run = function() {
-  this._executePararell("run", [this.config]);
+Actions.prototype.start = function() {
+  this._executePararell("start", [this.config]);
 };
 
 Actions.prototype.stop = function() {

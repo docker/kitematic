@@ -28,7 +28,7 @@ drupal:
 
   Lists the status of container(s) managed in the docker-compose.yml
 
-* `kitematic run`
+* `kitematic start`
 
   Starts the container(s) with it's setup from the docker-compose.yml
 
