@@ -108,7 +108,8 @@ var ImageCard = React.createClass({
       description = "No description.";
     }
     var logoStyle = {
-      backgroundImage: `linear-gradient(-180deg, ${this.props.image.gradient_start} 4%, ${this.props.image.gradient_end}  100%)`
+      //backgroundImage: `linear-gradient(-180deg, ${this.props.image.gradient_start} 4%, ${this.props.image.gradient_end}  100%)`
+      backgroundColor: this.props.image.gradient_start
     };
     var imgsrc;
     if (this.props.image.img) {

@@ -42,7 +42,7 @@ var Preferences = React.createClass({
           <div className="title">VM Settings</div>
           <div className="option">
             <div className="option-name">
-              Shut Down Linux VM on closing Kitematic
+              Shutdown Linux VM on closing Kitematic
             </div>
             <div className="option-value">
               <input type="checkbox" checked={this.state.closeVMOnQuit} onChange={this.handleChangeCloseVMOnQuit}/>

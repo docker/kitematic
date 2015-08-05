@@ -16,7 +16,7 @@ Kitematic is an open source project built to simplify and streamline using
 Docker on a Mac or Windows (coming soon) PC. Kitematic automates the Docker
 installation and setup process and provides an intuitive graphical user
 interface (GUI) for running Docker containers.  Kitematic integrates with
-[Docker Machine](http://docs.docker.com/machine/) to provision a VirtualBox VM
+[Docker Machine]({{% thebaseurl %}}machine/) to provision a VirtualBox VM
 and install the Docker Engine locally on your machine.
 
 Once installed, the Kitematic GUI launches and from the home screen you will be
@@ -100,7 +100,7 @@ on your Mac by clicking on the folders in the "Edit Files" section of the
 container summary screen.
 
 This allows you to manage files in volumes via the Finder.
-Kitematic exposes a container's volume data under `~/Kitematic/<container's name>/`.
+Kitematic exposes a container's volume data under `~/Documents/Kitematic/<container's name>/`.
 Quick access to this folder (or directory) is available via the app:
 
 ![Accessing the volumes directory](../images/volumes-dir.png)
