@@ -3,13 +3,8 @@ var execFile = require('child_process').execFile;
 var packagejson = require('./package.json');
 var electron = require('electron-prebuilt');
 
-var dockerHostname = packagejson['docker-version'].indexOf('rc') !== -1 ? 'test.docker.com' : 'get.docker.com';
-
-var WINDOWS_DOCKER_URL = 'https://' + dockerHostname + '/builds/Windows/x86_64/docker-' + packagejson['docker-version'] + '.exe';
-var DARWIN_DOCKER_URL = 'https://' + dockerHostname + '/builds/Darwin/x86_64/docker-' + packagejson['docker-version'];
 var WINDOWS_DOCKER_MACHINE_URL = 'https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_windows-amd64.exe';
 var DARWIN_DOCKER_MACHINE_URL = 'https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_darwin-amd64';
-var DARWIN_COMPOSE_URL = 'https://github.com/docker/compose/releases/download/' + packagejson['docker-compose-version'] + '/docker-compose-Darwin-x86_64';
 
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
@@ -143,20 +138,10 @@ module.exports = function (grunt) {
 
     // docker binaries
     'download-binary': {
-      docker: {
-        version: packagejson['docker-version'],
-        binary: path.join('resources', 'docker'),
-        download: 'curl:docker'
-      },
       'docker-machine': {
         version: packagejson['docker-machine-version'],
         binary: path.join('resources', 'docker-machine'),
         download: 'curl:docker-machine'
-      },
-      'docker-compose': {
-        version: packagejson['docker-compose-version'],
-        binary: path.join('resources', 'docker-compose'),
-        download: 'curl:docker-compose'
       }
     },
 
@@ -221,17 +206,9 @@ module.exports = function (grunt) {
 
     // download binaries
     curl: {
-      docker: {
-        src: process.platform === 'win32' ? WINDOWS_DOCKER_URL : DARWIN_DOCKER_URL,
-        dest: process.platform === 'win32' ? path.join('resources', 'docker.exe') : path.join('resources', 'docker')
-      },
       'docker-machine': {
         src: process.platform === 'win32' ? WINDOWS_DOCKER_MACHINE_URL : DARWIN_DOCKER_MACHINE_URL,
         dest: process.platform === 'win32' ? path.join('resources', 'docker-machine.exe') : path.join('resources', 'docker-machine')
-      },
-      'docker-compose': {
-        src: DARWIN_COMPOSE_URL,
-        dest: 'resources/docker-compose'
       }
     },
 
@@ -253,22 +230,6 @@ module.exports = function (grunt) {
         files: {
           'build/main.css': 'styles/main.less'
         }
-      }
-    },
-
-    // javascript
-    babel: {
-      options: {
-        sourceMap: 'inline',
-        blacklist: 'regenerator'
-      },
-      dist: {
-        files: [{
-          expand: true,
-          cwd: 'src/',
-          src: ['**/*.js'],
-          dest: 'build/',
-        }]
       }
     },
 
@@ -304,6 +265,22 @@ module.exports = function (grunt) {
         type: 'string',
         value: 'docker',
         src: '<%= OSX_FILENAME %>/Contents/Info.plist'
+      }
+    },
+
+    // javascript
+    babel: {
+      options: {
+        sourceMap: 'inline',
+        blacklist: 'regenerator'
+      },
+      dist: {
+        files: [{
+          expand: true,
+          cwd: 'src/',
+          src: ['**/*.js'],
+          dest: 'build/',
+        }]
       }
     },
 
@@ -361,14 +338,10 @@ module.exports = function (grunt) {
     }
   });
 
-  if (process.platform === 'win32') {
-    grunt.registerTask('default', ['download-binary:docker', 'download-binary:docker-machine', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
-  } else {
-    grunt.registerTask('default', ['download-binary', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
-  }
+  grunt.registerTask('default', ['download-binary', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean:release', 'download-binary:docker', 'download-binary:docker-machine', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'prompt:create-windows-installer', 'create-windows-installer', 'rename:installer']);
+    grunt.registerTask('release', ['clean:release', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'prompt:create-windows-installer', 'create-windows-installer', 'rename:installer']);
   } else {
     grunt.registerTask('release', ['clean:release', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'plistbuddy', 'shell:sign', 'shell:zip']);
   }
