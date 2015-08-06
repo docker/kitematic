@@ -6,7 +6,7 @@
   align-items: flex-start;
   justify-content: center;
 
-  .preferences-content {
+  .preferences-content, .about-content {
     flex: 1 auto;
     margin-top: 45px;
     padding: 50px;
@@ -35,6 +35,36 @@
         flex: 1 auto;
         text-align: right;
       }
+    }
+  }
+  .about-content {
+    margin-top: 0px;
+    height: 100%;
+    overflow: auto;
+    .items {
+      display: flex;
+      .item {
+        flex: 1 auto;
+        margin-right: 1rem;
+        text-align: center;
+      }
+    }
+    h3 {
+      color: @gray-normal;
+      font-weight: 400;
+      font-size: 18px;
+      text-align: center;
+    }
+    img {
+      height: 100px;
+      width: auto;
+    }
+    h4 {
+      margin-bottom: 0.5rem;
+    }
+    p {
+      color: @gray-light;
+      font-size: 1.5rem;
     }
   }
 }

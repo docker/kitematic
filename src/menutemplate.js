@@ -17,7 +17,12 @@ var MenuTemplate = function () {
       submenu: [
       {
         label: 'About Kitematic',
-        selector: 'orderFrontStandardAboutPanel:'
+        click: function () {
+          metrics.track('Opened About', {
+            from: 'menu'
+          });
+          router.get().transitionTo('about');
+        }
       },
       {
         type: 'separator'
@@ -37,35 +42,9 @@ var MenuTemplate = function () {
         type: 'separator'
       },
       {
-        label: 'Install Docker Commands',
-        enabled: true,
-        click: function () {
-          metrics.track('Installed Docker Commands');
-          if (!setupUtil.shouldUpdateBinaries()) {
-            dialog.showMessageBox({
-              message: 'Docker binaries are already installed in /usr/local/bin',
-              buttons: ['OK']
-            });
-            return;
-          }
-
-          let copy = setupUtil.needsBinaryFix() ?
-               util.exec(setupUtil.macSudoCmd(setupUtil.copyBinariesCmd() + ' && ' + setupUtil.fixBinariesCmd())) :
-               util.exec(setupUtil.copyBinariesCmd());
-
-          copy.then(() => {
-            dialog.showMessageBox({
-              message: 'Docker binaries have been installed under /usr/local/bin',
-              buttons: ['OK']
-            });
-          }).catch((err) => {
-            console.log(err);
-          });
-        },
+        type: 'separator'
       },
       {
-        type: 'separator'
-      }, {
         label: 'Hide Kitematic',
         accelerator: util.CommandOrCtrl() + '+H',
         selector: 'hide:'
