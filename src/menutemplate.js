@@ -76,28 +76,24 @@ var MenuTemplate = function () {
       label: 'File',
       submenu: [
       {
-        label: 'Open File or Directory',
+        label: 'Open Compose File',
         accelerator: util.CommandOrCtrl() + '+O',
         click: function () {
           dialog.showOpenDialog({
-            properties: [ 'openFile', 'openDirectory' ],
+            properties: [ 'openFile' ],
             filters: [{ name: 'Docker Compose File', extensions: ['yml'] }]
           }, (files) => {
-            console.log('Opening: %o', files);
-            files.map((file) => {
-              compose.up(file).then(() => {
-                console.log('Showing it worked');
-                dialog.showMessageBox({
-                  'title': 'Docker Compose Completed',
-                  'message': 'Your containers are now up and running',
-                  'buttons': ['OK']
-                });
-              }, (rejected) => {
-                console.log('Showing error: %o', rejected);
-                dialog.showErrorBox('Docker Compose Error', rejected.message);
-              }).catch(err => {
-                console.error('Error found : %o', err);
-              });
+            compose.up(files[0]).then(() => {
+              dialog.showMessageBox({'title': 'Docker Compose Successful',
+                                     'message': 'All containers have been created',
+                                     'buttons': ['OK']
+                                   });
+            }).catch((err) => {
+              console.error('Error generated: %o', err.message);
+              dialog.showMessageBox({'title': 'Docker Compose Error',
+                                     'message': err.message,
+                                     'buttons': ['Dismiss']
+                                   });
             });
           });
         }
