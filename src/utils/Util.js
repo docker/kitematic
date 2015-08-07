@@ -81,9 +81,7 @@ module.exports = {
     var settingsjson = {};
     try {
       settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
-    } catch (err) {
-      //console.log('Settings error: %o', err);
-    }
+    } catch (err) {}
     return settingsjson;
   },
   isOfficialRepo: function (name) {

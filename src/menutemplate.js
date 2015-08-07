@@ -7,7 +7,6 @@ var setupUtil = require('./utils/SetupUtil');
 var metrics = require('./utils/MetricsUtil');
 var machine = require('./utils/DockerMachineUtil');
 var compose = require('./utils/DockerComposeUtil');
-var Promise = require('bluebird');
 var dialog = remote.require('dialog');
 import docker from './utils/DockerUtil';
 
