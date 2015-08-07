@@ -73,6 +73,7 @@ var _steps = [{
 
     var isoversion = machine.isoversion();
     var packagejson = util.packagejson();
+    var machineState = (yield machine.state());
     var packagejsonVersion = packagejson['docker-version'].split('-')[0];
     if (!isoversion || util.compareVersions(isoversion, packagejsonVersion) < 0) {
       yield machine.start();

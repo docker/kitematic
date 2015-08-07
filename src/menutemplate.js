@@ -6,6 +6,8 @@ var util = require('./utils/Util');
 var setupUtil = require('./utils/SetupUtil');
 var metrics = require('./utils/MetricsUtil');
 var machine = require('./utils/DockerMachineUtil');
+var compose = require('./utils/DockerComposeUtil');
+var Promise = require('bluebird');
 var dialog = remote.require('dialog');
 import docker from './utils/DockerUtil';
 
@@ -74,9 +76,31 @@ var MenuTemplate = function () {
       label: 'File',
       submenu: [
       {
-        label: 'Open File',
+        label: 'Open File or Directory',
         accelerator: util.CommandOrCtrl() + '+O',
-        selector: 'openDocument:'
+        click: function () {
+          dialog.showOpenDialog({
+            properties: [ 'openFile', 'openDirectory' ],
+            filters: [{ name: 'Docker Compose File', extensions: ['yml'] }]
+          }, (files) => {
+            console.log('Opening: %o', files);
+            files.map((file) => {
+              compose.up(file).then(() => {
+                console.log('Showing it worked');
+                dialog.showMessageBox({
+                  'title': 'Docker Compose Completed',
+                  'message': 'Your containers are now up and running',
+                  'buttons': ['OK']
+                });
+              }, (rejected) => {
+                console.log('Showing error: %o', rejected);
+                dialog.showErrorBox('Docker Compose Error', rejected.message);
+              }).catch(err => {
+                console.error('Error found : %o', err);
+              });
+            });
+          });
+        }
       },
       {
         type: 'separator'
