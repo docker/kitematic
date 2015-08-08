@@ -22,7 +22,7 @@
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   ],
-  "docker-version": "1.8.0-rc2",
+  "docker-version": "1.8.0-rc3",
   "docker-machine-version": "0.4.0-rc2",
   "electron-version": "0.27.2",
   "virtualbox-version": "5.0.0",
