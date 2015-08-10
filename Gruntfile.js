@@ -233,41 +233,6 @@ module.exports = function (grunt) {
       }
     },
 
-    plistbuddy: {
-      addBundleURLTypes: {
-        method: 'Add',
-        entry: 'CFBundleURLTypes',
-        type: 'array',
-        src: '<%= OSX_FILENAME %>/Contents/Info.plist'
-      },
-      addBundleURLTypesDict: {
-        method: 'Add',
-        entry: 'CFBundleURLTypes:0',
-        type: 'dict',
-        src: '<%= OSX_FILENAME %>/Contents/Info.plist'
-      },
-      addBundleURLTypesDictName: {
-        method: 'Add',
-        entry: 'CFBundleURLTypes:0:CFBundleURLName',
-        type: 'string',
-        value: 'Docker App Protocol',
-        src: '<%= OSX_FILENAME %>/Contents/Info.plist'
-      },
-      addBundleURLTypesDictSchemes: {
-        method: 'Add',
-        entry: 'CFBundleURLTypes:0:CFBundleURLSchemes',
-        type: 'array',
-        src: '<%= OSX_FILENAME %>/Contents/Info.plist'
-      },
-      addBundleURLTypesDictSchemesDocker: {
-        method: 'Add',
-        entry: 'CFBundleURLTypes:0:CFBundleURLSchemes:0',
-        type: 'string',
-        value: 'docker',
-        src: '<%= OSX_FILENAME %>/Contents/Info.plist'
-      }
-    },
-
     // javascript
     babel: {
       options: {
@@ -343,7 +308,7 @@ module.exports = function (grunt) {
   if (process.platform === 'win32') {
     grunt.registerTask('release', ['clean:release', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'prompt:create-windows-installer', 'create-windows-installer', 'rename:installer']);
   } else {
-    grunt.registerTask('release', ['clean:release', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'plistbuddy', 'shell:sign', 'shell:zip']);
+    grunt.registerTask('release', ['clean:release', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
   }
 
   process.on('SIGINT', function () {
