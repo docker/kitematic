@@ -27,13 +27,15 @@ var Preferences = React.createClass({
       <div className="preferences">
         <div className="about-content">
           <a onClick={this.handleGoBackClick}>Go Back</a>
-          <h3>Installed Software</h3>
           <div className="items">
             <div className="item">
               <RetinaImage src="cartoon-kitematic.png"/>
               <h4>Docker {packages.name}</h4>
               <p>{packages.version}</p>
             </div>
+          </div>
+          <h3>Kitematic is built with:</h3>
+          <div className="items">
             <div className="item">
               <RetinaImage src="cartoon-docker.png"/>
               <h4>Docker Engine</h4>
@@ -44,17 +46,18 @@ var Preferences = React.createClass({
               <h4>Docker Machine</h4>
               <p>{packages["docker-machine-version"]}</p>
             </div>
-            <div className="item">
-              <RetinaImage src="cartoon-docker-compose.png"/>
-              <h4>Docker Compose</h4>
-              <p>{packages["docker-compose-version"]}</p>
-            </div>
           </div>
           <h3>Third-Party Software</h3>
           <div className="items">
             <div className="item">
               <h4>VirtualBox</h4>
               <p>{packages["virtualbox-version"]}</p>
+            </div>
+          </div>
+          <div className="items">
+            <div className="item">
+              <h4>Electron</h4>
+              <p>{packages["electron-version"]}</p>
             </div>
           </div>
         </div>
