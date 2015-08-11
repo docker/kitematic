@@ -20,7 +20,7 @@ describe('SetupStore', function () {
 
     pit('downloads virtualbox if it is installed but has an outdated version', function () {
       virtualBox.installed.mockReturnValue(true);
-      virtualBox.version.mockReturnValue(Promise.resolve('4.3.16'));
+      virtualBox.version.mockReturnValue(Promise.resolve('5.0.0'));
       util.compareVersions.mockReturnValue(-1);
       setupUtil.download.mockReturnValue(Promise.resolve());
       virtualBox.filename.mockReturnValue('');
