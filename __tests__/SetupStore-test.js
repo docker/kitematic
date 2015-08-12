@@ -55,6 +55,7 @@ describe('SetupStore', function () {
       machine.stop.mockReturnValue(Promise.resolve());
       machine.start.mockReturnValue(Promise.resolve());
       machine.upgrade.mockReturnValue(Promise.resolve());
+      util.packagejson.mockReturnValue({'docker-version':'1.8.0'});
       util.compareVersions.mockReturnValue(-1);
       machine.create.mockClear();
       machine.upgrade.mockClear();
