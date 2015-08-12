@@ -29,8 +29,8 @@ commands on the command line:
 - `docker-machine create -d virtualbox dev`
 
 Then re-open Kitematic. This usually fixes the issue, but if it persists, feel
-free to view our [existing GitHub
-issues](https://github.com/kitematic/kitematic/issues?q=is%3Aopen+is%3Aissue+label%3Abug).
+free to view our <a href="https://github.com/kitematic/kitematic/issues?q=is%3Aopen+is%3Aissue+label%3Abug">existing GitHub
+issues</a>.
 
 ## Contributing Fixes
 
@@ -46,6 +46,5 @@ if you're looking to help fix specific issues around VM provisioning.
 
 ## View All Issues
 
-For a full list of Kitematic bugs or issues see our [GitHub
-issues](https://github.com/kitematic/kitematic/issues?q=is%3Aopen+is%3Aissue+label%3Abug)
-labelled as `bug`.
+For a full list of Kitematic bugs or issues see our <a href="https://github.com/kitematic/kitematic/issues?q=is%3Aopen+is%3Aissue+label%3Abug">existing GitHub
+issues</a> labelled as `bug`.
