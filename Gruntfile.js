@@ -46,15 +46,19 @@ module.exports = function (grunt) {
     APPNAME += ' (Beta)';
   }
 
-  var OSX_OUT = './dist/osx';
-  var OSX_FILENAME = OSX_OUT + '/' + APPNAME + '.app';
+  var OSX_OUT = './dist';
+  var OSX_OUT_X64 = OSX_OUT + '/' + APPNAME + '-darwin-x64';
+  var OSX_FILENAME = OSX_OUT_X64 + '/' + APPNAME + '.app';
 
   grunt.initConfig({
     IDENTITY: 'Developer ID Application: Docker Inc',
     APPNAME: APPNAME,
+    APPNAME_ESCAPED: APPNAME.replace(/ /g, '\\ ').replace(/\(/g,'\\(').replace(/\)/g,'\\)'),
     OSX_OUT: OSX_OUT,
+    OSX_OUT_ESCAPED: OSX_OUT.replace(/ /g, '\\ ').replace(/\(/g,'\\(').replace(/\)/g,'\\)'),
+    OSX_OUT_X64: OSX_OUT_X64,
     OSX_FILENAME: OSX_FILENAME,
-    OSX_FILENAME_ESCAPED: OSX_FILENAME.replace(' ', '\\ ').replace('(','\\(').replace(')','\\)'),
+    OSX_FILENAME_ESCAPED: OSX_FILENAME.replace(/ /g, '\\ ').replace(/\(/g,'\\(').replace(/\)/g,'\\)'),
 
     // electron
     electron: {
@@ -62,7 +66,7 @@ module.exports = function (grunt) {
         options: {
           name: BASENAME,
           dir: 'build/',
-          out: 'dist/',
+          out: 'dist',
           version: packagejson['electron-version'],
           platform: 'win32',
           arch: 'x64',
@@ -74,7 +78,7 @@ module.exports = function (grunt) {
         options: {
           name: APPNAME,
           dir: 'build/',
-          out: '<%= OSX_OUT %>',
+          out: 'dist',
           version: packagejson['electron-version'],
           platform: 'darwin',
           arch: 'x64',
@@ -103,7 +107,7 @@ module.exports = function (grunt) {
       exes: {
         files: [{
           expand: true,
-          cwd: 'dist/' + BASENAME + '-win32',
+          cwd: 'dist/' + BASENAME + '-win32-x64',
           src: [BASENAME + '.exe']
         }],
         options: {
@@ -124,16 +128,19 @@ module.exports = function (grunt) {
     },
 
     'create-windows-installer': {
-      appDirectory: 'dist/' + BASENAME + '-win32/',
-      authors: 'Docker Inc.',
-      loadingGif: 'util/loading.gif',
-      setupIcon: 'util/setup.ico',
-      iconUrl: 'https://raw.githubusercontent.com/kitematic/kitematic/master/util/kitematic.ico',
-      description: APPNAME,
-      title: APPNAME,
-      exe: BASENAME + '.exe',
-      version: packagejson.version,
-      signWithParams: '/f ' + certificateFile + ' /p <%= certificatePassword %> /tr http://timestamp.comodoca.com/rfc3161'
+      config: {
+        appDirectory: path.join(__dirname, 'dist/' + BASENAME + '-win32-x64'),
+        outputDirectory: path.join(__dirname, 'dist'),
+        authors: 'Docker Inc.',
+        loadingGif: 'util/loading.gif',
+        setupIcon: 'util/setup.ico',
+        iconUrl: 'https://raw.githubusercontent.com/kitematic/kitematic/master/util/kitematic.ico',
+        description: APPNAME,
+        title: APPNAME,
+        exe: BASENAME + '.exe',
+        version: packagejson.version,
+        signWithParams: '/f ' + certificateFile + ' /p <%= certificatePassword %> /tr http://timestamp.comodoca.com/rfc3161'
+      }
     },
 
     // docker binaries
@@ -175,7 +182,7 @@ module.exports = function (grunt) {
           expand: true,
           cwd: 'resources',
           src: ['docker*', 'ssh.exe', 'OPENSSH_LICENSE', 'msys-*'],
-          dest: 'dist/' + BASENAME + '-win32/resources/resources/'
+          dest: 'dist/' + BASENAME + '-win32-x64/resources/resources'
         }],
         options: {
           mode: true
@@ -199,8 +206,8 @@ module.exports = function (grunt) {
 
     rename: {
       installer: {
-        src: 'installer/Setup.exe',
-        dest: 'installer/' + BASENAME + 'Setup-' + packagejson.version + '-Windows-Alpha.exe'
+        src: 'dist/Setup.exe',
+        dest: 'dist/' + BASENAME + 'Setup-' + packagejson.version + '-Windows-Alpha.exe'
       }
     },
 
@@ -271,12 +278,27 @@ module.exports = function (grunt) {
         ].join(' && '),
       },
       zip: {
-        command: 'ditto -c -k --sequesterRsrc --keepParent <%= OSX_FILENAME_ESCAPED %> <%= OSX_OUT %>/' + BASENAME + '-' + packagejson.version + '-Mac.zip',
+        command: 'ditto -c -k --sequesterRsrc --keepParent <%= OSX_FILENAME_ESCAPED %> dist/' + BASENAME + '-' + packagejson.version + '-Mac.zip',
       }
     },
 
     clean: {
-      release: ['build/', 'dist/', 'installer/'],
+      release: ['build/', 'dist/'],
+    },
+
+    compress: {
+      windows: {
+        options: {
+	        archive: './dist/' +  BASENAME + '-' + packagejson.version + '-Windows-Alpha.zip',
+          mode: 'zip'
+        },
+        files: [{
+          expand: true,
+          dot: true,
+          cwd: './dist/Kitematic-win32-x64',
+          src: '**/*'
+        }]
+	    },
     },
 
     // livereload
@@ -306,7 +328,7 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['download-binary', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean:release', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'prompt:create-windows-installer', 'create-windows-installer', 'rename:installer']);
+    grunt.registerTask('release', ['clean:release', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'compress', 'prompt:create-windows-installer', 'create-windows-installer', 'rename:installer']);
   } else {
     grunt.registerTask('release', ['clean:release', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
   }
