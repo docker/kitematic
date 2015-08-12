@@ -9,16 +9,16 @@ var DockerCompose = {
     return 'docker-compose.yml';
   },
   up: function (fileName = this.name()) {
-    return util.exec([this.command(), '--file', fileName, 'up', '-d']);
+    return util.exec([this.command(), '--file', fileName, 'up', '-d']);;
   },
   start: function (fileName = this.name()) {
-    return util.exec([this.command(), 'start', '--file', fileName]);
+    return util.exec([this.command(), '--file', fileName, 'start']);
   },
   stop: function (fileName = this.name()) {
-    return util.exec([this.command(), 'stop', '--file', fileName]);
+    return util.exec([this.command(), '--file', fileName, 'stop']);
   },
   rm: function (fileName = this.name()) {
-    return util.exec([this.command(), 'rm', '--file', fileName]);
+    return util.exec([this.command(), '--file', fileName, 'rm']);
   }
 };
 

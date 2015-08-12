@@ -1,5 +1,6 @@
 import util from './Util';
 import path from 'path';
+import fs from 'fs';
 
 module.exports = {
   resourceDir: function () {
@@ -18,6 +19,12 @@ module.exports = {
     return path.join(this.resourceDir(), 'docker-machine' + util.binsEnding());
   },
   dockerCompose: function () {
-    return path.join(this.resourceDir(), 'docker-compose' + util.binsEnding());
+    let composePath = path.join(this.resourceDir(), 'docker-compose' + util.binsEnding());
+    fs.access(composePath, fs.F_OK, (err) => {
+      if (err) {
+        throw err;
+      }
+      return composePath;
+    });
   }
 };
