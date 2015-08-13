@@ -14,30 +14,36 @@ var ContainerHomeFolder = React.createClass({
   contextTypes: {
     router: React.PropTypes.func
   },
-  handleClickFolder: function (hostVolume, containerVolume) {
+  handleClickFolder: function (source, destination) {
     metrics.track('Opened Volume Directory', {
       from: 'home'
     });
 
-    if (hostVolume.indexOf(util.windowsToLinuxPath(util.home())) === -1) {
+    if (source.indexOf(util.windowsToLinuxPath(util.home())) === -1) {
       dialog.showMessageBox({
         message: 'Enable all volumes to edit files via your file manager? This may not work with all database containers.',
         buttons: ['Enable Volumes', 'Cancel']
       }, (index) => {
         if (index === 0) {
-          var volumes = _.clone(this.props.container.Volumes);
-          var newHostVolume = util.escapePath(path.join(util.home(), util.documents(), 'Kitematic', this.props.container.Name, containerVolume));
-          volumes[containerVolume] = newHostVolume;
-          var binds = _.pairs(volumes).map(function (pair) {
-            if(util.isWindows()) {
-              return util.windowsToLinuxPath(pair[1]) + ':' + pair[0];
+          var mounts = _.clone(this.props.container.Mounts);
+          var newSource = util.escapePath(path.join(util.home(), util.documents(), 'Kitematic', this.props.container.Name, destination));
+          var binds = mounts.map(function (m) {
+            let source = m.Source;
+            if (m.Destination === destination) {
+              source = newSource;
             }
-            return pair[1] + ':' + pair[0];
+
+            if(util.isWindows()) {
+              return util.windowsToLinuxPath(source) + ':' + m.Destination;
+            }
+
+            return source + ':' + m.Destination;
           });
-          mkdirp(newHostVolume, function (err) {
+
+          mkdirp(newSource, function (err) {
             console.log(err);
             if (!err) {
-              shell.showItemInFolder(newHostVolume);
+              shell.showItemInFolder(newSource);
             }
           });
 
@@ -45,7 +51,7 @@ var ContainerHomeFolder = React.createClass({
         }
       });
     } else {
-      let path = util.isWindows() ? util.linuxToWindowsPath(hostVolume) : hostVolume;
+      let path = util.isWindows() ? util.linuxToWindowsPath(source) : source;
       shell.showItemInFolder(path);
     }
   },
@@ -60,12 +66,13 @@ var ContainerHomeFolder = React.createClass({
       return false;
     }
 
-    var folders = _.map(_.omit(this.props.container.Volumes, (v, k) => k.indexOf('/Users/') !== -1), (val, key) => {
-      var firstFolder = key;
+    var folders = _.map(this.props.container.Mounts, (m, i) => {
+      let destination = m.Destination;
+      let source = m.Source;
       return (
-        <div key={key} className="folder" onClick={this.handleClickFolder.bind(this, val, key)}>
+        <div key={i} className="folder" onClick={this.handleClickFolder.bind(this, source, destination)}>
           <RetinaImage src="folder.png" />
-          <div className="text">{firstFolder}</div>
+          <div className="text">{destination}</div>
         </div>
       );
     });

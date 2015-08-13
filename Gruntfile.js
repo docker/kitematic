@@ -21,7 +21,6 @@ module.exports = function (grunt) {
   env.NODE_ENV = target;
 
   var certificateFile = grunt.option('certificateFile');
-  var certificatePassword = grunt.option('certificatePassword');
 
   var version = function (str) {
     var match = str.match(/(\d+\.\d+\.\d+)/);
@@ -41,6 +40,9 @@ module.exports = function (grunt) {
   });
 
   grunt.registerMultiTask('download-binary', 'Downloads binary unless version up to date', function () {
+    if(process.platform === 'linux')
+      return;
+
     var target = grunt.task.current.target;
     var done = this.async();
     var config = grunt.config('download-binary')[target];
@@ -103,6 +105,20 @@ module.exports = function (grunt) {
       }
     },
 
+    prompt: {
+      'create-windows-installer': {
+        options: {
+          questions: [
+            {
+              config: 'certificatePassword',
+              type: 'password',
+              message: 'Certificate Password: '
+            }
+          ]
+        }
+      }
+    },
+
     rcedit: {
       exes: {
         files: [{
@@ -128,16 +144,19 @@ module.exports = function (grunt) {
     },
 
     'create-windows-installer': {
-      appDirectory: 'dist/' + BASENAME + '-win32/',
-      authors: 'Docker Inc.',
-      loadingGif: 'util/loading.gif',
-      setupIcon: 'util/setup.ico',
-      iconUrl: 'https://raw.githubusercontent.com/kitematic/kitematic/master/util/kitematic.ico',
-      description: APPNAME,
-      title: APPNAME,
-      exe: BASENAME + '.exe',
-      version: packagejson.version,
-      signWithParams: '/f ' + certificateFile + ' /p ' + certificatePassword + ' /tr http://timestamp.comodoca.com/rfc3161'
+      config: {
+        appDirectory: path.join(__dirname, 'dist/' + BASENAME + '-win32-x64'),
+        outputDirectory: path.join(__dirname, 'dist'),
+        authors: 'Docker Inc.',
+        loadingGif: 'util/loading.gif',
+        setupIcon: 'util/setup.ico',
+        iconUrl: 'https://raw.githubusercontent.com/kitematic/kitematic/master/util/kitematic.ico',
+        description: APPNAME,
+        title: APPNAME,
+        exe: BASENAME + '.exe',
+        version: packagejson.version,
+        signWithParams: '/f ' + certificateFile + ' /p <%= certificatePassword %> /tr http://timestamp.comodoca.com/rfc3161'
+      }
     },
 
     // docker binaries
@@ -365,13 +384,7 @@ module.exports = function (grunt) {
     }
   });
 
-  if (process.platform === 'win32') {
-    grunt.registerTask('default', ['download-binary:docker', 'download-binary:docker-machine', 'download-boot2docker-iso', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
-  } else if(process.platform === 'linux') {
-    grunt.registerTask('default', ['clean', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
-  } else {
-    grunt.registerTask('default', ['download-binary', 'download-boot2docker-iso', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
-  }
+  grunt.registerTask('default', ['download-binary', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (process.platform === 'win32') {
     grunt.registerTask('release', ['clean:release', 'download-binary:docker', 'download-binary:docker-machine', 'download-boot2docker-iso', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'prompt:create-windows-installer', 'create-windows-installer', 'rename:installer']);

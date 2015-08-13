@@ -13,6 +13,7 @@ import ContainerSettingsPorts from './components/ContainerSettingsPorts.react';
 import ContainerSettingsVolumes from './components/ContainerSettingsVolumes.react';
 import ContainerSettingsAdvanced from './components/ContainerSettingsAdvanced.react';
 import Preferences from './components/Preferences.react';
+import About from './components/About.react';
 import NewContainerSearch from './components/NewContainerSearch.react';
 import NewContainerPull from './components/NewContainerPull.react';
 import Router from 'react-router';
@@ -51,6 +52,7 @@ var routes = (
         <Route name="pull" path="containers/new/pull" handler={NewContainerPull}></Route>
       </Route>
       <Route name="preferences" path="/preferences" handler={Preferences}/>
+      <Route name="about" path="/about" handler={About}/>
     </Route>
     <DefaultRoute name="setup" handler={Setup}/>
   </Route>

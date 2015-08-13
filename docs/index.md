@@ -9,45 +9,8 @@ weight=2
 +++
 <![end-metadata]-->
 
-# Kitematic: Install Kitematic
+# Kitematic 
 
-You install Kitematic much the same way you install any application on a Mac or
-Windows PC: download an image and run an installer.
+Kitematic, the Docker GUI, runs on Mac OS X and Windows operating systems. Beginning with the 1.8 Docker release, you use the Docker Toolbox to install Kitematic.  See the [Mac OS X installation guide](https://docs.docker.com/mac) or the [Windows installation guide](https://docs.docker.com/installation/windows) for details on installing with Docker Toolbox.
 
-## Download Kitematic
-
-[Download the Kitematic zip file](https://kitematic.com/download/), unzip the
-file by double-clicking it, and then double-click the application to run it.
-You'll probably also want to put the application in your Applications folder.
-
-## Initial Setup
-
-Opening Kitematic for the first time sets up everything you need to run Docker
-containers. If you don't already have VirtualBox installed, Kitematic will
-download and install the latest version.
-
-![Installing](../images/installing.png)
-
-All Done! Within a minute you should be ready to start running your first
-container!
-
-![containers](../images/containers.png)
-
-## Technical Details
-
-Kitematic is a self-contained .app, with an exception:
-
-- It will install VirtualBox if it's not already installed.
-
-### Why does Kitematic need my root password?
-
-Kitematic needs your root password for two reasons:
-
-- Installing VirtualBox requires root access as it includes Mac OS X kernel extensions.
-- Copying `docker` and `docker-machine` to `/usr/local/bin` may require root
-  permission if the default permissions for this directory have been changed
-  prior to installing Kitematic.
-
-## Next Steps
-
-For information about using Kitematic, take a look at the [User Guide](/userguide).
+For information about using Kitematic, take a look at the [User Guide](userguide).
