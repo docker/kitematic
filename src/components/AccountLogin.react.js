@@ -60,7 +60,7 @@ module.exports = React.createClass({
   },
 
   handleClickForgotPassword: function () {
-    shell.openExternal('https://hub.docker.com/account/forgot-password/');
+    shell.openExternal('https://hub.docker.com/reset-password/');
   },
 
   render: function () {
