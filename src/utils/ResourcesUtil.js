@@ -5,6 +5,9 @@ module.exports = {
   resourceDir: function () {
     return process.env.RESOURCES_PATH;
   },
+  toolboxDir: function () {
+    return process.env.TOOLBOX_PATH;
+  },
   macsudo: function () {
     return path.join(this.resourceDir(), 'macsudo');
   },
