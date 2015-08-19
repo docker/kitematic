@@ -1,5 +1,6 @@
 import util from './Util';
 import path from 'path';
+import fs from 'fs';
 
 module.exports = {
   resourceDir: function () {
