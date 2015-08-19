@@ -82,17 +82,20 @@ var MenuTemplate = function () {
             properties: [ 'openFile' ],
             filters: [{ name: 'Docker Compose File', extensions: ['yml'] }]
           }, (files) => {
-            compose.up(files[0]).then(() => {
-              dialog.showMessageBox({'title': 'Docker Compose Successful',
-                                     'message': 'All containers have been created',
-                                     'buttons': ['OK']
-                                   });
-            }).catch((err) => {
-              console.error('Error generated: %o', err.message);
-              dialog.showMessageBox({'title': 'Docker Compose Error',
-                                     'message': err.message,
-                                     'buttons': ['Dismiss']
-                                   });
+            machine.env().then((vmEnv)=> {
+              compose.up(files[0], vmEnv).then((info) => {
+                console.log('compose: ', info);
+                dialog.showMessageBox({'title': 'Docker Compose Successful',
+                                       'message': 'All containers have been created',
+                                       'buttons': ['OK']
+                                     });
+              }).catch((err) => {
+                console.error('Error generated: %o', err.message);
+                dialog.showMessageBox({'title': 'Docker Compose Error',
+                                       'message': err.message,
+                                       'buttons': ['Dismiss']
+                                     });
+              });
             });
           });
         }

@@ -1,5 +1,6 @@
 import util from './Util';
 import resources from './ResourcesUtil';
+import machine from './DockerMachineUtil';
 
 var DockerCompose = {
   command: function () {
@@ -8,17 +9,17 @@ var DockerCompose = {
   name: function () {
     return 'docker-compose.yml';
   },
-  up: function (fileName = this.name()) {
-    return util.exec([this.command(), '--file', fileName, 'up', '-d']);
+  up: function (fileName = this.name(), vmEnv = {}) {
+    return util.exec([this.command(), '--file', fileName, 'up', '-d'], vmEnv);
   },
-  start: function (fileName = this.name()) {
-    return util.exec([this.command(), 'start', '--file', fileName]);
+  start: function (fileName = this.name(), vmEnv = {}) {
+    return util.exec([this.command(), 'start', '--file', fileName], vmEnv);
   },
-  stop: function (fileName = this.name()) {
-    return util.exec([this.command(), 'stop', '--file', fileName]);
+  stop: function (fileName = this.name(), vmEnv = {}) {
+    return util.exec([this.command(), 'stop', '--file', fileName], vmEnv);
   },
-  rm: function (fileName = this.name()) {
-    return util.exec([this.command(), 'rm', '--file', fileName]);
+  rm: function (fileName = this.name(), vmEnv = {}) {
+    return util.exec([this.command(), 'rm', '--file', fileName], vmEnv);
   }
 };
 

@@ -22,11 +22,11 @@ module.exports = {
     let fn = Array.isArray(args) ? exec : child_process.exec;
     return new Promise((resolve, reject) => {
       fn(args, options, (stderr, stdout, code) => {
-        if (code) {
+        if (code || (typeof code == "undefined" && stderr !== '')) {
           var cmd = Array.isArray(args) ? args.join(' ') : args;
           reject(new Error(cmd + ' returned non zero exit code. Stderr: ' + stderr));
         } else {
-          resolve(stdout);
+          resolve(stdout+" "+stderr);
         }
       });
     });
