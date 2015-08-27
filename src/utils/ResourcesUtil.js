@@ -1,5 +1,5 @@
-var util = require('./Util');
-var path = require('path');
+import util from './Util';
+import path from 'path';
 
 module.exports = {
   resourceDir: function () {

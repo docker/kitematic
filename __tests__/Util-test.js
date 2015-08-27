@@ -30,6 +30,12 @@ describe('Util', function () {
       expect(util.removeSensitiveData(testdata).indexOf('/Users/<redacted>/.docker')).toNotEqual(-1);
     });
 
+    it('filters Windows username data', function () {
+      var testdata = String.raw`C:\\Users\\johnappleseed\\.docker\\machine`;
+      expect(util.removeSensitiveData(testdata).indexOf('johnappleseed')).toEqual(-1);
+      expect(util.removeSensitiveData(testdata).indexOf('<redacted>')).toNotEqual(-1);
+    });
+
     it ('returns input if empty or not a string', function () {
       expect(util.removeSensitiveData('')).toBe('');
       expect(util.removeSensitiveData(1)).toBe(1);

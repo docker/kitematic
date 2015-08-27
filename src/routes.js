@@ -1,21 +1,22 @@
-var React = require('react/addons');
-var Setup = require('./components/Setup.react');
-var Account = require('./components/Account.react');
-var AccountSignup = require('./components/AccountSignup.react');
-var AccountLogin = require('./components/AccountLogin.react');
-var Containers = require('./components/Containers.react');
-var ContainerDetails = require('./components/ContainerDetails.react');
-var ContainerHome = require('./components/ContainerHome.react');
-var ContainerLogs = require('./components/ContainerLogs.react');
-var ContainerSettings = require('./components/ContainerSettings.react');
-var ContainerSettingsGeneral = require('./components/ContainerSettingsGeneral.react');
-var ContainerSettingsPorts = require('./components/ContainerSettingsPorts.react');
-var ContainerSettingsVolumes = require('./components/ContainerSettingsVolumes.react');
-var ContainerSettingsAdvanced = require('./components/ContainerSettingsAdvanced.react');
-var Preferences = require('./components/Preferences.react');
-var NewContainerSearch = require('./components/NewContainerSearch.react');
-var NewContainerPull = require('./components/NewContainerPull.react');
-var Router = require('react-router');
+import React from 'react/addons';
+import Setup from './components/Setup.react';
+import Account from './components/Account.react';
+import AccountSignup from './components/AccountSignup.react';
+import AccountLogin from './components/AccountLogin.react';
+import Containers from './components/Containers.react';
+import ContainerDetails from './components/ContainerDetails.react';
+import ContainerHome from './components/ContainerHome.react';
+import ContainerLogs from './components/ContainerLogs.react';
+import ContainerSettings from './components/ContainerSettings.react';
+import ContainerSettingsGeneral from './components/ContainerSettingsGeneral.react';
+import ContainerSettingsPorts from './components/ContainerSettingsPorts.react';
+import ContainerSettingsVolumes from './components/ContainerSettingsVolumes.react';
+import ContainerSettingsAdvanced from './components/ContainerSettingsAdvanced.react';
+import Preferences from './components/Preferences.react';
+import About from './components/About.react';
+import NewContainerSearch from './components/NewContainerSearch.react';
+import NewContainerPull from './components/NewContainerPull.react';
+import Router from 'react-router';
 
 var Route = Router.Route;
 var DefaultRoute = Router.DefaultRoute;
@@ -51,6 +52,7 @@ var routes = (
         <Route name="pull" path="containers/new/pull" handler={NewContainerPull}></Route>
       </Route>
       <Route name="preferences" path="/preferences" handler={Preferences}/>
+      <Route name="about" path="/about" handler={About}/>
     </Route>
     <DefaultRoute name="setup" handler={Setup}/>
   </Route>

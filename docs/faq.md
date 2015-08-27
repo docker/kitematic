@@ -21,8 +21,7 @@ software released under the Apache 2.0 license.
 ### How can I contribute to Kitematic?
 
 We always welcome (and deeply appreciate!) new contributions to the project. The
-best way to start contributing to Kitematic is to review our doc on
-[contributing](https://github.com/kitematic/kitematic/blob/master/CONTRIBUTING.md).
+best way to start contributing to Kitematic is to review our doc on <a href="https://github.com/kitematic/kitematic/blob/master/CONTRIBUTING.md">contributing</a>.
 
 ### How does Kitematic work with Docker?
 
@@ -31,10 +30,9 @@ the Docker Remote API.
 
 ### Which platforms does Kitematic support?
 
-Right now Kitematic only works on Mac OS X. That said, Windows is on the
-short-term
-[roadmap](https://github.com/kitematic/kitematic/blob/master/ROADMAP.md) (coming
-soon!) and a Linux version is in high demand.
+Right now Kitematic works on Mac OS X and Windows. Linux is planned in the
+future.  Review our product <a
+href="https://github.com/kitematic/kitematic/blob/master/ROADMAP.md">roadmap</a>.
 
 ### Why does Kitematic collect usage analytics and bug reports?
 

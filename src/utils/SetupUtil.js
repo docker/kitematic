@@ -1,12 +1,12 @@
-var _ = require('underscore');
-var crypto = require('crypto');
-var fs = require('fs');
-var path = require('path');
-var request = require('request');
-var progress = require('request-progress');
-var Promise = require('bluebird');
-var util = require('./Util');
-var resources = require('./ResourcesUtil');
+import _ from 'underscore';
+import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
+import request from 'request';
+import progress from 'request-progress';
+import Promise from 'bluebird';
+import util from './Util';
+import resources from './ResourcesUtil';
 var virtualBox = require ('./VirtualBoxUtil');
 
 var SetupUtil = {

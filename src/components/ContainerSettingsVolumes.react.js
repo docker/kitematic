@@ -1,11 +1,11 @@
-var _ = require('underscore');
-var React = require('react/addons');
-var remote = require('remote');
+import _ from 'underscore';
+import React from 'react/addons';
+import remote from 'remote';
 var dialog = remote.require('dialog');
-var shell = require('shell');
-var util = require('../utils/Util');
-var metrics = require('../utils/MetricsUtil');
-var containerActions = require('../actions/ContainerActions');
+import shell from 'shell';
+import util from '../utils/Util';
+import metrics from '../utils/MetricsUtil';
+import containerActions from '../actions/ContainerActions';
 
 var ContainerSettingsVolumes = React.createClass({
   handleChooseVolumeClick: function (dockerVol) {
@@ -26,16 +26,23 @@ var ContainerSettingsVolumes = React.createClass({
       }
 
       metrics.track('Choose Directory for Volume');
+
       if(util.isWindows()) {
         directory = util.escapePath(util.windowsToLinuxPath(directory));
       }
-      var volumes = _.clone(this.props.container.Volumes);
-      volumes[dockerVol] = directory;
-      var binds = _.pairs(volumes).map(function (pair) {
-        return pair[1] + ':' + pair[0];
+
+      var mounts = _.clone(this.props.container.Mounts);
+      _.each(mounts, m => {
+        if (m.Destination === dockerVol) {
+          m.Source = directory;
+        }
       });
 
-      containerActions.update(this.props.container.Name, {Binds: binds, Volumes: volumes});
+      var binds = mounts.map(m => {
+        return m.Source + ':' + m.Destination;
+      });
+
+      containerActions.update(this.props.container.Name, {Binds: binds, Mounts: mounts});
     });
   },
   handleRemoveVolumeClick: function (dockerVol) {
@@ -45,13 +52,17 @@ var ContainerSettingsVolumes = React.createClass({
 
     var hostConfig = _.clone(this.props.container.HostConfig);
     var binds = hostConfig.Binds;
-    var volumes = _.clone(this.props.container.Volumes);
-    volumes[dockerVol] = null;
+    var mounts = _.clone(this.props.container.Mounts);
+    _.each(mounts, m => {
+      if (m.Destination === dockerVol) {
+        m.Source = null;
+      }
+    });
     var index = _.findIndex(binds, bind => bind.indexOf(`:${dockerVol}`) !== -1);
     if (index >= 0) {
       binds.splice(index, 1);
     }
-    containerActions.update(this.props.container.Name, {HostConfig: hostConfig, Binds: binds, Volumes: volumes});
+    containerActions.update(this.props.container.Name, {HostConfig: hostConfig, Binds: binds, Mounts: mounts});
   },
   handleOpenVolumeClick: function (path) {
     metrics.track('Opened Volume Directory', {
@@ -69,24 +80,25 @@ var ContainerSettingsVolumes = React.createClass({
     }
 
     var homeDir = util.isWindows() ? util.windowsToLinuxPath(util.home()) : util.home();
-    var volumes = _.map(this.props.container.Volumes, (val, key) => {
-      if (!val || val.indexOf(homeDir) === -1) {
-        val = (
+    var mounts= _.map(this.props.container.Mounts, (m, i) => {
+      let source = m.Source, destination = m.Destination;
+      if (!m.Source || m.Source.indexOf(homeDir) === -1) {
+        source = (
           <span className="value-right">No Folder</span>
         );
       } else {
-        let local = util.isWindows() ? util.linuxToWindowsPath(val) : val;
-        val = (
-          <a className="value-right" onClick={this.handleOpenVolumeClick.bind(this, val)}>{local.replace(process.env.HOME, '~')}</a>
+        let local = util.isWindows() ? util.linuxToWindowsPath(source) : source;
+        source = (
+          <a className="value-right" onClick={this.handleOpenVolumeClick.bind(this, source)}>{local.replace(process.env.HOME, '~')}</a>
         );
       }
       return (
         <tr>
-          <td>{key}</td>
-          <td>{val}</td>
+          <td>{destination}</td>
+          <td>{source}</td>
           <td>
-            <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleChooseVolumeClick.bind(this, key)}>Change</a>
-            <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleRemoveVolumeClick.bind(this, key)}>Remove</a>
+            <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleChooseVolumeClick.bind(this, destination)}>Change</a>
+            <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleRemoveVolumeClick.bind(this, destination)}>Remove</a>
           </td>
         </tr>
       );
@@ -104,7 +116,7 @@ var ContainerSettingsVolumes = React.createClass({
               </tr>
             </thead>
             <tbody>
-              {volumes}
+              {mounts}
             </tbody>
           </table>
         </div>
