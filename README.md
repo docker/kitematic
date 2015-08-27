@@ -32,7 +32,7 @@ Please read through our [Contributing Guidelines](https://github.com/kitematic/k
 ## Community
 
 - [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kitematic/kitematic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-- Ask questions on our [user forum](https://forums.docker.com/c/kitematic).
+- Ask questions on our [user forum](https://forums.docker.com/c/open-source-projects/kitematic).
 - **#kitematic** on IRC. [Join the channel](http://webchat.freenode.net/?channels=%23kitematic&uio=d4).
 - Follow [@kitematic on Twitter](https://twitter.com/kitematic).
 
