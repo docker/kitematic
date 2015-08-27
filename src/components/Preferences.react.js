@@ -1,6 +1,6 @@
-var React = require('react/addons');
-var metrics = require('../utils/MetricsUtil');
-var Router = require('react-router');
+import React from 'react/addons';
+import metrics from '../utils/MetricsUtil';
+import Router from 'react-router';
 
 var Preferences = React.createClass({
   mixins: [Router.Navigation],
@@ -42,7 +42,7 @@ var Preferences = React.createClass({
           <div className="title">VM Settings</div>
           <div className="option">
             <div className="option-name">
-              Shut Down Linux VM on closing Kitematic
+              Shutdown Linux VM on closing Kitematic
             </div>
             <div className="option-value">
               <input type="checkbox" checked={this.state.closeVMOnQuit} onChange={this.handleChangeCloseVMOnQuit}/>

@@ -1,16 +1,16 @@
-var EventEmitter = require('events').EventEmitter;
-var _ = require('underscore');
-var path = require('path');
-var fs = require('fs');
-var Promise = require('bluebird');
-var machine = require('../utils/DockerMachineUtil');
-var virtualBox = require('../utils/VirtualBoxUtil');
-var setupUtil = require('../utils/SetupUtil');
-var util = require('../utils/Util');
-var assign = require('object-assign');
-var metrics = require('../utils/MetricsUtil');
-var bugsnag = require('bugsnag-js');
-var docker = require('../utils/DockerUtil');
+import {EventEmitter} from 'events';
+import _ from 'underscore';
+import path from 'path';
+import fs from 'fs';
+import Promise from 'bluebird';
+import machine from '../utils/DockerMachineUtil';
+import virtualBox from '../utils/VirtualBoxUtil';
+import setupUtil from '../utils/SetupUtil';
+import util from '../utils/Util';
+import assign from 'object-assign';
+import metrics from '../utils/MetricsUtil';
+import bugsnag from 'bugsnag-js';
+import docker from '../utils/DockerUtil';
 
 var _currentStep = null;
 var _error = null;
@@ -73,7 +73,8 @@ var _steps = [{
 
     var isoversion = machine.isoversion();
     var packagejson = util.packagejson();
-    if (!isoversion || util.compareVersions(isoversion, packagejson['docker-version']) < 0) {
+    var packagejsonVersion = packagejson['docker-version'].split('-')[0];
+    if (!isoversion || util.compareVersions(isoversion, packagejsonVersion) < 0) {
       yield machine.start();
       yield machine.upgrade();
     }

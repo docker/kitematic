@@ -1,10 +1,10 @@
-var React = require('react/addons');
-var Router = require('react-router');
-var RetinaImage = require('react-retina-image');
-var Header = require('./Header.react');
-var metrics = require('../utils/MetricsUtil');
-var accountStore = require('../stores/AccountStore');
-var accountActions = require('../actions/AccountActions');
+import React from 'react/addons';
+import Router from 'react-router';
+import RetinaImage from 'react-retina-image';
+import Header from './Header.react';
+import metrics from '../utils/MetricsUtil';
+import accountStore from '../stores/AccountStore';
+import accountActions from '../actions/AccountActions';
 
 module.exports = React.createClass({
   mixins: [Router.Navigation],

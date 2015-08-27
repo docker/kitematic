@@ -1,10 +1,10 @@
-var _ = require('underscore');
-var React = require('react/addons');
-var Router = require('react-router');
-var validator = require('validator');
-var accountActions = require('../actions/AccountActions');
-var metrics = require('../utils/MetricsUtil');
-var shell = require('shell');
+import _ from 'underscore';
+import React from 'react/addons';
+import Router from 'react-router';
+import validator from 'validator';
+import accountActions from '../actions/AccountActions';
+import metrics from '../utils/MetricsUtil';
+import shell from 'shell';
 
 module.exports = React.createClass({
   mixins: [Router.Navigation, React.addons.LinkedStateMixin],
@@ -60,7 +60,7 @@ module.exports = React.createClass({
   },
 
   handleClickForgotPassword: function () {
-    shell.openExternal('https://hub.docker.com/account/forgot-password/');
+    shell.openExternal('https://hub.docker.com/reset-password/');
   },
 
   render: function () {

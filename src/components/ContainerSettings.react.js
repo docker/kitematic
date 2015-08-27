@@ -1,7 +1,7 @@
-var $ = require('jquery');
-var _ = require('underscore');
-var React = require('react/addons');
-var Router = require('react-router');
+import $ from 'jquery';
+import _ from 'underscore';
+import React from 'react/addons';
+import Router from 'react-router';
 
 var ContainerSettings = React.createClass({
   contextTypes: {

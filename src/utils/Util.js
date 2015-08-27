@@ -1,10 +1,10 @@
-var exec = require('exec');
-var child_process = require('child_process');
-var Promise = require('bluebird');
-var fs = require('fs');
-var path = require('path');
-var crypto = require('crypto');
-var remote = require('remote');
+import exec from 'exec';
+import child_process from 'child_process';
+import Promise from 'bluebird';
+import fs from 'fs';
+import path from 'path';
+import crypto from 'crypto';
+import remote from 'remote';
 var app = remote.require('app');
 
 module.exports = {
@@ -71,7 +71,8 @@ module.exports = {
     }
     return str.replace(/-----BEGIN CERTIFICATE-----.*-----END CERTIFICATE-----/mg, '<redacted>')
       .replace(/-----BEGIN RSA PRIVATE KEY-----.*-----END RSA PRIVATE KEY-----/mg, '<redacted>')
-      .replace(/\/Users\/[^\/]*\//mg, '/Users/<redacted>/');
+      .replace(/\/Users\/[^\/]*\//mg, '/Users/<redacted>/')
+      .replace(/\\Users\\[^\/]*\\/mg, '\\Users\\<redacted>\\');
   },
   packagejson: function () {
     return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));

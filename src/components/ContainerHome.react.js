@@ -1,12 +1,12 @@
-var _ = require('underscore');
-var $ = require('jquery');
-var React = require('react/addons');
-var Radial = require('./Radial.react');
-var ContainerProgress = require('./ContainerProgress.react');
-var ContainerHomePreview = require('./ContainerHomePreview.react');
-var ContainerHomeLogs = require('./ContainerHomeLogs.react');
-var ContainerHomeFolders = require('./ContainerHomeFolders.react');
-var shell = require('shell');
+import _ from 'underscore';
+import $ from 'jquery';
+import React from 'react/addons';
+import Radial from './Radial.react';
+import ContainerProgress from './ContainerProgress.react';
+import ContainerHomePreview from './ContainerHomePreview.react';
+import ContainerHomeLogs from './ContainerHomeLogs.react';
+import ContainerHomeFolders from './ContainerHomeFolders.react';
+import shell from 'shell';
 
 var ContainerHome = React.createClass({
   contextTypes: {
@@ -39,11 +39,11 @@ var ContainerHome = React.createClass({
   showWeb: function () {
     return _.keys(this.props.ports).length > 0;
   },
-  
+
   showFolders: function () {
-    return this.props.container.Volumes && _.keys(this.props.container.Volumes).length > 0 && this.props.container.State.Running;
+    return this.props.container.Mounts && this.props.container.Mounts.length > 0 && this.props.container.State.Running;
   },
-  
+
   render: function () {
     if (!this.props.container) {
       return;

@@ -1,7 +1,7 @@
-var React = require('react/addons');
-var metrics = require('../utils/MetricsUtil');
-var ContainerUtil = require('../utils/ContainerUtil');
-var containerActions = require('../actions/ContainerActions');
+import React from 'react/addons';
+import metrics from '../utils/MetricsUtil';
+import ContainerUtil from '../utils/ContainerUtil';
+import containerActions from '../actions/ContainerActions';
 
 var ContainerSettingsAdvanced = React.createClass({
   mixins: [React.addons.LinkedStateMixin],

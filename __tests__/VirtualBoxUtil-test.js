@@ -3,17 +3,13 @@ var virtualBox = require('../src/utils/VirtualBoxUtil');
 var util = require('../src/utils/Util');
 
 describe('VirtualBox', function () {
-  it('returns the right command', function () {
-    expect(virtualBox.command()).toBe('/usr/bin/VBoxManage');
-  });
-
-  describe('version 4.3.20r96996', function () {
+  describe('version 5.0.0r101573', function () {
     pit('correctly parses virtualbox version', function () {
       util.exec.mockImplementation(function () {
-        return Promise.resolve('4.3.20r96996');
+        return Promise.resolve('5.0.0r101573');
       });
       return virtualBox.version().then(function (version) {
-        expect(version).toBe('4.3.20');
+        expect(version).toBe('5.0.0');
       });
     });
   });

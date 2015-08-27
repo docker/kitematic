@@ -1,15 +1,15 @@
-var _ = require('underscore');
-var React = require('react/addons');
-var Router = require('react-router');
-var RetinaImage = require('react-retina-image');
-var ImageCard = require('./ImageCard.react');
-var Promise = require('bluebird');
-var metrics = require('../utils/MetricsUtil');
-var classNames = require('classnames');
-var repositoryActions = require('../actions/RepositoryActions');
-var repositoryStore = require('../stores/RepositoryStore');
-var accountStore = require('../stores/AccountStore');
-var accountActions = require('../actions/AccountActions');
+import _ from 'underscore';
+import React from 'react/addons';
+import Router from 'react-router';
+import RetinaImage from 'react-retina-image';
+import ImageCard from './ImageCard.react';
+import Promise from 'bluebird';
+import metrics from '../utils/MetricsUtil';
+import classNames from 'classnames';
+import repositoryActions from '../actions/RepositoryActions';
+import repositoryStore from '../stores/RepositoryStore';
+import accountStore from '../stores/AccountStore';
+import accountActions from '../actions/AccountActions';
 
 var _searchPromise = null;
 
@@ -222,7 +222,7 @@ module.exports = React.createClass({
           <div className="new-container-header">
             <div className="search">
               <div className="search-bar">
-                <input type="search" ref="searchInput" className="form-control" placeholder="Search image on Docker Hub" onChange={this.handleChange}/>
+                <input type="search" ref="searchInput" className="form-control" placeholder="Search for Docker images from Docker Hub" onChange={this.handleChange}/>
                 <div className={magnifierClasses}></div>
                 <div className={loadingClasses}><div></div></div>
               </div>
