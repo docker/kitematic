@@ -132,7 +132,7 @@ var ContainerDetailsSubheader = React.createClass({
     var docsActionClass = classNames({
       action: true,
       disabled: false
-    })
+    });
 
     var currentRoutes = _.map(this.context.router.getCurrentRoutes(), r => r.name);
     var currentRoute = _.last(currentRoutes);
