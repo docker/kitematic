@@ -262,17 +262,17 @@ export default {
   },
 
   restart (name) {
-    let container = this.client.getContainer(name);
-    container.stop(error => {
-      if (error && error.statusCode !== 304) {
-        containerServerActions.error({name, error});
+    this.client.getContainer(name).stop(stopError => {
+      if (stopError && stopError.statusCode !== 304) {
+        containerServerActions.error({name, stopError});
         return;
       }
-      container.inspect((error, data) => {
-        if (error) {
-          containerServerActions.error({name, error});
+      this.client.getContainer(name).start(startError => {
+        if (startError && startError.statusCode !== 304) {
+          containerServerActions.error({name, startError});
+          return;
         }
-        this.startContainer(name, data);
+        this.fetchContainer(name);
       });
     });
   },
