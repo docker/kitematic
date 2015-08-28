@@ -10,7 +10,14 @@ var DockerMachine = {
     return resources.dockerMachine();
   },
   name: function () {
-    return 'default';
+    var vmname;
+    var kitematicfg = util.kitematicfg();
+    if (kitematicfg.virtualbox && kitematicfg.virtualbox.name) {
+      vmname = kitematicfg.virtualbox.name;
+    } else {
+      vmname = 'default';
+    }
+    return vmname;
   },
   isoversion: function (machineName = this.name()) {
     try {
@@ -54,7 +61,14 @@ var DockerMachine = {
     });
   },
   create: function (machineName = this.name()) {
-    return util.exec([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
+    var memory;
+    var kitematicfg = util.kitematicfg();
+    if (kitematicfg.virtualbox && kitematicfg.virtualbox.memory) {
+      memory = kitematicfg.virtualbox.memory;
+    } else {
+      memory = '2048';
+    }
+    return util.exec([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', memory, machineName]);
   },
   start: function (machineName = this.name()) {
     return util.exec([this.command(), '-D', 'start', machineName]);

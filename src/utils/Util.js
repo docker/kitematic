@@ -84,6 +84,13 @@ module.exports = {
     } catch (err) {}
     return settingsjson;
   },
+  kitematicfg: function () {
+    var kitematicfg = {};
+    try {
+      kitematicfg = JSON.parse(fs.readFileSync(path.join(this.home(), '.kitematicfg'), 'utf8'));
+    } catch (err) {}
+    return kitematicfg;
+  },
   isOfficialRepo: function (name) {
     if (!name || !name.length) {
       return false;
