@@ -11,6 +11,6 @@ weight=2
 
 # Kitematic 
 
-Kitematic, the Docker GUI, runs on Mac OS X and Windows operating systems. Beginning with the 1.8 Docker release, you use the Docker Toolbox to install Kitematic.  See the [Mac OS X installation guide](https://docs.docker.com/mac) or the [Windows installation guide](https://docs.docker.com/installation/windows) for details on installing with Docker Toolbox.
+Kitematic, the Docker GUI, runs on Mac OS X and Windows operating systems. Beginning with the 1.8 Docker release, you use the Docker Toolbox to install Kitematic.  See the [Mac OS X installation guide](https://docs.docker.com/installation/mac) or the [Windows installation guide](https://docs.docker.com/installation/windows) for details on installing with Docker Toolbox.
 
 For information about using Kitematic, take a look at the [User Guide](userguide).
