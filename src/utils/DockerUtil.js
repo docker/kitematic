@@ -5,7 +5,7 @@ import dockerode from 'dockerode';
 import _ from 'underscore';
 import util from './Util';
 import hubUtil from './HubUtil';
-import metrics from '../utils/MetricsUtil';
+import metrics from './MetricsUtil';
 import containerServerActions from '../actions/ContainerServerActions';
 import Promise from 'bluebird';
 import rimraf from 'rimraf';

@@ -9,7 +9,7 @@ import metrics from './utils/MetricsUtil';
 import template from './menutemplate';
 import webUtil from './utils/WebUtil';
 import hubUtil from './utils/HubUtil';
-var urlUtil = require ('./utils/URLUtil');
+import urlUtil from './utils/URLUtil';
 var app = remote.require('app');
 import request from 'request';
 import docker from './utils/DockerUtil';
@@ -18,6 +18,7 @@ import Router from 'react-router';
 import routes from './routes';
 import routerContainer from './router';
 import repositoryActions from './actions/RepositoryActions';
+import menubar from './menubar';
 
 hubUtil.init();
 
@@ -32,7 +33,7 @@ webUtil.addLiveReload();
 webUtil.addBugReporting();
 webUtil.disableGlobalBackspace();
 
-Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
+//Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
 
 metrics.track('Started App');
 metrics.track('app heartbeat');
@@ -49,6 +50,7 @@ routerContainer.set(router);
 SetupStore.setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   docker.init();
+  menubar.init();
   if (!hub.prompted() && !hub.loggedin()) {
     router.transitionTo('login');
   } else {
