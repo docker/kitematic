@@ -87,6 +87,16 @@ var ContainerDetailsSubheader = React.createClass({
       containerActions.start(this.props.container.Name);
     }
   },
+  handleDocs: function () {
+    let repoUri = 'https://hub.docker.com/r/';
+    let imageName = this.props.container.Config.Image.split(':')[0];
+    if (imageName.indexOf('/') === -1) {
+      repoUri = repoUri + 'library/' + imageName;
+    } else {
+      repoUri = repoUri + imageName;
+    }
+    shell.openExternal(repoUri);
+  },
   handleTerminal: function () {
     if (!this.disableTerminal()) {
       metrics.track('Terminaled Into Container');
@@ -119,6 +129,10 @@ var ContainerDetailsSubheader = React.createClass({
       action: true,
       disabled: this.disableTerminal()
     });
+    var docsActionClass = classNames({
+      action: true,
+      disabled: false
+    });
 
     var currentRoutes = _.map(this.context.router.getCurrentRoutes(), r => r.name);
     var currentRoute = _.last(currentRoutes);
@@ -149,6 +163,7 @@ var ContainerDetailsSubheader = React.createClass({
         </div>
       );
     }
+
     return (
       <div className="details-subheader">
         <div className="details-header-actions">
@@ -160,6 +175,10 @@ var ContainerDetailsSubheader = React.createClass({
           <div className={terminalActionClass}>
             <div className="action-icon" onClick={this.handleTerminal}><span className="icon icon-docker-exec"></span></div>
             <div className="btn-label">EXEC</div>
+          </div>
+          <div className={docsActionClass}>
+            <div className="action-icon" onClick={this.handleDocs}><span className="icon icon-open-external"></span></div>
+            <div className="btn-label">DOCS</div>
           </div>
         </div>
         <div className="details-subheader-tabs">
