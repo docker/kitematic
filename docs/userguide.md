@@ -16,7 +16,7 @@ Kitematic is an open source project built to simplify and streamline using
 Docker on a Mac or Windows (coming soon) PC. Kitematic automates the Docker
 installation and setup process and provides an intuitive graphical user
 interface (GUI) for running Docker containers.  Kitematic integrates with
-[Docker Machine]({{% thebaseurl %}}machine/) to provision a VirtualBox VM
+[Docker Machine](https://docs.docker.com/machine/) to provision a VirtualBox VM
 and install the Docker Engine locally on your machine.
 
 Once installed, the Kitematic GUI launches and from the home screen you will be
