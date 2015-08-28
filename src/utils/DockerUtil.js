@@ -311,12 +311,12 @@ export default {
 
     let container = this.client.getContainer(name);
     container.unpause(function () {
-      container.kill(function (error) {
-        if (error) {
-          containerServerActions.error({name, error});
-          return;
-        }
-        container.remove(function () {
+      container.kill(function () {
+        container.remove(function (error) {
+          if (error) {
+            containerServerActions.error({name, error});
+            return;
+          }
           containerServerActions.destroyed({id: name});
           var volumePath = path.join(util.home(), 'Kitematic', name);
           if (fs.existsSync(volumePath)) {

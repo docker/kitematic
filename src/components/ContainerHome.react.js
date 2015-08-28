@@ -41,7 +41,7 @@ var ContainerHome = React.createClass({
   },
 
   showFolders: function () {
-    return this.props.container.Volumes && _.keys(this.props.container.Volumes).length > 0 && this.props.container.State.Running;
+    return this.props.container.Mounts && this.props.container.Mounts.length > 0 && this.props.container.State.Running;
   },
 
   render: function () {

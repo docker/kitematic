@@ -11,12 +11,6 @@ Kitematic is a simple application for managing Docker containers on Mac and Wind
 
 [Download the latest version](https://kitematic.com/download) of Kitematic.
 
-On the Mac, Kitematic can copy the binaries for Docker, Docker Machine and Docker Compose into `/usr/local/bin` for command line use outside of Kitematic.
-
-To do so please click on the Kitematic dropdown menu and select `Install Docker Commands`
-
-![Install Docker Commands](https://cloud.githubusercontent.com/assets/3325447/8246881/fa5f1ee0-15fa-11e5-936b-147bd53ec5a0.png)
-
 ## Documentation
 
 Kitematic's documentation and other information can be found at [http://kitematic.com/docs](http://kitematic.com/docs).
@@ -38,7 +32,7 @@ Please read through our [Contributing Guidelines](https://github.com/kitematic/k
 ## Community
 
 - [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kitematic/kitematic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
-- Ask questions on our [user forum](https://forums.docker.com/c/kitematic).
+- Ask questions on our [user forum](https://forums.docker.com/c/open-source-projects/kitematic).
 - **#kitematic** on IRC. [Join the channel](http://webchat.freenode.net/?channels=%23kitematic&uio=d4).
 - Follow [@kitematic on Twitter](https://twitter.com/kitematic).
 
