@@ -79,6 +79,12 @@ export default {
       startopts.PublishAllPorts = true;
     }
 
+    if (containerData.HostConfig && ( containerData.HostConfig.Dns || containerData.HostConfig.DnsSearch)) {
+      startopts.HostConfig = {};
+      startopts.HostConfig.Dns = containerData.HostConfig.Dns;
+      startopts.HostConfig.DnsSearch = containerData.HostConfig.DnsSearch;
+    }
+
     let container = this.client.getContainer(name);
     container.start(startopts, (error) => {
       if (error) {
@@ -100,8 +106,6 @@ export default {
     if (!containerData.Env && containerData.Config && containerData.Config.Env) {
       containerData.Env = containerData.Config.Env;
     }
-
-
     containerData.Volumes = _.mapObject(containerData.Volumes, () => {return {};});
 
     let existing = this.client.getContainer(name);
