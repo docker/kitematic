@@ -10,6 +10,7 @@ import child_process from 'child_process';
 process.env.NODE_PATH = path.join(__dirname, 'node_modules');
 process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
 process.env.PATH = '/usr/local/bin:' + process.env.PATH;
+process.env.TOOLBOX_PATH = '/usr/local/bin';
 
 var size = {}, settingsjson = {};
 try {

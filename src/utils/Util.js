@@ -22,11 +22,11 @@ module.exports = {
     let fn = Array.isArray(args) ? exec : child_process.exec;
     return new Promise((resolve, reject) => {
       fn(args, options, (stderr, stdout, code) => {
-        if (code) {
+        if (code || (typeof code == "undefined" && stderr !== '')) {
           var cmd = Array.isArray(args) ? args.join(' ') : args;
           reject(new Error(cmd + ' returned non zero exit code. Stderr: ' + stderr));
         } else {
-          resolve(stdout);
+          resolve(stdout+" "+stderr);
         }
       });
     });
@@ -98,11 +98,11 @@ module.exports = {
   },
   compareVersions: function (v1, v2, options) {
     var lexicographical = options && options.lexicographical,
-    zeroExtend = options && options.zeroExtend,
-    v1parts = v1.split('.'),
-    v2parts = v2.split('.');
+        zeroExtend = options && options.zeroExtend,
+        v1parts = v1.split('.'),
+        v2parts = v2.split('.');
 
-    function isValidPart(x) {
+    function isValidPart (x) {
       return (lexicographical ? /^\d+[A-Za-z]*$/ : /^\d+$/).test(x);
     }
 
@@ -130,11 +130,9 @@ module.exports = {
       }
       if (v1parts[i] === v2parts[i]) {
         continue;
-      }
-      else if (v1parts[i] > v2parts[i]) {
+      } else if (v1parts[i] > v2parts[i]) {
         return 1;
-      }
-      else {
+      } else {
         return -1;
       }
     }
@@ -148,9 +146,9 @@ module.exports = {
   randomId: function () {
     return crypto.randomBytes(32).toString('hex');
   },
-  windowsToLinuxPath: function(windowsAbsPath) {
+  windowsToLinuxPath: function (windowsAbsPath) {
     var fullPath = windowsAbsPath.replace(':', '').split(path.sep).join('/');
-    if(fullPath.charAt(0) !== '/'){
+    if (fullPath.charAt(0) !== '/') {
       fullPath = '/' + fullPath.charAt(0).toLowerCase() + fullPath.substring(1);
     }
     return fullPath;

@@ -6,6 +6,7 @@ var util = require('./utils/Util');
 var setupUtil = require('./utils/SetupUtil');
 var metrics = require('./utils/MetricsUtil');
 var machine = require('./utils/DockerMachineUtil');
+var compose = require('./utils/DockerComposeUtil');
 var dialog = remote.require('dialog');
 import docker from './utils/DockerUtil';
 
@@ -73,6 +74,32 @@ var MenuTemplate = function () {
     {
       label: 'File',
       submenu: [
+      {
+        label: 'Open Compose File',
+        accelerator: util.CommandOrCtrl() + '+O',
+        click: function () {
+          dialog.showOpenDialog({
+            properties: [ 'openFile' ],
+            filters: [{ name: 'Docker Compose File', extensions: ['yml'] }]
+          }, (files) => {
+            machine.env().then((vmEnv)=> {
+              compose.up(files[0], vmEnv).then((info) => {
+                console.log('compose: ', info);
+                dialog.showMessageBox({'title': 'Docker Compose Successful',
+                                       'message': 'All containers have been created',
+                                       'buttons': ['OK']
+                                     });
+              }).catch((err) => {
+                console.error('Error generated: %o', err.message);
+                dialog.showMessageBox({'title': 'Docker Compose Error',
+                                       'message': err.message,
+                                       'buttons': ['Dismiss']
+                                     });
+              });
+            });
+          });
+        }
+      },
       {
         type: 'separator'
       },

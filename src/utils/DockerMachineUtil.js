@@ -68,6 +68,16 @@ var DockerMachine = {
   rm: function (machineName = this.name()) {
     return util.exec([this.command(), 'rm', '-f', machineName]);
   },
+  env: function (machineName = this.name()) {
+    return util.exec([this.command(), 'env', machineName]).then((vmEnv) => {
+      let envRegex = /^export\s(DOCKER_[a-z_]+)="([0-9a-z:\/.]+)"$/igm;
+      let envOpts = {}, match;
+      while (match = envRegex.exec(vmEnv)) {
+        envOpts[match[1]] = match[2];
+      }
+      return Promise.resolve({env: envOpts});
+    });
+  },
   ip: function (machineName = this.name()) {
     return util.exec([this.command(), 'ip', machineName]).then(stdout => {
       return Promise.resolve(stdout.trim().replace('\n', ''));
