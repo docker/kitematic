@@ -2,6 +2,7 @@ import _ from 'underscore';
 import alt from '../alt';
 import containerServerActions from '../actions/ContainerServerActions';
 import containerActions from '../actions/ContainerActions';
+import menubar from '../menubar';
 
 class ContainerStore {
   constructor () {
@@ -78,6 +79,7 @@ class ContainerStore {
       containers[name].State.Updating = true;
     }
 
+    menubar.update(containers);
     this.setState({containers});
   }
 
@@ -91,11 +93,12 @@ class ContainerStore {
     // LogStore.fetch(container.Name);
 
     containers[container.Name] = container;
-
+    menubar.update(containers);
     this.setState({containers});
   }
 
   allUpdated ({containers}) {
+    menubar.update(containers);
     this.setState({containers});
   }
 

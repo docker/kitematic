@@ -55,6 +55,12 @@ var MenuTemplate = function () {
         selector: 'hideOtherApplications:'
       },
       {
+        label: 'Show Kitematic',
+        click: function () {
+          remote.getCurrentWindow().show();
+        }
+      },
+      {
         label: 'Show All',
         selector: 'unhideAllApplications:'
       },
