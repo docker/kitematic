@@ -8,6 +8,7 @@ import tagServerActions from '../actions/TagServerActions';
 
 let REGHUB2_ENDPOINT = process.env.REGHUB2_ENDPOINT || 'https://hub.docker.com/v2';
 let searchReq = null;
+let PAGING = 24;
 
 module.exports = {
   // Normalizes results from search to v2 repository results
@@ -24,7 +25,7 @@ module.exports = {
     return obj;
   },
 
-  search: function (query, page) {
+  search: function (query, page, sorting = null) {
     if (searchReq) {
       searchReq.abort();
       searchReq = null;
@@ -33,10 +34,18 @@ module.exports = {
     if (!query) {
       repositoryServerActions.resultsUpdated({repos: []});
     }
+    /**
+     * Sort:
+     * All - no sorting
+     * ordering: -start_count
+     * ordering: -pull_count
+     * is_automated: 1
+     * is_official: 1
+     */
 
     searchReq = request.get({
-      url: 'https://registry.hub.docker.com/v1/search?',
-      qs: {q: query, page}
+      url: `${REGHUB2_ENDPOINT}/search/repositories/?`,
+      qs: {query: query, page: page, page_size: PAGING, sorting}
     }, (error, response, body) => {
       if (error) {
         repositoryServerActions.error({error});
@@ -44,10 +53,14 @@ module.exports = {
 
       let data = JSON.parse(body);
       let repos = _.map(data.results, result => {
+        result.name = result.repo_name;
         return this.normalize(result);
       });
+      let next = data.next;
+      let previous = data.previous;
+      let total = Math.floor(data.count / PAGING);
       if (response.statusCode === 200) {
-        repositoryServerActions.resultsUpdated({repos});
+        repositoryServerActions.resultsUpdated({repos, page, previous, next, total});
       }
     });
   },
@@ -99,7 +112,8 @@ module.exports = {
 
   tags: function (repo, callback) {
     hubUtil.request({
-      url: `${REGHUB2_ENDPOINT}/repositories/${repo}/tags`
+      url: `${REGHUB2_ENDPOINT}/repositories/${repo}/tags`,
+      qs: {page: 1, page_size: 100}
     }, (error, response, body) => {
       if (response.statusCode === 200) {
         let data = JSON.parse(body);
@@ -122,7 +136,8 @@ module.exports = {
     let namespaces = [];
     // Get Orgs for user
     hubUtil.request({
-      url: `${REGHUB2_ENDPOINT}/user/orgs/?page_size=50`
+      url: `${REGHUB2_ENDPOINT}/user/orgs/`,
+      qs: { page_size: 50 }
     }, (orgError, orgResponse, orgBody) => {
       if (orgError) {
         repositoryServerActions.error({orgError});
