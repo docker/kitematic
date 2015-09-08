@@ -290,17 +290,17 @@ export default {
   },
 
   restart (name) {
-    let container = this.client.getContainer(name);
-    container.stop(error => {
-      if (error && error.statusCode !== 304) {
-        containerServerActions.error({name, error});
+    this.client.getContainer(name).stop(stopError => {
+      if (stopError && stopError.statusCode !== 304) {
+        containerServerActions.error({name, stopError});
         return;
       }
-      container.inspect((error, data) => {
-        if (error) {
-          containerServerActions.error({name, error});
+      this.client.getContainer(name).start(startError => {
+        if (startError && startError.statusCode !== 304) {
+          containerServerActions.error({name, startError});
+          return;
         }
-        this.startContainer(name, data);
+        this.fetchContainer(name);
       });
     });
   },
@@ -343,12 +343,12 @@ export default {
 
     let container = this.client.getContainer(name);
     container.unpause(function () {
-      container.kill(function (error) {
-        if (error) {
-          containerServerActions.error({name, error});
-          return;
-        }
-        container.remove(function () {
+      container.kill(function () {
+        container.remove(function (error) {
+          if (error) {
+            containerServerActions.error({name, error});
+            return;
+          }
           containerServerActions.destroyed({id: name});
           var volumePath = path.join(util.home(), 'Kitematic', name);
           if (fs.existsSync(volumePath)) {

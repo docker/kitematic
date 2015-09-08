@@ -10,7 +10,7 @@ var DockerMachine = {
     return resources.dockerMachine();
   },
   name: function () {
-    return 'docker-vm';
+    return 'default';
   },
   isoversion: function (machineName = this.name()) {
     try {
