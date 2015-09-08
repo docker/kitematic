@@ -7,9 +7,9 @@ class RepositoryActions {
     regHubUtil.recommended();
   }
 
-  search (query) {
+  search (query, page = 1) {
     this.dispatch({});
-    regHubUtil.search(query);
+    regHubUtil.search(query, page);
   }
 
   repos () {

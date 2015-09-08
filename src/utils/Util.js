@@ -81,8 +81,23 @@ module.exports = {
     var settingsjson = {};
     try {
       settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
-    } catch (err) {}
+    } catch (err) {
+      if (err instanceof SyntaxError) {
+        console.error('Settings %o: %o', err.name, err.message);
+      }
+    }
     return settingsjson;
+  },
+  kitematicfg: function () {
+    var kitematicfg = {};
+    try {
+      kitematicfg = JSON.parse(fs.readFileSync(path.join(this.home(), '.kitematicfg'), 'utf8'));
+    } catch (err) {
+      if (err instanceof SyntaxError) {
+        console.error('Kitmatic %o: %o', err.name, err.message);
+      }
+    }
+    return kitematicfg;
   },
   isOfficialRepo: function (name) {
     if (!name || !name.length) {
