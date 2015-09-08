@@ -1,5 +1,8 @@
 root: true
 
+plugins:
+    - react
+
 ecmaFeatures:
     modules: true
     jsx: true

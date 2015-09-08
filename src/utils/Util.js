@@ -98,11 +98,11 @@ module.exports = {
   },
   compareVersions: function (v1, v2, options) {
     var lexicographical = options && options.lexicographical,
-    zeroExtend = options && options.zeroExtend,
-    v1parts = v1.split('.'),
-    v2parts = v2.split('.');
+      zeroExtend = options && options.zeroExtend,
+      v1parts = v1.split('.'),
+      v2parts = v2.split('.');
 
-    function isValidPart(x) {
+    function isValidPart (x) {
       return (lexicographical ? /^\d+[A-Za-z]*$/ : /^\d+$/).test(x);
     }
 
@@ -130,11 +130,9 @@ module.exports = {
       }
       if (v1parts[i] === v2parts[i]) {
         continue;
-      }
-      else if (v1parts[i] > v2parts[i]) {
+      } else if (v1parts[i] > v2parts[i]) {
         return 1;
-      }
-      else {
+      } else {
         return -1;
       }
     }
@@ -148,9 +146,9 @@ module.exports = {
   randomId: function () {
     return crypto.randomBytes(32).toString('hex');
   },
-  windowsToLinuxPath: function(windowsAbsPath) {
+  windowsToLinuxPath: function (windowsAbsPath) {
     var fullPath = windowsAbsPath.replace(':', '').split(path.sep).join('/');
-    if(fullPath.charAt(0) !== '/'){
+    if (fullPath.charAt(0) !== '/') {
       fullPath = '/' + fullPath.charAt(0).toLowerCase() + fullPath.substring(1);
     }
     return fullPath;
@@ -158,5 +156,5 @@ module.exports = {
   linuxToWindowsPath: function (linuxAbsPath) {
     return linuxAbsPath.replace('/c', 'C:').split('/').join('\\');
   },
-  webPorts: ['80', '8000', '8080', '3000', '5000', '2368', '9200', '8983']
+  webPorts: ['80', '8000', '8080', '8888', '3000', '5000', '2368', '9200', '8983']
 };
