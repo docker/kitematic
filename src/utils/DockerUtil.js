@@ -262,7 +262,7 @@ export default {
   },
 
   restart (name) {
-    this.client.getContainer(name).stop(stopError => {
+    this.client.getContainer(name).stop({t: 10}, stopError => {
       if (stopError && stopError.statusCode !== 304) {
         containerServerActions.error({name, stopError});
         return;
@@ -278,7 +278,7 @@ export default {
   },
 
   stop (name) {
-    this.client.getContainer(name).stop(error => {
+    this.client.getContainer(name).stop({t: 10}, error => {
       if (error && error.statusCode !== 304) {
         containerServerActions.error({name, error});
         return;
