@@ -112,7 +112,27 @@
     }
     .table {
       &.ports {
-        max-width: 500px;
+        input {
+          width: 50px;
+          border: 0;
+        }
+        tr {
+          td {
+            &:first-child {
+              width: 120px;
+            }
+            &.bind {
+              width: 190px;
+            }
+            &.error {
+              text-align: left;
+              color: red;
+              padding-left: 10px;
+              padding-right: 10px;
+              border: 0;
+            }
+          }
+        }
       }
       &.volumes {
         max-width: 100%;
