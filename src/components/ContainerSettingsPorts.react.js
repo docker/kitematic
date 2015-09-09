@@ -53,7 +53,7 @@ var ContainerSettingsPorts = React.createClass({
     } else if (port <= 0 || port > 65535) {
       ports[key].error = 'Needs to be in range <1,65535>.';
     } else if (otherPorts[port]) {
-      ports[key].error = 'Collision with port at container "'+ otherPorts[port] +'"';
+      ports[key].error = 'Collision with container "'+ otherPorts[port] +'"';
     } else if (duplicates.length > 0) {
       ports[key].error = 'Collision with another port in this container.';
     } else if (port == 22 || port == 2376) {
