@@ -23,8 +23,8 @@ var ContainerSettingsPorts = React.createClass({
     shell.openExternal(url);
   },
   handleChangePort: function(key, e) {
-    var ports = this.state.ports;
-    var port = e.target.value;
+    let ports = this.state.ports;
+    let port = e.target.value;
 
     // save updated port
     ports[key] = _.extend(ports[key], {
@@ -35,29 +35,31 @@ var ContainerSettingsPorts = React.createClass({
 
     // basic validation, if number is integer, if its in range, if there
     // is no collision with ports of other containers and also if there is no
-    // collision with ports for current containser
-    const name = this.props.container.Name;
-    const containers = containerStore.getState().containers;
-    const container = ContainerUtil.isPortCollision(name, containers, port);
+    // collision with ports for current container
+    const otherContainers = _.filter(_.values(containerStore.getState().containers), c => c.Name !== this.props.container.Name);
+    const otherPorts = _.flatten(otherContainers.map(container => {
+      return _.values(container.NetworkSettings.Ports).map(hosts => hosts.map(host => {return {port: host.HostPort, name: container.Name}}));
+    })).reduce((prev, pair) => {
+      prev[pair.port] = pair.name;
+      return prev;
+    }, {});
+
     const duplicates = _.filter(ports, (v, i) => {
       return (i != key && _.isEqual(v.port, port));
     });
+
     if (!port.match(/^[0-9]+$/g)) {
       ports[key].error = 'Needs to be an integer.';
-     }
-    else if (port <= 0 || port > 65535) {
+    } else if (port <= 0 || port > 65535) {
       ports[key].error = 'Needs to be in range <1,65535>.';
+    } else if (otherPorts[port]) {
+      ports[key].error = 'Collision with port at container "'+ otherPorts[port] +'"';
+    } else if (duplicates.length > 0) {
+      ports[key].error = 'Collision with another port in this container.';
+    } else if (port == 22 || port == 2376) {
+      ports[key].error = 'Ports 22 and 2376 are reserved ports for Kitematic/Docker.';
     }
-    else if (container) {
-      ports[key].error = 'Collision with port at container "'+ container.Name +'"';
-    }
-    else if (duplicates.length > 0) {
-      ports[key].error = "Collision with other port at container.";
-    }
-    else if (port == 22 || port == 2376) {
-      ports[key].error = "Ports 22 and 2376 are reserved ports for Kitematic/Docker.";
-    }
-    this.setState({ ports: ports });
+    this.setState({ports: ports});
   },
   handleSave: function() {
     containerActions.update(this.props.container.Name, {

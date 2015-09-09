@@ -45,25 +45,6 @@ var ContainerUtil = {
       };
     });
     return res;
-  },
-
-  /**
-   * Check if there is port colision with other containers
-   * @param  {String} name       name of the current container
-   * @param  {Array}  containers array of all containers
-   * @param  {String} port
-   * @return {Object|null}       return nothing or container with colision
-   */
-  isPortCollision: function (name, containers, port) {
-    var interfaces = {};
-    _.forEach(containers, container => {
-      if (container.Name != name) {
-        _.forEach(this.ports(container), (ip) => {
-          interfaces[ip + ':' + port] = container;
-        });
-      }
-    });
-    return interfaces[docker.host + ':' + port];
   }
 };
 
