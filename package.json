@@ -22,14 +22,14 @@
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     }
   ],
-  "docker-version": "1.8.1",
+  "docker-version": "1.8.2",
   "docker-machine-version": "0.4.1",
   "electron-version": "0.27.2",
-  "virtualbox-version": "5.0.2",
-  "virtualbox-filename": "VirtualBox-5.0.2.pkg",
-  "virtualbox-filename-win": "VirtualBox-5.0.2.exe",
-  "virtualbox-checksum": "384414edab277c376a2ac3d02e5f316434fa4d54d31db44dc85b6e560eda4143",
-  "virtualbox-checksum-win": "a8183d21566fc6cb327e4b71303fa0d04fc6cd079ba83d66818d18c5ef427037",
+  "virtualbox-version": "5.0.4",
+  "virtualbox-filename": "VirtualBox-5.0.4.pkg",
+  "virtualbox-filename-win": "VirtualBox-5.0.4.exe",
+  "virtualbox-checksum": "4597b2ebdf7a334a3a4028e2285f62cf4cf157477e33fa5f433d944da54737d6",
+  "virtualbox-checksum-win": "17fe9943eae33d1d23d37160fd862b7c5db0eef8cb48225cf143244d0e934f94",
   "dependencies": {
     "alt": "^0.16.2",
     "ansi-to-html": "0.3.0",
