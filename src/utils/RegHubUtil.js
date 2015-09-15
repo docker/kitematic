@@ -131,6 +131,13 @@ module.exports = {
         }
         return null;
       }
+
+      if (orgResponse.statusCode === 401) {
+        hubUtil.logout();
+        repositoryServerActions.reposUpdated({repos: []});
+        return;
+      }
+
       if (orgResponse.statusCode !== 200) {
         let generalError = new Error('Failed to fetch repos');
         repositoryServerActions.error({error: generalError});
@@ -164,6 +171,12 @@ module.exports = {
               callback(error);
             }
             return null;
+          }
+
+          if (orgResponse.statusCode === 401) {
+            hubUtil.logout();
+            repositoryServerActions.reposUpdated({repos: []});
+            return;
           }
 
           if (response.statusCode !== 200) {
