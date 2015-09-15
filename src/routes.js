@@ -51,8 +51,8 @@ var routes = (
         <DefaultRoute name="search" handler={NewContainerSearch}/>
         <Route name="pull" path="pull" handler={NewContainerPull}></Route>
       </Route>
-      <Route name="preferences" path="/preferences" handler={Preferences}/>
-      <Route name="about" path="/about" handler={About}/>
+      <Route name="preferences" path="preferences" handler={Preferences}/>
+      <Route name="about" path="about" handler={About}/>
     </Route>
     <DefaultRoute name="setup" handler={Setup}/>
   </Route>
