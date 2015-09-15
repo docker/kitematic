@@ -48,6 +48,15 @@ class AccountStore {
     this.setState({username, verified, errors: {}, loading: false});
   }
 
+  loggedout () {
+    this.setState({
+      loading: false,
+      errors: {},
+      username: null,
+      verified: false
+    });
+  }
+
   signedup ({username}) {
     this.setState({username, errors: {}, loading: false});
   }
