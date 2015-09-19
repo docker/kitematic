@@ -13,12 +13,12 @@ var ContainerHome = React.createClass({
     router: React.PropTypes.func
   },
 
-  componentDidMount: function() {
+  componentDidMount: function () {
     this.handleResize();
     window.addEventListener('resize', this.handleResize);
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount: function () {
     window.removeEventListener('resize', this.handleResize);
   },
 
@@ -46,7 +46,7 @@ var ContainerHome = React.createClass({
 
   render: function () {
     if (!this.props.container) {
-      return;
+      return '';
     }
 
     let body;
@@ -70,11 +70,14 @@ var ContainerHome = React.createClass({
         }
 
         sum = sum / this.props.container.Progress.amount;
+        if (isNaN(sum)) {
+          sum = 0;
+        }
 
         body = (
           <div className="details-progress">
             <h2>Downloading Image</h2>
-            <h2>{(Math.round(sum*100)/100).toFixed(2)}%</h2>
+            <h2>{ (Math.round(sum * 100) / 100).toFixed(2) }%</h2>
             <div className="container-progress-wrapper">
               <ContainerProgress pBar1={values[0]} pBar2={values[1]} pBar3={values[2]} pBar4={values[3]}/>
             </div>

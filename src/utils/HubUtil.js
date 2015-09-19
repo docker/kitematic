@@ -95,6 +95,10 @@ module.exports = {
     localStorage.removeItem('auth.username');
     localStorage.removeItem('auth.verified');
     localStorage.removeItem('auth.config');
+
+    this.request({
+      url: `${HUB2_ENDPOINT}/logout`
+    }, (error, response, body) => {});
   },
 
   login: function (username, password, callback) {

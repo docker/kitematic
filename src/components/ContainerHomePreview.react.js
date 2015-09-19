@@ -25,7 +25,7 @@ var ContainerHomePreview = React.createClass({
     }
   },
 
-  componentWillUnmount: function() {
+  componentWillUnmount: function () {
     clearInterval(this.timer);
   },
 
