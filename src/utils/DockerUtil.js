@@ -20,16 +20,14 @@ export default {
       throw new Error('Falsy ip or name passed to docker client setup');
     }
 
-    if (!util.isLinux()) {
+    switch(process.platform) {
+    case 'win32':
+    case 'darwin':
       let certDir = path.join(util.home(), '.docker/machine/machines/', name);
       if (!fs.existsSync(certDir)) {
         throw new Error('Certificate directory does not exist');
       }
-    }
 
-    switch(process.platform) {
-    case 'win32':
-    case 'darwin':
       this.host = ip;
       this.client = new dockerode({
         protocol: 'https',
