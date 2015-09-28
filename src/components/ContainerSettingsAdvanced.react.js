@@ -5,7 +5,7 @@ import ContainerUtil from '../utils/ContainerUtil';
 import containerActions from '../actions/ContainerActions';
 
 var ipRegex = /\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b/;
-var domainRegex = /([a-z0-9-]+\.(?:com|net|org|co\.uk|localhost|dev))(?:\/|$)/;
+var domainRegex = /^([a-z0-9-]+(?:\.[a-z0-9-]+)+)(?:\/|$)/;
 
 var ContainerSettingsAdvanced = React.createClass({
   mixins: [React.addons.LinkedStateMixin],
