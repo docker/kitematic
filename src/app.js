@@ -9,7 +9,7 @@ import metrics from './utils/MetricsUtil';
 import template from './menutemplate';
 import webUtil from './utils/WebUtil';
 import hubUtil from './utils/HubUtil';
-var urlUtil = require ('./utils/URLUtil');
+var urlUtil = require('./utils/URLUtil');
 var app = remote.require('app');
 import request from 'request';
 import docker from './utils/DockerUtil';

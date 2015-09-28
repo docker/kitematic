@@ -32,27 +32,27 @@ var App = React.createClass({
 
 var routes = (
   <Route name="app" path="/" handler={App}>
-    <Route name="account" path="/account" handler={Account}>
-      <Route name="signup" path="/account/signup" handler={AccountSignup}/>
-      <Route name="login" path="/account/login" handler={AccountLogin}/>
+    <Route name="account" path="account" handler={Account}>
+      <Route name="signup" path="signup" handler={AccountSignup}/>
+      <Route name="login" path="login" handler={AccountLogin}/>
     </Route>
-    <Route name="containers" handler={Containers}>
-      <Route name="container" path="containers/details/:name" handler={ContainerDetails}>
+    <Route name="containers" path="containers" handler={Containers}>
+      <Route name="container" path="details/:name" handler={ContainerDetails}>
         <DefaultRoute name="containerHome" handler={ContainerHome} />
-        <Route name="containerLogs" path="containers/details/:name/logs" handler={ContainerLogs}/>
-        <Route name="containerSettings" path="containers/details/:name/settings" handler={ContainerSettings}>
-          <Route name="containerSettingsGeneral" path="containers/details/:name/settings/general" handler={ContainerSettingsGeneral}/>
-          <Route name="containerSettingsPorts" path="containers/details/:name/settings/ports" handler={ContainerSettingsPorts}/>
-          <Route name="containerSettingsVolumes" path="containers/details/:name/settings/volumes" handler={ContainerSettingsVolumes}/>
-          <Route name="containerSettingsAdvanced" path="containers/details/:name/settings/advanced" handler={ContainerSettingsAdvanced}/>
+        <Route name="containerLogs" path="logs" handler={ContainerLogs}/>
+        <Route name="containerSettings" path="settings" handler={ContainerSettings}>
+          <Route name="containerSettingsGeneral" path="general" handler={ContainerSettingsGeneral}/>
+          <Route name="containerSettingsPorts" path="ports" handler={ContainerSettingsPorts}/>
+          <Route name="containerSettingsVolumes" path="volumes" handler={ContainerSettingsVolumes}/>
+          <Route name="containerSettingsAdvanced" path="advanced" handler={ContainerSettingsAdvanced}/>
         </Route>
       </Route>
-      <Route name="new" path="containers/new">
+      <Route name="new" path="new">
         <DefaultRoute name="search" handler={NewContainerSearch}/>
-        <Route name="pull" path="containers/new/pull" handler={NewContainerPull}></Route>
+        <Route name="pull" path="pull" handler={NewContainerPull}></Route>
       </Route>
-      <Route name="preferences" path="/preferences" handler={Preferences}/>
-      <Route name="about" path="/about" handler={About}/>
+      <Route name="preferences" path="preferences" handler={Preferences}/>
+      <Route name="about" path="about" handler={About}/>
     </Route>
     <DefaultRoute name="setup" handler={Setup}/>
   </Route>
