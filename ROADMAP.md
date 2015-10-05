@@ -34,3 +34,13 @@
 
 * Refactor to Flux Architecture
 * Stability & code quality improvements
+
+**August 2015**
+
+* Make Kitematic part of the Docker Toolbox
+* Stability & code quality improvements
+
+**September 2015**
+
+* Better integration with new version of Docker Hub
+* Stability & code quality improvements
