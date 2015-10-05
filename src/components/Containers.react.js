@@ -10,10 +10,6 @@ import shell from 'shell';
 import machine from '../utils/DockerMachineUtil';
 
 var Containers = React.createClass({
-  contextTypes: {
-    router: React.PropTypes.func
-  },
-
   getInitialState: function () {
     return {
       sidebarOffset: 0,
@@ -52,7 +48,9 @@ var Containers = React.createClass({
     let containers = containerStore.getState().containers;
     let sorted = this.sorted(containerStore.getState().containers);
 
-    let name = this.context.router.getCurrentParams().name;
+    console.log(this.props);
+
+    let name = this.props.params.name;
     if (containerStore.getState().pending) {
       this.context.router.transitionTo('pull');
     } else if (name && !containers[name]) {
@@ -151,7 +149,7 @@ var Containers = React.createClass({
       sidebarHeaderClass += ' sep';
     }
 
-    var container = this.context.router.getCurrentParams().name ? this.state.containers[this.context.router.getCurrentParams().name] : {};
+    var container = this.props.params ? this.state.containers[ this.props.params] : {};
     return (
       <div className="containers">
         <Header />

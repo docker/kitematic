@@ -9,15 +9,16 @@ import metrics from './utils/MetricsUtil';
 import template from './menutemplate';
 import webUtil from './utils/WebUtil';
 import hubUtil from './utils/HubUtil';
-var urlUtil = require('./utils/URLUtil');
-var app = remote.require('app');
+import setupUtil from './utils/SetupUtil';
 import request from 'request';
 import docker from './utils/DockerUtil';
 import hub from './utils/HubUtil';
 import Router from 'react-router';
+import createHashHistory from 'history/lib/createHashHistory'
 import routes from './routes';
 import routerContainer from './router';
 import repositoryActions from './actions/RepositoryActions';
+var app = remote.require('app');
 
 hubUtil.init();
 
@@ -40,19 +41,16 @@ setInterval(function () {
   metrics.track('app heartbeat');
 }, 14400000);
 
-var router = Router.create({
-  routes: routes
-});
-router.run(Handler => React.render(<Handler/>, document.body));
-routerContainer.set(router);
+let history = createHashHistory()
+React.render(<Router history={history}>{routes}</Router>, document.body)
 
-SetupStore.setup().then(() => {
+setupUtil.setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   docker.init();
   if (!hub.prompted() && !hub.loggedin()) {
-    router.transitionTo('login');
+    history.replaceState(null, '/account/login');
   } else {
-    router.transitionTo('search');
+    history.replaceState(null, '/containers/new');
   }
 }).catch(err => {
   metrics.track('Setup Failed', {
@@ -67,24 +65,3 @@ ipc.on('application:quitting', () => {
     machine.stop();
   }
 });
-
-// Event fires when the app receives a docker:// URL such as
-// docker://repository/run/redis
-ipc.on('application:open-url', opts => {
-  request.get('https://kitematic.com/flags.json', (err, response, body) => {
-    if (err || response.statusCode !== 200) {
-      return;
-    }
-
-    var flags = JSON.parse(body);
-    if (!flags) {
-      return;
-    }
-
-    urlUtil.openUrl(opts.url, flags, app.getVersion());
-  });
-});
-
-module.exports = {
-  router: router
-};

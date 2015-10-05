@@ -1,79 +1,43 @@
 import React from 'react/addons';
 import Router from 'react-router';
 import Radial from './Radial.react.js';
-import SetupStore from '../stores/SetupStore';
 import RetinaImage from 'react-retina-image';
 import Header from './Header.react';
 import Util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
+import setupStore from '../stores/SetupStore';
 
 var Setup = React.createClass({
-  mixins: [ Router.Navigation ],
+  mixins: [Router.Navigation],
+
   getInitialState: function () {
-    return {
-      progress: 0,
-      name: '',
-    };
+    return setupStore.getState();
   },
-  componentWillMount: function () {
-    SetupStore.on(SetupStore.PROGRESS_EVENT, this.update);
-    SetupStore.on(SetupStore.STEP_EVENT, this.update);
-    SetupStore.on(SetupStore.ERROR_EVENT, this.update);
-  },
+
   componentDidMount: function () {
-    this.update();
+    setupStore.listen(this.update);
   },
+
   componentDidUnmount: function () {
-    SetupStore.removeListener(SetupStore.PROGRESS_EVENT, this.update);
-    SetupStore.removeListener(SetupStore.STEP_EVENT, this.update);
-    SetupStore.removeListener(SetupStore.ERROR_EVENT, this.update);
+    setupStore.unlisten(this.update);
   },
-  handleCancelRetry: function () {
-    metrics.track('Setup Retried', {
-      from: 'cancel'
-    });
-    SetupStore.retry();
-  },
-  handleErrorRetry: function () {
-    metrics.track('Setup Retried', {
-      from: 'error',
-      removeVM: false
-    });
-    SetupStore.retry(false);
-  },
-  handleErrorRemoveRetry: function () {
-    metrics.track('Setup Retried', {
-      from: 'error',
-      removeVM: true
-    });
-    SetupStore.retry(true);
-  },
-  handleOpenWebsite: function () {
-    Util.exec(['open', 'https://www.virtualbox.org/wiki/Downloads']);
-  },
+
   update: function () {
-    this.setState({
-      progress: SetupStore.percent(),
-      step: SetupStore.step(),
-      error: SetupStore.error(),
-      cancelled: SetupStore.cancelled()
-    });
+    this.setState(setupStore.getState());
   },
+
   renderContents: function () {
-    var img = 'virtualbox.png';
-    if (SetupStore.step().name === 'init' || SetupStore.step().name === 'start') {
-      img = 'boot2docker.png';
-    }
     return (
       <div className="contents">
-        <RetinaImage src={img} checkIfRetinaImgExists={false}/>
+        <RetinaImage src="boot2docker.png" checkIfRetinaImgExists={false}/>
         <div className="detail">
           <Radial progress={this.state.progress} thick={true} gray={true}/>
         </div>
       </div>
     );
   },
-  renderStep: function () {
+
+  renderProgress: function () {
     return (
       <div className="setup">
         <Header hideLogin={true}/>
@@ -83,9 +47,8 @@ var Setup = React.createClass({
           </div>
           <div className="desc">
             <div className="content">
-              <h4>Step {SetupStore.number()} out of {SetupStore.stepCount()}</h4>
-              <h1>{SetupStore.step().title}</h1>
-              <p>{SetupStore.step().message}</p>
+              <h1>{this.state.title}</h1>
+              <p>{this.state.message}</p>
             </div>
           </div>
         </div>
@@ -141,15 +104,14 @@ var Setup = React.createClass({
       </div>
     );
   },
+
   render: function () {
     if (this.state.cancelled) {
       return this.renderCancelled();
     } else if (this.state.error) {
       return this.renderError();
-    } else if (SetupStore.step()) {
-      return this.renderStep();
     } else {
-      return false;
+      return this.renderProgress();
     }
   }
 });
