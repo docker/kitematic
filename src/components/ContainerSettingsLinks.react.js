@@ -1,8 +1,6 @@
 import _ from 'underscore';
 import React from 'react/addons';
-import remote from 'remote';
 import metrics from '../utils/MetricsUtil';
-var dialog = remote.require('dialog');
 import ContainerUtil from '../utils/ContainerUtil';
 import containerActions from '../actions/ContainerActions';
 import containerStore from '../stores/ContainerStore';
@@ -23,7 +21,9 @@ var ContainerSettingsLinks = React.createClass({
       return [util.randomId(), l[0], l[1], true];
     });
     let containers = containerStore.getState().containers;
-    let sorted = _.pluck(containers, 'Name');
+    let sorted = _.filter(_.pluck(containers, 'Name'), name => {
+      return name !== this.props.container.Name;
+    });
 
     return {
       links: links,
@@ -41,7 +41,7 @@ var ContainerSettingsLinks = React.createClass({
         let link = key + ':' + value;
         // Check if Container was previously added
         let currentKey = keys.indexOf(key);
-        if ( currentKey != -1) {
+        if ( currentKey !== -1) {
           list[currentKey] = link;
         } else {
           keys.push(key);
@@ -58,21 +58,21 @@ var ContainerSettingsLinks = React.createClass({
     let selected = false;
     let value;
     // Check if Typeahead or simple input
-    if (typeof event === "string") {
+    if (typeof event === 'string') {
       selected = true;
       value = event;
     } else {
       value = event.target.value;
     }
     links[index][1] = value;
-    if (links[index][2] == "") {
+    if (links[index][2] === '') {
       links[index][2] = value;
-      this.refs["link-val"].getDOMNode().value = value;
+      this.refs['link-val'].getDOMNode().value = value;
     }
-    links[index][3] =  selected;
+    links[index][3] = selected;
     this.setState({
       links: links
-    }, () => {4
+    }, () => {
       if (!selected) {
         // Focus on input after re-render
         this.refs.keyTypeahead.refs.entry.getDOMNode().focus();
@@ -131,7 +131,7 @@ var ContainerSettingsLinks = React.createClass({
         <input type="text" className="key line" defaultValue={key} readOnly />
       );
 
-      if (key == "" || !selected) {
+      if (key === '' || !selected) {
         inputDockerContainer = (
             <Typeahead
               ref="keyTypeahead"
@@ -144,7 +144,7 @@ var ContainerSettingsLinks = React.createClass({
         );
       } else if (index === this.state.links.length - 1) {
         inputDockerContainer = (
-          <input type="text" ref="link-key"  className="key line" defaultValue={key} onChange={this.handleChangeLinksKey.bind(this, index)} />
+          <input type="text" ref="link-key" className="key line" defaultValue={key} onChange={this.handleChangeLinksKey.bind(this, index)} />
         );
       }
 
