@@ -25,11 +25,6 @@
   "docker-version": "1.8.2",
   "docker-machine-version": "0.4.1",
   "electron-version": "0.27.2",
-  "virtualbox-version": "5.0.4",
-  "virtualbox-filename": "VirtualBox-5.0.4.pkg",
-  "virtualbox-filename-win": "VirtualBox-5.0.4.exe",
-  "virtualbox-checksum": "4597b2ebdf7a334a3a4028e2285f62cf4cf157477e33fa5f433d944da54737d6",
-  "virtualbox-checksum-win": "17fe9943eae33d1d23d37160fd862b7c5db0eef8cb48225cf143244d0e934f94",
   "dependencies": {
     "alt": "^0.16.2",
     "ansi-to-html": "0.3.0",
