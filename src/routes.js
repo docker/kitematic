@@ -14,44 +14,45 @@ import ContainerSettingsVolumes from './components/ContainerSettingsVolumes.reac
 import ContainerSettingsAdvanced from './components/ContainerSettingsAdvanced.react';
 import Preferences from './components/Preferences.react';
 import About from './components/About.react';
+import Loading from './components/Loading.react';
 import NewContainerSearch from './components/NewContainerSearch.react';
-import NewContainerPull from './components/NewContainerPull.react';
-import {Router, IndexRoute, Route, Link} from 'react-router'
+import Router from 'react-router';
+
+var Route = Router.Route;
+var DefaultRoute = Router.DefaultRoute;
+var RouteHandler = Router.RouteHandler;
 
 var App = React.createClass({
   render: function () {
     return (
-      <div>
-        {this.props.children}
-      </div>
+      <RouteHandler/>
     );
   }
 });
 
 var routes = (
-  <Route path="/" component={App}>
-    <IndexRoute component={Setup}/>
-    <Route path="account" component={Account}>
-      <Route path="signup" component={AccountSignup}/>
-      <Route path="login" component={AccountLogin}/>
+  <Route name="app" path="/" handler={App}>
+    <Route name="account" path="account" handler={Account}>
+      <Route name="signup" path="signup" handler={AccountSignup}/>
+      <Route name="login" path="login" handler={AccountLogin}/>
     </Route>
-    <Route path="containers" component={Containers}>
-      <Route path="details/:name" component={ContainerDetails}>
-        <IndexRoute component={ContainerHome} />
-        <Route path="logs" component={ContainerLogs}/>
-        <Route path="settings" component={ContainerSettings}>
-          <Route path="general" component={ContainerSettingsGeneral}/>
-          <Route path="ports" component={ContainerSettingsPorts}/>
-          <Route path="volumes" component={ContainerSettingsVolumes}/>
-          <Route path="advanced" component={ContainerSettingsAdvanced}/>
+    <Route name="containers" path="containers" handler={Containers}>
+      <Route name="container" path="details/:name" handler={ContainerDetails}>
+        <DefaultRoute name="containerHome" handler={ContainerHome} />
+        <Route name="containerLogs" path="logs" handler={ContainerLogs}/>
+        <Route name="containerSettings" path="settings" handler={ContainerSettings}>
+          <Route name="containerSettingsGeneral" path="general" handler={ContainerSettingsGeneral}/>
+          <Route name="containerSettingsPorts" path="ports" handler={ContainerSettingsPorts}/>
+          <Route name="containerSettingsVolumes" path="volumes" handler={ContainerSettingsVolumes}/>
+          <Route name="containerSettingsAdvanced" path="advanced" handler={ContainerSettingsAdvanced}/>
         </Route>
       </Route>
-      <Route name="new" path="new">
-        <IndexRoute component={NewContainerSearch}/>
-      </Route>
-      <Route path="preferences" component={Preferences}/>
-      <Route path="about" component={About}/>
+      <Route name="search" handler={NewContainerSearch}/>
+      <Route name="preferences" path="preferences" handler={Preferences}/>
+      <Route name="about" path="about" handler={About}/>
     </Route>
+    <DefaultRoute name="loading" handler={Loading}/>
+    <Route name="setup" handler={Setup}/>
   </Route>
 );
 

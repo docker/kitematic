@@ -74,6 +74,7 @@ app.on('ready', function () {
       mainWindow.webContents.send('application:quitting');
       return true;
     });
+
     app.on('window-all-closed', function() {
       app.quit();
     });

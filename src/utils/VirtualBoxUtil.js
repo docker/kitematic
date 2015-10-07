@@ -1,18 +1,24 @@
 import fs from 'fs';
+import path from 'path';
 import util from './Util';
 import Promise from 'bluebird';
 
 var VirtualBox = {
   command: function () {
     if(util.isWindows()) {
-      return 'C:\\Program Files\\Oracle\\VirtualBox\\VBoxManage.exe';
+      if (process.env.VBOX_MSI_INSTALL_PATH) {
+        return path.join(process.env.VBOX_MSI_INSTALL_PATH, 'VBoxManage.exe');
+      } else {
+        return path.join(process.env.VBOX_INSTALL_PATH, 'VBoxManage.exe');
+      }
     } else {
       return '/Applications/VirtualBox.app/Contents/MacOS/VBoxManage';
     }
   },
   installed: function () {
     if(util.isWindows()) {
-      return fs.existsSync('C:\\Program Files\\Oracle\\VirtualBox\\VBoxManage.exe') && fs.existsSync('C:\\Program Files\\Oracle\\VirtualBox\\VirtualBox.exe');
+      return (process.env.VBOX_MSI_INSTALL_PATH && fs.existsSync(path.join(process.env.VBOX_MSI_INSTALL_PATH, 'VBoxManage.exe'))) ||
+             (process.env.VBOX_INSTALL_PATH && fs.existsSync(path.join(process.env.VBOX_INSTALL_PATH, 'VBoxManage.exe')));
     } else {
       return fs.existsSync('/Applications/VirtualBox.app') && fs.existsSync('/Applications/VirtualBox.app/Contents/MacOS/VBoxManage');
     }

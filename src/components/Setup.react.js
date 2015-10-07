@@ -31,7 +31,7 @@ var Setup = React.createClass({
       <div className="contents">
         <RetinaImage src="boot2docker.png" checkIfRetinaImgExists={false}/>
         <div className="detail">
-          <Radial progress={this.state.progress} thick={true} gray={true}/>
+          <Radial progress={Math.round(this.state.progress)} thick={true} gray={true}/>
         </div>
       </div>
     );
@@ -47,29 +47,8 @@ var Setup = React.createClass({
           </div>
           <div className="desc">
             <div className="content">
-              <h1>{this.state.title}</h1>
-              <p>{this.state.message}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  },
-  renderCancelled: function () {
-    return (
-      <div className="setup">
-        <Header hideLogin={true}/>
-        <div className="setup-content">
-          <div className="image">
-            {this.renderContents()}
-          </div>
-          <div className="desc">
-            <div className="content">
-              <h4>Setup Cancelled</h4>
-              <h1>Couldn&#39;t Install Requirements</h1>
-              <p>Kitematic didn&#39;t receive the administrative privileges required to install or upgrade VirtualBox &amp; Docker.</p>
-              <p>Please click retry. If VirtualBox is not installed, you can download &amp; install it manually from the <a onClick={this.handleOpenWebsite}>official Oracle website</a>.</p>
-              <p><button className="btn btn-action" onClick={this.handleCancelRetry}>Retry</button></p>
+              <h1>Starting Docker VM</h1>
+              <p>To run Docker containers on your computer, Kitematic is starting a Linux virtual machine. This may take a minute...</p>
             </div>
           </div>
         </div>

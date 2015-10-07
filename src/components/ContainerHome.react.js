@@ -1,7 +1,6 @@
 import _ from 'underscore';
 import $ from 'jquery';
 import React from 'react/addons';
-import Radial from './Radial.react';
 import ContainerProgress from './ContainerProgress.react';
 import ContainerHomePreview from './ContainerHomePreview.react';
 import ContainerHomeLogs from './ContainerHomeLogs.react';
@@ -88,14 +87,14 @@ var ContainerHome = React.createClass({
         body = (
           <div className="details-progress">
             <h2>Waiting For Another Download</h2>
-            <Radial spin="true" progress="90" thick={true} transparent={true}/>
+            <div className="spinner la-ball-clip-rotate la-lg la-dark"><div></div></div>
           </div>
         );
       } else {
         body = (
           <div className="details-progress">
             <h2>Connecting to Docker Hub</h2>
-            <Radial spin="true" progress="90" thick={true} transparent={true}/>
+            <div className="spinner la-ball-clip-rotate la-lg la-dark"><div></div></div>
           </div>
         );
       }

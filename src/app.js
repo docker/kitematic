@@ -14,7 +14,6 @@ import request from 'request';
 import docker from './utils/DockerUtil';
 import hub from './utils/HubUtil';
 import Router from 'react-router';
-import createHashHistory from 'history/lib/createHashHistory'
 import routes from './routes';
 import routerContainer from './router';
 import repositoryActions from './actions/RepositoryActions';
@@ -41,16 +40,19 @@ setInterval(function () {
   metrics.track('app heartbeat');
 }, 14400000);
 
-let history = createHashHistory()
-React.render(<Router history={history}>{routes}</Router>, document.body)
+var router = Router.create({
+  routes: routes
+});
+router.run(Handler => React.render(<Handler/>, document.body));
+routerContainer.set(router);
 
 setupUtil.setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   docker.init();
   if (!hub.prompted() && !hub.loggedin()) {
-    history.replaceState(null, '/account/login');
+    router.transitionTo('login');
   } else {
-    history.replaceState(null, '/containers/new');
+    router.transitionTo('search');
   }
 }).catch(err => {
   metrics.track('Setup Failed', {

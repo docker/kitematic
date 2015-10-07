@@ -9,16 +9,17 @@ import setupActions from '../actions/SetupActions';
 import metrics from './MetricsUtil';
 import machine from './DockerMachineUtil';
 import docker from './DockerUtil';
+import router from '../router';
 
 let _retryPromise = null;
 
 export default {
-  simulateProgress (estimateSeconds, progress) {
+  simulateProgress (estimateSeconds) {
     var times = _.range(0, estimateSeconds * 1000, 200);
     var timers = [];
     _.each(times, time => {
       var timer = setTimeout(() => {
-        setupActions.progress(100 * time / (estimateSeconds * 1000));
+        setupActions.progress({progress: 100 * time / (estimateSeconds * 1000)});
       }, time);
       timers.push(timer);
     });
@@ -27,7 +28,6 @@ export default {
   retry (removeVM) {
     if (removeVM) {
       machine.rm().finally(() => {
-        console.log('machine removed');
         _retryPromise.resolve();
       });
     } else {
@@ -50,17 +50,23 @@ export default {
 
         let exists = await virtualBox.vmExists('default');
         if (!exists) {
-          this.simulateProgress(60, progress => setupActions.progress(progress));
-          await machine.rm();
+          router.get().transitionTo('setup');
+          this.simulateProgress(60);
+          try {
+            await machine.rm();
+          } catch (err) {}
           await machine.create();
         } else {
           let state = await machine.state();
-          if (state === 'Saved') {
-            this.simulateProgress(10, progress => setupActions.progress(progress));
-          } else {
-            this.simulateProgress(25, progress => setupActions.progress(progress));
+          if (state !== 'Running') {
+            router.get().transitionTo('setup');
+            if (state === 'Saved') {
+              this.simulateProgress(10);
+            } else if (state === 'Stopped') {
+              this.simulateProgress(25)
+            }
+            await machine.start();
           }
-          await machine.start();
         }
 
         let ip = await machine.ip();
@@ -76,6 +82,7 @@ export default {
         await this.pause();
       }
     }
+    console.log('Setup finished.');
     metrics.track('Setup Finished');
   }
 };

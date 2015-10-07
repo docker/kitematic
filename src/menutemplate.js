@@ -6,9 +6,8 @@ var util = require('./utils/Util');
 var setupUtil = require('./utils/SetupUtil');
 var metrics = require('./utils/MetricsUtil');
 var machine = require('./utils/DockerMachineUtil');
+var docker = require('./utils/DockerUtil');
 var dialog = remote.require('dialog');
-import docker from './utils/DockerUtil';
-import Router from 'react-router';
 
 // main.js
 var MenuTemplate = function () {
@@ -22,7 +21,7 @@ var MenuTemplate = function () {
           metrics.track('Opened About', {
             from: 'menu'
           });
-          Router.transitionTo('about');
+          router.get().transitionTo('about');
         }
       },
       {
@@ -36,7 +35,7 @@ var MenuTemplate = function () {
           metrics.track('Opened Preferences', {
             from: 'menu'
           });
-          Router.transitionTo('preferences');
+          router.get().transitionTo('preferences');
         }
       },
       {

@@ -10,6 +10,10 @@ import shell from 'shell';
 import machine from '../utils/DockerMachineUtil';
 
 var Containers = React.createClass({
+  contextTypes: {
+    router: React.PropTypes.func
+  },
+
   getInitialState: function () {
     return {
       sidebarOffset: 0,
@@ -48,9 +52,7 @@ var Containers = React.createClass({
     let containers = containerStore.getState().containers;
     let sorted = this.sorted(containerStore.getState().containers);
 
-    console.log(this.props);
-
-    let name = this.props.params.name;
+    let name = this.context.router.getCurrentParams().name;
     if (containerStore.getState().pending) {
       this.context.router.transitionTo('pull');
     } else if (name && !containers[name]) {
@@ -82,7 +84,7 @@ var Containers = React.createClass({
 
   handleNewContainer: function () {
     $(this.getDOMNode()).find('.new-container-item').parent().fadeIn();
-    this.context.router.transitionTo('new');
+    this.context.router.transitionTo('search');
     metrics.track('Pressed New Container');
   },
 
@@ -149,7 +151,7 @@ var Containers = React.createClass({
       sidebarHeaderClass += ' sep';
     }
 
-    var container = this.props.params ? this.state.containers[ this.props.params] : {};
+    var container = this.context.router.getCurrentParams().name ? this.state.containers[this.context.router.getCurrentParams().name] : {};
     return (
       <div className="containers">
         <Header />
@@ -158,7 +160,7 @@ var Containers = React.createClass({
             <section className={sidebarHeaderClass}>
               <h4>Containers</h4>
               <div className="create">
-                <Router.Link to="new">
+                <Router.Link to="search">
                   <span className="btn btn-new btn-action has-icon btn-hollow"><span className="icon icon-add"></span>New</span>
                 </Router.Link>
               </div>
