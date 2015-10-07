@@ -1,0 +1,14 @@
+mysql:
+  image: "mysql/mysql-server:5.7"
+  volumes:
+    - /var/lib/mysql
+  environment:
+    - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+drupal:
+  image: "timbrandin/drupal"
+  ports: # (optional) Ports definitions.
+    - "80"
+  volumes: # (optional) Shared volumes/folders.
+    - ./:/var/www
+  links: # (optional) Container links.
+    - "mysql:mysql"
