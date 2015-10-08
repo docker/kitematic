@@ -14,8 +14,8 @@ import ContainerSettingsVolumes from './components/ContainerSettingsVolumes.reac
 import ContainerSettingsAdvanced from './components/ContainerSettingsAdvanced.react';
 import Preferences from './components/Preferences.react';
 import About from './components/About.react';
+import Loading from './components/Loading.react';
 import NewContainerSearch from './components/NewContainerSearch.react';
-import NewContainerPull from './components/NewContainerPull.react';
 import Router from 'react-router';
 
 var Route = Router.Route;
@@ -47,14 +47,12 @@ var routes = (
           <Route name="containerSettingsAdvanced" path="advanced" handler={ContainerSettingsAdvanced}/>
         </Route>
       </Route>
-      <Route name="new" path="new">
-        <DefaultRoute name="search" handler={NewContainerSearch}/>
-        <Route name="pull" path="pull" handler={NewContainerPull}></Route>
-      </Route>
+      <Route name="search" handler={NewContainerSearch}/>
       <Route name="preferences" path="preferences" handler={Preferences}/>
       <Route name="about" path="about" handler={About}/>
     </Route>
-    <DefaultRoute name="setup" handler={Setup}/>
+    <DefaultRoute name="loading" handler={Loading}/>
+    <Route name="setup" handler={Setup}/>
   </Route>
 );
 

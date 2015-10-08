@@ -229,7 +229,9 @@ module.exports = function (grunt) {
     babel: {
       options: {
         sourceMap: 'inline',
-        blacklist: 'regenerator'
+        blacklist: 'regenerator',
+        stage: 1,
+        optional: ['asyncToGenerator']
       },
       dist: {
         files: [{

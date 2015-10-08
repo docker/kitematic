@@ -1,113 +1,111 @@
 import _ from 'underscore';
-import crypto from 'crypto';
 import fs from 'fs';
 import path from 'path';
-import request from 'request';
-import progress from 'request-progress';
 import Promise from 'bluebird';
 import util from './Util';
-import resources from './ResourcesUtil';
-var virtualBox = require ('./VirtualBoxUtil');
+import bugsnag from 'bugsnag-js';
+import virtualBox from './VirtualBoxUtil';
+import setupServerActions from '../actions/SetupServerActions';
+import metrics from './MetricsUtil';
+import machine from './DockerMachineUtil';
+import docker from './DockerUtil';
+import router from '../router';
 
-var SetupUtil = {
-  needsBinaryFix() {
-    return this.pathDoesNotExistOrDenied(util.binsPath()) ||
-        (fs.existsSync(util.dockerBinPath()) && this.pathDenied(util.dockerBinPath())) ||
-        (fs.existsSync(util.dockerMachineBinPath()) && this.pathDenied(util.dockerMachineBinPath()));
-  },
-  pathDoesNotExistOrDenied: function (path) {
-    if(util.isWindows()) {
-      return (!fs.existsSync(path));
-    } else {
-      return (!fs.existsSync(path) || this.pathDenied(path));
-    }
-  },
-  pathDenied: function (path) {
-    return fs.statSync(path).gid !== 80 || fs.statSync(path).uid !== process.getuid();
-  },
-  shouldUpdateBinaries: function () {
-    return !fs.existsSync(util.dockerBinPath()) ||
-        !fs.existsSync(util.dockerMachineBinPath()) ||
-        !fs.existsSync(util.dockerComposeBinPath()) ||
-        this.checksum(util.dockerBinPath()) !== this.checksum(resources.docker()) ||
-        this.checksum(util.dockerMachineBinPath()) !== this.checksum(resources.dockerMachine()) ||
-        this.checksum(util.dockerComposeBinPath()) !== this.checksum(resources.dockerCompose());
-  },
-  copycmd: function (src, dest) {
-    return ['rm', '-f', dest, '&&', 'cp', src, dest];
-  },
-  copyBinariesCmd: function () {
-    var cmd = ['mkdir', '-p', '/usr/local/bin'];
-    cmd.push('&&');
-    cmd.push.apply(cmd, this.copycmd(util.escapePath(resources.dockerMachine()), '/usr/local/bin/docker-machine'));
-    cmd.push('&&');
-    cmd.push.apply(cmd, this.copycmd(util.escapePath(resources.docker()), '/usr/local/bin/docker'));
-    cmd.push('&&');
-    cmd.push.apply(cmd, this.copycmd(util.escapePath(resources.dockerCompose()), '/usr/local/bin/docker-compose'));
-    return cmd.join(' ');
-  },
-  fixBinariesCmd: function () {
-    var cmd = [];
-    cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, path.join('/usr/local/bin')]);
-    cmd.push('&&');
-    cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, path.join('/usr/local/bin', 'docker-machine')]);
-    cmd.push('&&');
-    cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, path.join('/usr/local/bin', 'docker')]);
-    cmd.push('&&');
-    cmd.push.apply(cmd, ['chown', `${process.getuid()}:${80}`, path.join('/usr/local/bin', 'docker-compose')]);
-    return cmd.join(' ');
-  },
-  installVirtualBoxCmd: function () {
-    if(util.isWindows()) {
-      return `powershell.exe -ExecutionPolicy unrestricted -Command "Start-Process \\\"${path.join(util.supportDir(), virtualBox.filename())}\\\" -ArgumentList \\\"--silent --msiparams REBOOT=ReallySuppress\\\" -Verb runAs -Wait"`;
-    } else {
-      return `installer -pkg ${util.escapePath(path.join(util.supportDir(), virtualBox.filename()))} -target /`;
-    }
-  },
-  macSudoCmd: function (cmd) {
-    return `${util.escapePath(resources.macsudo())} -p "Kitematic requires administrative privileges to install and/or start VirtualBox." sh -c \"${cmd}\"`;
-  },
-  simulateProgress(estimateSeconds, progress) {
+let _retryPromise = null;
+let _timers = [];
+
+export default {
+  simulateProgress (estimateSeconds) {
     var times = _.range(0, estimateSeconds * 1000, 200);
-    var timers = [];
     _.each(times, time => {
       var timer = setTimeout(() => {
-        progress(100 * time / (estimateSeconds * 1000));
+        setupServerActions.progress({progress: 100 * time / (estimateSeconds * 1000)});
       }, time);
-      timers.push(timer);
+      _timers.push(timer);
     });
   },
-  checksum(filename) {
-    return crypto.createHash('sha256').update(fs.readFileSync(filename), 'utf8').digest('hex');
-  },
-  download(url, filename, checksum, percentCallback) {
-    return new Promise((resolve, reject) => {
-      if (fs.existsSync(filename)) {
-        var existingChecksum = this.checksum(filename);
-        if (existingChecksum === checksum) {
-          resolve();
-          return;
-        } else {
-          fs.unlinkSync(filename);
-        }
-      }
 
-      progress(request({ uri: url, rejectUnauthorized: false }), { throttle: 10 }).on('progress', state => {
-        if (percentCallback) {
-          percentCallback(state.percent);
-        }
-      }).on('error', err => {
-        reject(err);
-      }).pipe(fs.createWriteStream(filename)).on('error', err => {
-        reject(err);
-      }).on('close', err => {
-        if (err) {
-          reject(err);
-        }
-        resolve();
+  clearTimers () {
+    _timers.forEach(t => clearTimeout(t));
+    _timers = [];
+  },
+
+  retry (removeVM) {
+    router.get().transitionTo('loading');
+    if (removeVM) {
+      machine.rm().finally(() => {
+        _retryPromise.resolve();
       });
-    });
+    } else {
+      _retryPromise.resolve();
+    }
+  },
+
+  pause () {
+    _retryPromise = Promise.defer();
+    return _retryPromise.promise;
+  },
+
+  async setup () {
+    metrics.track('Started Setup');
+    while (true) {
+      try {
+        if (!util.isWindows() && !virtualBox.active()) {
+          await util.exec(setupUtil.macSudoCmd(util.escapePath('/Library/Application Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh') + ' restart'));
+        }
+
+        let exists = await virtualBox.vmExists(machine.name());
+        if (!exists) {
+          router.get().transitionTo('setup');
+          this.simulateProgress(60);
+          try {
+            await machine.rm();
+          } catch (err) {}
+          await machine.create();
+        } else {
+          let state = await machine.state();
+          if (state !== 'Running') {
+            if (state === 'Saved') {
+              router.get().transitionTo('setup');
+              this.simulateProgress(10);
+            } else if (state === 'Stopped') {
+              router.get().transitionTo('setup');
+              this.simulateProgress(25)
+            }
+            await machine.start();
+          }
+        }
+
+        // Try to receive an ip address from machine, for at least to 80 seconds.
+        let tries = 80, ip = null;
+        while (!ip && tries > 0) {
+          try {
+            console.log('Trying to fetch machine IP, tries left: ' + tries);
+            ip = await machine.ip();
+            tries -= 1;
+            await Promise.delay(1000);
+          } catch (err) {}
+        }
+
+        if (ip) {
+          docker.setup(ip, machine.name());
+        } else {
+          throw new Error('Could not determine IP from docker-machine.');
+        }
+
+        break;
+      } catch (error) {
+        router.get().transitionTo('setup');
+        metrics.track('Setup Failed');
+        setupServerActions.error({error});
+        bugsnag.notify('SetupError', error.message, {
+          error: error,
+          output: error.message
+        }, 'info');
+        this.clearTimers();
+        await this.pause();
+      }
+    }
+    metrics.track('Setup Finished');
   }
 };
-
-module.exports = SetupUtil;
