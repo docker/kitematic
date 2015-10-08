@@ -1,11 +1,11 @@
 import alt from '../alt';
+import setupServerActions from '../actions/SetupServerActions';
 import setupActions from '../actions/SetupActions';
 
 class SetupStore {
   constructor () {
     this.bindActions(setupActions);
-    this.title = '';
-    this.message = '';
+    this.bindActions(setupServerActions);
     this.percent = 0;
     this.error = null;
   }
@@ -15,7 +15,7 @@ class SetupStore {
   }
 
   progress ({progress}) {
-    this.setState({progress})
+    this.setState({error: null, progress})
   }
 }
 

@@ -5,27 +5,33 @@ import Promise from 'bluebird';
 import util from './Util';
 import bugsnag from 'bugsnag-js';
 import virtualBox from './VirtualBoxUtil';
-import setupActions from '../actions/SetupActions';
+import setupServerActions from '../actions/SetupServerActions';
 import metrics from './MetricsUtil';
 import machine from './DockerMachineUtil';
 import docker from './DockerUtil';
 import router from '../router';
 
 let _retryPromise = null;
+let _timers = [];
 
 export default {
   simulateProgress (estimateSeconds) {
     var times = _.range(0, estimateSeconds * 1000, 200);
-    var timers = [];
     _.each(times, time => {
       var timer = setTimeout(() => {
-        setupActions.progress({progress: 100 * time / (estimateSeconds * 1000)});
+        setupServerActions.progress({progress: 100 * time / (estimateSeconds * 1000)});
       }, time);
-      timers.push(timer);
+      _timers.push(timer);
     });
   },
 
+  clearTimers () {
+    _timers.forEach(t => clearTimeout(t));
+    _timers = [];
+  },
+
   retry (removeVM) {
+    router.get().transitionTo('loading');
     if (removeVM) {
       machine.rm().finally(() => {
         _retryPromise.resolve();
@@ -59,30 +65,48 @@ export default {
         } else {
           let state = await machine.state();
           if (state !== 'Running') {
-            router.get().transitionTo('setup');
             if (state === 'Saved') {
+              router.get().transitionTo('setup');
               this.simulateProgress(10);
             } else if (state === 'Stopped') {
+              router.get().transitionTo('setup');
               this.simulateProgress(25)
             }
             await machine.start();
           }
         }
 
-        let ip = await machine.ip();
-        docker.setup(ip, machine.name());
-        await docker.waitForConnection();
+        // Try to receive an ip address from machine, for at least to 80 seconds.
+        let tries = 80, ip = null;
+        while (!ip && tries > 0) {
+          try {
+            console.log('Trying to fetch IP, tries left: ' + tries);
+            ip = await machine.ip();
+            tries -= 1;
+            await Promise.delay(1000);
+          } catch (err) {}
+        }
+
+        if (ip) {
+          docker.setup(ip, machine.name());
+        } else {
+          throw new Error('Could not determine IP from docker-machine.');
+        }
+
         break;
-      } catch (err) {
-        setupActions.error(err);
-        bugsnag.notify('SetupError', err.message, {
-          error: err,
-          output: err.message
+
+      } catch (error) {
+        router.get().transitionTo('setup');
+        metrics.track('Setup Failed');
+        setupServerActions.error({error});
+        bugsnag.notify('SetupError', error.message, {
+          error: error,
+          output: error.message
         }, 'info');
+        this.clearTimers();
         await this.pause();
       }
     }
-    console.log('Setup finished.');
     metrics.track('Setup Finished');
   }
 };

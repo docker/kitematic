@@ -1,11 +1,10 @@
 import alt from '../alt';
+import setupUtil from '../utils/SetupUtil';
 
 class SetupActions {
-  constructor () {
-    this.generateActions(
-      'progress',
-      'error'
-    );
+  retry (removeVM) {
+    this.dispatch({removeVM});
+    setupUtil.retry(removeVM);
   }
 }
 

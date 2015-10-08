@@ -6,6 +6,7 @@ import Header from './Header.react';
 import Util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
 import setupStore from '../stores/SetupStore';
+import setupActions from '../actions/SetupActions';
 
 var Setup = React.createClass({
   mixins: [Router.Navigation],
@@ -24,6 +25,15 @@ var Setup = React.createClass({
 
   update: function () {
     this.setState(setupStore.getState());
+  },
+
+  handleErrorRetry: function () {
+    setupActions.retry(false);
+  },
+
+  handleErrorRemoveRetry: function () {
+    console.log('Deleting VM and trying again.');
+    setupActions.retry(true);
   },
 
   renderContents: function () {
@@ -85,9 +95,7 @@ var Setup = React.createClass({
   },
 
   render: function () {
-    if (this.state.cancelled) {
-      return this.renderCancelled();
-    } else if (this.state.error) {
+    if (this.state.error) {
       return this.renderError();
     } else {
       return this.renderProgress();

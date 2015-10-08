@@ -462,35 +462,5 @@ export default {
         callback(error);
       });
     });
-  },
-
-  // TODO: move this to machine health checks
-  waitForConnection (tries, delay) {
-    tries = tries || 10;
-    delay = delay || 1000;
-    let tryCount = 1, connected = false;
-    return new Promise((resolve, reject) => {
-      async.until(() => connected, callback => {
-        this.client.listContainers(error => {
-          if (error) {
-            if (tryCount > tries) {
-              callback(Error('Cannot connect to the Docker Engine. Either the VM is not responding or the connection may be blocked (VPN or Proxy): ' + error.message));
-            } else {
-              tryCount += 1;
-              setTimeout(callback, delay);
-            }
-          } else {
-            connected = true;
-            callback();
-          }
-        });
-      }, error => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve();
-        }
-      });
-    });
   }
 };
