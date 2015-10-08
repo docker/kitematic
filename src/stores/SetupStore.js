@@ -15,7 +15,7 @@ class SetupStore {
   }
 
   progress ({progress}) {
-    this.setState({error: null, progress})
+    this.setState({error: null, progress});
   }
 }
 

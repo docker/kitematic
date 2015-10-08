@@ -54,7 +54,7 @@ export default {
           await util.exec(setupUtil.macSudoCmd(util.escapePath('/Library/Application Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh') + ' restart'));
         }
 
-        let exists = await virtualBox.vmExists('default');
+        let exists = await virtualBox.vmExists(machine.name());
         if (!exists) {
           router.get().transitionTo('setup');
           this.simulateProgress(60);
