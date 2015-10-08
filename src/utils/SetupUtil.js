@@ -80,7 +80,7 @@ export default {
         let tries = 80, ip = null;
         while (!ip && tries > 0) {
           try {
-            console.log('Trying to fetch IP, tries left: ' + tries);
+            console.log('Trying to fetch machine IP, tries left: ' + tries);
             ip = await machine.ip();
             tries -= 1;
             await Promise.delay(1000);
@@ -94,7 +94,6 @@ export default {
         }
 
         break;
-
       } catch (error) {
         router.get().transitionTo('setup');
         metrics.track('Setup Failed');
