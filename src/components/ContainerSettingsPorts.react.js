@@ -108,7 +108,7 @@ var ContainerSettingsPorts = React.createClass({
             <thead>
               <tr>
                 <th>DOCKER PORT</th>
-                <th>MAC IP:PORT</th>
+                <th>IP & PORT</th>
                 <th></th>
               </tr>
             </thead>

@@ -69,11 +69,11 @@ var ContainerHomePreview = React.createClass({
     } else {
       var ports = _.map(_.pairs(this.props.ports), pair => {
         var key = pair[0];
-        var val = pair[1];
+        var {ip, port, url, error} = pair[1];
         return (
           <tr key={key}>
             <td>{key}</td>
-            <td>{val.display}</td>
+            <td>{ip}: {port}</td>
           </tr>
         );
       });
@@ -92,7 +92,7 @@ var ContainerHomePreview = React.createClass({
               <thead>
                 <tr>
                   <th>DOCKER PORT</th>
-                  <th>ACCESS URL</th>
+                  <th>IP & PORT</th>
                 </tr>
               </thead>
               <tbody>
