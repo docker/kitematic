@@ -73,7 +73,7 @@ var ContainerHomePreview = React.createClass({
         return (
           <tr key={key}>
             <td>{key}</td>
-            <td>{val.display}</td>
+            <td>{val.url}</td>
           </tr>
         );
       });
