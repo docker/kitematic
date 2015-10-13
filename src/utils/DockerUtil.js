@@ -68,19 +68,11 @@ export default {
 
   startContainer (name, containerData) {
     let startopts = {
-      Binds: containerData.Binds || []
+      Binds: containerData.Binds || [],
     };
 
-    if (containerData.NetworkSettings && containerData.NetworkSettings.Ports) {
-      startopts.PortBindings = containerData.NetworkSettings.Ports;
-    } else if (containerData.HostConfig && containerData.HostConfig.PortBindings) {
-      startopts.PortBindings = containerData.HostConfig.PortBindings;
-    } else {
-      startopts.PublishAllPorts = true;
-    }
-
     let container = this.client.getContainer(name);
-    container.start(startopts, (error) => {
+    container.start({}, (error) => {
       if (error) {
         containerServerActions.error({name, error});
         return;
@@ -100,10 +92,11 @@ export default {
     if (!containerData.Env && containerData.Config && containerData.Config.Env) {
       containerData.Env = containerData.Config.Env;
     }
-
-
+    if (!containerData.HostConfig) {
+      containerData.HostConfig = {}
+      containerData.HostConfig.PublishAllPorts = true;
+    }
     containerData.Volumes = _.mapObject(containerData.Volumes, () => {return {};});
-
     let existing = this.client.getContainer(name);
     existing.kill(() => {
       existing.remove(() => {

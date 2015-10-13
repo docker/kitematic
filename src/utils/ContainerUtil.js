@@ -21,6 +21,14 @@ var ContainerUtil = {
     return [container.Config.Tty, container.Config.OpenStdin];
   },
 
+  // Provide DNS options
+  dns: function (container) {
+    if (!container || !container.HostConfig) {
+      return { ip: null, search: null, error: null, errorDomain: null };
+    }
+    return { ip: container.HostConfig.Dns, search: container.HostConfig.DnsSearch, error: null, errorDomain: null };
+  },
+
   // TODO: inject host here instead of requiring Docker
   ports: function (container) {
     if (!container || !container.NetworkSettings) {
