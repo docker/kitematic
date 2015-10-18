@@ -93,8 +93,11 @@
     flex: 0 auto;
     flex-shrink: 0;
     .search {
+      display: flex;
       flex: 1 auto;
       .search-bar {
+        display: flex;
+        flex: 1 auto;
         position: relative;
         .loading {
           position: absolute;
@@ -109,26 +112,21 @@
           left: 13px;
         }
         input {
-          transition: all 140ms;
-          width: 90%;
+          flex: 1 auto;
           max-width: 500px;
           border-radius: 0;
           position: relative;
-          top: -1px;
-          left: -1px;
           font-size: 14px;
-          height: 46px;
+          height: 44px;
           padding-left: 4.4rem;
           color: @gray-darkest;
           box-shadow: none;
-          border: 1px solid @color-divider;
-          //border-right: 1px solid transparent;
-          &:hover {
-            border: 1px solid @gray-lighter;
-          }
+          border: none;
+          border-right: 1px solid @color-divider;
+          box-shadow:inset 0px 0px 0px 1px transparent;
+          transition: all 140ms linear;
           &:focus {
-            box-shadow: none;
-            border: 1px solid @brand-primary;
+            box-shadow:inset 0px 0px 0px 1px @brand-primary;
           }
           &::-webkit-input-placeholder {
             color: @gray-lighter;
