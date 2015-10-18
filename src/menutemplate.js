@@ -130,7 +130,7 @@ var MenuTemplate = function () {
       label: 'View',
       submenu: [
         {
-          label: 'Toggle DevTools',
+          label: 'Toggle Chromium Developer Tools',
           accelerator: 'Alt+' + util.CommandOrCtrl() + '+I',
           click: function() { remote.getCurrentWindow().toggleDevTools(); }
         }
