@@ -101,20 +101,28 @@ export default {
       containerData.Env = containerData.Config.Env;
     }
 
-    containerData.Volumes = _.mapObject(containerData.Volumes, () => {return {};});
+    containerData.Volumes = _.mapObject(containerData.Volumes, () => {});
 
-    let existing = this.client.getContainer(name);
-    existing.kill(() => {
-      existing.remove(() => {
-        this.client.createContainer(containerData, (error) => {
-          if (error) {
-            containerServerActions.error({name, error});
-            return;
-          }
-          metrics.track('Container Finished Creating');
-          this.startContainer(name, containerData);
-          delete this.placeholders[name];
-          localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
+    this.client.getImage(containerData.Image).inspect((error, image) => {
+      if (error) {
+        containerServerActions.error({name, error});
+        return;
+      }
+
+      containerData.Cmd = image.Config.Cmd || 'bash';
+      let existing = this.client.getContainer(name);
+      existing.kill(() => {
+        existing.remove(() => {
+          this.client.createContainer(containerData, (error) => {
+            if (error) {
+              containerServerActions.error({name, error});
+              return;
+            }
+            metrics.track('Container Finished Creating');
+            this.startContainer(name, containerData);
+            delete this.placeholders[name];
+            localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
+          });
         });
       });
     });
