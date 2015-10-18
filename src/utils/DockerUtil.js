@@ -101,7 +101,6 @@ export default {
       containerData.Env = containerData.Config.Env;
     }
 
-
     containerData.Volumes = _.mapObject(containerData.Volumes, () => {return {};});
 
     let existing = this.client.getContainer(name);
@@ -114,6 +113,8 @@ export default {
           }
           metrics.track('Container Finished Creating');
           this.startContainer(name, containerData);
+          delete this.placeholders[name];
+          localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
         });
       });
     });
@@ -164,7 +165,7 @@ export default {
       Name: name,
       Image: imageName,
       Config: {
-        Image: imageName,
+        Image: imageName
       },
       Tty: true,
       OpenStdin: true,
@@ -187,8 +188,6 @@ export default {
         return;
       }
 
-      delete this.placeholders[name];
-      localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
       this.createContainer(name, {Image: imageName, Tty: true, OpenStdin: true});
     },
 
