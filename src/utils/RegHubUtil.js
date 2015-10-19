@@ -5,8 +5,9 @@ import util from '../utils/Util';
 import hubUtil from '../utils/HubUtil';
 import repositoryServerActions from '../actions/RepositoryServerActions';
 import tagServerActions from '../actions/TagServerActions';
+import Promise from 'bluebird';
 
-let REGHUB2_ENDPOINT = process.env.REGHUB2_ENDPOINT || 'https://hub.docker.com/v2';
+let REGHUB2_ENDPOINT = process.env.REGHUB2_ENDPOINT || localStorage.getItem('settings.registryHub') || 'https://hub.docker.com/v2';
 let searchReq = null;
 
 module.exports = {
@@ -24,6 +25,20 @@ module.exports = {
     return obj;
   },
 
+  check: function (endpoint) {
+    return new Promise((resolve, reject) => {
+      request.get({
+        url: `${endpoint}/repositories/library/debian/`
+      }, (error, response) => {
+        if (!error && response.statusCode === 200) {
+          return resolve({'response': response});
+        } else {
+          return reject(new Error('Registry does not exist or is down.'));
+        }
+      });
+    });
+  },
+
   search: function (query, page) {
     if (searchReq) {
       searchReq.abort();
@@ -35,8 +50,8 @@ module.exports = {
     }
 
     searchReq = request.get({
-      url: 'https://registry.hub.docker.com/v1/search?',
-      qs: {q: query, page}
+      url: `${REGHUB2_ENDPOINT}/search/repositories/?`,
+      qs: {query: query, page}
     }, (error, response, body) => {
       if (error) {
         repositoryServerActions.error({error});
@@ -44,6 +59,9 @@ module.exports = {
 
       let data = JSON.parse(body);
       let repos = _.map(data.results, result => {
+        if (result.repo_name) {
+          result.name = result.repo_name;
+        }
         return this.normalize(result);
       });
       if (response.statusCode === 200) {
@@ -71,10 +89,10 @@ module.exports = {
         if (util.isOfficialRepo(name)) {
           name = 'library/' + name;
         }
-
         request.get({
           url: `${REGHUB2_ENDPOINT}/repositories/${name}`
         }, (error, response, body) => {
+
           if (error) {
             repositoryServerActions.error({error});
             return;

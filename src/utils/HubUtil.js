@@ -3,7 +3,7 @@ import request from 'request';
 import accountServerActions from '../actions/AccountServerActions';
 import metrics from './MetricsUtil';
 
-let HUB2_ENDPOINT = process.env.HUB2_ENDPOINT || 'https://hub.docker.com/v2';
+let HUB2_ENDPOINT = process.env.REGHUB2_ENDPOINT || localStorage.getItem('settings.registryHub') || 'https://hub.docker.com/v2';
 
 module.exports = {
   init: function () {
