@@ -13,6 +13,9 @@ class RepositoryStore {
     this.results = [];
     this.recommended = [];
     this.repos = [];
+    this.next = null;
+    this.previous = null;
+    this.currentPage = 1;
     this.reposLoading = false;
     this.recommendedLoading = false;
     this.resultsLoading = false;
@@ -45,8 +48,8 @@ class RepositoryStore {
     this.setState({error: null, resultsLoading: true});
   }
 
-  resultsUpdated ({repos}) {
-    this.setState({results: repos, resultsLoading: false});
+  resultsUpdated ({repos, page, previous, next}) {
+    this.setState({results: repos, currentPage: page, previous: previous, next: next, resultsLoading: false});
   }
 
   recommended () {

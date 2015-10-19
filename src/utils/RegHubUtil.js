@@ -24,7 +24,7 @@ module.exports = {
     return obj;
   },
 
-  search: function (query, page) {
+  search: function (query, page, sorting = null) {
     if (searchReq) {
       searchReq.abort();
       searchReq = null;
@@ -33,10 +33,18 @@ module.exports = {
     if (!query) {
       repositoryServerActions.resultsUpdated({repos: []});
     }
+    /**
+     * Sort:
+     * All - no sorting
+     * ordering: -start_count
+     * ordering: -pull_count
+     * is_automated: 1
+     * is_official: 1
+     */
 
     searchReq = request.get({
-      url: 'https://registry.hub.docker.com/v1/search?',
-      qs: {q: query, page}
+      url: `${REGHUB2_ENDPOINT}/search/repositories/?`,
+      qs: {query: query, page: page, page_size: 25, sorting}
     }, (error, response, body) => {
       if (error) {
         repositoryServerActions.error({error});
@@ -44,10 +52,13 @@ module.exports = {
 
       let data = JSON.parse(body);
       let repos = _.map(data.results, result => {
+        result.name = result.repo_name;
         return this.normalize(result);
       });
+      let next = data.next;
+      let previous = data.previous;
       if (response.statusCode === 200) {
-        repositoryServerActions.resultsUpdated({repos});
+        repositoryServerActions.resultsUpdated({repos, page, previous, next});
       }
     });
   },
