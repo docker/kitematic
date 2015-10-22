@@ -61,9 +61,9 @@ export default {
           throw new Error('Docker Machine is not installed. Please install it via the Docker Toolbox.');
         }
 
-        setupServerActions.started({started: true});
         let exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
         if (!exists) {
+          setupServerActions.started({started: true});
           this.simulateProgress(60);
           try {
             await machine.rm();
@@ -72,6 +72,7 @@ export default {
         } else {
           let state = await machine.state();
           if (state !== 'Running') {
+            setupServerActions.started({started: true});
             if (state === 'Saved') {
               router.get().transitionTo('setup');
               this.simulateProgress(10);
