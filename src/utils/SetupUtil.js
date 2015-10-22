@@ -52,15 +52,17 @@ export default {
     while (true) {
       try {
         setupServerActions.started({started: false});
-        router.get().transitionTo('setup');
         if (!virtualBox.installed()) {
+          router.get().transitionTo('setup');
           throw new Error('VirtualBox is not installed. Please install it via the Docker Toolbox.');
         }
 
         if (!machine.installed()) {
+          router.get().transitionTo('setup');
           throw new Error('Docker Machine is not installed. Please install it via the Docker Toolbox.');
         }
 
+        setupServerActions.started({started: true});
         let exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
         if (!exists) {
           setupServerActions.started({started: true});
@@ -72,13 +74,10 @@ export default {
         } else {
           let state = await machine.state();
           if (state !== 'Running') {
-            setupServerActions.started({started: true});
             if (state === 'Saved') {
-              setupServerActions.started({started: true});
               router.get().transitionTo('setup');
               this.simulateProgress(10);
             } else if (state === 'Stopped') {
-              setupServerActions.started({started: true});
               router.get().transitionTo('setup');
               this.simulateProgress(25);
             }
