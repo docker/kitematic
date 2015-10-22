@@ -4,7 +4,8 @@ class SetupServerActions {
   constructor () {
     this.generateActions(
       'progress',
-      'error'
+      'error',
+      'started'
     );
   }
 }

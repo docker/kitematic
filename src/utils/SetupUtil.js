@@ -16,6 +16,7 @@ let _timers = [];
 
 export default {
   simulateProgress (estimateSeconds) {
+    this.clearTimers();
     var times = _.range(0, estimateSeconds * 1000, 200);
     _.each(times, time => {
       var timer = setTimeout(() => {
@@ -50,13 +51,19 @@ export default {
     metrics.track('Started Setup');
     while (true) {
       try {
-        if (!util.isWindows() && !virtualBox.active()) {
-          await util.exec(setupUtil.macSudoCmd(util.escapePath('/Library/Application Support/VirtualBox/LaunchDaemons/VirtualBoxStartup.sh') + ' restart'));
+        setupServerActions.started({started: false});
+        router.get().transitionTo('setup');
+        if (!virtualBox.installed()) {
+          throw new Error('VirtualBox is not installed. Please install it via the Docker Toolbox.');
         }
 
-        let exists = await virtualBox.vmExists(machine.name());
+        if (!machine.installed()) {
+          throw new Error('Docker Machine is not installed. Please install it via the Docker Toolbox.');
+        }
+
+        setupServerActions.started({started: true});
+        let exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
         if (!exists) {
-          router.get().transitionTo('setup');
           this.simulateProgress(60);
           try {
             await machine.rm();
@@ -70,7 +77,7 @@ export default {
               this.simulateProgress(10);
             } else if (state === 'Stopped') {
               router.get().transitionTo('setup');
-              this.simulateProgress(25)
+              this.simulateProgress(25);
             }
             await machine.start();
           }

@@ -17,7 +17,6 @@
     "lint": "jsxhint src"
   },
   "license": "Apache-2.0",
-  "docker-machine-version": "0.4.1",
   "electron-version": "0.33.6",
   "dependencies": {
     "alt": "^0.16.2",

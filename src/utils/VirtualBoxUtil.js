@@ -5,7 +5,7 @@ import Promise from 'bluebird';
 
 var VirtualBox = {
   command: function () {
-    if(util.isWindows()) {
+    if (util.isWindows()) {
       if (process.env.VBOX_MSI_INSTALL_PATH) {
         return path.join(process.env.VBOX_MSI_INSTALL_PATH, 'VBoxManage.exe');
       } else {
@@ -16,7 +16,7 @@ var VirtualBox = {
     }
   },
   installed: function () {
-    if(util.isWindows()) {
+    if (util.isWindows()) {
       return (process.env.VBOX_MSI_INSTALL_PATH && fs.existsSync(path.join(process.env.VBOX_MSI_INSTALL_PATH, 'VBoxManage.exe'))) ||
              (process.env.VBOX_INSTALL_PATH && fs.existsSync(path.join(process.env.VBOX_INSTALL_PATH, 'VBoxManage.exe')));
     } else {
@@ -38,20 +38,13 @@ var VirtualBox = {
     });
   },
   poweroffall: function () {
-    if (!this.installed()) {
-      return Promise.reject('VirtualBox not installed.');
-    }
     return util.exec(this.command() + ' list runningvms | sed -E \'s/.*\\{(.*)\\}/\\1/\' | xargs -L1 -I {} ' + this.command() + ' controlvm {} poweroff');
   },
   mountSharedDir: function (vmName, pathName, hostPath) {
-    if (!this.installed()) {
-      return Promise.reject('VirtualBox not installed.');
-    }
-
     return util.exec([this.command(), 'sharedfolder', 'add', vmName, '--name', pathName, '--hostpath', hostPath, '--automount']);
   },
   killall: function () {
-    if(util.isWindows()) {
+    if (util.isWindows()) {
       return this.poweroffall().then(() => {
         return util.exec(['powershell.exe', '\"get-process VBox* | stop-process\"']);
       }).catch(() => {});
