@@ -65,6 +65,7 @@ export default {
         setupServerActions.started({started: true});
         let exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
         if (!exists) {
+          router.get().transitionTo('setup');
           setupServerActions.started({started: true});
           this.simulateProgress(60);
           try {
