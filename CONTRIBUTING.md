@@ -30,7 +30,9 @@ You will need to install:
 - Open a command prompt (`cmd`) and run the command `mkdir ~/AppData/Roaming/npm` 
 - [Visual Studio 2013 Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) (or similar) - You do not need to install any optional packages during install.
 - [Python](https://www.python.org/downloads/release/python-2710/)
+- Set the `DOCKER_TOOLBOX_INSTALL_PATH` environment variable as follows:
 
+![Toolbox Env Var](https://cloud.githubusercontent.com/assets/251292/10656552/adaedb20-7834-11e5-8881-d5402d3fee37.png)
 
 ### Getting Started
 
