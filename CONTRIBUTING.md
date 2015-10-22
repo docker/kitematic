@@ -25,7 +25,8 @@ You will need to install:
 
 ### Prerequisites for developing Kitematic on Windows 
 You will need to install: 
-- [Node.js 0.10.38](https://nodejs.org/dist/v0.10.38/)
+- The [Docker Toolbox](https://docker.com/toolbox)
+- [Node.js](https://nodejs.org/)
 - Open a command prompt (`cmd`) and run the command `mkdir ~/AppData/Roaming/npm` 
 - [Visual Studio 2013 Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) (or similar) - You do not need to install any optional packages during install.
 - [Python](https://www.python.org/downloads/release/python-2710/)
