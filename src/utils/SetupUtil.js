@@ -72,6 +72,7 @@ export default {
         } else {
           let state = await machine.state();
           if (state !== 'Running') {
+            setupServerActions.started({started: true});
             if (state === 'Saved') {
               setupServerActions.started({started: true});
               router.get().transitionTo('setup');
