@@ -3,14 +3,23 @@ import path from 'path';
 import Promise from 'bluebird';
 import fs from 'fs';
 import util from './Util';
-import resources from './ResourcesUtil';
 
 var DockerMachine = {
   command: function () {
-    return resources.dockerMachine();
+    if (util.isWindows()) {
+      return path.join(process.env.DOCKER_TOOLBOX_INSTALL_PATH, 'docker-machine.exe');
+    } else {
+      return '/usr/local/bin/docker-machine';
+    }
   },
   name: function () {
     return 'default';
+  },
+  installed: function () {
+    if (util.isWindows() && !process.env.DOCKER_TOOLBOX_INSTALL_PATH) {
+      return false;
+    }
+    return fs.existsSync(this.command());
   },
   isoversion: function (machineName = this.name()) {
     try {
@@ -161,7 +170,7 @@ var DockerMachine = {
     } else {
       cmd = cmd || process.env.SHELL;
       this.info(machineName).then(machine => {
-        util.exec([resources.terminal(), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 ${cmd}`]).then(() => {});
+        util.exec([path.join(process.env.RESOURCES_PATH, 'terminal'), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 ${cmd}`]).then(() => {});
       });
     }
   },

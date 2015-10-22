@@ -3,9 +3,6 @@ var execFile = require('child_process').execFile;
 var packagejson = require('./package.json');
 var electron = require('electron-prebuilt');
 
-var WINDOWS_DOCKER_MACHINE_URL = 'https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_windows-amd64.exe';
-var DARWIN_DOCKER_MACHINE_URL = 'https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_darwin-amd64';
-
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
   var target = grunt.option('target') || 'development';
@@ -21,21 +18,6 @@ module.exports = function (grunt) {
     var match = str.match(/(\d+\.\d+\.\d+)/);
     return match ? match[1] : null;
   };
-
-  grunt.registerMultiTask('download-binary', 'Downloads binary unless version up to date', function () {
-    var target = grunt.task.current.target;
-    var done = this.async();
-    var config = grunt.config('download-binary')[target];
-    execFile(config.binary, ['--version'], function (err, stdout) {
-      var currentVersion = version(stdout);
-      if (!currentVersion || currentVersion !== version(config.version)) {
-        grunt.task.run('curl:' + target);
-        grunt.task.run('chmod');
-      }
-      done();
-
-    });
-  });
 
   var BASENAME = 'Kitematic';
   var APPNAME = BASENAME;
@@ -128,15 +110,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // docker binaries
-    'download-binary': {
-      'docker-machine': {
-        version: packagejson['docker-machine-version'],
-        binary: path.join('resources', 'docker-machine'),
-        download: 'curl:docker-machine'
-      }
-    },
-
     // images
     copy: {
       dev: {
@@ -166,7 +139,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: 'resources',
-          src: ['docker*', 'ssh.exe', 'OPENSSH_LICENSE', 'msys-*'],
+          src: ['ssh.exe', 'OPENSSH_LICENSE', 'msys-*'],
           dest: 'dist/' + BASENAME + '-win32-x64/resources/resources'
         }],
         options: {
@@ -177,7 +150,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: 'resources',
-          src: ['docker*', 'macsudo', 'terminal'],
+          src: ['terminal'],
           dest: '<%= OSX_FILENAME %>/Contents/Resources/resources/'
         }, {
           src: 'util/kitematic.icns',
@@ -193,23 +166,6 @@ module.exports = function (grunt) {
       installer: {
         src: 'dist/Setup.exe',
         dest: 'dist/' + BASENAME + 'Setup-' + packagejson.version + '-Windows-Alpha.exe'
-      }
-    },
-
-    // download binaries
-    curl: {
-      'docker-machine': {
-        src: process.platform === 'win32' ? WINDOWS_DOCKER_MACHINE_URL : DARWIN_DOCKER_MACHINE_URL,
-        dest: process.platform === 'win32' ? path.join('resources', 'docker-machine.exe') : path.join('resources', 'docker-machine')
-      }
-    },
-
-    chmod: {
-      binaries: {
-        options: {
-          mode: '755'
-        },
-        src: ['resources/docker*']
       }
     },
 
@@ -312,12 +268,12 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('default', ['download-binary', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+  grunt.registerTask('default', ['newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean:release', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'compress']);
+    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'compress']);
   } else {
-    grunt.registerTask('release', ['clean:release', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
+    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
   }
 
   process.on('SIGINT', function () {

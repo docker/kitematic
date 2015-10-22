@@ -6,16 +6,21 @@ class SetupStore {
   constructor () {
     this.bindActions(setupActions);
     this.bindActions(setupServerActions);
-    this.percent = 0;
+    this.started = false;
+    this.progress = null;
     this.error = null;
   }
 
+  started ({started}) {
+    this.setState({error: null, started});
+  }
+
   error ({error}) {
-    this.setState({error});
+    this.setState({error, progress: null});
   }
 
   progress ({progress}) {
-    this.setState({error: null, progress});
+    this.setState({progress});
   }
 }
 
