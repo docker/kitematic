@@ -73,7 +73,7 @@ export default {
           } catch (err) {}
           await machine.create();
         } else {
-          let state = await machine.state();
+          let state = await machine.status();
           if (state !== 'Running') {
             if (state === 'Saved') {
               router.get().transitionTo('setup');

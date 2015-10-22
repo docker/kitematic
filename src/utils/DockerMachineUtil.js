@@ -85,9 +85,9 @@ var DockerMachine = {
   regenerateCerts: function (machineName = this.name()) {
     return util.exec([this.command(), 'tls-regenerate-certs', '-f', machineName]);
   },
-  state: function (machineName = this.name()) {
-    return this.info(machineName).then(info => {
-      return info ? info.state : null;
+  status: function (machineName = this.name()) {
+    return util.exec([this.command(), 'status', machineName]).then(stdout => {
+      return Promise.resolve(stdout.trim().replace('\n', ''));
     });
   },
   disk: function (machineName = this.name()) {
