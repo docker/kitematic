@@ -140,21 +140,6 @@ var DockerMachine = {
       }
     });
   },
-  stats: function (machineName = this.name()) {
-    this.state(machineName).then(state => {
-      if (state === 'Stopped') {
-        return Promise.resolve({state: state});
-      }
-      var memory = this.memory();
-      var disk = this.disk();
-      return Promise.all([memory, disk]).spread((memory, disk) => {
-        return Promise.resolve({
-          memory: memory,
-          disk: disk
-        });
-      });
-    });
-  },
   dockerTerminal: function (cmd, machineName = this.name()) {
     if(util.isWindows()) {
       cmd = cmd || '';
