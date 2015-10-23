@@ -34,29 +34,8 @@ var DockerMachine = {
       return null;
     }
   },
-  info: function (machineName = this.name()) {
-    return util.exec([this.command(), 'ls']).then(stdout => {
-      var lines = stdout.trim().split('\n').filter(line => line.indexOf('time=') === -1);
-      var machines = {};
-      lines.slice(1, lines.length).forEach(line => {
-        var tokens = line.trim().split(/[\s]+/).filter(token => token !== '*');
-        var machine = {
-          name: tokens[0],
-          driver: tokens[1],
-          state: tokens[2],
-          url: tokens[3] || ''
-        };
-        machines[machine.name] = machine;
-      });
-      if (machines[machineName]) {
-        return Promise.resolve(machines[machineName]);
-      } else {
-        return Promise.reject(new Error('Machine does not exist.'));
-      }
-    });
-  },
   exists: function (machineName = this.name()) {
-    return this.info(machineName).then(() => {
+    return this.status(machineName).then(() => {
       return true;
     }).catch(() => {
       return false;
@@ -79,6 +58,11 @@ var DockerMachine = {
   },
   ip: function (machineName = this.name()) {
     return util.exec([this.command(), 'ip', machineName]).then(stdout => {
+      return Promise.resolve(stdout.trim().replace('\n', ''));
+    });
+  },
+  url: function (machineName = this.name()) {
+    return util.exec([this.command(), 'url', machineName]).then(stdout => {
       return Promise.resolve(stdout.trim().replace('\n', ''));
     });
   },
@@ -122,7 +106,7 @@ var DockerMachine = {
           return line.indexOf('-/+ buffers') !== -1;
         });
         var tokens = dataline.split(' ');
-        tokens = tokens.filter(function(token) {
+        tokens = tokens.filter((token) => {
           return token !== '';
         });
         var usedGb = parseInt(tokens[2], 10) / 1000;
@@ -141,24 +125,24 @@ var DockerMachine = {
     });
   },
   dockerTerminal: function (cmd, machineName = this.name()) {
-    if(util.isWindows()) {
+    if (util.isWindows()) {
       cmd = cmd || '';
-      this.info(machineName).then(machine => {
+      this.url(machineName).then(machineUrl => {
         util.exec('start powershell.exe ' + cmd,
           {env: {
-            'DOCKER_HOST' : machine.url,
-            'DOCKER_CERT_PATH' : path.join(util.home(), '.docker/machine/machines/' + machine.name),
+            'DOCKER_HOST': machineUrl,
+            'DOCKER_CERT_PATH': path.join(util.home(), '.docker/machine/machines/' + machineName),
             'DOCKER_TLS_VERIFY': 1
           }
         });
       });
     } else {
       cmd = cmd || process.env.SHELL;
-      this.info(machineName).then(machine => {
-        util.exec([path.join(process.env.RESOURCES_PATH, 'terminal'), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 ${cmd}`]).then(() => {});
+      this.url(machineName).then(machineUrl => {
+        util.exec([path.join(process.env.RESOURCES_PATH, 'terminal'), `DOCKER_HOST=${machineUrl} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machineName)} DOCKER_TLS_VERIFY=1 ${cmd}`]).then(() => {});
       });
     }
-  },
+  }
 };
 
 module.exports = DockerMachine;
