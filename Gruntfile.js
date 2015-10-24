@@ -22,24 +22,6 @@ module.exports = function (grunt) {
     return match ? match[1] : null;
   };
 
-  grunt.registerMultiTask('download-binary', 'Downloads binary unless version up to date', function () {
-    if(process.platform === 'linux')
-      return;
-
-    var target = grunt.task.current.target;
-    var done = this.async();
-    var config = grunt.config('download-binary')[target];
-    execFile(config.binary, ['--version'], function (err, stdout) {
-      var currentVersion = version(stdout);
-      if (!currentVersion || currentVersion !== version(config.version)) {
-        grunt.task.run('curl:' + target);
-        grunt.task.run('chmod');
-      }
-      done();
-
-    });
-  });
-
   var BASENAME = 'Kitematic';
   var APPNAME = BASENAME;
 
@@ -140,17 +122,7 @@ module.exports = function (grunt) {
         description: APPNAME,
         title: APPNAME,
         exe: BASENAME + '.exe',
-        version: packagejson.version,
-        signWithParams: '/f ' + certificateFile + ' /p <%= certificatePassword %> /tr http://timestamp.comodoca.com/rfc3161'
-      }
-    },
-
-    // docker binaries
-    'download-binary': {
-      'docker-machine': {
-        version: packagejson['docker-machine-version'],
-        binary: path.join('resources', 'docker-machine'),
-        download: 'curl:docker-machine'
+        version: packagejson.version
       }
     },
 
@@ -183,7 +155,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: 'resources',
-          src: ['docker*', 'ssh.exe', 'OPENSSH_LICENSE', 'msys-*'],
+          src: ['ssh.exe', 'OPENSSH_LICENSE', 'msys-*'],
           dest: 'dist/' + BASENAME + '-win32-x64/resources/resources'
         }],
         options: {
@@ -194,7 +166,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: 'resources',
-          src: ['docker*', 'macsudo', 'terminal'],
+          src: ['terminal'],
           dest: '<%= OSX_FILENAME %>/Contents/Resources/resources/'
         }, {
           src: 'util/kitematic.icns',
@@ -210,23 +182,6 @@ module.exports = function (grunt) {
       installer: {
         src: 'dist/Setup.exe',
         dest: 'dist/' + BASENAME + 'Setup-' + packagejson.version + '-Windows-Alpha.exe'
-      }
-    },
-
-    // download binaries
-    curl: {
-      'docker-machine': {
-        src: process.platform === 'win32' ? WINDOWS_DOCKER_MACHINE_URL : DARWIN_DOCKER_MACHINE_URL,
-        dest: process.platform === 'win32' ? path.join('resources', 'docker-machine.exe') : path.join('resources', 'docker-machine')
-      }
-    },
-
-    chmod: {
-      binaries: {
-        options: {
-          mode: '755'
-        },
-        src: ['resources/docker*']
       }
     },
 
@@ -246,7 +201,9 @@ module.exports = function (grunt) {
     babel: {
       options: {
         sourceMap: 'inline',
-        blacklist: 'regenerator'
+        blacklist: 'regenerator',
+        stage: 1,
+        optional: ['asyncToGenerator']
       },
       dist: {
         files: [{
@@ -327,15 +284,14 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.registerTask('default', ['download-binary', 'newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+  grunt.registerTask('default', ['newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean:release', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'compress', 'create-windows-installer', 'rename:installer']);
+    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'compress', 'create-windows-installer', 'rename:installer']);
   } else if(process.platform === 'linux') {
-    // TODO : Add 'copy:linux' when will do the packaging
     grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:linux']);
   } else {
-    grunt.registerTask('release', ['clean:release', 'download-binary', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
+    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
   }
 
   process.on('SIGINT', function () {

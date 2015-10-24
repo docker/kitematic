@@ -18,7 +18,6 @@ class ContainerActions {
   }
 
   stop (name) {
-    this.dispatch({name});
     dockerUtil.stop(name);
   }
 

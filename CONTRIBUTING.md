@@ -19,16 +19,20 @@ Before you file an issue or a pull request, read the following tips on how to ke
 
 ### Prerequisites for developing Kitematic on Mac 
 You will need to install: 
--  [Node.js 0.10.38](https://nodejs.org/dist/v0.10.38/)
+- The [Docker Toolbox](https://docker.com/toolbox)
+-  [Node.js](https://nodejs.org/)
 - The latest Xcode from the Apple App Store. 
 
 ### Prerequisites for developing Kitematic on Windows 
 You will need to install: 
-- [Node.js 0.10.38](https://nodejs.org/dist/v0.10.38/)
+- The [Docker Toolbox](https://docker.com/toolbox)
+- [Node.js](https://nodejs.org/)
 - Open a command prompt (`cmd`) and run the command `mkdir ~/AppData/Roaming/npm` 
 - [Visual Studio 2013 Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) (or similar) - You do not need to install any optional packages during install.
 - [Python](https://www.python.org/downloads/release/python-2710/)
+- [Temporary] Set the `DOCKER_TOOLBOX_INSTALL_PATH` environment variable as follows:
 
+![Toolbox Env Var](https://cloud.githubusercontent.com/assets/251292/10656552/adaedb20-7834-11e5-8881-d5402d3fee37.png)
 
 ### Getting Started
 

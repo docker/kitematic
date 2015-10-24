@@ -1,13 +1,12 @@
-var remote = require('remote');
-var app = remote.require('app');
-var shell = require('shell');
-var router = require('./router');
-var util = require('./utils/Util');
-var setupUtil = require('./utils/SetupUtil');
-var metrics = require('./utils/MetricsUtil');
-var machine = require('./utils/DockerMachineUtil');
-var dialog = remote.require('dialog');
+import remote from 'remote';
+import shell from 'shell';
+import router from './router';
+import util from './utils/Util';
+import metrics from './utils/MetricsUtil';
+import machine from './utils/DockerMachineUtil';
 import docker from './utils/DockerUtil';
+
+var app = remote.require('app');
 
 // main.js
 var MenuTemplate = function () {
@@ -131,7 +130,7 @@ var MenuTemplate = function () {
       label: 'View',
       submenu: [
         {
-          label: 'Toggle DevTools',
+          label: 'Toggle Chromium Developer Tools',
           accelerator: 'Alt+' + util.CommandOrCtrl() + '+I',
           click: function() { remote.getCurrentWindow().toggleDevTools(); }
         }

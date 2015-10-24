@@ -22,19 +22,19 @@ First, if you haven't yet done so, [download and start
 Kitematic](/). Once open, the app should look like
 this:
 
-![Rethink create button](../images/rethink-create.png)
+![Rethink create button](images/rethink-create.png)
 
 Click on the _Create_ button of the `rethinkdb` image listing in the recommended
 list as shown above. This will download & run a RethinkDB container within a few
 minutes. Once it's done, you'll have a local RethinkDB database up and running.
 
-![Rethink container](../images/rethink-container.png)
+![Rethink container](images/rethink-container.png)
 
 Let's start using it to develop a node.js app. For now, let's figure out which
 IP address and port RethinkDB is listening on. To find out, click the `Settings`
 tab and then the `Ports` section:
 
-![Rethink create button](../images/rethink-ports.png)
+![Rethink create button](images/rethink-ports.png)
 
 You can see there that for RethinkDB port `28015`, the container is listening on
 host `192.168.99.100` and port `49154` (in this example - ports may be different
@@ -65,5 +65,5 @@ Now, point your browser to `http://localhost:8000`. Congratulations, you've
 successfully used a RethinkDB container in Kitematic to build a real-time chat
 app. Happy coding!
 
-![Rethink app preview](../images/rethinkdb-preview.png)
+![Rethink app preview](images/rethinkdb-preview.png)
 

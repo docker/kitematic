@@ -39,7 +39,6 @@ var Preferences = React.createClass({
             <div className="item">
               <RetinaImage src="cartoon-docker.png"/>
               <h4>Docker Engine</h4>
-              <p>{packages["docker-version"]}</p>
             </div>
             <div className="item">
               <RetinaImage src="cartoon-docker-machine.png"/>

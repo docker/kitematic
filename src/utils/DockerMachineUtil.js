@@ -3,14 +3,23 @@ import path from 'path';
 import Promise from 'bluebird';
 import fs from 'fs';
 import util from './Util';
-import resources from './ResourcesUtil';
 
 var DockerMachine = {
   command: function () {
-    return resources.dockerMachine();
+    if (util.isWindows()) {
+      return path.join(process.env.DOCKER_TOOLBOX_INSTALL_PATH, 'docker-machine.exe');
+    } else {
+      return '/usr/local/bin/docker-machine';
+    }
   },
   name: function () {
     return 'default';
+  },
+  installed: function () {
+    if (util.isWindows() && !process.env.DOCKER_TOOLBOX_INSTALL_PATH) {
+      return false;
+    }
+    return fs.existsSync(this.command());
   },
   isoversion: function (machineName = this.name()) {
     try {
@@ -76,9 +85,9 @@ var DockerMachine = {
   regenerateCerts: function (machineName = this.name()) {
     return util.exec([this.command(), 'tls-regenerate-certs', '-f', machineName]);
   },
-  state: function (machineName = this.name()) {
-    return this.info(machineName).then(info => {
-      return info ? info.state : null;
+  status: function (machineName = this.name()) {
+    return util.exec([this.command(), 'status', machineName]).then(stdout => {
+      return Promise.resolve(stdout.trim().replace('\n', ''));
     });
   },
   disk: function (machineName = this.name()) {
@@ -131,21 +140,6 @@ var DockerMachine = {
       }
     });
   },
-  stats: function (machineName = this.name()) {
-    this.state(machineName).then(state => {
-      if (state === 'Stopped') {
-        return Promise.resolve({state: state});
-      }
-      var memory = this.memory();
-      var disk = this.disk();
-      return Promise.all([memory, disk]).spread((memory, disk) => {
-        return Promise.resolve({
-          memory: memory,
-          disk: disk
-        });
-      });
-    });
-  },
   dockerTerminal: function (cmd, machineName = this.name()) {
     if(util.isWindows()) {
       cmd = cmd || '';
@@ -160,13 +154,13 @@ var DockerMachine = {
       });
     } else if (util.isLinux()) {
       cmd = cmd || process.env.SHELL;
-      var terminal = resources.terminal();
+      var terminal = util.linuxTerminal();
       if (terminal)
         util.exec(terminal.concat([cmd])).then(() => {});
     } else {
       cmd = cmd || process.env.SHELL;
       this.info(machineName).then(machine => {
-        util.exec([resources.terminal(), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 ${cmd}`]).then(() => {});
+        util.exec([path.join(process.env.RESOURCES_PATH, 'terminal'), `DOCKER_HOST=${machine.url} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machine.name)} DOCKER_TLS_VERIFY=1 ${cmd}`]).then(() => {});
       });
     }
   },

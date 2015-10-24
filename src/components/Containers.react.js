@@ -84,7 +84,7 @@ var Containers = React.createClass({
 
   handleNewContainer: function () {
     $(this.getDOMNode()).find('.new-container-item').parent().fadeIn();
-    this.context.router.transitionTo('new');
+    this.context.router.transitionTo('search');
     metrics.track('Pressed New Container');
   },
 
@@ -160,7 +160,7 @@ var Containers = React.createClass({
             <section className={sidebarHeaderClass}>
               <h4>Containers</h4>
               <div className="create">
-                <Router.Link to="new">
+                <Router.Link to="search">
                   <span className="btn btn-new btn-action has-icon btn-hollow"><span className="icon icon-add"></span>New</span>
                 </Router.Link>
               </div>

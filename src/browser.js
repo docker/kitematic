@@ -42,12 +42,6 @@ if (process.platform === 'win32') {
   }
 }
 
-var openURL = null;
-app.on('open-url', function (event, url) {
-  event.preventDefault();
-  openURL = url;
-});
-
 app.on('ready', function () {
   var mainWindow = new BrowserWindow({
     width: size.width || 800,
@@ -80,6 +74,7 @@ app.on('ready', function () {
       mainWindow.webContents.send('application:quitting');
       return true;
     });
+
     app.on('window-all-closed', function() {
       app.quit();
     });
@@ -105,18 +100,6 @@ app.on('ready', function () {
     mainWindow.setTitle('Kitematic');
     mainWindow.show();
     mainWindow.focus();
-
-    if (openURL) {
-      mainWindow.webContents.send('application:open-url', {
-        url: openURL
-      });
-    }
-    app.on('open-url', function (event, url) {
-      event.preventDefault();
-      mainWindow.webContents.send('application:open-url', {
-        url: url
-      });
-    });
 
     if (process.env.NODE_ENV !== 'development') {
       autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion() + '&beta=' + !!settingsjson.beta + '&platform=' + os.platform());
