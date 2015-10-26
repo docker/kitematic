@@ -23,7 +23,11 @@ module.exports = React.createClass({
       username: accountStore.getState().username,
       verified: accountStore.getState().verified,
       accountLoading: accountStore.getState().loading,
-      error: repositoryStore.getState().error
+      error: repositoryStore.getState().error,
+      currentPage: repositoryStore.getState().currentPage,
+      totalPage: repositoryStore.getState().totalPage,
+      previousPage: repositoryStore.getState().previousPage,
+      nextPage: repositoryStore.getState().nextPage
     };
   },
   componentDidMount: function () {
@@ -43,7 +47,11 @@ module.exports = React.createClass({
   update: function () {
     this.setState({
       loading: repositoryStore.loading(),
-      repos: repositoryStore.all()
+      repos: repositoryStore.all(),
+      currentPage: repositoryStore.getState().currentPage,
+      totalPage: repositoryStore.getState().totalPage,
+      previousPage: repositoryStore.getState().previousPage,
+      nextPage: repositoryStore.getState().nextPage
     });
   },
   updateAccount: function () {
@@ -53,29 +61,39 @@ module.exports = React.createClass({
       accountLoading: accountStore.getState().loading
     });
   },
-  search: function (query) {
+  search: function (query, page = 1) {
     if (_searchPromise) {
       _searchPromise.cancel();
       _searchPromise = null;
     }
 
+    let previousPage = (page - 1 < 1) ? 1 : page - 1;
+    let nextPage = (page + 1 > this.state.totalPage) ? this.state.totalPage : page + 1;
+
     this.setState({
       query: query,
-      loading: true
+      loading: true,
+      currentPage: page,
+      previousPage: previousPage,
+      nextPage: nextPage
     });
 
     _searchPromise = Promise.delay(200).cancellable().then(() => {
       metrics.track('Searched for Images');
       _searchPromise = null;
-      repositoryActions.search(query);
+      repositoryActions.search(query, page);
     }).catch(Promise.CancellationError, () => {});
   },
   handleChange: function (e) {
-    var query = e.target.value;
+    let query = e.target.value;
     if (query === this.state.query) {
       return;
     }
     this.search(query);
+  },
+  handlePage: function (page) {
+    let query = this.state.query;
+    this.search(query, page);
   },
   handleFilter: function (filter) {
 
@@ -111,20 +129,76 @@ module.exports = React.createClass({
         })
         .filter(repo => filter === 'all' || (filter === 'recommended' && repo.is_recommended) || (filter === 'userrepos' && repo.is_user_repo));
 
-    let results;
+    let results, paginateResults;
+    let previous = [];
+    let next = [];
+    if (this.state.previousPage) {
+      let previousPage = this.state.currentPage - 7;
+      if (previousPage < 1) {
+        previousPage = 1;
+      }
+      previous.push((
+        <li>
+          <a href="" onClick={this.handlePage.bind(this, 1)} aria-label="First">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+      ));
+      for (previousPage; previousPage < this.state.currentPage; previousPage++) {
+        previous.push((
+          <li><a href="" onClick={this.handlePage.bind(this, previousPage)}>{previousPage}</a></li>
+        ));
+      }
+    }
+    if (this.state.nextPage) {
+      let nextPage = this.state.currentPage + 1;
+      for (nextPage; nextPage < this.state.totalPage; nextPage++) {
+        next.push((
+          <li><a href="" onClick={this.handlePage.bind(this, nextPage)}>{nextPage}</a></li>
+        ));
+        if (nextPage > this.state.currentPage + 7) {
+          break;
+        }
+      }
+      next.push((
+        <li>
+          <a href="" onClick={this.handlePage.bind(this, this.state.totalPage)} aria-label="Last">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      ));
+    }
+
+    let current = (
+      <li className="active">
+        <span>{this.state.currentPage} <span className="sr-only">(current)</span></span>
+      </li>
+    );
+
+    paginateResults = next.length || previous.length ? (
+      <nav>
+        <ul className="pagination">
+          {previous}
+          {current}
+          {next}
+        </ul>
+      </nav>
+    ) : null;
     if (this.state.error) {
       results = (
         <div className="no-results">
           <h2>There was an error contacting Docker Hub.</h2>
         </div>
       );
+      paginateResults = null;
     } else if (filter === 'userrepos' && !accountStore.getState().username) {
       results = (
         <div className="no-results">
-          <h2><Router.Link to="login">Log In</Router.Link>  or  <Router.Link to="signup">Sign Up</Router.Link> to access your Docker Hub repositories.</h2>
+          <h2><Router.Link to="login">Log In</Router.Link> or <Router.Link to="signup">Sign Up</Router.Link> to access your Docker Hub repositories.</h2>
           <RetinaImage src="connect-art.png" checkIfRetinaImgExists={false}/>
         </div>
       );
+      paginateResults = null;
     } else if (filter === 'userrepos' && !accountStore.getState().verified) {
       let spinner = this.state.accountLoading ? <div className="spinner la-ball-clip-rotate la-dark"><div></div></div> : null;
       results = (
@@ -136,6 +210,7 @@ module.exports = React.createClass({
           <RetinaImage src="inspection.png" checkIfRetinaImgExists={false}/>
         </div>
       );
+      paginateResults = null;
     } else if (this.state.loading) {
       results = (
         <div className="no-results">
@@ -168,14 +243,20 @@ module.exports = React.createClass({
         </div>
       ) : null;
 
-      let otherResults = otherItems.length ? (
-        <div>
-          <h4>Other Repositories</h4>
-          <div className="result-grid">
-            {otherItems}
+      let otherResults;
+      if (otherItems.length) {
+        otherResults = (
+          <div>
+            <h4>Other Repositories</h4>
+            <div className="result-grid">
+              {otherItems}
+            </div>
           </div>
-        </div>
-      ) : null;
+        );
+      } else {
+        otherResults = null;
+        paginateResults = null;
+      }
 
       results = (
         <div className="result-grids">
@@ -236,6 +317,9 @@ module.exports = React.createClass({
           </div>
           <div className="results">
             {results}
+          </div>
+          <div className="pagination-center">
+            {paginateResults}
           </div>
         </div>
       </div>

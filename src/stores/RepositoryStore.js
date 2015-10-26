@@ -13,6 +13,11 @@ class RepositoryStore {
     this.results = [];
     this.recommended = [];
     this.repos = [];
+    this.query = null;
+    this.nextPage = null;
+    this.previousPage = null;
+    this.currentPage = 1;
+    this.totalPage = null;
     this.reposLoading = false;
     this.recommendedLoading = false;
     this.resultsLoading = false;
@@ -41,12 +46,18 @@ class RepositoryStore {
     }
   }
 
-  search () {
-    this.setState({error: null, resultsLoading: true});
+  search ({query, page}) {
+    if (this.query === query) {
+      let previousPage = (page - 1 < 1) ? 1 : page - 1;
+      let nextPage = (page + 1 > this.totalPage) ? this.totalPage : page + 1;
+      this.setState({query: query, error: null, resultsLoading: true, currentPage: page, nextPage: nextPage, previousPage: previousPage});
+    } else {
+      this.setState({query: query, error: null, resultsLoading: true, nextPage: null, previousPage: null, currentPage: 1});
+    }
   }
 
-  resultsUpdated ({repos}) {
-    this.setState({results: repos, resultsLoading: false});
+  resultsUpdated ({repos, page, previous, next, total}) {
+    this.setState({results: repos, currentPage: page, previousPage: previous, nextPage: next, totalPage: total, resultsLoading: false});
   }
 
   recommended () {
