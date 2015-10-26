@@ -13,33 +13,33 @@ var ContainerDetailsSubheader = React.createClass({
   },
   disableRun: function () {
     if (!this.props.container) {
-      return false;
+      return true;
     }
     return (!this.props.container.State.Running || !this.props.defaultPort || this.props.container.State.Updating);
   },
   disableRestart: function () {
     if (!this.props.container) {
-      return false;
+      return true;
     }
-    return (this.props.container.State.Downloading || this.props.container.State.Restarting || this.props.container.State.Updating);
+    return (this.props.container.State.Stopping || this.props.container.State.Downloading || this.props.container.State.Restarting || this.props.container.State.Updating);
   },
   disableStop: function () {
     if (!this.props.container) {
-      return false;
+      return true;
     }
-    return (this.props.container.State.Downloading || this.props.container.State.ExitCode || !this.props.container.State.Running || this.props.container.State.Updating);
+    return (this.props.container.State.Stopping || this.props.container.State.Downloading || this.props.container.State.ExitCode || !this.props.container.State.Running || this.props.container.State.Updating);
   },
   disableStart: function () {
     if (!this.props.container) {
-      return false;
+      return true;
     }
     return (this.props.container.State.Downloading || this.props.container.State.Running || this.props.container.State.Updating);
   },
   disableTerminal: function () {
     if (!this.props.container) {
-      return false;
+      return true;
     }
-    return (!this.props.container.State.Running || this.props.container.State.Updating);
+    return (this.props.container.State.Stopping || !this.props.container.State.Running || this.props.container.State.Updating);
   },
   disableTab: function () {
     if (!this.props.container) {

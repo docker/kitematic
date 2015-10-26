@@ -269,7 +269,7 @@ export default {
   },
 
   restart (name) {
-    this.client.getContainer(name).stop(stopError => {
+    this.client.getContainer(name).stop({t: 5}, stopError => {
       if (stopError && stopError.statusCode !== 304) {
         containerServerActions.error({name, stopError});
         return;
@@ -285,7 +285,7 @@ export default {
   },
 
   stop (name) {
-    this.client.getContainer(name).stop(error => {
+    this.client.getContainer(name).stop({t: 5}, error => {
       if (error && error.statusCode !== 304) {
         containerServerActions.error({name, error});
         return;
@@ -341,12 +341,16 @@ export default {
       stream.on('data', json => {
         let data = JSON.parse(json);
 
-        if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete') {
+        if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete' || data.status === 'attach') {
           return;
         }
 
         if (data.status === 'destroy') {
           containerServerActions.destroyed({id: data.id});
+        } else if (data.status === 'kill') {
+          containerServerActions.kill({id: data.id});
+        } else if (data.status === 'stop') {
+          containerServerActions.stopped({id: data.id});
         } else if (data.id) {
           this.fetchContainer(data.id);
         }
