@@ -1,5 +1,4 @@
 import app from 'app';
-import autoUpdater from 'auto-updater';
 import BrowserWindow from 'browser-window';
 import fs from 'fs';
 import os from 'os';
@@ -66,7 +65,6 @@ app.on('ready', function () {
   var updating = false;
   ipc.on('application:quit-install', function () {
     updating = true;
-    autoUpdater.quitAndInstall();
   });
 
   if (os.platform() === 'win32') {
@@ -96,36 +94,9 @@ app.on('ready', function () {
     }
   });
 
-  mainWindow.webContents.on('did-finish-load', function() {
+  mainWindow.webContents.on('did-finish-load', function () {
     mainWindow.setTitle('Kitematic');
     mainWindow.show();
     mainWindow.focus();
-
-    if (process.env.NODE_ENV !== 'development') {
-      autoUpdater.setFeedUrl('https://updates.kitematic.com/releases/latest?version=' + app.getVersion() + '&beta=' + !!settingsjson.beta + '&platform=' + os.platform());
-    }
-  });
-
-  autoUpdater.on('checking-for-update', function () {
-    console.log('Checking for update...');
-  });
-
-  autoUpdater.on('update-available', function () {
-    console.log('Update available.');
-  });
-
-  autoUpdater.on('update-not-available', function () {
-    console.log('Update not available.');
-  });
-
-  autoUpdater.on('update-downloaded', function (e, releaseNotes, releaseName, releaseDate, updateURL) {
-    console.log('Update downloaded.');
-    console.log(releaseNotes, releaseName, releaseDate, updateURL);
-    mainWindow.webContents.send('application:update-available');
-  });
-
-  autoUpdater.on('error', function (e, error) {
-    console.log('An error occured while checking for updates.');
-    console.log(error);
   });
 });
