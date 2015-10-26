@@ -5,6 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import remote from 'remote';
+var dialog = remote.require('dialog');
 var app = remote.require('app');
 
 module.exports = {
@@ -33,6 +34,9 @@ module.exports = {
   },
   isWindows: function () {
     return process.platform === 'win32';
+  },
+  isLinux: function () {
+    return process.platform === 'linux';
   },
   binsPath: function () {
     return this.isWindows() ? path.join(this.home(), 'Kitematic-bins') : path.join('/usr/local/bin');
@@ -155,6 +159,18 @@ module.exports = {
   },
   linuxToWindowsPath: function (linuxAbsPath) {
     return linuxAbsPath.replace('/c', 'C:').split('/').join('\\');
+  },
+  linuxTerminal: function () {
+    if (fs.existsSync('/usr/bin/x-terminal-emulator')) {
+      return ['/usr/bin/x-terminal-emulator', '-e'];
+    } else {
+      dialog.showMessageBox({
+        type: 'warning',
+        buttons: ['OK'],
+        message: 'The terminal emulator symbolic link doesn\'t exists. Please read the Wiki at https://github.com/kitematic/kitematic/wiki/Common-Issues-and-Fixes#early-linux-support-from-zedtux.'
+      });
+      return;
+    }
   },
   webPorts: ['80', '8000', '8080', '8888', '3000', '5000', '2368', '9200', '8983']
 };

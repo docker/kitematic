@@ -3,6 +3,9 @@ var execFile = require('child_process').execFile;
 var packagejson = require('./package.json');
 var electron = require('electron-prebuilt');
 
+var WINDOWS_DOCKER_MACHINE_URL = 'https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_windows-amd64.exe';
+var DARWIN_DOCKER_MACHINE_URL = 'https://github.com/docker/machine/releases/download/v' + packagejson['docker-machine-version'] + '/docker-machine_darwin-amd64';
+
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
   var target = grunt.option('target') || 'development';
@@ -63,6 +66,19 @@ module.exports = function (grunt) {
           out: 'dist',
           version: packagejson['electron-version'],
           platform: 'darwin',
+          arch: 'x64',
+          asar: true,
+          'app-bundle-id': 'com.kitematic.kitematic',
+          'app-version': packagejson.version
+        }
+      },
+      linux: {
+        options: {
+          name: APPNAME,
+          dir: 'build/',
+          out: 'dist/linux/',
+          version: packagejson['electron-version'],
+          platform: 'linux',
           arch: 'x64',
           asar: true,
           'app-bundle-id': 'com.kitematic.kitematic',
@@ -271,7 +287,9 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (process.platform === 'win32') {
-    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'compress']);
+    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'compress', 'create-windows-installer', 'rename:installer']);
+  } else if(process.platform === 'linux') {
+    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:linux']);
   } else {
     grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
   }

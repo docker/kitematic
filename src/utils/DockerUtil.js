@@ -20,20 +20,29 @@ export default {
       throw new Error('Falsy ip or name passed to docker client setup');
     }
 
-    let certDir = path.join(util.home(), '.docker/machine/machines/', name);
-    if (!fs.existsSync(certDir)) {
-      throw new Error('Certificate directory does not exist');
-    }
+    switch(process.platform) {
+    case 'win32':
+    case 'darwin':
+      let certDir = path.join(util.home(), '.docker/machine/machines/', name);
+      if (!fs.existsSync(certDir)) {
+        throw new Error('Certificate directory does not exist');
+      }
 
-    this.host = ip;
-    this.client = new dockerode({
-      protocol: 'https',
-      host: ip,
-      port: 2376,
-      ca: fs.readFileSync(path.join(certDir, 'ca.pem')),
-      cert: fs.readFileSync(path.join(certDir, 'cert.pem')),
-      key: fs.readFileSync(path.join(certDir, 'key.pem'))
-    });
+      this.host = ip;
+      this.client = new dockerode({
+        protocol: 'https',
+        host: ip,
+        port: 2376,
+        ca: fs.readFileSync(path.join(certDir, 'ca.pem')),
+        cert: fs.readFileSync(path.join(certDir, 'cert.pem')),
+        key: fs.readFileSync(path.join(certDir, 'key.pem'))
+      });
+      break;
+    case 'linux':
+      this.host = 'localhost';
+      this.client = new dockerode({socketPath: '/var/run/docker.sock'});
+      break;
+    }
   },
 
   init () {

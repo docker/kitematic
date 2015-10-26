@@ -51,50 +51,56 @@ export default {
     metrics.track('Started Setup');
     while (true) {
       try {
-        setupServerActions.started({started: false});
-        if (!virtualBox.installed()) {
-          router.get().transitionTo('setup');
-          throw new Error('VirtualBox is not installed. Please install it via the Docker Toolbox.');
-        }
+        let ip = null;
 
-        if (!machine.installed()) {
-          router.get().transitionTo('setup');
-          throw new Error('Docker Machine is not installed. Please install it via the Docker Toolbox.');
-        }
-
-        setupServerActions.started({started: true});
-        let exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
-        if (!exists) {
-          router.get().transitionTo('setup');
-          setupServerActions.started({started: true});
-          this.simulateProgress(60);
-          try {
-            await machine.rm();
-          } catch (err) {}
-          await machine.create();
-        } else {
-          let state = await machine.status();
-          if (state !== 'Running') {
-            if (state === 'Saved') {
-              router.get().transitionTo('setup');
-              this.simulateProgress(10);
-            } else if (state === 'Stopped') {
-              router.get().transitionTo('setup');
-              this.simulateProgress(25);
-            }
-            await machine.start();
+        if (!util.isLinux()) {
+          setupServerActions.started({started: false});
+          if (!virtualBox.installed()) {
+            router.get().transitionTo('setup');
+            throw new Error('VirtualBox is not installed. Please install it via the Docker Toolbox.');
           }
-        }
 
-        // Try to receive an ip address from machine, for at least to 80 seconds.
-        let tries = 80, ip = null;
-        while (!ip && tries > 0) {
-          try {
-            console.log('Trying to fetch machine IP, tries left: ' + tries);
-            ip = await machine.ip();
-            tries -= 1;
-            await Promise.delay(1000);
-          } catch (err) {}
+          if (!machine.installed()) {
+            router.get().transitionTo('setup');
+            throw new Error('Docker Machine is not installed. Please install it via the Docker Toolbox.');
+          }
+
+          setupServerActions.started({started: true});
+          let exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
+          if (!exists) {
+            router.get().transitionTo('setup');
+            setupServerActions.started({started: true});
+            this.simulateProgress(60);
+            try {
+              await machine.rm();
+            } catch (err) {}
+            await machine.create();
+          } else {
+            let state = await machine.status();
+            if (state !== 'Running') {
+              if (state === 'Saved') {
+                router.get().transitionTo('setup');
+                this.simulateProgress(10);
+              } else if (state === 'Stopped') {
+                router.get().transitionTo('setup');
+                this.simulateProgress(25);
+              }
+              await machine.start();
+            }
+          }
+
+          // Try to receive an ip address from machine, for at least to 80 seconds.
+          let tries = 80;
+          while (!ip && tries > 0) {
+            try {
+              console.log('Trying to fetch machine IP, tries left: ' + tries);
+              ip = await machine.ip();
+              tries -= 1;
+              await Promise.delay(1000);
+            } catch (err) {}
+          }
+        } else {
+          ip = 'localhost';
         }
 
         if (ip) {
