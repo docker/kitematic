@@ -13,7 +13,9 @@ class ContainerServerActions {
       'started',
       'unmuted',
       'updated',
-      'waiting'
+      'waiting',
+      'kill',
+      'stopped'
     );
   }
 }

@@ -38,10 +38,22 @@ class ContainerStore {
     }
   }
 
-  stop ({name}) {
+  stopped ({id}) {
     let containers = this.containers;
-    if (containers[name]) {
-      containers[name].State.Running = false;
+    let container = _.find(_.values(containers), c => c.Id === id || c.Name === id);
+
+    if (containers[container.Name]) {
+      containers[container.Name].State.Stopping = false;
+      this.setState({containers});
+    }
+  }
+
+  kill ({id}) {
+    let containers = this.containers;
+    let container = _.find(_.values(containers), c => c.Id === id || c.Name === id);
+
+    if (containers[container.Name]) {
+      containers[container.Name].State.Stopping = true;
       this.setState({containers});
     }
   }
@@ -69,6 +81,10 @@ class ContainerStore {
   update ({name, container}) {
     let containers = this.containers;
     if (containers[name] && containers[name].State && containers[name].State.Updating) {
+      return;
+    }
+
+    if (containers[name].State.Stopping) {
       return;
     }
 
@@ -113,9 +129,7 @@ class ContainerStore {
 
   destroyed ({id}) {
     let containers = this.containers;
-    let container = _.find(_.values(this.containers), container => {
-      return container.Id === id || container.Name === id;
-    });
+    let container = _.find(_.values(containers), c => c.Id === id || c.Name === id);
 
     if (container && container.State && container.State.Updating) {
       return;
