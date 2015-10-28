@@ -52,7 +52,7 @@ class RepositoryStore {
       let nextPage = (page + 1 > this.totalPage) ? this.totalPage : page + 1;
       this.setState({query: query, error: null, resultsLoading: true, currentPage: page, nextPage: nextPage, previousPage: previousPage});
     } else {
-      this.setState({query: query, error: null, resultsLoading: true, nextPage: null, previousPage: null, currentPage: 1});
+      this.setState({query: query, error: null, resultsLoading: true, nextPage: null, previousPage: null, currentPage: 1, totalPage: null});
     }
   }
 
