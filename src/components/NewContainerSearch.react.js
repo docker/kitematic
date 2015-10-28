@@ -66,16 +66,21 @@ module.exports = React.createClass({
       _searchPromise.cancel();
       _searchPromise = null;
     }
-
-    let previousPage = (page - 1 < 1) ? 1 : page - 1;
-    let nextPage = (page + 1 > this.state.totalPage) ? this.state.totalPage : page + 1;
+    let previousPage, nextPage, totalPage = null;
+    // If query remains, retain pagination
+    if (this.state.query === query) {
+      previousPage = (page - 1 < 1) ? 1 : page - 1;
+      nextPage = (page + 1 > this.state.totalPage) ? this.state.totalPage : page + 1;
+      totalPage = this.state.totalPage;
+    }
 
     this.setState({
       query: query,
       loading: true,
       currentPage: page,
       previousPage: previousPage,
-      nextPage: nextPage
+      nextPage: nextPage,
+      totalPage: totalPage
     });
 
     _searchPromise = Promise.delay(200).cancellable().then(() => {
@@ -174,8 +179,7 @@ module.exports = React.createClass({
         <span>{this.state.currentPage} <span className="sr-only">(current)</span></span>
       </li>
     );
-
-    paginateResults = next.length || previous.length ? (
+    paginateResults = (next.length || previous.length) && (this.state.query !== '') ? (
       <nav>
         <ul className="pagination">
           {previous}
