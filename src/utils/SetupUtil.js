@@ -26,6 +26,10 @@ export default {
     });
   },
 
+  resetProgress () {
+    setupServerActions.progress({progress: null});
+  },
+
   clearTimers () {
     _timers.forEach(t => clearTimeout(t));
     _timers = [];
@@ -62,8 +66,20 @@ export default {
           throw new Error('Docker Machine is not installed. Please install it via the Docker Toolbox.');
         }
 
+        // Allow machine selection on initial launch
+        if (!localStorage.getItem('settings.vm')) {
+          router.get().transitionTo('selectmachine');
+          await this.pause();
+        }
+
         setupServerActions.started({started: true});
-        let exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
+
+        let exists = true;
+        // Check if we're dealing with a virtualbox machine
+        if (machine.driver() === 'virtualbox') {
+          exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
+        }
+
         if (!exists) {
           router.get().transitionTo('setup');
           setupServerActions.started({started: true});
@@ -90,7 +106,6 @@ export default {
         let tries = 80, ip = null;
         while (!ip && tries > 0) {
           try {
-            console.log('Trying to fetch machine IP, tries left: ' + tries);
             ip = await machine.ip();
             tries -= 1;
             await Promise.delay(1000);
