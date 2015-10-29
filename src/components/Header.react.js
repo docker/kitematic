@@ -26,7 +26,8 @@ var Header = React.createClass({
     document.addEventListener('keyup', this.handleDocumentKeyUp, false);
 
     accountStore.listen(this.update);
-
+    // remove listener if exists
+    ipc.removeAllListeners('application:update-available');
     ipc.on('application:update-available', () => {
       this.setState({
         updateAvailable: true

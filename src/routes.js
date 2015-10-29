@@ -1,5 +1,6 @@
 import React from 'react/addons';
 import Setup from './components/Setup.react';
+import SelectMachine from './components/SelectMachine.react';
 import Account from './components/Account.react';
 import AccountSignup from './components/AccountSignup.react';
 import AccountLogin from './components/AccountLogin.react';
@@ -53,6 +54,7 @@ var routes = (
     </Route>
     <DefaultRoute name="loading" handler={Loading}/>
     <Route name="setup" handler={Setup}/>
+    <Route name="selectmachine" handler={SelectMachine}/>
   </Route>
 );
 
