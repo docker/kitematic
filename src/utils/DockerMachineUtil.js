@@ -13,10 +13,7 @@ var DockerMachine = {
     }
   },
   name: function () {
-    return util.vmsettings().name || 'default';
-  },
-  driver: function () {
-    return util.vmsettings().driver || 'virtualbox';
+    return 'default';
   },
   installed: function () {
     if (util.isWindows() && !process.env.DOCKER_TOOLBOX_INSTALL_PATH) {
@@ -36,24 +33,6 @@ var DockerMachine = {
     } catch (err) {
       return null;
     }
-  },
-  list: function () {
-    return util.exec([this.command(), 'ls']).then(stdout => {
-      var lines = stdout.trim().split('\n').filter(line => line.indexOf('time=') === -1);
-      var machines = {};
-      lines.slice(1, lines.length).forEach(line => {
-        var tokens = line.trim().split(/[\s]+/).filter(token => token !== '*');
-        var machine = {
-          name: tokens[0],
-          active: tokens[1],
-          driver: tokens[2],
-          state: tokens[3],
-          url: tokens[4] || ''
-        };
-        machines[machine.name] = machine;
-      });
-      return Promise.resolve(machines);
-    });
   },
   exists: function (machineName = this.name()) {
     return this.status(machineName).then(() => {
