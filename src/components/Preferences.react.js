@@ -1,8 +1,6 @@
 import React from 'react/addons';
 import metrics from '../utils/MetricsUtil';
 import Router from 'react-router';
-import setupUtil from '../utils/SetupUtil';
-import docker from '../utils/DockerUtil';
 
 var Preferences = React.createClass({
   mixins: [Router.Navigation],
@@ -15,21 +13,6 @@ var Preferences = React.createClass({
   handleGoBackClick: function () {
     this.goBack();
     metrics.track('Went Back From Preferences');
-  },
-  handleClearVMClick: function () {
-    localStorage.removeItem('settings.vm');
-    localStorage.removeItem('placeholders');
-    setupUtil.resetProgress();
-    setupUtil.setup().then(() => {
-      docker.init();
-      this.transitionTo('search');
-    }).catch(err => {
-      metrics.track('Setup Failed', {
-        step: 'catch',
-        message: err.message
-      });
-      throw err;
-    });
   },
   handleChangeCloseVMOnQuit: function (e) {
     var checked = e.target.checked;
@@ -63,14 +46,6 @@ var Preferences = React.createClass({
             </div>
             <div className="option-value">
               <input type="checkbox" checked={this.state.closeVMOnQuit} onChange={this.handleChangeCloseVMOnQuit}/>
-            </div>
-          </div>
-          <div className="option">
-            <div className="option-name">
-              Reset VM preferences
-            </div>
-            <div className="option-value">
-              <button className="btn btn-primary" onClick={this.handleClearVMClick}>Reset</button>
             </div>
           </div>
           <div className="title">App Settings</div>
