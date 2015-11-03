@@ -34,7 +34,9 @@ var VirtualBox = {
           reject('VBoxManage -v output format not recognized.');
         }
         resolve(match[1]);
-      }).catch(reject);
+      }).catch(() => {
+        resolve(null);
+      });
     });
   },
   poweroffall: function () {
