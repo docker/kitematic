@@ -16,25 +16,20 @@ var VirtualBox = {
     }
   },
   installed: function () {
-    if (util.isWindows()) {
-      return (process.env.VBOX_MSI_INSTALL_PATH && fs.existsSync(path.join(process.env.VBOX_MSI_INSTALL_PATH, 'VBoxManage.exe'))) ||
-             (process.env.VBOX_INSTALL_PATH && fs.existsSync(path.join(process.env.VBOX_INSTALL_PATH, 'VBoxManage.exe')));
-    } else {
-      return fs.existsSync('/Applications/VirtualBox.app') && fs.existsSync('/Applications/VirtualBox.app/Contents/MacOS/VBoxManage');
-    }
+    return fs.existsSync(this.command());
   },
   active: function () {
     return fs.existsSync('/dev/vboxnetctl');
   },
   version: function () {
-    return new Promise((resolve, reject) => {
-      util.exec([this.command(), '-v']).then(stdout => {
-        var match = stdout.match(/(\d+\.\d+\.\d+).*/);
-        if (!match || match.length < 2) {
-          reject('VBoxManage -v output format not recognized.');
-        }
-        resolve(match[1]);
-      }).catch(reject);
+    return util.exec([this.command(), '-v']).then(stdout => {
+      let matchlist = stdout.match(/(\d+\.\d+\.\d+).*/);
+      if (!matchlist || matchlist.length < 2) {
+        Promise.reject('VBoxManage -v output format not recognized.');
+      }
+      return Promise.resolve(matchlist[1]);
+    }).catch(() => {
+      return Promise.resolve(null);
     });
   },
   poweroffall: function () {

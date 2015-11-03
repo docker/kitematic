@@ -33,9 +33,6 @@ var WebUtil = {
       bugsnag.releaseStage = process.env.NODE_ENV === 'development' ? 'development' : 'production';
       bugsnag.notifyReleaseStages = ['production'];
       bugsnag.appVersion = app.getVersion();
-      bugsnag.metaData = {
-        beta: !!settingsjson.beta
-      };
 
       bugsnag.beforeNotify = function(payload) {
         if (!metrics.enabled()) {
