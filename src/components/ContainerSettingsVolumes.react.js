@@ -28,7 +28,7 @@ var ContainerSettingsVolumes = React.createClass({
       metrics.track('Choose Directory for Volume');
 
       if(util.isWindows()) {
-        directory = util.escapePath(util.windowsToLinuxPath(directory));
+        directory = util.windowsToLinuxPath(directory);
       }
 
       var mounts = _.clone(this.props.container.Mounts);
