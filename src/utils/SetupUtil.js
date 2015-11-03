@@ -32,6 +32,10 @@ export default {
   },
 
   retry (removeVM) {
+    metrics.track('Retried Setup', {
+      removeVM
+    });
+
     router.get().transitionTo('loading');
     if (removeVM) {
       machine.rm().finally(() => {
@@ -48,18 +52,31 @@ export default {
   },
 
   async setup () {
-    metrics.track('Started Setup');
+    let virtualBoxVersion = await virtualBox.version();
+    let machineVersion = await machine.version();
+
+    metrics.track('Started Setup', {
+      virtualBoxVersion,
+      machineVersion
+    });
+
     while (true) {
       try {
         setupServerActions.started({started: false});
-        if (!virtualBox.installed()) {
-          router.get().transitionTo('setup');
-          throw new Error('VirtualBox is not installed. Please install it via the Docker Toolbox.');
-        }
 
-        if (!machine.installed()) {
+        // Make sure virtulBox and docker-machine are installed
+        let virtualBoxInstalled = virtualBox.installed();
+        let machineInstalled = machine.installed();
+        if (!virtualBoxInstalled || !machineInstalled) {
           router.get().transitionTo('setup');
-          throw new Error('Docker Machine is not installed. Please install it via the Docker Toolbox.');
+          if (!virtualBoxInstalled) {
+            setupServerActions.error({error: 'VirtualBox is not installed. Please install it via the Docker Toolbox.'});
+          } else {
+            setupServerActions.error({error: 'Docker Machine is not installed. Please install it via the Docker Toolbox.'});
+          }
+          this.clearTimers();
+          await this.pause();
+          continue;
         }
 
         setupServerActions.started({started: true});
@@ -106,7 +123,10 @@ export default {
         break;
       } catch (error) {
         router.get().transitionTo('setup');
-        metrics.track('Setup Failed');
+        metrics.track('Setup Failed', {
+          virtualBoxVersion,
+          machineVersion
+        });
         setupServerActions.error({error});
         bugsnag.notify('SetupError', error.message, {
           error: error,
@@ -116,6 +136,9 @@ export default {
         await this.pause();
       }
     }
-    metrics.track('Setup Finished');
+    metrics.track('Setup Finished', {
+      virtualBoxVersion,
+      machineVersion
+    });
   }
 };
