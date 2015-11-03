@@ -26,7 +26,8 @@ var ContainerHomeFolder = React.createClass({
       }, (index) => {
         if (index === 0) {
           var mounts = _.clone(this.props.container.Mounts);
-          var newSource = util.escapePath(path.join(util.home(), util.documents(), 'Kitematic', this.props.container.Name, destination));
+          var newSource = path.join(util.home(), util.documents(), 'Kitematic', this.props.container.Name, destination);
+
           var binds = mounts.map(function (m) {
             let source = m.Source;
             if (m.Destination === destination) {
