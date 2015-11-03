@@ -23,11 +23,11 @@ var VirtualBox = {
   },
   version: function () {
     return util.exec([this.command(), '-v']).then(stdout => {
-      var match = stdout.match(/(\d+\.\d+\.\d+).*/);
-      if (!match || match.length < 2) {
+      let matchlist = stdout.match(/(\d+\.\d+\.\d+).*/);
+      if (!matchlist || matchlist.length < 2) {
         Promise.reject('VBoxManage -v output format not recognized.');
       }
-      return Promise.resolve(match[1]);
+      return Promise.resolve(matchlist[1]);
     }).catch(() => {
       return Promise.resolve(null);
     });

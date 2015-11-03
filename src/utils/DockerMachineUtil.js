@@ -24,11 +24,11 @@ var DockerMachine = {
   version: function () {
     return util.exec([this.command(), '-v']).then(stdout => {
       try {
-        var match = stdout.match(/(\d+\.\d+\.\d+).*/);
-        if (!match || match.length < 2) {
+        var matchlist = stdout.match(/(\d+\.\d+\.\d+).*/);
+        if (!matchlist || matchlist.length < 2) {
           Promise.reject('docker-machine -v output format not recognized.');
         }
-        return Promise.resolve(match[1]);
+        return Promise.resolve(matchlist[1]);
       } catch (err) {
         return Promise.resolve(null);
       }
@@ -160,11 +160,13 @@ var DockerMachine = {
   },
   virtualBoxLogs: function (machineName = this.name()) {
     let logsPath = path.join(util.home(), '.docker', 'machine', 'machines', machineName, machineName, 'Logs', 'VBox.log');
-    if (fs.existsSync(logsPath)) {
-      return fs.readFileSync(logsPath, 'utf8');
-    } else {
-      return null;
+    let logData = null;
+    try {
+      logData = fs.readFileSync(logsPath, 'utf8');
+    } catch (e) {
+      console.error(e);
     }
+    return logData;
   }
 };
 
