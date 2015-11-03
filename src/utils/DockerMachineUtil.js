@@ -21,6 +21,21 @@ var DockerMachine = {
     }
     return fs.existsSync(this.command());
   },
+  version: function () {
+    return util.exec([this.command(), '-v']).then(stdout => {
+      try {
+        let tokens = stdout.split(' ');
+        if (tokens.length < 3) {
+          return Promise.resolve(null);
+        }
+        return Promise.resolve(tokens[2]);
+      } catch (err) {
+        return Promise.resolve(null);
+      }
+    }).catch(() => {
+      return Promise.resolve(null);
+    });
+  },
   isoversion: function (machineName = this.name()) {
     try {
       var data = fs.readFileSync(path.join(util.home(), '.docker', 'machine', 'machines', machineName, 'boot2docker.iso'), 'utf8');
