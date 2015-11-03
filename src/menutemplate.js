@@ -16,6 +16,7 @@ var MenuTemplate = function () {
       submenu: [
       {
         label: 'About Kitematic',
+        enabled: !!docker.host,
         click: function () {
           metrics.track('Opened About', {
             from: 'menu'

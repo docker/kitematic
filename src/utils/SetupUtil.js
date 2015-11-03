@@ -52,14 +52,8 @@ export default {
   },
 
   async setup () {
-    let virtualBoxVersion = await virtualBox.version();
-    let machineVersion = await machine.version();
-
-    metrics.track('Started Setup', {
-      virtualBoxVersion,
-      machineVersion
-    });
-
+    let virtualBoxVersion = null;
+    let machineVersion = null;
     while (true) {
       try {
         setupServerActions.started({started: false});
@@ -79,7 +73,15 @@ export default {
           continue;
         }
 
+        virtualBoxVersion = await virtualBox.version();
+        machineVersion = await machine.version();
+
         setupServerActions.started({started: true});
+        metrics.track('Started Setup', {
+          virtualBoxVersion,
+          machineVersion
+        });
+
         let exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
         if (!exists) {
           router.get().transitionTo('setup');
@@ -128,10 +130,18 @@ export default {
           machineVersion
         });
         setupServerActions.error({error});
-        bugsnag.notify('SetupError', error.message, {
-          error: error,
-          output: error.message
+
+        let message = error.message.split('\n');
+        let lastLine = message.length > 1 ? message[message.length - 2] : 'Docker Machine encountered an error.';
+        let virtualBoxLogs = machine.virtualBoxLogs();
+        bugsnag.notify('Setup Failed', lastLine, {
+          'Docker Machine Logs': error.message,
+          'VirtualBox Logs': virtualBoxLogs,
+          'VirtualBox Version': virtualBoxVersion,
+          'Machine Version': machineVersion,
+          groupingHash: machineVersion
         }, 'info');
+
         this.clearTimers();
         await this.pause();
       }

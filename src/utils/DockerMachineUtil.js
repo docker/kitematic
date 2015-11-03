@@ -24,11 +24,11 @@ var DockerMachine = {
   version: function () {
     return util.exec([this.command(), '-v']).then(stdout => {
       try {
-        let tokens = stdout.split(' ');
-        if (tokens.length < 3) {
-          return Promise.resolve(null);
+        var match = stdout.match(/(\d+\.\d+\.\d+).*/);
+        if (!match || match.length < 2) {
+          Promise.reject('docker-machine -v output format not recognized.');
         }
-        return Promise.resolve(tokens[2]);
+        return Promise.resolve(match[1]);
       } catch (err) {
         return Promise.resolve(null);
       }
@@ -146,7 +146,7 @@ var DockerMachine = {
         util.exec('start powershell.exe ' + cmd,
           {env: {
             'DOCKER_HOST': machineUrl,
-            'DOCKER_CERT_PATH': path.join(util.home(), '.docker/machine/machines/' + machineName),
+            'DOCKER_CERT_PATH': path.join(util.home(), '.docker', 'machine', 'machines', machineName),
             'DOCKER_TLS_VERIFY': 1
           }
         });
@@ -156,6 +156,14 @@ var DockerMachine = {
       this.url(machineName).then(machineUrl => {
         util.exec([path.join(process.env.RESOURCES_PATH, 'terminal'), `DOCKER_HOST=${machineUrl} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machineName)} DOCKER_TLS_VERIFY=1 ${cmd}`]).then(() => {});
       });
+    }
+  },
+  virtualBoxLogs: function (machineName = this.name()) {
+    let logsPath = path.join(util.home(), '.docker', 'machine', 'machines', machineName, machineName, 'Logs', 'VBox.log');
+    if (fs.existsSync(logsPath)) {
+      return fs.readFileSync(logsPath, 'utf8');
+    } else {
+      return null;
     }
   }
 };
