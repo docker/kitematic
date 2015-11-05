@@ -137,7 +137,7 @@ module.exports = {
     // Get Orgs for user
     hubUtil.request({
       url: `${REGHUB2_ENDPOINT}/user/orgs/`,
-      qs: { page_size: 50 }
+      qs: { page_size: 1000 }
     }, (orgError, orgResponse, orgBody) => {
       if (orgError) {
         repositoryServerActions.error({orgError});
@@ -178,7 +178,8 @@ module.exports = {
 
       async.map(namespaces, (namespace, cb) => {
         hubUtil.request({
-          url: `${REGHUB2_ENDPOINT}/repositories/${namespace}`
+          url: `${REGHUB2_ENDPOINT}/repositories/${namespace}`,
+          qs: { page_size: 1000 }
         }, (error, response, body) => {
           if (error) {
             repositoryServerActions.error({error});
