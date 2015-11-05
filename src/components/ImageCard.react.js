@@ -8,6 +8,7 @@ import containerActions from '../actions/ContainerActions';
 import containerStore from '../stores/ContainerStore';
 import tagStore from '../stores/TagStore';
 import tagActions from '../actions/TagActions';
+import numeral from 'numeral';
 
 var ImageCard = React.createClass({
   mixins: [Router.Navigation],
@@ -147,6 +148,8 @@ var ImageCard = React.createClass({
         <span className="icon icon-badge-private"></span>
       );
     }
+    let favCount = (this.props.image.star_count < 1000) ? numeral(this.props.image.star_count).value() : numeral(this.props.image.star_count).format('0.0a').toUpperCase();
+    let pullCount = (this.props.image.pull_count < 1000) ? numeral(this.props.image.pull_count).value() : numeral(this.props.image.pull_count).format('0a').toUpperCase();
     return (
       <div className="image-item">
         <div className="overlay menu-overlay">
@@ -185,7 +188,9 @@ var ImageCard = React.createClass({
           <div className="actions">
             <div className="favorites">
               <span className="icon icon-favorite"></span>
-              <span className="text">{this.props.image.star_count}</span>
+              <span className="text">{favCount}</span>
+              <span className="icon icon-download"></span>
+              <span className="text">{pullCount}</span>
             </div>
             <div className="more-menu" onClick={self.handleMenuOverlayClick}>
               <span className="icon icon-more"></span>
