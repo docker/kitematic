@@ -199,9 +199,21 @@ var ContainerSettingsGeneral = React.createClass({
       );
     });
 
+
+    let shortId = (
+          <div className="settings-section">
+            <h3>Container Id</h3>
+            <div className="container-name">
+              <input id="input-container-name" type="text" className="line" placeholder="Container Id" defaultValue={this.props.container.Id.substr(0, 12)} readOnly></input>
+            </div>
+          </div>
+        );
+
+
     return (
       <div className="settings-panel">
         {rename}
+        {shortId}
         <div className="settings-section">
           <h3>Environment Variables</h3>
           <div className="env-vars-labels">
