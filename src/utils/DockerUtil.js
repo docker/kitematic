@@ -78,8 +78,36 @@ export default {
     } else {
       startopts.PublishAllPorts = true;
     }
+    // Add support for linked containers and runtime settings
+    if (containerData.HostConfig) {
+      var hostConfig = containerData.HostConfig;
+      if (hostConfig.Links && hostConfig.Links !== null){
+        startopts.Links = [];
+        _.map(hostConfig.Links, (link) => {
+          var i = link.indexOf(':');
+          // Account for the slashes
+          if (link.indexOf('/') != -1 && link.indexOf('/') < i) {
+            var keyStart = link.indexOf('/') + 1;
+          } else {
+            var keyStart = 0;
+          }
+          if (link.lastIndexOf('/') != -1 && link.lastIndexOf('/') > i) {
+            var valStart = link.lastIndexOf('/') + 1;
+          } else {
+            var valStart = i + 1;
+          }
+          var key = link.slice(keyStart, i);
+          var val = link.slice(valStart);
+
+          if (this.status(key)) {
+            startopts.Links.push(key+':'+val);
+          }
+        });
+      }
+    }
 
     let container = this.client.getContainer(name);
+
     container.start(startopts, (error) => {
       if (error) {
         containerServerActions.error({name, error});
@@ -302,6 +330,14 @@ export default {
       }
       this.fetchContainer(name);
     });
+  },
+
+  status (name) {
+    let running = false;
+    this.client.getContainer(name).inspect((error, container) => {
+      running = container.State.Running;
+    });
+    return running;
   },
 
   destroy (name) {
