@@ -28,20 +28,22 @@ var ContainerUtil = {
     }
     var res = {};
     var ip = docker.host;
-    var ports = (container.NetworkSettings.Ports) ? container.NetworkSettings.Ports : (container.HostConfig.PortBindings) ? container.HostConfig.PortBindings : container.Config.ExposedPorts;
+    var ports = (container.NetworkSettings.Ports) ? container.NetworkSettings.Ports : ((container.HostConfig.PortBindings) ? container.HostConfig.PortBindings : container.Config.ExposedPorts);
     _.each(ports, function (value, key) {
-      var dockerPort = key.split('/')[0];
+      var [dockerPort, portType] = key.split('/');
       var localUrl = null;
-      var localUrlDisplay = null;
       var port = null;
+
       if (value && value.length) {
-        var port = value[0].HostPort;
-        localUrl = 'http://' + ip + ':' + port;
+        port = value[0].HostPort;
       }
+      localUrl = (port) ? ip + ':' + port : ip + ':' + '<not set>';
+
       res[dockerPort] = {
         url: localUrl,
         ip: ip,
-        port: port
+        port: port,
+        portType: portType
       };
     });
     return res;

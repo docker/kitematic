@@ -6,6 +6,7 @@ import containerActions from '../actions/ContainerActions';
 import containerStore from '../stores/ContainerStore';
 import metrics from '../utils/MetricsUtil';
 import {webPorts} from '../utils/Util';
+import {DropdownButton, MenuItem} from 'react-bootstrap';
 
 var ContainerSettingsPorts = React.createClass({
   contextTypes: {
@@ -61,16 +62,29 @@ var ContainerSettingsPorts = React.createClass({
     }
     this.setState({ports: ports});
   },
-  handleSave: function() {
+  handleChangePortType: function (key, portType) {
+    let ports = this.state.ports;
+    let port = ports[key].port;
+
+    // save updated port
+    ports[key] = _.extend(ports[key], {
+      url: ports[key].ip + ':' + port,
+      port: port,
+      portType: portType,
+      error: null
+    });
+    this.setState({ports: ports});
+  },
+  handleSave: function () {
+    let bindings = _.reduce(this.state.ports, (res, value, key) => {
+      res[key + '/' + value.portType] = [{
+        HostPort: value.port
+      }];
+      return res;
+    }, {});
     containerActions.update(this.props.container.Name, {
       NetworkSettings: {
-        Ports: _.reduce(this.state.ports, function(res, value, key) {
-          res[key + '/tcp'] = [{
-            HostIp: value.ip,
-            HostPort: value.port,
-          }];
-          return res;
-        }, {})
+        Ports: bindings
       }
     });
   },
@@ -80,9 +94,10 @@ var ContainerSettingsPorts = React.createClass({
     }
     var isUpdating = (this.props.container.State.Updating);
     var isValid = true;
+
     var ports = _.map(_.pairs(this.state.ports), pair => {
       var key = pair[0];
-      var {ip, port, url, error} = pair[1];
+      var {ip, port, url, portType, error} = pair[1];
       isValid = (error) ? false : isValid;
       let ipLink = (this.props.container.State.Running && !this.props.container.State.Paused && !this.props.container.State.ExitCode && !this.props.container.State.Restarting) ? (<a onClick={this.handleViewLink.bind(this, url)}>{ip}</a>):({ip});
       return (
@@ -95,6 +110,12 @@ var ContainerSettingsPorts = React.createClass({
               disabled={isUpdating}
               onChange={this.handleChangePort.bind(this, key)}
               defaultValue={port} />
+          </td>
+          <td>
+            <DropdownButton bsStyle="primary" title={portType}>
+              <MenuItem onSelect={this.handleChangePortType.bind(this, key, 'tcp')} key={key + '-tcp'}>TCP</MenuItem>
+              <MenuItem onSelect={this.handleChangePortType.bind(this, key, 'udp')} key={key + '-udp'}>UDP</MenuItem>
+            </DropdownButton>
           </td>
           <td className="error">{error}</td>
         </tr>
