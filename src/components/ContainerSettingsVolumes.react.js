@@ -16,12 +16,15 @@ var ContainerSettingsVolumes = React.createClass({
       }
 
       var directory = filenames[0];
+      if (util.isWindows()) {
+        directory = util.windowsToLinuxPath(directory);
+      }
 
-      if (!directory || directory.indexOf(util.home()) === -1) {
+      if (!this.checkValidFolder(directory)) {
         dialog.showMessageBox({
           type: 'warning',
           buttons: ['OK'],
-          message: 'Invalid directory. Volume directories must be under your Users directory'
+          message: 'Invalid directory. Volume directories must be under the folders you enabled on your Docker Host'
         });
         return;
       }
@@ -44,6 +47,22 @@ var ContainerSettingsVolumes = React.createClass({
 
       containerActions.update(this.props.container.Name, {Mounts: mounts, HostConfig: hostConfig});
     });
+  },
+  checkValidFolder: function (directory) {
+    var founded = false;
+    if (directory) {
+      for (let idx = 0; idx < util.folders.length; idx++) {
+        let folder = util.folders[idx];
+        if (util.isWindows()) {
+          folder = util.windowsToLinuxPath(folder);
+        }
+        if (directory.toLowerCase().indexOf(folder.toLowerCase()) !== -1) {
+          founded = true;
+          break;
+        }
+      }
+    }
+    return founded;
   },
   handleRemoveVolumeClick: function (dockerVol) {
     metrics.track('Removed Volume Directory', {
@@ -81,10 +100,9 @@ var ContainerSettingsVolumes = React.createClass({
       return false;
     }
 
-    var homeDir = util.isWindows() ? util.windowsToLinuxPath(util.home()) : util.home();
     var mounts= _.map(this.props.container.Mounts, (m, i) => {
       let source = m.Source, destination = m.Destination;
-      if (!m.Source || m.Source.indexOf(homeDir) === -1) {
+      if (!m.Source || !this.checkValidFolder(m.Source)) {
         source = (
           <span className="value-right">No Folder</span>
         );

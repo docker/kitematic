@@ -44,6 +44,26 @@ var VirtualBox = {
     }).catch((err) => {
       return false;
     });
+  },
+  getShareDir: function (vmName) {
+    var myRegexp = /Host path:\s'([^']+)'/;
+    return util.execFile([this.command(), 'showvminfo', vmName]).then((value) => {
+      let sharedFoldersStart = value.indexOf('Shared folders:');
+      let sharedFoldersEnd = value.indexOf('VRDE Connection:');
+      let vl = value.substring(sharedFoldersStart, sharedFoldersEnd);
+      let items = vl.split('\n');
+      var elements = [];
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].startsWith('Name')) {
+          elements.push(myRegexp.exec(items[i])[1]);
+        }
+      }
+      util.folders = elements;
+      return true;
+    }).catch(() => {
+      return false;
+    });
+
   }
 };
 

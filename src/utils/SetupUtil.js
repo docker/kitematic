@@ -110,6 +110,9 @@ export default {
           machineVersion
         });
 
+        virtualBox.getShareDir(machine.name());
+        
+        
         let exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
         if (!exists) {
           router.get().transitionTo('setup');
