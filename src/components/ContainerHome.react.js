@@ -73,10 +73,12 @@ var ContainerHome = React.createClass({
           sum = 0;
         }
 
+        let total = (Math.round(sum * 100) / 100).toFixed(2);
+
         body = (
           <div className="details-progress">
-            <h2>Downloading Image</h2>
-            <h2>{ (Math.round(sum * 100) / 100).toFixed(2) }%</h2>
+            <h2>{total >= 100 ? 'Creating Container' : 'Downloading Image'}</h2>
+            <h2>{total}%</h2>
             <div className="container-progress-wrapper">
               <ContainerProgress pBar1={values[0]} pBar2={values[1]} pBar3={values[2]} pBar4={values[3]}/>
             </div>
