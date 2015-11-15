@@ -366,16 +366,20 @@
             font-size: 11px;
             color: @gray-normal;
             border-right: 1px solid @color-divider;
-            padding: 1.1rem 1.2rem;
+            padding: 1.1rem 1rem;
             .icon {
               position: relative;
               font-size: 11px;
-              margin-right: 0.5rem;
+              margin-right: 0.3rem;
               color: @gray-normal;
+            }
+            .icon-download {
+              margin-left: 0.5rem;
             }
             .text {
               position: relative;
               top: -0.2rem;
+              margin-right: 0.3rem;
             }
           }
           .tags {
@@ -400,10 +404,16 @@
           }
           .more-menu {
             flex: 0 auto;
-            width: 39px;
-            padding: 0.4rem 1rem;
+            width: 30px;
+            padding: 0.4rem 0.5rem;
             font-size: 20px;
             .box-button();
+            .box-button {
+              .icon {
+                font-size: 1.5rem;
+                margin-left: 0.2rem;
+              }
+            }
           }
           .action {
             flex: 0 auto;

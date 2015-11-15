@@ -26,7 +26,7 @@ var DockerMachine = {
       try {
         var matchlist = stdout.match(/(\d+\.\d+\.\d+).*/);
         if (!matchlist || matchlist.length < 2) {
-          Promise.reject('docker-machine -v output format not recognized.');
+          return Promise.reject('docker-machine -v output format not recognized.');
         }
         return Promise.resolve(matchlist[1]);
       } catch (err) {

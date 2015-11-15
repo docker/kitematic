@@ -231,6 +231,19 @@ export default {
         existingData.Tty = existingData.Config.Tty;
         existingData.OpenStdin = existingData.Config.OpenStdin;
       }
+      let networking = _.extend(existingData.NetworkSettings, data.NetworkSettings);
+      if (networking && networking.Ports) {
+        let exposed = _.reduce(networking.Ports, (res, value, key) => {
+          res[key] = {};
+          return res;
+        }, {});
+        data = _.extend(data, {
+          HostConfig: {
+            PortBindings: networking.Ports
+          },
+          ExposedPorts: exposed
+        });
+      }
 
       var fullData = _.extend(existingData, data);
       this.createContainer(name, fullData);

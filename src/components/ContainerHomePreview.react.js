@@ -34,7 +34,7 @@ var ContainerHomePreview = React.createClass({
       metrics.track('Opened In Browser', {
         from: 'preview'
       });
-      shell.openExternal(this.props.ports[this.props.defaultPort].url);
+      shell.openExternal('http://' + this.props.ports[this.props.defaultPort].url);
     }
   },
 
@@ -48,7 +48,7 @@ var ContainerHomePreview = React.createClass({
   render: function () {
     var preview;
     if (this.props.defaultPort) {
-      var frame = React.createElement('webview', {className: 'frame', id: 'webview', src: this.props.ports[this.props.defaultPort].url, autosize: 'on'});
+      var frame = React.createElement('webview', {className: 'frame', id: 'webview', src: 'http://' + this.props.ports[this.props.defaultPort].url, autosize: 'on'});
       preview = (
         <div className="web-preview wrapper">
           <div className="widget">
@@ -72,7 +72,7 @@ var ContainerHomePreview = React.createClass({
         var val = pair[1];
         return (
           <tr key={key}>
-            <td>{key}</td>
+            <td>{key + '/' + val.portType}</td>
             <td>{val.url}</td>
           </tr>
         );
