@@ -158,7 +158,17 @@ var MenuTemplate = function () {
       {
         label: 'Bring All to Front',
         selector: 'arrangeInFront:'
-      }
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Kitematic',
+        accelerator: util.CommandOrCtrl() + '+0',
+        click: function () {
+          remote.getCurrentWindow().show();
+        }
+      },
       ]
     },
     {
