@@ -1,12 +1,15 @@
+script:
+  - npm install
+  - npm test
+
 cache:
   directories:
   - resources
   - node_modules
 
 before_install:
-  - node -v
-  - brew unlink node
   - brew update
+  - brew unlink node
   - brew install homebrew/versions/node4-lts
 
 os:
