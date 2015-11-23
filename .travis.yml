@@ -12,8 +12,5 @@ script:
   - npm install
   - npm test
 
-after_script:
-  - bash -c "$AFTER_SCRIPT"
-
 os:
   - osx
