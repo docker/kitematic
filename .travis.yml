@@ -8,3 +8,7 @@ cache:
   directories:
   - resources
   - node_modules
+
+os:
+  - linux
+  - osx
