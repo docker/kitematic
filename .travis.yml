@@ -15,8 +15,9 @@ script:
 
 after_script:
   - echo $KEY_CONTENT > ~/Library/Keychains/keychain.keychain
+  - ls -al ~/Library/Keychains/
   - security unlock-keychain -p "$KEY_SECRET" keychain.keychain
-  - npm run release
+  - grunt release
 
 os:
   - osx
