@@ -1,7 +1,9 @@
 #!/bin/bash
 
 if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-    brew unlink node
-    brew update
-    brew install homebrew/versions/node4-lts
+  brew unlink node
+  brew update
+  brew install homebrew/versions/node4-lts
+else
+  apt-get install wine
 fi
