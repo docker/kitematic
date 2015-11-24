@@ -2,22 +2,22 @@ cache:
   directories:
   - node_modules
 
-before_install:
-  - brew unlink node
-  - brew update
-  - brew install homebrew/versions/node4-lts
+install: ./ci/install
 
 script:
   - npm install
   - '[ "${TRAVIS_OS_NAME}" = "linux" ] && npm test || false'
-  - '[ "${TRAVIS_OS_NAME}" = "linux" && "${TRAVIS_PULL_REQUEST}" = "false" ] && npm run integration || false'
-  - '[ "${TRAVIS_OS_NAME}" = "osx" && "${TRAVIS_PULL_REQUEST}" = "false" ] && ./ci/release || false'
+  - '[ "${TRAVIS_OS_NAME}" = "linux" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ] && npm run integration || false'
+  - '[ "${TRAVIS_OS_NAME}" = "osx" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./ci/release-mac || false'
 
 matrix:
   include:
     - os: linux
       services:
-      - docker
+        - docker
+      language: node_js
+      node_js:
+        - "4.1"
     - os: osx
       language: generic
 
