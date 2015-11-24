@@ -13,12 +13,12 @@ script:
 
 matrix:
   include:
-     - os: linux
-       services:
-         - docker
-       language: node_js
-       node_js:
-         - "4.1"
+    - os: linux
+      services:
+        - docker
+      language: node_js
+      node_js:
+        - "4.1"
     - os: osx
       language: generic
 
