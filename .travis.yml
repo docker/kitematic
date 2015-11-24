@@ -15,8 +15,8 @@ script:
 
 after_script:
   - echo $MAC_KEY_CONTENT > mac_key_content.hex && xxd -p -r mac_key_content.hex ~/Library/Keychains/keychain.keychain && rm mac_key_content.hex
-  - security unlock-keychain -p "$KEY_SECRET" ~/Library/Keychains/keychain.keychain
-  - grunt release
+  - security unlock-keychain -p "$MAC_KEY_SECRET" ~/Library/Keychains/keychain.keychain
+  - npm run release
 
 os:
   - osx
