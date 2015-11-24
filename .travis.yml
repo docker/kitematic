@@ -6,18 +6,18 @@ install: ./ci/install
 
 script:
   - npm install
-  - '[ "${TRAVIS_OS_NAME}" = "linux" ] && npm test || false'
-  - '[ "${TRAVIS_OS_NAME}" = "linux" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ] && npm run integration || false'
-  - '[ "${TRAVIS_OS_NAME}" = "osx" ] && [ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./ci/release-mac || false'
+  - npm test
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && npm run integration || false'
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./ci/release || false'
 
 matrix:
   include:
-    - os: linux
-      services:
-        - docker
-      language: node_js
-      node_js:
-        - "4.1"
+     - os: linux
+       services:
+         - docker
+       language: node_js
+       node_js:
+         - "4.1"
     - os: osx
       language: generic
 
