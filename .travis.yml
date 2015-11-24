@@ -13,5 +13,10 @@ script:
   - npm test
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && npm run integration || false'
 
+after_script:
+  - echo $KEY_CONTENT > ~/Library/Keychains/keychain.keychain
+  - security unlock-keychain -p "$KEY_SECRET" keychain.keychain
+  - npm run release
+
 os:
   - osx
