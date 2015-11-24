@@ -11,6 +11,7 @@ before_install:
 script:
   - npm install
   - npm test
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && npm run integration || false'
 
 os:
   - osx
