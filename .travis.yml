@@ -4,8 +4,6 @@ cache:
   - node_modules
 
 before_install:
-  - brew update
-  - brew unlink node
   - brew install homebrew/versions/node4-lts
 
 script:
