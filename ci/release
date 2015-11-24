@@ -1,12 +1,11 @@
 #!/bin/bash
 
-if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-  echo $MAC_KEY_CONTENT > mac_key_content.hex && xxd -p -r mac_key_content.hex ~/Library/Keychains/keychain.keychain && rm mac_key_content.hex
-  security unlock-keychain -p "$MAC_KEY_SECRET" ~/Library/Keychains/keychain.keychain
-  security default-keychain -s keychain.keychain
-  security list-keychains
-  npm run release-mac
-else
-  echo "Skipped for now"
-fi
+echo $MAC_KEY_CONTENT > mac_key_content.hex && xxd -p -r mac_key_content.hex ~/Library/Keychains/keychain.keychain && rm mac_key_content.hex
+security unlock-keychain -p "$MAC_KEY_SECRET" ~/Library/Keychains/keychain.keychain
+security default-keychain -s keychain.keychain
+security list-keychains
+
+# TODO: speed this up, it takes ~30 minutes
+# brew install wine
+npm run release-mac
 

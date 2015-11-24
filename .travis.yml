@@ -1,24 +1,15 @@
-cache:
-  directories:
-  - node_modules
-
 install:
-  - ./ci/install
+  - brew unlink node
+  - brew update
+  - brew install homebrew/versions/node4-lts
 
 script:
   - npm install
   - npm test
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && npm run integration || false'
+
+after_script:
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./ci/release || false'
 
-matrix:
-  include:
-    - os: linux
-      services:
-        - docker
-      language: node_js
-      node_js:
-        - "4.1"
-    - os: osx
-      language: generic
-
+os:
+  - osx
