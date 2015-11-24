@@ -2,7 +2,8 @@ cache:
   directories:
   - node_modules
 
-install: ./ci/install
+install:
+  - ./ci/install
 
 script:
   - npm install
