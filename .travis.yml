@@ -12,13 +12,7 @@ script:
   - npm install
   - npm test
   - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && npm run integration || false'
-
-after_script:
-  - echo $MAC_KEY_CONTENT > mac_key_content.hex && xxd -p -r mac_key_content.hex ~/Library/Keychains/keychain.keychain && rm mac_key_content.hex
-  - security unlock-keychain -p "$MAC_KEY_SECRET" ~/Library/Keychains/keychain.keychain
-  - security list-keychains
-  - security default-keychain -s ~/Library/Keychains/keychain.keychain
-  - npm run release
+  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./ci/release || false'
 
 os:
   - osx
