@@ -1,6 +1,5 @@
 cache:
   directories:
-  - resources
   - node_modules
 
 before_install:
@@ -10,11 +9,15 @@ before_install:
 
 script:
   - npm install
-  - npm test
   - '[ "${TRAVIS_OS_NAME}" = "linux" ] && npm test || false'
   - '[ "${TRAVIS_OS_NAME}" = "linux" && "${TRAVIS_PULL_REQUEST}" = "false" ] && npm run integration || false'
   - '[ "${TRAVIS_OS_NAME}" = "osx" && "${TRAVIS_PULL_REQUEST}" = "false" ] && ./ci/release || false'
 
-os:
-  - osx
-  - linux
+matrix:
+  include:
+    - os: linux
+      services:
+      - docker
+    - os: osx
+      language: generic
+
