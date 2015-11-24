@@ -2,4 +2,4 @@ echo $MAC_KEY_CONTENT > mac_key_content.hex && xxd -p -r mac_key_content.hex ~/L
 security unlock-keychain -p "$MAC_KEY_SECRET" ~/Library/Keychains/keychain.keychain
 security default-keychain -s keychain.keychain
 security list-keychains
-npm run release
+npm run release-mac
