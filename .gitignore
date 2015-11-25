@@ -2,6 +2,7 @@
 .swp
 build
 dist
+release
 installer
 node_modules
 coverage

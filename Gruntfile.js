@@ -195,7 +195,7 @@ module.exports = function (grunt) {
         ].join(' && '),
       },
       zip: {
-        command: 'ditto -c -k --sequesterRsrc --keepParent <%= OSX_FILENAME_ESCAPED %> dist/' + BASENAME + '-' + packagejson.version + '-Mac.zip',
+        command: 'ditto -c -k --sequesterRsrc --keepParent <%= OSX_FILENAME_ESCAPED %> release/' + BASENAME + '-' + packagejson.version + '-Mac.zip',
       }
     },
 
@@ -206,7 +206,7 @@ module.exports = function (grunt) {
     compress: {
       windows: {
         options: {
-	        archive: './dist/' +  BASENAME + '-' + packagejson.version + '-Windows-Alpha.zip',
+	        archive: './release/' +  BASENAME + '-' + packagejson.version + '-Windows-Alpha.zip',
           mode: 'zip'
         },
         files: [{
