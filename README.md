@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/docker/kitematic.svg?branch=master)](https://travis-ci.org/kitematic/kitematic)
+[![Build Status](https://travis-ci.org/docker/kitematic.svg?branch=master)](https://travis-ci.org/docker/kitematic)
 
 
 [![Kitematic Logo](https://cloud.githubusercontent.com/assets/251292/5269258/1b229c3c-7a2f-11e4-96f1-e7baf3c86d73.png)](https://kitematic.com)
