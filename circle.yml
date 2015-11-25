@@ -2,5 +2,6 @@ machine:
   xcode:
     version: "7.0"
 
-cache_directories:
-  - node_modules
+dependencies:
+  cache_directories:
+    - node_modules
