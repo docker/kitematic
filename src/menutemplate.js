@@ -164,7 +164,7 @@ var MenuTemplate = function () {
       },
       {
         label: 'Kitematic',
-        accelerator: util.CommandOrCtrl() + '+0',
+        accelerator: 'Cmd+0',
         click: function () {
           remote.getCurrentWindow().show();
         }
