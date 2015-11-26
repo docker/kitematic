@@ -4,5 +4,5 @@ machine:
 
 dependencies:
   cache_directories:
-    - node_modules
-    - /usr/local/Cellar
+    - "node_modules"
+    - "/usr/local/Cellar"
