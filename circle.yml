@@ -5,3 +5,10 @@ machine:
 dependencies:
   cache_directories:
     - "node_modules"
+
+deployment:
+  release:
+    tag: /v.*/
+    owner: docker
+    commands:
+      - echo $CIRCLE_BRANCH
