@@ -96,7 +96,7 @@ var ContainerListItem = React.createClass({
 
     return (
       <Router.Link to="container" params={{name: container.Name}}>
-        <li onMouseEnter={self.handleItemMouseEnter} onMouseLeave={self.handleItemMouseLeave}>
+        <li onMouseEnter={self.handleItemMouseEnter} onMouseLeave={self.handleItemMouseLeave} onClick={self.handleClick}>
           {state}
           <div className="info">
             <div className="name">
