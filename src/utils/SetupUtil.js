@@ -51,6 +51,10 @@ export default {
     return _retryPromise.promise;
   },
 
+  setup() {
+    return util.isLinux() ? this.nativeSetup() : this.nonNativeSetup();
+  },
+
   async nativeSetup () {
     while (true) {
       try {
