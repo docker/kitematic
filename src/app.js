@@ -47,8 +47,7 @@ var router = Router.create({
 router.run(Handler => React.render(<Handler/>, document.body));
 routerContainer.set(router);
 
-let setup = util.isLinux() ? setupUtil.nativeSetup : setupUtil.nonNativeSetup;
-setup().then(() => {
+setupUtil.setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   docker.init();
   if (!hub.prompted() && !hub.loggedin()) {
