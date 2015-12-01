@@ -55,7 +55,6 @@ module.exports = function (grunt) {
           platform: 'darwin',
           arch: 'x64',
           asar: true,
-          'app-bundle-id': 'com.kitematic.kitematic',
           'app-version': packagejson.version
         }
       },
@@ -63,7 +62,7 @@ module.exports = function (grunt) {
         options: {
           name: LINUX_APPNAME,
           dir: 'build/',
-          out: 'dist/linux/',
+          out: 'dist',
           version: packagejson['electron-version'],
           platform: 'linux',
           arch: 'x64',
