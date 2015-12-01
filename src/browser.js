@@ -53,6 +53,10 @@ app.on('ready', function () {
     show: false
   });
 
+  if (process.env.NODE_ENV === 'development') {
+    mainWindow.openDevTools({detach: true});
+  }
+
   mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, 'index.html')));
 
   app.on('activate-with-no-open-windows', function () {

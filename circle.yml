@@ -1,3 +1,14 @@
 machine:
-  node:
-    version: 4.1.2
+  xcode:
+    version: "7.0"
+
+dependencies:
+  cache_directories:
+    - "node_modules"
+
+deployment:
+  release:
+    tag: /v.*/
+    owner: docker
+    commands:
+      - echo $CIRCLE_BRANCH

@@ -1,4 +1,4 @@
-FROM docs/base:hugo-github-linking
+FROM docs/base:latest
 MAINTAINER Mary Anthony <mary@docker.com> (@moxiegirl)
 
 RUN svn checkout https://github.com/docker/compose/trunk/docs /docs/content/compose
@@ -9,7 +9,8 @@ RUN svn checkout https://github.com/docker/tutorials/trunk/docs /docs/content
 RUN svn checkout https://github.com/docker/opensource/trunk/docs /docs/content/opensource
 RUN svn checkout https://github.com/docker/machine/trunk/docs /docs/content/machine
 
+ENV PROJECT=kitematic
 # To get the git info for this repo
 COPY . /src
 
-COPY . /docs/content/kitematic/
+COPY . /docs/content/$PROJECT/
