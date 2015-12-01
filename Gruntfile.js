@@ -209,7 +209,7 @@ module.exports = function (grunt) {
         ].join(' && '),
       },
       zip: {
-        command: 'ditto -c -k --sequesterRsrc --keepParent <%= OSX_FILENAME_ESCAPED %> dist/' + BASENAME + '-' + packagejson.version + '-Mac.zip',
+        command: 'ditto -c -k --sequesterRsrc --keepParent <%= OSX_FILENAME_ESCAPED %> release/' + BASENAME + '-' + packagejson.version + '-Mac.zip',
       }
     },
 
@@ -220,7 +220,7 @@ module.exports = function (grunt) {
     compress: {
       windows: {
         options: {
-	        archive: './dist/' +  BASENAME + '-' + packagejson.version + '-Windows-Alpha.zip',
+	        archive: './release/' +  BASENAME + '-' + packagejson.version + '-Windows-Alpha.zip',
           mode: 'zip'
         },
         files: [{
@@ -257,11 +257,8 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('default', ['newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
-  if(process.platform === 'linux') {
-    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:linux']);
-  } else {
-    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress']);
-  }
+  grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress']);
+  grunt.registerTask('release-mac', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip']);
 
   process.on('SIGINT', function () {
     grunt.task.run(['shell:electron:kill']);

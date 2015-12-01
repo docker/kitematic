@@ -15,7 +15,9 @@ class ContainerServerActions {
       'updated',
       'waiting',
       'kill',
-      'stopped'
+      'stopped',
+      'log',
+      'logs'
     );
   }
 }

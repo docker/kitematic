@@ -17,7 +17,7 @@ using Kitematic and Docker.
 ### Create Minecraft Server Container
 
 First, if you haven't yet done so, [download and start
-Kitematic](/). Once installed and running, the app should look like this:
+Kitematic](index.md). Once installed and running, the app should look like this:
 
 Create a container from the recommended Minecraft image by clicking the "Create"
 button.

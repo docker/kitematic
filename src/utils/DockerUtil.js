@@ -8,13 +8,15 @@ import util from './Util';
 import hubUtil from './HubUtil';
 import metrics from '../utils/MetricsUtil';
 import containerServerActions from '../actions/ContainerServerActions';
-import Promise from 'bluebird';
 import rimraf from 'rimraf';
+import stream from 'stream';
 
 export default {
   host: null,
   client: null,
   placeholders: {},
+  streams: {},
+  activeContainerName: null,
 
   setup (ip, name) {
     if (!ip || !name) {
@@ -357,6 +359,85 @@ export default {
     });
   },
 
+  active (name) {
+    this.detach();
+    this.activeContainerName = name;
+
+    if (name) {
+      this.logs();
+    }
+  },
+
+  logs () {
+    if (!this.activeContainerName) {
+      return;
+    }
+
+    this.client.getContainer(this.activeContainerName).logs({
+      stdout: true,
+      stderr: true,
+      tail: 1000,
+      follow: false,
+      timestamps: 1
+    }, (err, logStream) => {
+      if (err) {
+        return;
+      }
+
+      let logs = '';
+      logStream.setEncoding('utf8');
+      logStream.on('data', chunk => logs += chunk);
+      logStream.on('end', () => {
+        containerServerActions.logs({name: this.activeContainerName, logs});
+        this.attach();
+      });
+    });
+  },
+
+  attach () {
+    if (!this.activeContainerName) {
+      return;
+    }
+
+    this.client.getContainer(this.activeContainerName).logs({
+      stdout: true,
+      stderr: true,
+      tail: 0,
+      follow: true,
+      timestamps: 1
+    }, (err, logStream) => {
+      if (err) {
+        return;
+      }
+
+      if (this.stream) {
+        this.detach();
+      }
+      this.stream = logStream;
+
+      let timeout = null;
+      let batch = '';
+      logStream.setEncoding('utf8');
+      logStream.on('data', (chunk) => {
+        batch += chunk;
+        if (!timeout) {
+          timeout = setTimeout(() => {
+            containerServerActions.log({name: this.activeContainerName, entry: batch});
+            timeout = null;
+            batch = '';
+          }, 16);
+        }
+      });
+    });
+  },
+
+  detach () {
+    if (this.stream) {
+      this.stream.destroy();
+      this.stream = null;
+    }
+  },
+
   listen () {
     this.client.getEvents((error, stream) => {
       if (error || !stream) {
@@ -368,16 +449,25 @@ export default {
       stream.on('data', json => {
         let data = JSON.parse(json);
 
-        if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete' || data.status === 'attach') {
+        if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete' ||  data.status === 'attach') {
           return;
         }
 
         if (data.status === 'destroy') {
           containerServerActions.destroyed({id: data.id});
+          this.detach(data.id);
         } else if (data.status === 'kill') {
           containerServerActions.kill({id: data.id});
+          this.detach(data.id);
         } else if (data.status === 'stop') {
           containerServerActions.stopped({id: data.id});
+          this.detach(data.id);
+        } else if (data.status === 'create') {
+          this.logs();
+          this.fetchContainer(data.id);
+        } else if (data.status === 'start') {
+          this.attach();
+          this.fetchContainer(data.id);
         } else if (data.id) {
           this.fetchContainer(data.id);
         }

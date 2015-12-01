@@ -38,6 +38,10 @@ class ContainerActions {
   run (name, repo, tag) {
     dockerUtil.run(name, repo, tag);
   }
+
+  active (name) {
+    dockerUtil.active(name);
+  }
 }
 
 export default alt.createActions(ContainerActions);

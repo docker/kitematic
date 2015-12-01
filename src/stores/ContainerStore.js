@@ -3,6 +3,8 @@ import alt from '../alt';
 import containerServerActions from '../actions/ContainerServerActions';
 import containerActions from '../actions/ContainerActions';
 
+let MAX_LOG_SIZE = 3000;
+
 class ContainerStore {
   constructor () {
     this.bindActions(containerActions);
@@ -102,10 +104,8 @@ class ContainerStore {
     if (containers[container.Name] && containers[container.Name].State.Updating) {
       return;
     }
-    // Trigger log update
-    // TODO: fix this loading multiple times
-    // LogStore.fetch(container.Name);
 
+    container.Logs = containers[container.Name].Logs;
     containers[container.Name] = container;
 
     this.setState({containers});
@@ -141,7 +141,7 @@ class ContainerStore {
     }
   }
 
-  waiting({name, waiting}) {
+  waiting ({name, waiting}) {
     let containers = this.containers;
     if (containers[name]) {
       containers[name].State.Waiting = waiting;
@@ -156,6 +156,33 @@ class ContainerStore {
 
   clearPending () {
     this.setState({pending: null});
+  }
+
+  log ({name, entry}) {
+    let container = this.containers[name];
+    if (!container) {
+      return;
+    }
+
+    if (!container.Logs) {
+      container.Logs = [];
+    }
+
+    container.Logs.push.apply(container.Logs, entry.split('\n').filter(e => e.length));
+    container.Logs = container.Logs.slice(container.Logs.length - MAX_LOG_SIZE, MAX_LOG_SIZE);
+    this.emitChange();
+  }
+
+  logs ({name, logs}) {
+    let container = this.containers[name];
+
+    if (!container) {
+      return;
+    }
+
+    container.Logs = logs.split('\n');
+    container.Logs = container.Logs.slice(container.Logs.length - MAX_LOG_SIZE, MAX_LOG_SIZE);
+    this.emitChange();
   }
 
   static generateName (repo) {
