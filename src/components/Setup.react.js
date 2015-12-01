@@ -3,6 +3,7 @@ import Router from 'react-router';
 import Radial from './Radial.react.js';
 import RetinaImage from 'react-retina-image';
 import Header from './Header.react';
+import Util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
 import setupStore from '../stores/SetupStore';
 import setupActions from '../actions/SetupActions';
@@ -43,6 +44,13 @@ var Setup = React.createClass({
     shell.openExternal('https://www.docker.com/docker-toolbox');
   },
 
+  handleLinuxDockerInstall: function () {
+    metrics.track('Opening Linux Docker installation instructions', {
+      from: 'setup'
+    });
+    shell.openExternal('http://docs.docker.com/linux/started/');
+  },
+
   renderContents: function () {
     return (
       <div className="contents">
@@ -74,6 +82,25 @@ var Setup = React.createClass({
   },
 
   renderError: function () {
+    let deleteVmAndRetry;
+
+    if (Util.isLinux()) {
+      if (!this.state.started) {
+        deleteVmAndRetry = (
+          <button className="btn btn-action" onClick={this.handleLinuxDockerInstall}>Install Docker</button>
+        );
+      }
+    } else {
+      if (this.state.started) {
+        deleteVmAndRetry = (
+          <button className="btn btn-action" onClick={this.handleErrorRemoveRetry}>Delete VM &amp; Retry Setup</button>
+        );
+      } else {
+        deleteVmAndRetry = (
+          <button className="btn btn-action" onClick={this.handleToolBox}>Get Toolbox</button>
+        );
+      }
+    }
     return (
       <div className="setup">
         <Header hideLogin={true}/>
@@ -93,7 +120,7 @@ var Setup = React.createClass({
               <p className="error">{this.state.error.message || this.state.error}</p>
               <p className="setup-actions">
                 <button className="btn btn-action" onClick={this.handleErrorRetry}>Retry Setup</button>
-                {this.state.started ? <button className="btn btn-action" onClick={this.handleErrorRemoveRetry}>Delete VM &amp; Retry Setup</button> : <button className="btn btn-action" onClick={this.handleToolBox}>Get Toolbox</button>}
+                {{deleteVmAndRetry}}
               </p>
             </div>
           </div>

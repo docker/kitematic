@@ -17,6 +17,7 @@ import Router from 'react-router';
 import routes from './routes';
 import routerContainer from './router';
 import repositoryActions from './actions/RepositoryActions';
+import util from './utils/Util';
 var app = remote.require('app');
 
 hubUtil.init();
@@ -46,7 +47,8 @@ var router = Router.create({
 router.run(Handler => React.render(<Handler/>, document.body));
 routerContainer.set(router);
 
-setupUtil.setup().then(() => {
+let setup = util.isLinux() ? setupUtil.nativeSetup : setupUtil.nonNativeSetup;
+setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   docker.init();
   if (!hub.prompted() && !hub.loggedin()) {

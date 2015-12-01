@@ -2,8 +2,8 @@ import _ from 'underscore';
 import fs from 'fs';
 import path from 'path';
 import Promise from 'bluebird';
-import util from './Util';
 import bugsnag from 'bugsnag-js';
+import util from './Util';
 import virtualBox from './VirtualBoxUtil';
 import setupServerActions from '../actions/SetupServerActions';
 import metrics from './MetricsUtil';
@@ -51,7 +51,31 @@ export default {
     return _retryPromise.promise;
   },
 
-  async setup () {
+  async nativeSetup () {
+    while (true) {
+      try {
+        docker.setup('localhost', machine.name());
+        docker.isDockerRunning();
+
+        break;
+      } catch (error) {
+        router.get().transitionTo('setup');
+        metrics.track('Native Setup Failed');
+        setupServerActions.error({error});
+
+        let message = error.message.split('\n');
+        let lastLine = message.length > 1 ? message[message.length - 2] : 'Docker Machine encountered an error.';
+        bugsnag.notify('Native Setup Failed', lastLine, {
+          'Docker Machine Logs': error.message
+        }, 'info');
+
+        this.clearTimers();
+        await this.pause();
+      }
+    }
+  },
+
+  async nonNativeSetup () {
     let virtualBoxVersion = null;
     let machineVersion = null;
     while (true) {
