@@ -1,4 +1,5 @@
 require.main.paths.splice(0, 0, process.env.NODE_PATH);
+
 import electron from 'electron';
 const remote = electron.remote;
 const Menu = remote.Menu;
