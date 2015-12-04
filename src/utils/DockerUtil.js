@@ -10,6 +10,7 @@ import metrics from '../utils/MetricsUtil';
 import containerServerActions from '../actions/ContainerServerActions';
 import rimraf from 'rimraf';
 import stream from 'stream';
+import JSONStream from 'JSONStream';
 
 export default {
   host: null,
@@ -446,9 +447,7 @@ export default {
       }
 
       stream.setEncoding('utf8');
-      stream.on('data', json => {
-        let data = JSON.parse(json);
-
+      stream.pipe(JSONStream.parse()).on('data', data => {
         if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete' ||  data.status === 'attach') {
           return;
         }
@@ -509,9 +508,7 @@ export default {
       let error = null;
 
       // data is associated with one layer only (can be identified with id)
-      stream.on('data', str => {
-        var data = JSON.parse(str);
-
+      stream.pipe(JSONStream.parse()).on('data', data => {
         if (data.error) {
           error = data.error;
           return;
