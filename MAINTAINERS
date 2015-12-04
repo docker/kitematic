@@ -1,4 +1,46 @@
-Jeff Morgan <jmorgan@docker.com> (@jeffdm)
-Sean Li <mail@shang.li> (@elesant)
-Michael Chiang <mchiang@docker.com> (@mchiang0610)
-Ben French <me@frenchben.com> (@FrenchBen)
+# Kitematic maintainers file
+#
+# This file describes who runs the docker/kitematic project and how.
+# This is a living document - if you see something out of date or missing, speak up!
+#
+# It is structured to be consumable by both humans and programs.
+# To extract its contents programmatically, use any TOML-compliant parser.
+#
+# This file is compiled into the MAINTAINERS file in docker/opensource.
+#
+[Org]
+	[Org."Core maintainers"]
+		people = [
+			"elesant",
+			"FrenchBen",
+			"jeffdm",
+			"mchiang0610",
+		]
+
+[people]
+
+# A reference list of all people associated with the project.
+# All other sections should refer to people by their canonical key
+# in the people section.
+
+	# ADD YOURSELF HERE IN ALPHABETICAL ORDER
+
+	[people.elesant]
+	Name = "Sean Li"
+	Email = "mail@shang.li"
+	GitHub = "elesant"
+
+	[people.FrenchBen]
+	Name = "Ben French"
+	Email = "me@frenchben.com"
+	GitHub = "FrenchBen"
+
+	[people.jeffdm]
+	Name = "Jeff Morgan"
+	Email = "jmorgan@docker.com"
+	GitHub = "jeffdm"
+
+	[people.mchiang0610]
+	Name = "Michael Chiang"
+	Email = "mchiang@docker.com"
+	GitHub = "mchiang0610"
