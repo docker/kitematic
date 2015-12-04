@@ -100,14 +100,20 @@ class ContainerStore {
   }
 
   updated ({container}) {
+    if (!container || !container.Name) {
+      return;
+    }
+
     let containers = this.containers;
     if (containers[container.Name] && containers[container.Name].State.Updating) {
       return;
     }
 
-    container.Logs = containers[container.Name].Logs;
-    containers[container.Name] = container;
+    if (containers[container.Name] && containers[container.Name].Logs) {
+      container.Logs = containers[container.Name].Logs;
+    }
 
+    containers[container.Name] = container;
     this.setState({containers});
   }
 
