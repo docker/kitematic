@@ -1,4 +1,3 @@
-import exec from 'exec';
 import child_process from 'child_process';
 import Promise from 'bluebird';
 import fs from 'fs';
@@ -20,12 +19,11 @@ module.exports = {
       }
     }
 
-    let fn = Array.isArray(args) ? exec : child_process.exec;
     return new Promise((resolve, reject) => {
-      fn(args, options, (stderr, stdout, code) => {
-        if (code) {
-          var cmd = Array.isArray(args) ? args.join(' ') : args;
-          reject(new Error(cmd + ' returned non zero exit code. Stderr: ' + stderr));
+      var cmd = Array.isArray(args) ? args.join(' ') : args;
+      child_process.exec(cmd, options, (error, stdout, stderr) => {
+        if (error) {
+          reject(new Error('Encountered an error: ' + error));
         } else {
           resolve(stdout);
         }
