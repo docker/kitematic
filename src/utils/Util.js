@@ -8,20 +8,20 @@ var dialog = remote.require('dialog');
 var app = remote.require('app');
 
 module.exports = {
-  exec: function (args, options) {
-    options = options || {};
-
-    // Add resources dir to exec path for Windows
-    if (this.isWindows()) {
-      options.env = options.env || {};
-      if (!options.env.PATH) {
-        options.env.PATH = process.env.RESOURCES_PATH + ';' + process.env.PATH;
-      }
-    }
-
+  execFile: function (args, options) {
     return new Promise((resolve, reject) => {
-      var cmd = Array.isArray(args) ? args.join(' ') : args;
-      child_process.exec(cmd, options, (error, stdout, stderr) => {
+      child_process.execFile(args[0], args.slice(1), options, (error, stdout, stderr) => {
+        if (error) {
+          reject(new Error('Encountered an error: ' + error));
+        } else {
+          resolve(stdout);
+        }
+      });
+    });
+  },
+  exec: function (args, options) {
+    return new Promise((resolve, reject) => {
+      child_process.exec(args, options, (error, stdout, stderr) => {
         if (error) {
           reject(new Error('Encountered an error: ' + error));
         } else {
