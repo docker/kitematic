@@ -27,14 +27,10 @@ var ContainerSettingsVolumes = React.createClass({
 
       metrics.track('Choose Directory for Volume');
 
-      if(util.isWindows()) {
-        directory = util.windowsToLinuxPath(directory);
-      }
-
       var mounts = _.clone(this.props.container.Mounts);
       _.each(mounts, m => {
         if (m.Destination === dockerVol) {
-          m.Source = directory;
+          m.Source = util.windowsToLinuxPath(directory);
         }
       });
 
@@ -50,19 +46,14 @@ var ContainerSettingsVolumes = React.createClass({
       from: 'settings'
     });
 
-    var hostConfig = _.clone(this.props.container.HostConfig);
-    var binds = hostConfig.Binds;
     var mounts = _.clone(this.props.container.Mounts);
     _.each(mounts, m => {
       if (m.Destination === dockerVol) {
         m.Source = null;
       }
     });
-    var index = _.findIndex(binds, bind => bind.indexOf(`:${dockerVol}`) !== -1);
-    if (index >= 0) {
-      binds.splice(index, 1);
-    }
-    containerActions.update(this.props.container.Name, {HostConfig: hostConfig, Binds: binds, Mounts: mounts});
+
+    containerActions.update(this.props.container.Name, {Mounts: mounts});
   },
   handleOpenVolumeClick: function (path) {
     metrics.track('Opened Volume Directory', {

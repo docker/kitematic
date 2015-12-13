@@ -248,6 +248,11 @@ export default {
         existingData.Tty = existingData.Config.Tty;
         existingData.OpenStdin = existingData.Config.OpenStdin;
       }
+
+      data.Mounts = data.Mounts || existingData.Mounts;
+      data.Binds = data.Mounts.map(m => m.Source + ':' + m.Destination);
+
+      // Preserve Ports
       let networking = _.extend(existingData.NetworkSettings, data.NetworkSettings);
       if (networking && networking.Ports) {
         let exposed = _.reduce(networking.Ports, (res, value, key) => {
@@ -273,8 +278,8 @@ export default {
         containerServerActions.error({name, error});
         return;
       }
-      var oldPath = path.join(util.home(), 'Kitematic', name);
-      var newPath = path.join(util.home(), 'Kitematic', newName);
+      var oldPath = util.windowsToLinuxPath(path.join(util.home(), util.documents(), 'Kitematic', name));
+      var newPath = util.windowsToLinuxPath(path.join(util.home(), util.documents(), 'Kitematic', newName));
 
       this.client.getContainer(newName).inspect((error, container) => {
         if (error) {
@@ -285,13 +290,12 @@ export default {
           if (fs.existsSync(oldPath)) {
             fs.renameSync(oldPath, newPath);
           }
-          var binds = _.pairs(container.Volumes).map(function (pair) {
-            return pair[1] + ':' + pair[0];
+
+          container.Mounts.forEach(m => {
+            m.Source = m.Source.replace(oldPath, newPath);
           });
-          var newBinds = binds.map(b => {
-            return b.replace(path.join(util.home(), 'Kitematic', name), path.join(util.home(), 'Kitematic', newName));
-          });
-          this.updateContainer(newName, {Binds: newBinds});
+
+          this.updateContainer(newName, {Mounts: container.Mounts});
           rimraf(oldPath, () => {});
         });
       });
