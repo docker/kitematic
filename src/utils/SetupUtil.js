@@ -137,9 +137,9 @@ export default {
         let tries = 80, ip = null;
         while (!ip && tries > 0) {
           try {
+            tries -= 1;
             console.log('Trying to fetch machine IP, tries left: ' + tries);
             ip = await machine.ip();
-            tries -= 1;
             await Promise.delay(1000);
           } catch (err) {}
         }
@@ -153,11 +153,12 @@ export default {
         break;
       } catch (error) {
         router.get().transitionTo('setup');
-        metrics.track('Setup Failed', {
+
+        let novtx = error.message.indexOf('This computer doesn\'t have VT-X/AMD-v enabled') !== -1;
+        metrics.track(novtx ? 'Setup Halted' : 'Setup Failed', {
           virtualBoxVersion,
           machineVersion
         });
-        setupServerActions.error({error});
 
         let message = error.message.split('\n');
         let lastLine = message.length > 1 ? message[message.length - 2] : 'Docker Machine encountered an error.';
@@ -169,6 +170,8 @@ export default {
           'Machine Version': machineVersion,
           groupingHash: machineVersion
         }, 'info');
+
+        setupServerActions.error({error: new Error(lastLine)});
 
         this.clearTimers();
         await this.pause();
