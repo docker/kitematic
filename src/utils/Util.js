@@ -10,7 +10,7 @@ var app = remote.require('app');
 module.exports = {
   execFile: function (args, options) {
     return new Promise((resolve, reject) => {
-      child_process.execFile(args[0], args.slice(1), options, (error, stdout, stderr) => {
+      child_process.execFile(args[0], args.slice(1), options, (error, stdout) => {
         if (error) {
           reject(new Error('Encountered an error: ' + error));
         } else {
@@ -21,7 +21,7 @@ module.exports = {
   },
   exec: function (args, options) {
     return new Promise((resolve, reject) => {
-      child_process.exec(args, options, (error, stdout, stderr) => {
+      child_process.exec(args, options, (error, stdout) => {
         if (error) {
           reject(new Error('Encountered an error: ' + error));
         } else {

@@ -121,6 +121,7 @@ export default {
           await machine.create();
         } else {
           let state = await machine.status();
+          console.log(state);
           if (state !== 'Running') {
             if (state === 'Saved') {
               router.get().transitionTo('setup');
@@ -171,7 +172,7 @@ export default {
           groupingHash: machineVersion
         }, 'info');
 
-        setupServerActions.error({error: new Error(lastLine)});
+        setupServerActions.error({error: new Error(message)});
 
         this.clearTimers();
         await this.pause();

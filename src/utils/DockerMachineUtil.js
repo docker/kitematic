@@ -3,6 +3,7 @@ import path from 'path';
 import Promise from 'bluebird';
 import fs from 'fs';
 import util from './Util';
+import child_process from 'child_process';
 
 var DockerMachine = {
   command: function () {
@@ -85,8 +86,14 @@ var DockerMachine = {
     return util.execFile([this.command(), 'tls-regenerate-certs', '-f', machineName]);
   },
   status: function (machineName = this.name()) {
-    return util.execFile([this.command(), 'status', machineName]).then(stdout => {
-      return Promise.resolve(stdout.trim().replace('\n', ''));
+    return new Promise((resolve, reject) => {
+      child_process.execFile(this.command(), ['status', machineName], (error, stdout, stderr) => {
+        if (error) {
+          reject(new Error('Encountered an error: ' + error));
+        } else {
+          resolve(stderr.trim());
+        }
+      });
     });
   },
   disk: function (machineName = this.name()) {
