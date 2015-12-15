@@ -91,7 +91,7 @@ var DockerMachine = {
         if (error) {
           reject(new Error('Encountered an error: ' + error));
         } else {
-          resolve(stderr.trim());
+          resolve(stdout.trim() + stderr.trim());
         }
       });
     });
