@@ -1,18 +1,14 @@
+sudo: false
+
+language: node_js
+node_js:
+    - "4.1"
+
 cache:
   directories:
-  - resources
-  - node_modules
-
-before_install:
-  - brew unlink node
-  - brew update
-  - brew install homebrew/versions/node4-lts
+    - node_modules
 
 script:
   - npm install
   - npm test
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && npm run integration || false'
-  - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && ./ci/release || false'
 
-os:
-  - osx

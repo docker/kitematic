@@ -2,7 +2,6 @@ import React from 'react/addons';
 import remote from 'remote';
 import RetinaImage from 'react-retina-image';
 import ipc from 'ipc';
-var autoUpdater = remote.require('auto-updater');
 import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
 var Menu = remote.require('menu');
@@ -32,7 +31,6 @@ var Header = React.createClass({
         updateAvailable: true
       });
     });
-    autoUpdater.checkForUpdates();
   },
   componentWillUnmount: function () {
     document.removeEventListener('keyup', this.handleDocumentKeyUp, false);

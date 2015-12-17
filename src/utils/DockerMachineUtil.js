@@ -3,6 +3,7 @@ import path from 'path';
 import Promise from 'bluebird';
 import fs from 'fs';
 import util from './Util';
+import child_process from 'child_process';
 
 var DockerMachine = {
   command: function () {
@@ -22,7 +23,7 @@ var DockerMachine = {
     return fs.existsSync(this.command());
   },
   version: function () {
-    return util.exec([this.command(), '-v']).then(stdout => {
+    return util.execFile([this.command(), '-v']).then(stdout => {
       try {
         var matchlist = stdout.match(/(\d+\.\d+\.\d+).*/);
         if (!matchlist || matchlist.length < 2) {
@@ -57,40 +58,46 @@ var DockerMachine = {
     });
   },
   create: function (machineName = this.name()) {
-    return util.exec([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
+    return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
   },
   start: function (machineName = this.name()) {
-    return util.exec([this.command(), '-D', 'start', machineName]);
+    return util.execFile([this.command(), '-D', 'start', machineName]);
   },
   stop: function (machineName = this.name()) {
-    return util.exec([this.command(), 'stop', machineName]);
+    return util.execFile([this.command(), 'stop', machineName]);
   },
   upgrade: function (machineName = this.name()) {
-    return util.exec([this.command(), 'upgrade', machineName]);
+    return util.execFile([this.command(), 'upgrade', machineName]);
   },
   rm: function (machineName = this.name()) {
-    return util.exec([this.command(), 'rm', '-f', machineName]);
+    return util.execFile([this.command(), 'rm', '-f', machineName]);
   },
   ip: function (machineName = this.name()) {
-    return util.exec([this.command(), 'ip', machineName]).then(stdout => {
+    return util.execFile([this.command(), 'ip', machineName]).then(stdout => {
       return Promise.resolve(stdout.trim().replace('\n', ''));
     });
   },
   url: function (machineName = this.name()) {
-    return util.exec([this.command(), 'url', machineName]).then(stdout => {
+    return util.execFile([this.command(), 'url', machineName]).then(stdout => {
       return Promise.resolve(stdout.trim().replace('\n', ''));
     });
   },
   regenerateCerts: function (machineName = this.name()) {
-    return util.exec([this.command(), 'tls-regenerate-certs', '-f', machineName]);
+    return util.execFile([this.command(), 'tls-regenerate-certs', '-f', machineName]);
   },
   status: function (machineName = this.name()) {
-    return util.exec([this.command(), 'status', machineName]).then(stdout => {
-      return Promise.resolve(stdout.trim().replace('\n', ''));
+    return new Promise((resolve, reject) => {
+      child_process.execFile(this.command(), ['status', machineName], (error, stdout, stderr) => {
+        if (error) {
+          reject(new Error('Encountered an error: ' + error));
+        } else {
+          resolve(stdout.trim() + stderr.trim());
+        }
+      });
     });
   },
   disk: function (machineName = this.name()) {
-    return util.exec([this.command(), 'ssh', machineName, 'df']).then(stdout => {
+    return util.execFile([this.command(), 'ssh', machineName, 'df']).then(stdout => {
       try {
         var lines = stdout.split('\n');
         var dataline = _.find(lines, function (line) {
@@ -114,7 +121,7 @@ var DockerMachine = {
     });
   },
   memory: function (machineName = this.name()) {
-    return util.exec([this.command(), 'ssh', machineName, 'free -m']).then(stdout => {
+    return util.execFile([this.command(), 'ssh', machineName, 'free -m']).then(stdout => {
       try {
         var lines = stdout.split('\n');
         var dataline = _.find(lines, function (line) {
@@ -151,10 +158,15 @@ var DockerMachine = {
           }
         });
       });
+    } else if (util.isLinux()) {
+      cmd = cmd || process.env.SHELL;
+      var terminal = util.linuxTerminal();
+      if (terminal)
+        util.execFile(terminal.concat([cmd])).then(() => {});
     } else {
       cmd = cmd || process.env.SHELL;
       this.url(machineName).then(machineUrl => {
-        util.exec([path.join(process.env.RESOURCES_PATH, 'terminal'), `DOCKER_HOST=${machineUrl} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machineName)} DOCKER_TLS_VERIFY=1 ${cmd}`]).then(() => {});
+        util.execFile([path.join(process.env.RESOURCES_PATH, 'terminal'), `DOCKER_HOST=${machineUrl} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machineName)} DOCKER_TLS_VERIFY=1 ${cmd}`]).then(() => {});
       });
     }
   },

@@ -2,8 +2,8 @@ import _ from 'underscore';
 import fs from 'fs';
 import path from 'path';
 import Promise from 'bluebird';
-import util from './Util';
 import bugsnag from 'bugsnag-js';
+import util from './Util';
 import virtualBox from './VirtualBoxUtil';
 import setupServerActions from '../actions/SetupServerActions';
 import metrics from './MetricsUtil';
@@ -51,7 +51,35 @@ export default {
     return _retryPromise.promise;
   },
 
-  async setup () {
+  setup() {
+    return util.isLinux() ? this.nativeSetup() : this.nonNativeSetup();
+  },
+
+  async nativeSetup () {
+    while (true) {
+      try {
+        docker.setup('localhost', machine.name());
+        docker.isDockerRunning();
+
+        break;
+      } catch (error) {
+        router.get().transitionTo('setup');
+        metrics.track('Native Setup Failed');
+        setupServerActions.error({error});
+
+        let message = error.message.split('\n');
+        let lastLine = message.length > 1 ? message[message.length - 2] : 'Docker Machine encountered an error.';
+        bugsnag.notify('Native Setup Failed', lastLine, {
+          'Docker Machine Logs': error.message
+        }, 'info');
+
+        this.clearTimers();
+        await this.pause();
+      }
+    }
+  },
+
+  async nonNativeSetup () {
     let virtualBoxVersion = null;
     let machineVersion = null;
     while (true) {
@@ -93,6 +121,7 @@ export default {
           await machine.create();
         } else {
           let state = await machine.status();
+          console.log(state);
           if (state !== 'Running') {
             if (state === 'Saved') {
               router.get().transitionTo('setup');
@@ -109,9 +138,9 @@ export default {
         let tries = 80, ip = null;
         while (!ip && tries > 0) {
           try {
+            tries -= 1;
             console.log('Trying to fetch machine IP, tries left: ' + tries);
             ip = await machine.ip();
-            tries -= 1;
             await Promise.delay(1000);
           } catch (err) {}
         }
@@ -125,11 +154,12 @@ export default {
         break;
       } catch (error) {
         router.get().transitionTo('setup');
-        metrics.track('Setup Failed', {
+
+        let novtx = error.message.indexOf('This computer doesn\'t have VT-X/AMD-v enabled') !== -1;
+        metrics.track(novtx ? 'Setup Halted' : 'Setup Failed', {
           virtualBoxVersion,
           machineVersion
         });
-        setupServerActions.error({error});
 
         let message = error.message.split('\n');
         let lastLine = message.length > 1 ? message[message.length - 2] : 'Docker Machine encountered an error.';
@@ -141,6 +171,8 @@ export default {
           'Machine Version': machineVersion,
           groupingHash: machineVersion
         }, 'info');
+
+        setupServerActions.error({error: new Error(message)});
 
         this.clearTimers();
         await this.pause();

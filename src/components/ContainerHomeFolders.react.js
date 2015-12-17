@@ -28,17 +28,10 @@ var ContainerHomeFolder = React.createClass({
           var mounts = _.clone(this.props.container.Mounts);
           var newSource = path.join(util.home(), util.documents(), 'Kitematic', this.props.container.Name, destination);
 
-          var binds = mounts.map(function (m) {
-            let source = m.Source;
+          mounts.forEach(m => {
             if (m.Destination === destination) {
-              source = newSource;
+              m.Source = util.windowsToLinuxPath(newSource);
             }
-
-            if(util.isWindows()) {
-              return util.windowsToLinuxPath(source) + ':' + m.Destination;
-            }
-
-            return source + ':' + m.Destination;
           });
 
           mkdirp(newSource, function (err) {
@@ -48,7 +41,7 @@ var ContainerHomeFolder = React.createClass({
             }
           });
 
-          containerActions.update(this.props.container.Name, {Binds: binds});
+          containerActions.update(this.props.container.Name, {Mounts: mounts});
         }
       });
     } else {

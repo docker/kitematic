@@ -7,14 +7,15 @@
     flex-direction: row;
     padding: 1rem;
     .left {
-      width: 100%;
+      display: flex;
+      flex: 0.9 1 0;
       flex-direction: column;
       margin-right: 1rem;
     }
     .right {
+      display: flex;
+      flex: 0.1 0 300px;
       width: 40%;
-      min-width: 200px;
-      max-width: 600px;
       flex-direction: column;
     }
     .full {
@@ -103,7 +104,6 @@
           color: @gray-lightest;
           font-family: @font-code;
           font-size: 10px;
-          white-space: pre-wrap;
           -webkit-user-select: text;
           padding: 1.2rem 1.2rem 5rem 1.2rem;
           overflow: auto;

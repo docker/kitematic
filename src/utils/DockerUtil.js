@@ -3,37 +3,46 @@ import fs from 'fs';
 import path from 'path';
 import dockerode from 'dockerode';
 import _ from 'underscore';
+import child_process from 'child_process';
 import util from './Util';
 import hubUtil from './HubUtil';
 import metrics from '../utils/MetricsUtil';
 import containerServerActions from '../actions/ContainerServerActions';
-import Promise from 'bluebird';
 import rimraf from 'rimraf';
+import stream from 'stream';
+import JSONStream from 'JSONStream';
 
 export default {
   host: null,
   client: null,
   placeholders: {},
+  streams: {},
+  activeContainerName: null,
 
   setup (ip, name) {
     if (!ip || !name) {
       throw new Error('Falsy ip or name passed to docker client setup');
     }
 
-    let certDir = path.join(util.home(), '.docker/machine/machines/', name);
-    if (!fs.existsSync(certDir)) {
-      throw new Error('Certificate directory does not exist');
-    }
+    if (util.isLinux()) {
+      this.host = 'localhost';
+      this.client = new dockerode({socketPath: '/var/run/docker.sock'});
+    } else {
+      let certDir = path.join(util.home(), '.docker/machine/machines/', name);
+      if (!fs.existsSync(certDir)) {
+        throw new Error('Certificate directory does not exist');
+      }
 
-    this.host = ip;
-    this.client = new dockerode({
-      protocol: 'https',
-      host: ip,
-      port: 2376,
-      ca: fs.readFileSync(path.join(certDir, 'ca.pem')),
-      cert: fs.readFileSync(path.join(certDir, 'cert.pem')),
-      key: fs.readFileSync(path.join(certDir, 'key.pem'))
-    });
+      this.host = ip;
+      this.client = new dockerode({
+        protocol: 'https',
+        host: ip,
+        port: 2376,
+        ca: fs.readFileSync(path.join(certDir, 'ca.pem')),
+        cert: fs.readFileSync(path.join(certDir, 'cert.pem')),
+        key: fs.readFileSync(path.join(certDir, 'key.pem'))
+      });
+    }
   },
 
   init () {
@@ -64,6 +73,14 @@ export default {
         });
       });
     });
+  },
+
+  isDockerRunning () {
+    try {
+      child_process.execSync('ps ax | grep "docker daemon" | grep -v grep');
+    } catch (error) {
+      throw new Error('Cannot connect to the Docker daemon. The daemon is not running.');
+    }
   },
 
   startContainer (name, containerData) {
@@ -109,7 +126,7 @@ export default {
         return;
       }
 
-      containerData.Cmd = image.Config.Cmd || 'bash';
+      containerData.Cmd = image.Config.Cmd || image.Config.Entrypoint || 'bash';
       let existing = this.client.getContainer(name);
       existing.kill(() => {
         existing.remove(() => {
@@ -231,6 +248,11 @@ export default {
         existingData.Tty = existingData.Config.Tty;
         existingData.OpenStdin = existingData.Config.OpenStdin;
       }
+
+      data.Mounts = data.Mounts || existingData.Mounts;
+      data.Binds = data.Mounts.map(m => m.Source + ':' + m.Destination);
+
+      // Preserve Ports
       let networking = _.extend(existingData.NetworkSettings, data.NetworkSettings);
       if (networking && networking.Ports) {
         let exposed = _.reduce(networking.Ports, (res, value, key) => {
@@ -256,8 +278,8 @@ export default {
         containerServerActions.error({name, error});
         return;
       }
-      var oldPath = path.join(util.home(), 'Kitematic', name);
-      var newPath = path.join(util.home(), 'Kitematic', newName);
+      var oldPath = util.windowsToLinuxPath(path.join(util.home(), util.documents(), 'Kitematic', name));
+      var newPath = util.windowsToLinuxPath(path.join(util.home(), util.documents(), 'Kitematic', newName));
 
       this.client.getContainer(newName).inspect((error, container) => {
         if (error) {
@@ -268,13 +290,12 @@ export default {
           if (fs.existsSync(oldPath)) {
             fs.renameSync(oldPath, newPath);
           }
-          var binds = _.pairs(container.Volumes).map(function (pair) {
-            return pair[1] + ':' + pair[0];
+
+          container.Mounts.forEach(m => {
+            m.Source = m.Source.replace(oldPath, newPath);
           });
-          var newBinds = binds.map(b => {
-            return b.replace(path.join(util.home(), 'Kitematic', name), path.join(util.home(), 'Kitematic', newName));
-          });
-          this.updateContainer(newName, {Binds: newBinds});
+
+          this.updateContainer(newName, {Mounts: container.Mounts});
           rimraf(oldPath, () => {});
         });
       });
@@ -343,6 +364,85 @@ export default {
     });
   },
 
+  active (name) {
+    this.detach();
+    this.activeContainerName = name;
+
+    if (name) {
+      this.logs();
+    }
+  },
+
+  logs () {
+    if (!this.activeContainerName) {
+      return;
+    }
+
+    this.client.getContainer(this.activeContainerName).logs({
+      stdout: true,
+      stderr: true,
+      tail: 1000,
+      follow: false,
+      timestamps: 1
+    }, (err, logStream) => {
+      if (err) {
+        return;
+      }
+
+      let logs = '';
+      logStream.setEncoding('utf8');
+      logStream.on('data', chunk => logs += chunk);
+      logStream.on('end', () => {
+        containerServerActions.logs({name: this.activeContainerName, logs});
+        this.attach();
+      });
+    });
+  },
+
+  attach () {
+    if (!this.activeContainerName) {
+      return;
+    }
+
+    this.client.getContainer(this.activeContainerName).logs({
+      stdout: true,
+      stderr: true,
+      tail: 0,
+      follow: true,
+      timestamps: 1
+    }, (err, logStream) => {
+      if (err) {
+        return;
+      }
+
+      if (this.stream) {
+        this.detach();
+      }
+      this.stream = logStream;
+
+      let timeout = null;
+      let batch = '';
+      logStream.setEncoding('utf8');
+      logStream.on('data', (chunk) => {
+        batch += chunk;
+        if (!timeout) {
+          timeout = setTimeout(() => {
+            containerServerActions.log({name: this.activeContainerName, entry: batch});
+            timeout = null;
+            batch = '';
+          }, 16);
+        }
+      });
+    });
+  },
+
+  detach () {
+    if (this.stream) {
+      this.stream.destroy();
+      this.stream = null;
+    }
+  },
+
   listen () {
     this.client.getEvents((error, stream) => {
       if (error || !stream) {
@@ -351,19 +451,26 @@ export default {
       }
 
       stream.setEncoding('utf8');
-      stream.on('data', json => {
-        let data = JSON.parse(json);
-
-        if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete' || data.status === 'attach') {
+      stream.pipe(JSONStream.parse()).on('data', data => {
+        if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete' ||  data.status === 'attach') {
           return;
         }
 
         if (data.status === 'destroy') {
           containerServerActions.destroyed({id: data.id});
+          this.detach(data.id);
         } else if (data.status === 'kill') {
           containerServerActions.kill({id: data.id});
+          this.detach(data.id);
         } else if (data.status === 'stop') {
           containerServerActions.stopped({id: data.id});
+          this.detach(data.id);
+        } else if (data.status === 'create') {
+          this.logs();
+          this.fetchContainer(data.id);
+        } else if (data.status === 'start') {
+          this.attach();
+          this.fetchContainer(data.id);
         } else if (data.id) {
           this.fetchContainer(data.id);
         }
@@ -405,9 +512,7 @@ export default {
       let error = null;
 
       // data is associated with one layer only (can be identified with id)
-      stream.on('data', str => {
-        var data = JSON.parse(str);
-
+      stream.pipe(JSONStream.parse()).on('data', data => {
         if (data.error) {
           error = data.error;
           return;

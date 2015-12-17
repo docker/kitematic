@@ -17,6 +17,7 @@ import Router from 'react-router';
 import routes from './routes';
 import routerContainer from './router';
 import repositoryActions from './actions/RepositoryActions';
+import util from './utils/Util';
 var app = remote.require('app');
 
 hubUtil.init();

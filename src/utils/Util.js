@@ -1,30 +1,29 @@
-import exec from 'exec';
 import child_process from 'child_process';
 import Promise from 'bluebird';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import remote from 'remote';
+var dialog = remote.require('dialog');
 var app = remote.require('app');
 
 module.exports = {
-  exec: function (args, options) {
-    options = options || {};
-
-    // Add resources dir to exec path for Windows
-    if (this.isWindows()) {
-      options.env = options.env || {};
-      if (!options.env.PATH) {
-        options.env.PATH = process.env.RESOURCES_PATH + ';' + process.env.PATH;
-      }
-    }
-
-    let fn = Array.isArray(args) ? exec : child_process.exec;
+  execFile: function (args, options) {
     return new Promise((resolve, reject) => {
-      fn(args, options, (stderr, stdout, code) => {
-        if (code) {
-          var cmd = Array.isArray(args) ? args.join(' ') : args;
-          reject(new Error(cmd + ' returned non zero exit code. Stderr: ' + stderr));
+      child_process.execFile(args[0], args.slice(1), options, (error, stdout) => {
+        if (error) {
+          reject(new Error('Encountered an error: ' + error));
+        } else {
+          resolve(stdout);
+        }
+      });
+    });
+  },
+  exec: function (args, options) {
+    return new Promise((resolve, reject) => {
+      child_process.exec(args, options, (error, stdout) => {
+        if (error) {
+          reject(new Error('Encountered an error: ' + error));
         } else {
           resolve(stdout);
         }
@@ -33,6 +32,9 @@ module.exports = {
   },
   isWindows: function () {
     return process.platform === 'win32';
+  },
+  isLinux: function () {
+    return process.platform === 'linux';
   },
   binsPath: function () {
     return this.isWindows() ? path.join(this.home(), 'Kitematic-bins') : path.join('/usr/local/bin');
@@ -155,6 +157,18 @@ module.exports = {
   },
   linuxToWindowsPath: function (linuxAbsPath) {
     return linuxAbsPath.replace('/c', 'C:').split('/').join('\\');
+  },
+  linuxTerminal: function () {
+    if (fs.existsSync('/usr/bin/x-terminal-emulator')) {
+      return ['/usr/bin/x-terminal-emulator', '-e'];
+    } else {
+      dialog.showMessageBox({
+        type: 'warning',
+        buttons: ['OK'],
+        message: 'The terminal emulator symbolic link doesn\'t exists. Please read the Wiki at https://github.com/kitematic/kitematic/wiki/Common-Issues-and-Fixes#early-linux-support-from-zedtux.'
+      });
+      return;
+    }
   },
   webPorts: ['80', '8000', '8080', '8888', '3000', '5000', '2368', '9200', '8983']
 };

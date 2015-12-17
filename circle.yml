@@ -1,3 +1,15 @@
 machine:
-  node:
-    version: 4.1.2
+  xcode:
+    version: "7.0"
+
+dependencies:
+  cache_directories:
+    - "node_modules"
+
+deployment:
+  release:
+    tag: /v.*/
+    owner: docker
+    commands:
+      - github-release upload --user docker --repo kitematic --tag $CIRCLE_TAG --file release/Kitematic-Mac.zip --name Kitematic-Mac.zip
+      - github-release upload --user docker --repo kitematic --tag $CIRCLE_TAG --file release/Kitematic-Windows.zip --name Kitematic-Windows.zip
