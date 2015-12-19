@@ -121,7 +121,6 @@ export default {
           await machine.create();
         } else {
           let state = await machine.status();
-          console.log(state);
           if (state !== 'Running') {
             if (state === 'Saved') {
               router.get().transitionTo('setup');

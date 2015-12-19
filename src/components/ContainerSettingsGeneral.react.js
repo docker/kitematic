@@ -1,8 +1,9 @@
 import _ from 'underscore';
 import React from 'react/addons';
 import metrics from '../utils/MetricsUtil';
-import remote from 'remote';
-var dialog = remote.require('dialog');
+import electron from 'electron';
+const remote = electron.remote;
+const dialog = remote.dialog;
 import ContainerUtil from '../utils/ContainerUtil';
 import containerActions from '../actions/ContainerActions';
 import util from '../utils/Util';
@@ -53,6 +54,16 @@ var ContainerSettingsGeneral = React.createClass({
     });
   },
 
+  handleCmdChange: function (e) {
+    var command = e.target.value;
+    if (command === this.state.command) {
+      return;
+    }
+    this.setState({
+      command: command
+    });
+
+  },
   handleNameOnKeyUp: function (e) {
     if (e.keyCode === 13 && this.state.slugName) {
       this.handleSaveContainerName();
@@ -81,6 +92,25 @@ var ContainerSettingsGeneral = React.createClass({
     metrics.track('Changed Container Name');
   },
 
+  handleSaveContainerCmd: function () {
+    var command = this.state.command;
+    if (command === this.props.container.Config.Cmd) {
+      return;
+    }
+
+    containerActions.update(this.props.container.Name, {Cmd: [command]});
+    metrics.track('Changed Container Command');
+  },
+  printPrettyCmd: function () {
+    var out = '';
+    for (var i = 0; i < this.props.container.Config.Cmd.length; i++) {
+      out += this.props.container.Config.Cmd[i];
+      if (i + 1 < this.props.container.Config.Cmd.length) {
+        out += ' ';
+      }
+    }
+    return out;
+  },
   handleSaveEnvVars: function () {
     metrics.track('Saved Environment Variables');
     let list = [];
@@ -170,6 +200,12 @@ var ContainerSettingsGeneral = React.createClass({
       );
     }
 
+    let cmdSave = (<a className="btn btn-action" disabled="disabled" onClick={this.handleSaveContainerCmd}>Save</a>);
+    if (this.state.command) {
+      cmdSave = (<a className="btn btn-action" onClick={this.handleSaveContainerCmd}>Save</a>);
+    }
+
+
     let rename = (
       <div className="settings-section">
         <h3>Container Name</h3>
@@ -202,6 +238,13 @@ var ContainerSettingsGeneral = React.createClass({
     return (
       <div className="settings-panel">
         {rename}
+        <div className="settings-section">
+          <h3>Command</h3>
+          <div className="container-name">
+            <input id="input-container-cmd" type="text" className="line" placeholder="Command" defaultValue={this.printPrettyCmd()} onChange={this.handleCmdChange} ></input>
+          </div>
+          {cmdSave}
+        </div>
         <div className="settings-section">
           <h3>Environment Variables</h3>
           <div className="env-vars-labels">
