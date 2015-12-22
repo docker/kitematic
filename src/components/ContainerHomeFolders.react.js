@@ -41,7 +41,13 @@ var ContainerHomeFolder = React.createClass({
             }
           });
 
-          containerActions.update(this.props.container.Name, {Mounts: mounts});
+          let binds = mounts.map(m => {
+            return m.Source + ':' + m.Destination;
+          });
+
+          let hostConfig = _.extend(this.props.container.HostConfig, {Binds: binds});
+
+          containerActions.update(this.props.container.Name, {Mounts: mounts, HostConfig: hostConfig});
         }
       });
     } else {
