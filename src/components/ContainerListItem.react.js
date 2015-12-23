@@ -1,8 +1,9 @@
 import $ from 'jquery';
 import React from 'react/addons';
 import Router from 'react-router';
-import remote from 'remote';
-var dialog = remote.require('dialog');
+import electron from 'electron';
+const remote = electron.remote;
+const dialog = remote.dialog;
 import metrics from '../utils/MetricsUtil';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import containerActions from '../actions/ContainerActions';

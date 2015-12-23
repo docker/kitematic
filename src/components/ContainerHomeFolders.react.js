@@ -6,8 +6,9 @@ import shell from 'shell';
 import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
 import containerActions from '../actions/ContainerActions';
-import remote from 'remote';
-var dialog = remote.require('dialog');
+import electron from 'electron';
+const remote = electron.remote;
+const dialog = remote.dialog;
 import mkdirp from 'mkdirp';
 
 var ContainerHomeFolder = React.createClass({

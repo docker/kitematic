@@ -1,4 +1,5 @@
-import remote from 'remote';
+import electron from 'electron';
+const remote = electron.remote;
 import shell from 'shell';
 import router from './router';
 import util from './utils/Util';
@@ -6,7 +7,7 @@ import metrics from './utils/MetricsUtil';
 import machine from './utils/DockerMachineUtil';
 import docker from './utils/DockerUtil';
 
-var app = remote.require('app');
+const app = remote.app;
 
 // main.js
 var MenuTemplate = function () {

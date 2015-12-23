@@ -1,24 +1,24 @@
 require.main.paths.splice(0, 0, process.env.NODE_PATH);
-import remote from 'remote';
-var Menu = remote.require('menu');
+import electron from 'electron';
+const remote = electron.remote;
+const Menu = remote.Menu;
+// ipcRenderer is used as we're in the process
+const ipcRenderer = electron.ipcRenderer;
+
 import React from 'react';
-import SetupStore from './stores/SetupStore';
-import ipc from 'ipc';
-import machine from './utils/DockerMachineUtil';
+
 import metrics from './utils/MetricsUtil';
 import template from './menutemplate';
 import webUtil from './utils/WebUtil';
 import hubUtil from './utils/HubUtil';
 import setupUtil from './utils/SetupUtil';
-import request from 'request';
 import docker from './utils/DockerUtil';
 import hub from './utils/HubUtil';
 import Router from 'react-router';
 import routes from './routes';
 import routerContainer from './router';
 import repositoryActions from './actions/RepositoryActions';
-import util from './utils/Util';
-var app = remote.require('app');
+import machine from './utils/DockerMachineUtil';
 
 hubUtil.init();
 
@@ -47,6 +47,8 @@ var router = Router.create({
 router.run(Handler => React.render(<Handler/>, document.body));
 routerContainer.set(router);
 
+
+
 setupUtil.setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   docker.init();
@@ -63,7 +65,7 @@ setupUtil.setup().then(() => {
   throw err;
 });
 
-ipc.on('application:quitting', () => {
+ipcRenderer.on('application:quitting', () => {
   if (localStorage.getItem('settings.closeVMOnQuit') === 'true') {
     machine.stop();
   }
