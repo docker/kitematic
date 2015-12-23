@@ -2,7 +2,7 @@ import app from 'app';
 import BrowserWindow from 'browser-window';
 import fs from 'fs';
 import os from 'os';
-import ipc from 'ipc';
+var ipc = require('electron').ipcMain;
 import path from 'path';
 import child_process from 'child_process';
 
@@ -57,7 +57,7 @@ app.on('ready', function () {
     mainWindow.openDevTools({detach: true});
   }
 
-  mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, 'index.html')));
+  mainWindow.loadURL(path.normalize('file://' + path.join(__dirname, 'index.html')));
 
   app.on('activate-with-no-open-windows', function () {
     if (mainWindow) {

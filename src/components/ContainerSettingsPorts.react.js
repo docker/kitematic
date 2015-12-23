@@ -39,7 +39,9 @@ var ContainerSettingsPorts = React.createClass({
     // collision with ports for current container
     const otherContainers = _.filter(_.values(containerStore.getState().containers), c => c.Name !== this.props.container.Name);
     const otherPorts = _.flatten(otherContainers.map(container => {
-      return _.values(container.NetworkSettings.Ports).map(hosts => hosts.map(host => {return {port: host.HostPort, name: container.Name}}));
+      return _.values(container.NetworkSettings.Ports).map(hosts => hosts.map(host => {
+        return {port: host.HostPort, name: container.Name}
+      }));
     })).reduce((prev, pair) => {
       prev[pair.port] = pair.name;
       return prev;
@@ -76,17 +78,18 @@ var ContainerSettingsPorts = React.createClass({
     this.setState({ports: ports});
   },
   handleSave: function () {
-    let bindings = _.reduce(this.state.ports, (res, value, key) => {
+    let exposedPorts = {};
+    let portBindings = _.reduce(this.state.ports, (res, value, key) => {
       res[key + '/' + value.portType] = [{
         HostPort: value.port
       }];
+      exposedPorts[key] = {};
       return res;
     }, {});
-    containerActions.update(this.props.container.Name, {
-      NetworkSettings: {
-        Ports: bindings
-      }
-    });
+
+    let hostConfig = _.extend(this.props.container.HostConfig, {PortBindings: portBindings});
+
+    containerActions.update(this.props.container.Name, {ExposedPorts: exposedPorts, HostConfig: hostConfig});
   },
   render: function () {
     if (!this.props.container) {

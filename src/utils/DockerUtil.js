@@ -83,21 +83,9 @@ export default {
     }
   },
 
-  startContainer (name, containerData) {
-    let startopts = {
-      Binds: containerData.Binds || []
-    };
-
-    if (containerData.NetworkSettings && containerData.NetworkSettings.Ports) {
-      startopts.PortBindings = containerData.NetworkSettings.Ports;
-    } else if (containerData.HostConfig && containerData.HostConfig.PortBindings) {
-      startopts.PortBindings = containerData.HostConfig.PortBindings;
-    } else {
-      startopts.PublishAllPorts = true;
-    }
-
+  startContainer (name) {
     let container = this.client.getContainer(name);
-    container.start(startopts, (error) => {
+    container.start((error) => {
       if (error) {
         containerServerActions.error({name, error});
         return;
@@ -126,6 +114,10 @@ export default {
         return;
       }
 
+      if (!containerData.HostConfig || (containerData.HostConfig && !containerData.HostConfig.PortBindings)) {
+        containerData.PublishAllPorts = true;
+      }
+
       containerData.Cmd = image.Config.Cmd || image.Config.Entrypoint || 'bash';
       let existing = this.client.getContainer(name);
       existing.kill(() => {
@@ -136,7 +128,7 @@ export default {
               return;
             }
             metrics.track('Container Finished Creating');
-            this.startContainer(name, containerData);
+            this.startContainer(name);
             delete this.placeholders[name];
             localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
           });
@@ -250,22 +242,6 @@ export default {
       }
 
       data.Mounts = data.Mounts || existingData.Mounts;
-      data.Binds = data.Mounts.map(m => m.Source + ':' + m.Destination);
-
-      // Preserve Ports
-      let networking = _.extend(existingData.NetworkSettings, data.NetworkSettings);
-      if (networking && networking.Ports) {
-        let exposed = _.reduce(networking.Ports, (res, value, key) => {
-          res[key] = {};
-          return res;
-        }, {});
-        data = _.extend(data, {
-          HostConfig: {
-            PortBindings: networking.Ports
-          },
-          ExposedPorts: exposed
-        });
-      }
 
       var fullData = _.extend(existingData, data);
       this.createContainer(name, fullData);
