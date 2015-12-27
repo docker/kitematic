@@ -35,6 +35,21 @@ module.exports = React.createClass({
     containerActions.active(null);
   },
 
+  getLogFontSize: function(offset) {
+    var fontSize = parseInt($('.logs').css('font-size')) + offset;
+    return (fontSize < 8 ? 8 : fontSize);
+  },
+
+  increaseLogFontSize: function() {
+    var fontSize = this.getLogFontSize(2);
+    $('.logs').css("font-size", fontSize);
+  },
+
+  decreaseLogFontSize: function() {
+    var fontSize = this.getLogFontSize(-2);
+    $('.logs').css("font-size", fontSize);
+  },
+
   render: function () {
     let logs = this.props.container.Logs ?
         this.props.container.Logs.map((l) => <div key={l.substr(0,l.indexOf(' '))} dangerouslySetInnerHTML={{__html: convert.toHtml(escape(l.substr(l.indexOf(' ')+1)).replace(/ /g, '&nbsp;<wbr>'))}}></div>) :
@@ -43,7 +58,13 @@ module.exports = React.createClass({
       <div className="mini-logs wrapper">
         <div className="widget">
           <div className="top-bar">
-            <div className="text">Container Logs</div>
+            <div className="text">
+              Container Logs
+            </div>
+            <span className="fontSizeSettings">
+              <span className="text increaseFontSize" onClick= {this.increaseLogFontSize}>+</span>
+              <span className="text decreaseFontSize" onClick= {this.decreaseLogFontSize}>-</span>
+            </span>
           </div>
           <div className="logs">
             {logs}
