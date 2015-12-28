@@ -42,12 +42,12 @@ module.exports = React.createClass({
 
   increaseLogFontSize: function() {
     var fontSize = this.getLogFontSize(2);
-    $('.logs').css("font-size", fontSize);
+    $('.logs').css('font-size', fontSize);
   },
 
   decreaseLogFontSize: function() {
     var fontSize = this.getLogFontSize(-2);
-    $('.logs').css("font-size", fontSize);
+    $('.logs').css('font-size', fontSize);
   },
 
   render: function () {
