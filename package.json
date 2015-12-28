@@ -55,7 +55,7 @@
   "devDependencies": {
     "babel": "^5.8.23",
     "babel-jest": "^5.2.0",
-    "electron-prebuilt": "^0.35.4",
+    "electron-prebuilt": "^0.36",
     "eslint": "^1.3.1",
     "eslint-plugin-react": "^3.3.0",
     "grunt": "^0.4.5",
@@ -79,11 +79,10 @@
     "grunt-rename": "^0.1.4",
     "grunt-shell": "^1.1.2",
     "grunt-shell-spawn": "^0.3.8",
-    "jest-cli": "^0.5.8",
+    "jest-cli": "^0.8.2",
     "jsxhint": "^0.15.1",
     "load-grunt-tasks": "^3.2.0",
     "minimist": "^1.1.1",
-    "react-tools": "^0.13.1",
     "run-sequence": "^1.0.2",
     "shell-escape": "^0.2.0",
     "source-map-support": "^0.3.2"
