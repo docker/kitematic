@@ -3,9 +3,10 @@ import Promise from 'bluebird';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import remote from 'remote';
-var dialog = remote.require('dialog');
-var app = remote.require('app');
+import electron from 'electron';
+const remote = electron.remote;
+const dialog = remote.dialog;
+const app = remote.app;
 
 module.exports = {
   execFile: function (args, options) {

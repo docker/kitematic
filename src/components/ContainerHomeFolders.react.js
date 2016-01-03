@@ -6,8 +6,9 @@ import shell from 'shell';
 import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
 import containerActions from '../actions/ContainerActions';
-import remote from 'remote';
-var dialog = remote.require('dialog');
+import electron from 'electron';
+const remote = electron.remote;
+const dialog = remote.dialog;
 import mkdirp from 'mkdirp';
 
 var ContainerHomeFolder = React.createClass({
@@ -41,7 +42,13 @@ var ContainerHomeFolder = React.createClass({
             }
           });
 
-          containerActions.update(this.props.container.Name, {Mounts: mounts});
+          let binds = mounts.map(m => {
+            return m.Source + ':' + m.Destination;
+          });
+
+          let hostConfig = _.extend(this.props.container.HostConfig, {Binds: binds});
+
+          containerActions.update(this.props.container.Name, {Mounts: mounts, HostConfig: hostConfig});
         }
       });
     } else {

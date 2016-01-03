@@ -2,7 +2,7 @@ sudo: false
 
 language: node_js
 node_js:
-    - "4.1"
+    - "4.2.2"
 
 cache:
   directories:
@@ -11,4 +11,3 @@ cache:
 script:
   - npm install
   - npm test
-

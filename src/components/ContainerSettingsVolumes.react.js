@@ -1,7 +1,8 @@
 import _ from 'underscore';
 import React from 'react/addons';
-import remote from 'remote';
-var dialog = remote.require('dialog');
+import electron from 'electron';
+const remote = electron.remote;
+const dialog = remote.dialog;
 import shell from 'shell';
 import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
@@ -31,6 +32,7 @@ var ContainerSettingsVolumes = React.createClass({
       _.each(mounts, m => {
         if (m.Destination === dockerVol) {
           m.Source = util.windowsToLinuxPath(directory);
+          m.Driver = null;
         }
       });
 
@@ -38,7 +40,9 @@ var ContainerSettingsVolumes = React.createClass({
         return m.Source + ':' + m.Destination;
       });
 
-      containerActions.update(this.props.container.Name, {Binds: binds, Mounts: mounts});
+      let hostConfig = _.extend(this.props.container.HostConfig, {Binds: binds});
+
+      containerActions.update(this.props.container.Name, {Mounts: mounts, HostConfig: hostConfig});
     });
   },
   handleRemoveVolumeClick: function (dockerVol) {
@@ -50,10 +54,17 @@ var ContainerSettingsVolumes = React.createClass({
     _.each(mounts, m => {
       if (m.Destination === dockerVol) {
         m.Source = null;
+        m.Driver = 'local';
       }
     });
 
-    containerActions.update(this.props.container.Name, {Mounts: mounts});
+    let binds = mounts.map(m => {
+      return m.Source + ':' + m.Destination;
+    });
+
+    let hostConfig = _.extend(this.props.container.HostConfig, {Binds: binds});
+
+    containerActions.update(this.props.container.Name, {Mounts: mounts, HostConfig: hostConfig});
   },
   handleOpenVolumeClick: function (path) {
     metrics.track('Opened Volume Directory', {
