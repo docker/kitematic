@@ -14,12 +14,12 @@ let PAGING = 24;
 module.exports = {
 
 
-   // get the registry url
+   // get the kitematic url
    recommendedUrl: function () {
      return KITEMATIC_ENDPOINT;
    },
 
-   // save the registry url
+   // save the kitematic url
    setRecommendedUrl: function (url) {
      KITEMATIC_ENDPOINT=url;
    },
