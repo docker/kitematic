@@ -10,6 +10,7 @@ import metrics from '../utils/MetricsUtil';
 import containerServerActions from '../actions/ContainerServerActions';
 import rimraf from 'rimraf';
 import stream from 'stream';
+import Promise from 'bluebird';
 import JSONStream from 'JSONStream';
 
 export default {
@@ -45,6 +46,28 @@ export default {
     }
   },
 
+  async version () {
+    let version = null;
+    let maxRetries = 10;
+    let retries = 0;
+    let error_message = "";
+    while (version == null && retries < maxRetries) {
+      console.log('Trying to fetch docker verion, tries : ' + retries);
+      this.client.version((error,data) => {
+        if (!error) {
+          version = data.Version;
+        } else {
+          error_message = error;
+        }
+        retries++;
+      });
+      await Promise.delay(1000);
+    }
+    if (version == null) {
+       throw new Error(error_message);
+    }
+    return version;
+  },
   init () {
     this.placeholders = JSON.parse(localStorage.getItem('placeholders')) || {};
     this.fetchAllContainers();
@@ -117,7 +140,7 @@ export default {
       if (!containerData.HostConfig || (containerData.HostConfig && !containerData.HostConfig.PortBindings)) {
         containerData.PublishAllPorts = true;
       }
-      
+
       if (image.Config.Cmd) {
         containerData.Cmd = image.Config.Cmd;
       } else if (!image.Config.Entrypoint) {
