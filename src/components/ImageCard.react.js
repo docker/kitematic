@@ -9,13 +9,15 @@ import containerStore from '../stores/ContainerStore';
 import tagStore from '../stores/TagStore';
 import tagActions from '../actions/TagActions';
 import numeral from 'numeral';
+import regHub from '../utils/RegHubUtil';
 
 var ImageCard = React.createClass({
   mixins: [Router.Navigation],
   getInitialState: function () {
     return {
       tags: [],
-      chosenTag: 'latest'
+      chosenTag: 'latest',
+      recommendedUrl: regHub.recommendedUrl()
     };
   },
   componentDidMount: function () {
@@ -32,7 +34,8 @@ var ImageCard = React.createClass({
     }
     this.setState({
       loading: tagStore.getState().loading[repo] || false,
-      tags: tagStore.getState().tags[repo] || []
+      tags: tagStore.getState().tags[repo] || [],
+      recommendedUrl: regHub.recommendedUrl()
     });
   },
   handleTagClick: function (tag) {
@@ -114,9 +117,9 @@ var ImageCard = React.createClass({
     };
     var imgsrc;
     if (this.props.image.img) {
-      imgsrc = `https://kitematic.com/recommended/${this.props.image.img}`;
+      imgsrc = `${this.state.recommendedUrl}/recommended/${this.props.image.img}`;
     } else {
-      imgsrc = 'https://kitematic.com/recommended/kitematic_html.png';
+      imgsrc = `${this.state.recommendedUrl}/recommended/kitematic_html.png`;
     }
     var tags;
     if (self.state.loading) {
