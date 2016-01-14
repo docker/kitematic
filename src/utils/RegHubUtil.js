@@ -11,6 +11,17 @@ let searchReq = null;
 let PAGING = 24;
 
 module.exports = {
+
+  // get the registry url
+  registryUrl: function () {
+    return REGHUB2_ENDPOINT;
+  },
+
+  // save the registry url
+  setRegistryUrl: function (url) {
+    REGHUB2_ENDPOINT=url;
+  },
+
   // Normalizes results from search to v2 repository results
   normalize: function (repo) {
     let obj = _.clone(repo);

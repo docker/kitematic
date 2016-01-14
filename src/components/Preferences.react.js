@@ -1,5 +1,6 @@
 import React from 'react/addons';
 import metrics from '../utils/MetricsUtil';
+import regHub from '../utils/RegHubUtil';
 import Router from 'react-router';
 
 var Preferences = React.createClass({
@@ -7,7 +8,8 @@ var Preferences = React.createClass({
   getInitialState: function () {
     return {
       closeVMOnQuit: localStorage.getItem('settings.closeVMOnQuit') === 'true',
-      metricsEnabled: metrics.enabled()
+      metricsEnabled: metrics.enabled(),
+      registryUrl: regHub.registryUrl()
     };
   },
   handleGoBackClick: function () {
@@ -33,6 +35,13 @@ var Preferences = React.createClass({
     metrics.track('Toggled util/MetricsUtil', {
       enabled: checked
     });
+  },
+  handleChangeRegistryUrl: function (e) {
+    var value = e.target.value;
+    this.setState({
+      registryUrl: value
+    });
+    regHub.setRegistryUrl(value);
   },
   render: function () {
     var vmSettings;
@@ -65,6 +74,14 @@ var Preferences = React.createClass({
             </div>
             <div className="option-value">
               <input type="checkbox" checked={this.state.metricsEnabled} onChange={this.handleChangeMetricsEnabled}/>
+            </div>
+          </div>
+          <div className="option">
+            <div className="option-name">
+              Set the Registry url
+            </div>
+            <div className="option-value">
+              <input type="text" value={this.state.registryUrl} onChange={this.handleChangeRegistryUrl}/>
             </div>
           </div>
         </div>
