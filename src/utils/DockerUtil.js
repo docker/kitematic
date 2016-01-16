@@ -117,8 +117,13 @@ export default {
       if (!containerData.HostConfig || (containerData.HostConfig && !containerData.HostConfig.PortBindings)) {
         containerData.PublishAllPorts = true;
       }
+      
+      if (image.Config.Cmd) {
+        containerData.Cmd = image.Config.Cmd;
+      } else if (!image.Config.Entrypoint) {
+        containerData.Cmd = 'bash';
+      }
 
-      containerData.Cmd = image.Config.Cmd || image.Config.Entrypoint || 'bash';
       let existing = this.client.getContainer(name);
       existing.kill(() => {
         existing.remove(() => {
