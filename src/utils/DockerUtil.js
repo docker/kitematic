@@ -117,8 +117,8 @@ export default {
       if (!containerData.HostConfig || (containerData.HostConfig && !containerData.HostConfig.PortBindings)) {
         containerData.PublishAllPorts = true;
       }
-      
-      if (image.Config.Cmd) {
+
+      if (!containerData.Cmd && image.Config.Cmd) {
         containerData.Cmd = image.Config.Cmd;
       } else if (!image.Config.Entrypoint) {
         containerData.Cmd = 'bash';
@@ -178,7 +178,7 @@ export default {
     });
   },
 
-  run (name, repository, tag) {
+  run (name, repository, tag, cmd) {
     tag = tag || 'latest';
     let imageName = repository + ':' + tag;
 
@@ -210,7 +210,12 @@ export default {
         return;
       }
 
-      this.createContainer(name, {Image: imageName, Tty: true, OpenStdin: true});
+      let createContainerData = {Image: imageName, Tty: true, OpenStdin: true};
+      if (cmd) {
+        createContainerData.Cmd = cmd;
+      }
+
+      this.createContainer(name, createContainerData);
     },
 
     // progress is actually the progression PER LAYER (combined in columns)
