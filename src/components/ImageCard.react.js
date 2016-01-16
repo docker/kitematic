@@ -9,6 +9,8 @@ import containerStore from '../stores/ContainerStore';
 import tagStore from '../stores/TagStore';
 import tagActions from '../actions/TagActions';
 import numeral from 'numeral';
+var Dialogs = require('dialogs');
+var dialogs = Dialogs();
 
 var ImageCard = React.createClass({
   mixins: [Router.Navigation],
@@ -53,8 +55,18 @@ var ImageCard = React.createClass({
     });
     let name = containerStore.generateName(this.props.image.name);
     let repo = this.props.image.namespace === 'library' ? this.props.image.name : this.props.image.namespace + '/' + this.props.image.name;
-    containerActions.run(name, repo, this.state.chosenTag);
-    this.transitionTo('containerHome', {name});
+    var obj = this;
+    dialogs.prompt('Which command do you want to use to start the container?', 'default', function ( value) {
+      if (value) {
+        if (value !== '' && value !== 'default') {
+          containerActions.run(name, repo, obj.state.chosenTag, value);
+        } else {
+          containerActions.run(name, repo, obj.state.chosenTag);
+        }
+        obj.transitionTo('containerHome', {name});
+      }
+    }, alert);
+
   },
   handleMenuOverlayClick: function () {
     let $menuOverlay = $(this.getDOMNode()).find('.menu-overlay');

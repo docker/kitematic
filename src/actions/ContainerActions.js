@@ -35,8 +35,8 @@ class ContainerActions {
     this.dispatch();
   }
 
-  run (name, repo, tag) {
-    dockerUtil.run(name, repo, tag);
+  run (name, repo, tag, cmd) {
+    dockerUtil.run(name, repo, tag, cmd);
   }
 
   active (name) {
