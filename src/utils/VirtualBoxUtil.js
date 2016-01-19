@@ -39,9 +39,9 @@ var VirtualBox = {
     return util.execFile([this.command(), 'sharedfolder', 'add', vmName, '--name', pathName, '--hostpath', hostPath, '--automount']);
   },
   vmExists: function (name) {
-    return util.execFile([this.command(), 'showvminfo', name]).then(() => {
-      return true;
-    }).catch((err) => {
+    return util.execFile([this.command(), 'list', 'vms']).then(out => {
+      return out.indexOf('"' + name + '"') !== -1;
+    }).catch(() => {
       return false;
     });
   }
