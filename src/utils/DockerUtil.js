@@ -117,7 +117,7 @@ export default {
       if (!containerData.HostConfig || (containerData.HostConfig && !containerData.HostConfig.PortBindings)) {
         containerData.PublishAllPorts = true;
       }
-      
+
       if (image.Config.Cmd) {
         containerData.Cmd = image.Config.Cmd;
       } else if (!image.Config.Entrypoint) {
@@ -174,6 +174,7 @@ export default {
           return;
         }
         containerServerActions.allUpdated({containers: _.indexBy(containers.concat(_.values(this.placeholders)), 'Name')});
+        this.logs();
       });
     });
   },
