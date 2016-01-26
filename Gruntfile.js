@@ -91,7 +91,7 @@ module.exports = function (grunt) {
             'FileDescription': WINDOWS_APPNAME,
             'InternalName': BASENAME + '.exe',
             'OriginalFilename': BASENAME + '.exe',
-            'LegalCopyright': 'Copyright 2015 Docker Inc. All rights reserved.'
+            'LegalCopyright': 'Copyright 2015-2016 Docker Inc. All rights reserved.'
           }
         }
       }
