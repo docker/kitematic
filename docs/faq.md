@@ -4,7 +4,7 @@ title = "Frequently Asked Questions"
 description = "Documentation covering common questions users have about Kitematic"
 keywords = ["docker, documentation, about, technology, kitematic,  gui"]
 [menu.main]
-parent="smn_workw_kitematic"
+parent="toolbox_kitematic"
 weight=5
 +++
 <![end-metadata]-->
