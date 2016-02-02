@@ -4,7 +4,7 @@ title = "Set up an Nginx web server"
 description = "Tutorial demonstrating the setup of an Nginx web server using Docker and Kitematic"
 keywords = ["docker, documentation, about, technology, kitematic, gui, nginx,  tutorial"]
 [menu.main]
-parent="smn_workw_kitematic"
+parent="toolbox_kitematic"
 weight=1
 +++
 <![end-metadata]-->

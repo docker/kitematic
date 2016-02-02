@@ -4,7 +4,7 @@ title = "Set up a Minecraft Server"
 description = "Tutorial demonstrating the setup of a Minecraft server using Docker and Kitematic"
 keywords = ["docker, documentation, about, technology, kitematic, gui, minecraft,  tutorial"]
 [menu.main]
-parent="smn_workw_kitematic"
+parent="toolbox_kitematic"
 weight=2
 +++
 <![end-metadata]-->
