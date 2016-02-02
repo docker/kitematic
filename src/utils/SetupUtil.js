@@ -11,6 +11,11 @@ import machine from './DockerMachineUtil';
 import docker from './DockerUtil';
 import router from '../router';
 
+// Docker Machine exits with 3 to differentiate pre-create check failures (e.g.
+// virtualization isn't enabled) from normal errors during create (exit code
+// 1).
+const precreateCheckExitCode = 3;
+
 let _retryPromise = null;
 let _timers = [];
 
@@ -154,11 +159,17 @@ export default {
       } catch (error) {
         router.get().transitionTo('setup');
 
-        let novtx = error.message.indexOf('This computer doesn\'t have VT-X/AMD-v enabled') !== -1;
-        metrics.track(novtx ? 'Setup Halted' : 'Setup Failed', {
-          virtualBoxVersion,
-          machineVersion
-        });
+        if (error.code === precreateCheckExitCode) {
+          metrics.track('Setup Halted', {
+            virtualBoxVersion,
+            machineVersion
+          });
+        } else {
+          metrics.track('Setup Failed', {
+            virtualBoxVersion,
+            machineVersion
+          });
+        }
 
         let message = error.message.split('\n');
         let lastLine = message.length > 1 ? message[message.length - 2] : 'Docker Machine encountered an error.';
