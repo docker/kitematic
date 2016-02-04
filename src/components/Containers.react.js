@@ -26,7 +26,7 @@ var Containers = React.createClass({
     containerStore.listen(this.update);
   },
 
-  componentDidUnmount: function () {
+  componentWillUnmount: function () {
     containerStore.unlisten(this.update);
   },
 
@@ -108,42 +108,6 @@ var Containers = React.createClass({
     });
     shell.openExternal('https://github.com/docker/kitematic/issues/new');
   },
-
-  // handleMouseEnterDockerTerminal: function () {
-  //   this.setState({
-  //     currentButtonLabel: 'Open terminal to use Docker command line.'
-  //   });
-  // },
-  //
-  // handleMouseLeaveDockerTerminal: function () {
-  //   this.setState({
-  //     currentButtonLabel: ''
-  //   });
-  // },
-  //
-  // handleMouseEnterReportIssue: function () {
-  //   this.setState({
-  //     currentButtonLabel: 'Report an issue or suggest feedback.'
-  //   });
-  // },
-  //
-  // handleMouseLeaveReportIssue: function () {
-  //   this.setState({
-  //     currentButtonLabel: ''
-  //   });
-  // },
-  //
-  // handleMouseEnterPreferences: function () {
-  //   this.setState({
-  //     currentButtonLabel: 'Change app preferences.'
-  //   });
-  // },
-  //
-  // handleMouseLeavePreferences: function () {
-  //   this.setState({
-  //     currentButtonLabel: ''
-  //   });
-  // },
 
   render: function () {
     var sidebarHeaderClass = 'sidebar-header';

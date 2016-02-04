@@ -21,7 +21,7 @@ var Setup = React.createClass({
     setupStore.listen(this.update);
   },
 
-  componentDidUnmount: function () {
+  componentWillUnmount: function () {
     setupStore.unlisten(this.update);
   },
 

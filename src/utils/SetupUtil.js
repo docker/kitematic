@@ -109,7 +109,6 @@ export default {
   },
 
   async nonNativeSetup () {
-    console.log('Non-native setup');
     let virtualBoxVersion = null;
     let machineVersion = null;
     while (true) {
