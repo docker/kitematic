@@ -64,6 +64,7 @@ export default {
     while (true) {
       try {
         docker.setup('localhost', machine.name());
+        await docker.version();
         docker.isDockerRunning();
 
         break;
@@ -151,6 +152,7 @@ export default {
 
         if (ip) {
           docker.setup(ip, machine.name());
+          await docker.version();
         } else {
           throw new Error('Could not determine IP from docker-machine.');
         }
