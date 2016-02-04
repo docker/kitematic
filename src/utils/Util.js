@@ -62,9 +62,6 @@ module.exports = {
     // TODO: fix me for windows 7
     return 'Documents';
   },
-  supportDir: function () {
-    return app.getPath('userData');
-  },
   CommandOrCtrl: function () {
     return this.isWindows() ? 'Ctrl' : 'Command';
   },
