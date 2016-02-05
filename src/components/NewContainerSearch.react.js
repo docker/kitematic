@@ -239,6 +239,34 @@ module.exports = React.createClass({
         </div>
       );
       paginateResults = null;
+    } else if (filter === 'userimages') {
+      let userImageItems = this.state.images.map(image => {
+        let repo = image.RepoTags[0].split(':')[0];
+        if (repo.indexOf('/') === -1) {
+          repo = 'local/' + repo;
+        }
+        [image.namespace, image.name] = repo.split('/');
+        image.description = null;
+        let tags = image.tags.join('-');
+        image.star_count = 0;
+        image.is_local = true;
+        return (<ImageCard key={image.namespace + '/' + image.name + ':' + tags} image={image} chosenTag={image.tags[0]} tags={image.tags} />);
+      });
+      let userImageResults = userImageItems.length ? (
+        <div className="result-grids">
+          <div>
+            <h4>My Images</h4>
+            <div className="result-grid">
+              {userImageItems}
+            </div>
+          </div>
+        </div>
+      ) : <div className="no-results">
+        <h2>Cannot find any local image.</h2>
+      </div>;
+      results = (
+          {userImageResults}
+      );
     } else if (this.state.loading) {
       results = (
         <div className="no-results">
@@ -293,32 +321,6 @@ module.exports = React.createClass({
           {otherResults}
         </div>
       );
-    } else if (filter === 'userimages') {
-      let userImageItems = this.state.images.map(image => {
-        let repo = image.RepoTags[0].split(':')[0];
-        if (repo.indexOf('/') === -1) {
-          repo = 'local/' + repo;
-        }
-        [image.namespace, image.name] = repo.split('/');
-        image.description = null;
-        let tags = image.tags.join('-');
-        image.star_count = 0;
-        image.is_local = true;
-        return (<ImageCard key={image.namespace + '/' + image.name + ':' + tags} image={image} chosenTag={image.tags[0]} tags={image.tags} />);
-      });
-      let userImageResults = userImageItems.length ? (
-        <div>
-          <h4>My Images</h4>
-          <div className="result-grid">
-            {userImageItems}
-          </div>
-        </div>
-      ) : null;
-      results = (
-        <div className="result-grids">
-          {userImageResults}
-        </div>
-      );
     } else {
       if (this.state.query.length) {
         results = (
@@ -350,17 +352,23 @@ module.exports = React.createClass({
       'icon-search': true,
       'search-icon': true
     });
+    let searchClasses = classNames('search-bar');
+    if (filter === 'userimages') {
+      searchClasses = classNames('search-bar', {
+        hidden: true
+      });
+    }
 
     return (
       <div className="details">
         <div className="new-container">
           <div className="new-container-header">
             <div className="search">
-              <div className="search-bar">
-                <input type="search" ref="searchInput" className="form-control" placeholder="Search for Docker images from Docker Hub" onChange={this.handleChange}/>
-                <div className={magnifierClasses}></div>
-                <div className={loadingClasses}><div></div></div>
-              </div>
+            <div className={searchClasses}>
+              <input type="search" ref="searchInput" className="form-control" placeholder="Search for Docker images from Docker Hub" onChange={this.handleChange}/>
+              <div className={magnifierClasses}></div>
+              <div className={loadingClasses}><div></div></div>
+            </div>
             </div>
             <div className="results-filters">
               <span className="results-filter results-filter-title">FILTER BY</span>

@@ -85,7 +85,7 @@ var ImageCard = React.createClass({
     $tagOverlay.fadeOut(300);
   },
   handleDeleteImgClick: function (image) {
-    if (this.state.chosenTag) {
+    if (this.state.chosenTag && !this.props.image.inUse) {
       imageActions.destroy(image.RepoTags[0].split(':')[0] + ':' + this.state.chosenTag);
     }
   },
@@ -164,8 +164,7 @@ var ImageCard = React.createClass({
       );
     }
 
-    let create;
-    let overlay;
+    let create, overlay;
     if (this.props.image.is_local) {
       create = (
         <div className="actions">
@@ -187,9 +186,9 @@ var ImageCard = React.createClass({
             <span className="icon icon-tag"></span><span className="text">SELECTED TAG: <span className="selected-tag">{this.state.chosenTag}</span></span>
           </div>
           <div className="remove" onClick={this.handleDeleteImgClick.bind(this, this.props.image)}>
-            <span className="btn btn-delete btn-action has-icon btn-hollow"><span className="icon icon-delete"></span>Delete Tag</span>
+            <span className="btn btn-delete btn-action has-icon btn-hollow" disabled={this.props.image.inUse ? 'disabled' : null}><span className="icon icon-delete"></span>Delete Tag</span>
           </div>
-          <p className="small">Prior to delete, stop all containers<br/>using the above tag</p>
+          {this.props.image.inUse ? <p className="small">To delete, remove all containers<br/>using the above image</p> : null }
           <div className="close-overlay">
             <a className="btn btn-action circular" onClick={self.handleCloseMenuOverlay}><span className="icon icon-delete"></span></a>
           </div>

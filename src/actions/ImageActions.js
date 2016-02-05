@@ -5,7 +5,7 @@ class ImageActions {
 
   all () {
     this.dispatch({});
-    dockerUtil.fetchAllImages();
+    dockerUtil.refresh();
   }
 
   destroy (image) {

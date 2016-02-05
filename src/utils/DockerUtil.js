@@ -13,7 +13,6 @@ import Promise from 'bluebird';
 import rimraf from 'rimraf';
 import stream from 'stream';
 import JSONStream from 'JSONStream';
-import Promise from 'bluebird';
 
 
 
@@ -25,6 +24,7 @@ var DockerUtil = {
   eventStream: null,
   activeContainerName: null,
   localImages: null,
+  imagesUsed: [],
 
   setup (ip, name) {
     if (!ip && !name) {
@@ -79,8 +79,7 @@ var DockerUtil = {
 
   init () {
     this.placeholders = JSON.parse(localStorage.getItem('placeholders')) || {};
-    this.fetchAllContainers();
-    this.fetchAllImages();
+    this.refresh();
     this.listen();
 
     // Resume pulling containers that were previously being pulled
@@ -170,11 +169,11 @@ var DockerUtil = {
             this.startContainer(name);
             delete this.placeholders[name];
             localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
+            this.refresh();
           });
         });
       });
     });
-    this.fetchAllImages();
   },
 
   fetchContainer (id) {
@@ -194,11 +193,16 @@ var DockerUtil = {
         console.error(err);
         return;
       }
+      this.imagesUsed = [];
       async.map(containers, (container, callback) => {
         this.client.getContainer(container.Id).inspect((error, container) => {
           if (error) {
             callback(null, null);
             return;
+          }
+          let imgSha = container.Image.replace('sha256:', '');
+          if (_.indexOf(this.imagesUsed, imgSha) === -1) {
+            this.imagesUsed.push(imgSha);
           }
           container.Name = container.Name.replace('/', '');
           callback(null, container);
@@ -211,6 +215,7 @@ var DockerUtil = {
           return;
         }
         containerServerActions.allUpdated({containers: _.indexBy(containers.concat(_.values(this.placeholders)), 'Name')});
+        this.fetchAllImages();
       });
     });
   },
@@ -220,6 +225,14 @@ var DockerUtil = {
       if (err) {
         imageServerActions.error(err);
       } else {
+        list.map((image, idx) => {
+          let imgSha = image.Id.replace('sha256:', '');
+          if (_.indexOf(this.imagesUsed, imgSha) !== -1) {
+            list[idx].inUse = true;
+          } else {
+            list[idx].inUse = false;
+          }
+        });
         this.localImages = list;
         imageServerActions.updated(list);
       }
@@ -236,6 +249,7 @@ var DockerUtil = {
               imageServerActions.error(err);
             } else {
               imageServerActions.destroyed(data);
+              this.refresh();
             }
           });
           return true;
@@ -271,6 +285,7 @@ var DockerUtil = {
       this.pullImage(repository, tag, error => {
         if (error) {
           containerServerActions.error({name, error});
+          this.refresh();
           return;
         }
 
@@ -299,6 +314,7 @@ var DockerUtil = {
     existing.inspect((error, existingData) => {
       if (error) {
         containerServerActions.error({name, error});
+        this.refresh();
         return;
       }
 
@@ -335,6 +351,7 @@ var DockerUtil = {
         if (error) {
           // TODO: handle error
           containerServerActions.error({newName, error});
+          this.refresh();
         }
         rimraf(newPath, () => {
           if (fs.existsSync(oldPath)) {
@@ -356,11 +373,13 @@ var DockerUtil = {
     this.client.getContainer(name).stop({t: 5}, stopError => {
       if (stopError && stopError.statusCode !== 304) {
         containerServerActions.error({name, stopError});
+        this.refresh();
         return;
       }
       this.client.getContainer(name).start(startError => {
         if (startError && startError.statusCode !== 304) {
           containerServerActions.error({name, startError});
+          this.refresh();
           return;
         }
         this.fetchContainer(name);
@@ -372,6 +391,7 @@ var DockerUtil = {
     this.client.getContainer(name).stop({t: 5}, error => {
       if (error && error.statusCode !== 304) {
         containerServerActions.error({name, error});
+        this.refresh();
         return;
       }
       this.fetchContainer(name);
@@ -382,6 +402,7 @@ var DockerUtil = {
     this.client.getContainer(name).start(error => {
       if (error && error.statusCode !== 304) {
         containerServerActions.error({name, error});
+        this.refresh();
         return;
       }
       this.fetchContainer(name);
@@ -393,15 +414,17 @@ var DockerUtil = {
       containerServerActions.destroyed({id: name});
       delete this.placeholders[name];
       localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
+      this.refresh();
       return;
     }
 
     let container = this.client.getContainer(name);
-    container.unpause(function () {
-      container.kill(function () {
-        container.remove(function (error) {
+    container.unpause( () => {
+      container.kill( () => {
+        container.remove( (error) => {
           if (error) {
             containerServerActions.error({name, error});
+            this.refresh();
             return;
           }
           containerServerActions.destroyed({id: name});
@@ -409,6 +432,7 @@ var DockerUtil = {
           if (fs.existsSync(volumePath)) {
             rimraf(volumePath, () => {});
           }
+          this.refresh();
         });
       });
     });
@@ -515,7 +539,7 @@ var DockerUtil = {
         let data = JSON.parse(json);
 
         if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete' || data.status === 'attach') {
-          this.fetchAllImages();
+          this.refresh();
         }
 
         if (data.status === 'destroy') {
@@ -655,6 +679,10 @@ var DockerUtil = {
         callback(error);
       });
     });
+  },
+
+  refresh () {
+    this.fetchAllContainers();
   }
 };
 
