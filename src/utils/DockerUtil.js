@@ -85,6 +85,7 @@ export default {
 
   startContainer (name) {
     let container = this.client.getContainer(name);
+
     container.start((error) => {
       if (error) {
         containerServerActions.error({name, error});
@@ -117,7 +118,7 @@ export default {
       if (!containerData.HostConfig || (containerData.HostConfig && !containerData.HostConfig.PortBindings)) {
         containerData.PublishAllPorts = true;
       }
-      
+
       if (image.Config.Cmd) {
         containerData.Cmd = image.Config.Cmd;
       } else if (!image.Config.Entrypoint) {
@@ -148,6 +149,14 @@ export default {
         containerServerActions.error({name: id, error});
       } else {
         container.Name = container.Name.replace('/', '');
+        this.client.getImage(container.Image).inspect((error, image) => {
+          if (error) {
+            containerServerActions.error({name, error});
+            return;
+          }
+          container.InitialPorts = image.Config.ExposedPorts;
+        });
+
         containerServerActions.updated({container});
       }
     });
@@ -165,6 +174,13 @@ export default {
             return;
           }
           container.Name = container.Name.replace('/', '');
+          this.client.getImage(container.Image).inspect((error, image) => {
+            if (error) {
+              containerServerActions.error({name, error});
+              return;
+            }
+            container.InitialPorts = image.Config.ExposedPorts;
+          });
           callback(null, container);
         });
       }, (err, containers) => {
