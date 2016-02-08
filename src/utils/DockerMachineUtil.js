@@ -24,7 +24,12 @@ var DockerMachine = {
     return 'default';
   },
   installed: function () {
-    return fs.existsSync(this.command());
+    try {
+      fs.accessSync(this.command(), fs.X_OK);
+      return true;
+    } catch (ex) {
+      return false;
+    }
   },
   version: function () {
     return util.execFile([this.command(), '-v']).then(stdout => {
