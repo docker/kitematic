@@ -58,7 +58,7 @@ var DockerMachine = {
     });
   },
   create: function (machineName = this.name()) {
-    return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
+    return util.execFile([this.command(), '-D', 'create', '-d', 'hyperv', '--hyperv-memory', '2048', machineName]);
   },
   start: function (machineName = this.name()) {
     return util.execFile([this.command(), '-D', 'start', machineName]);
