@@ -162,7 +162,7 @@ var DockerMachine = {
       cmd = cmd || process.env.SHELL;
       var terminal = util.isLinux() ? util.linuxTerminal() : path.join(process.env.RESOURCES_PATH, 'terminal');
       if (terminal) {
-        util.exec([terminal, cmd]).then(() => {});
+        util.execFile([terminal, cmd]).then(() => {});
       }
     } else {
       cmd = cmd || process.env.SHELL;
