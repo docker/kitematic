@@ -57,8 +57,18 @@ var DockerMachine = {
       return false;
     });
   },
-  create: function (machineName = this.name()) {
-    return util.execFile([this.command(), '-D', 'create', '-d', 'hyperv', '--hyperv-memory', '2048', machineName]);
+  create: function (machineName = this.name(), provider = "virtualbox") {
+    switch (provider){
+        case "virtualbox":{
+            return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
+        }
+        case "hyperv":{
+            return util.execFile([this.command(), '-D', 'create', '-d', 'hyperv', '--hyperv-memory', '2048', machineName]);
+        }
+        default:{
+            return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
+        }
+    }  
   },
   start: function (machineName = this.name()) {
     return util.execFile([this.command(), '-D', 'start', machineName]);
