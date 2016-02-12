@@ -5,6 +5,7 @@ import Promise from 'bluebird';
 import bugsnag from 'bugsnag-js';
 import util from './Util';
 import virtualBox from './VirtualBoxUtil';
+import hypervBox from './HypervBoxUtil';
 import setupServerActions from '../actions/SetupServerActions';
 import metrics from './MetricsUtil';
 import machine from './DockerMachineUtil';
@@ -93,6 +94,7 @@ export default {
 
         // Make sure virtulBox and docker-machine are installed
         let virtualBoxInstalled = virtualBox.installed();
+        let hypervInstalled = hyperv.installed();
         let machineInstalled = machine.installed();
         if (!virtualBoxInstalled || !machineInstalled) {
           router.get().transitionTo('setup');
