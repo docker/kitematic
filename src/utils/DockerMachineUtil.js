@@ -146,6 +146,15 @@ var DockerMachine = {
       }
     });
   },
+  mount: function (machineName = this.name(), mountPath) {
+    return util.execFile([this.command(), 'ssh', machineName, 'sudo mkdir -p /' + mountPath + '; sudo mount -t vboxsf -o gid=50,uid=1000 ' + mountPath + ' /' + mountPath]).then(stdout => {
+      try {
+        return true;
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    });
+  },
   dockerTerminal: function (cmd, machineName = this.name()) {
     if (util.isWindows()) {
       cmd = cmd || '';

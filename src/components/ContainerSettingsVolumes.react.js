@@ -7,26 +7,26 @@ import shell from 'shell';
 import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
 import containerActions from '../actions/ContainerActions';
+import virtualBox from '../utils/VirtualBoxUtil';
+import machine from '../utils/DockerMachineUtil';
 
 var ContainerSettingsVolumes = React.createClass({
+
   handleChooseVolumeClick: function (dockerVol) {
     dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']}, (filenames) => {
       if (!filenames) {
         return;
       }
 
+
       var directory = filenames[0];
+      var original = directory;
       if (util.isWindows()) {
         directory = util.windowsToLinuxPath(directory);
       }
 
       if (!this.checkValidFolder(directory)) {
-        dialog.showMessageBox({
-          type: 'warning',
-          buttons: ['OK'],
-          message: 'Invalid directory. Volume directories must be under the folders you enabled on your Docker Host'
-        });
-        return;
+        this.mountNewFolder(directory, original);
       }
 
       metrics.track('Choose Directory for Volume');
@@ -47,6 +47,18 @@ var ContainerSettingsVolumes = React.createClass({
 
       containerActions.update(this.props.container.Name, {Mounts: mounts, HostConfig: hostConfig});
     });
+  },
+
+  async mountNewFolder (directory, original) {
+    let mountPath = directory;
+    if (directory.startsWith('/')) {
+      mountPath = directory.substring(1, directory.length);
+    }
+
+     await virtualBox.mountSharedDir(machine.name(), mountPath, original);
+     await machine.mount(machine.name(), mountPath);
+     await virtualBox.getShareDir(machine.name());
+     return true;
   },
   checkValidFolder: function (directory) {
     var founded = false;
@@ -102,7 +114,7 @@ var ContainerSettingsVolumes = React.createClass({
 
     var mounts= _.map(this.props.container.Mounts, (m, i) => {
       let source = m.Source, destination = m.Destination;
-      if (!m.Source || !this.checkValidFolder(m.Source)) {
+      if (!m.Source ) {
         source = (
           <span className="value-right">No Folder</span>
         );

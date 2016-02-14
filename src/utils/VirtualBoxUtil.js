@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import util from './Util';
 import Promise from 'bluebird';
+import machine from './DockerMachineUtil';
 
 var VirtualBox = {
   command: function () {
@@ -36,7 +37,7 @@ var VirtualBox = {
     });
   },
   mountSharedDir: function (vmName, pathName, hostPath) {
-    return util.execFile([this.command(), 'sharedfolder', 'add', vmName, '--name', pathName, '--hostpath', hostPath, '--automount']);
+    return util.execFile([this.command(), 'sharedfolder', 'add', vmName, '--name', pathName, '--hostpath', hostPath, '--transient', '--automount']);
   },
   vmExists: function (name) {
     return util.execFile([this.command(), 'showvminfo', name]).then(() => {
@@ -64,6 +65,14 @@ var VirtualBox = {
       return false;
     });
 
+  },
+  mountAllSharedDirs: function () {
+    for (var idx in util.folders) {
+      if (util.folders.hasOwnProperty(idx)) {
+        let folder = util.folders[idx];
+        machine.mount(machine.name(), folder);
+      }
+    }
   }
 };
 
