@@ -10,6 +10,8 @@ import metrics from '../utils/MetricsUtil';
 import containerServerActions from '../actions/ContainerServerActions';
 import rimraf from 'rimraf';
 import stream from 'stream';
+import machine from './DockerMachineUtil';
+import virtualBox from './VirtualBoxUtil';
 import JSONStream from 'JSONStream';
 
 export default {
@@ -83,8 +85,33 @@ export default {
     }
   },
 
+  async mountNewFolder (directory, original) {
+    let mountPath = directory;
+    if (directory.startsWith('/')) {
+      mountPath = directory.substring(1, directory.length);
+    }
+
+     await virtualBox.mountSharedDir(machine.name(), mountPath, original);
+     await machine.mount(machine.name(), mountPath);
+     await virtualBox.getShareDir(machine.name());
+     return true;
+  },
+
   startContainer (name) {
     let container = this.client.getContainer(name);
+    container.inspect((error, existingData) => {
+      if (error) {
+        containerServerActions.error({name, error});
+        return;
+      }
+      existingData.Mounts.forEach(m => {
+        let original = m.Source;
+        if (util.isWindows()) {
+          original = util.linuxToWindowsPath(m.Source);
+        }
+        this.mountNewFolder(m.Source,original);
+      });
+    });
     container.start((error) => {
       if (error) {
         containerServerActions.error({name, error});
@@ -284,13 +311,27 @@ export default {
         containerServerActions.error({name, stopError});
         return;
       }
-      this.client.getContainer(name).start(startError => {
+      let container = this.client.getContainer(name);
+      container.inspect((error, existingData) => {
+        if (error) {
+          containerServerActions.error({name, error});
+          return;
+        }
+        existingData.Mounts.forEach(m => {
+          let original = m.Source;
+          if (util.isWindows()) {
+            original = util.linuxToWindowsPath(m.Source);
+          }
+          this.mountNewFolder(m.Source,original);
+        });
+      });
+      container.start(startError => {
         if (startError && startError.statusCode !== 304) {
           containerServerActions.error({name, startError});
           return;
         }
         this.fetchContainer(name);
-      });
+        });
     });
   },
 
@@ -305,7 +346,21 @@ export default {
   },
 
   start (name) {
-    this.client.getContainer(name).start(error => {
+    let container = this.client.getContainer(name);
+    container.inspect((error, existingData) => {
+      if (error) {
+        containerServerActions.error({name, error});
+        return;
+      }
+      existingData.Mounts.forEach(m => {
+        let original = m.Source;
+        if (util.isWindows()) {
+          original = util.linuxToWindowsPath(m.Source);
+        }
+        this.mountNewFolder(m.Source,original);
+      });
+    });
+    container.start(error => {
       if (error && error.statusCode !== 304) {
         containerServerActions.error({name, error});
         return;

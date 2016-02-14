@@ -64,15 +64,6 @@ var VirtualBox = {
     }).catch(() => {
       return false;
     });
-
-  },
-  mountAllSharedDirs: function () {
-    for (var idx in util.folders) {
-      if (util.folders.hasOwnProperty(idx)) {
-        let folder = util.folders[idx];
-        machine.mount(machine.name(), folder);
-      }
-    }
   }
 };
 

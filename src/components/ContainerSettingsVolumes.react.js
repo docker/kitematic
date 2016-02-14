@@ -25,10 +25,6 @@ var ContainerSettingsVolumes = React.createClass({
         directory = util.windowsToLinuxPath(directory);
       }
 
-      if (!this.checkValidFolder(directory)) {
-        this.mountNewFolder(directory, original);
-      }
-
       metrics.track('Choose Directory for Volume');
 
       var mounts = _.clone(this.props.container.Mounts);
@@ -47,34 +43,6 @@ var ContainerSettingsVolumes = React.createClass({
 
       containerActions.update(this.props.container.Name, {Mounts: mounts, HostConfig: hostConfig});
     });
-  },
-
-  async mountNewFolder (directory, original) {
-    let mountPath = directory;
-    if (directory.startsWith('/')) {
-      mountPath = directory.substring(1, directory.length);
-    }
-
-     await virtualBox.mountSharedDir(machine.name(), mountPath, original);
-     await machine.mount(machine.name(), mountPath);
-     await virtualBox.getShareDir(machine.name());
-     return true;
-  },
-  checkValidFolder: function (directory) {
-    var founded = false;
-    if (directory) {
-      for (let idx = 0; idx < util.folders.length; idx++) {
-        let folder = util.folders[idx];
-        if (util.isWindows()) {
-          folder = util.windowsToLinuxPath(folder);
-        }
-        if (directory.toLowerCase().indexOf(folder.toLowerCase()) !== -1) {
-          founded = true;
-          break;
-        }
-      }
-    }
-    return founded;
   },
   handleRemoveVolumeClick: function (dockerVol) {
     metrics.track('Removed Volume Directory', {

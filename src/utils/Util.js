@@ -157,7 +157,10 @@ module.exports = {
     return fullPath;
   },
   linuxToWindowsPath: function (linuxAbsPath) {
-    return linuxAbsPath.replace('/c', 'C:').split('/').join('\\');
+    let idx = linuxAbsPath.indexOf('/', 1);
+    let drive = linuxAbsPath.substring(1, idx);
+    let restPath = linuxAbsPath.substring(idx + 1, linuxAbsPath.length);
+    return drive + ':\\' + restPath.split('/').join('\\');
   },
   linuxTerminal: function () {
     if (fs.existsSync('/usr/bin/x-terminal-emulator')) {
