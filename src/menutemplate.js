@@ -135,6 +135,20 @@ var MenuTemplate = function () {
           label: 'Toggle Chromium Developer Tools',
           accelerator: 'Alt+' + util.CommandOrCtrl() + '+I',
           click: function() { remote.getCurrentWindow().toggleDevTools(); }
+        },
+        {
+          label: 'Log Zoom In',
+          accelerator: util.CommandOrCtrl() + '+=',
+          click: function() {
+            util.adjustLogFontSize(2);
+          }
+        },
+        {
+          label: 'Log Zoom Out',
+          accelerator: util.CommandOrCtrl() + '+-',
+          click: function() {
+            util.adjustLogFontSize(-2);
+          }
         }
       ]
     },
