@@ -13,7 +13,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       child_process.execFile(args[0], args.slice(1), options, (error, stdout) => {
         if (error) {
-          reject(new Error('Encountered an error: ' + error));
+          reject(error);
         } else {
           resolve(stdout);
         }
@@ -61,9 +61,6 @@ module.exports = {
   documents: function () {
     // TODO: fix me for windows 7
     return 'Documents';
-  },
-  supportDir: function () {
-    return app.getPath('userData');
   },
   CommandOrCtrl: function () {
     return this.isWindows() ? 'Ctrl' : 'Command';

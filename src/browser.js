@@ -11,13 +11,15 @@ let Promise = require('bluebird');
 
 process.env.NODE_PATH = path.join(__dirname, 'node_modules');
 process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
-process.env.PATH = '/usr/local/bin:' + process.env.PATH;
+if (process.platform !== 'win32') {
+  process.env.PATH = '/usr/local/bin:' + process.env.PATH;
+}
 var exiting = false;
-
 var size = {}, settingsjson = {};
 try {
-  size = JSON.parse(fs.readFileSync(path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], 'Library', 'Application\ Support', 'Kitematic', 'size')));
+  size = JSON.parse(fs.readFileSync(path.join(app.getPath('userData'), 'size')));
 } catch (err) {}
+
 try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, 'settings.json'), 'utf8'));
 } catch (err) {}

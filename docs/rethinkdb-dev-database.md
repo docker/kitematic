@@ -4,7 +4,7 @@ title = "Creating a Local RethinkDB Database for Development"
 description = "Tutorial demonstrating the setup of an RethinkDB database for development"
 keywords = ["docker, documentation, about, technology, kitematic, gui, rethink,  tutorial"]
 [menu.main]
-parent="smn_workw_kitematic"
+parent="toolbox_kitematic"
 weight=3
 +++
 <![end-metadata]-->
