@@ -91,7 +91,7 @@ export default {
       try {
         setupServerActions.started({started: false});
 
-        // Make sure virtulBox and docker-machine are installed
+        // Make sure virtualBox and docker-machine are installed
         let virtualBoxInstalled = virtualBox.installed();
         let machineInstalled = machine.installed();
         if (!virtualBoxInstalled || !machineInstalled) {
