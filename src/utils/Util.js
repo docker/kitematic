@@ -43,7 +43,7 @@ module.exports = {
     });
   },
   isWindows: function () {
-    return process.platform === 'win32';
+    return process.platform === 'win32' || process.platform == 'win64';
   },
   isLinux: function () {
     return process.platform === 'linux';

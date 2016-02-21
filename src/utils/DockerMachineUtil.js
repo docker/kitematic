@@ -60,12 +60,15 @@ var DockerMachine = {
   create: function (machineName = this.name(), provider = "virtualbox") {
     switch (provider){
         case "virtualbox":{
+            console.log('started create with virtualbox');
             return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
         }
         case "hyperv":{
-            return util.execFile([this.command(), '-D', 'create', '-d', 'hyperv', '--hyperv-memory', '2048', machineName]);
+            console.log('started create with hyperv');
+            return util.execFile([this.command(), '-D', 'create', '-d', 'hyperv', '--hyperv-memory', '2048', '--hyperv-virtual-switch', 'Docker Virtual Switch', machineName]);
         }
         default:{
+            console.log('started create with virtualbox');
             return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
         }
     }  
