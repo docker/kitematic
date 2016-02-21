@@ -9,6 +9,17 @@ const dialog = remote.dialog;
 const app = remote.app;
 
 module.exports = {
+  spawn: function (args, options) {
+    return new Promise((resolve, reject) => {
+      child_process.spawn(args[0], args.slice(1), options, (error, stdout) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(stdout);
+        }
+      });
+    });
+  },
   execFile: function (args, options) {
     return new Promise((resolve, reject) => {
       child_process.execFile(args[0], args.slice(1), options, (error, stdout) => {
@@ -32,7 +43,7 @@ module.exports = {
     });
   },
   isWindows: function () {
-    return process.platform === 'win32';
+    return process.platform === 'win32' || process.platform == 'win64';
   },
   isLinux: function () {
     return process.platform === 'linux';
