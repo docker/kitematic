@@ -156,7 +156,6 @@ export default {
           machineVersion
         });
         
-        console.log('try to use hyperv');
         let exists = await hypervBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
         if (!exists) {
           startedHyperv = true;
@@ -167,7 +166,6 @@ export default {
             await machine.rm();
           } catch (err) {}
           await machine.create('default', 'hyperv');
-          console.log('finish to create hyperv machine');
         } else {
           let state = await machine.status();
           if (state !== 'Running') {
@@ -182,7 +180,6 @@ export default {
             }
 
             await machine.start();
-            console.log('started hyperv machine');
           }
         }
         
@@ -211,7 +208,6 @@ export default {
             }
         }
 
-        console.log('try to connect to machine via ip');
         // Try to receive an ip address from machine, for at least to 80 seconds.
         let tries = 80, ip = null;
         while (!ip && tries > 0) {
