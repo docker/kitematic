@@ -5,17 +5,18 @@ import Promise from 'bluebird';
 
 var HypervBox = {
   command: function () {
+    let hypervPath = "C:\Program Files\Hyper-V";
     if (util.isWindows()) {
         if (HypervBox.pathExists())
         {
-            return "c:\windows\system32\vmms.exe";
+            return hypervPath;
         }
     }
      
     return "";
   },
   pathExists: function (){
-    let hypervPath = "c:\windows\system32\vmms.exe";
+    let hypervPath = "C:\Program Files\Hyper-V";
 
     try {
         fs.accessSync(hypervPath, fs.F_OK);
@@ -49,7 +50,7 @@ var HypervBox = {
     return util.execFile([this.command(), 'sharedfolder', 'add', vmName, '--name', pathName, '--hostpath', hostPath, '--automount']);
   },
   vmExists: function (name) {
-    return util.execFile([this.command(), 'list', 'vms']).then(out => {
+    return util.execFile([this.command()]).then(out => {
       return out.indexOf('"' + name + '"') !== -1;
     }).catch(() => {
       return false;
