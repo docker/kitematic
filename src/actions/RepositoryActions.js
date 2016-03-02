@@ -16,6 +16,11 @@ class RepositoryActions {
     this.dispatch({});
     regHubUtil.repos();
   }
+
+  fetch (name) {
+    this.dispatch({});
+    regHubUtil.fetch(name)
+  }
 }
 
 export default alt.createActions(RepositoryActions);

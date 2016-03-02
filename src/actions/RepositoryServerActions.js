@@ -7,7 +7,8 @@ class RepositoryServerActions {
       'resultsUpdated',
       'recommendedUpdated',
       'reposUpdated',
-      'error'
+      'error',
+      'fetch'
     );
   }
 }

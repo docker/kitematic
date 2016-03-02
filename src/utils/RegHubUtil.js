@@ -3,6 +3,7 @@ import request from 'request';
 import async from 'async';
 import util from '../utils/Util';
 import hubUtil from '../utils/HubUtil';
+import dockerUtil from '../utils/DockerUtil';
 import repositoryServerActions from '../actions/RepositoryServerActions';
 import tagServerActions from '../actions/TagServerActions';
 
@@ -23,6 +24,33 @@ module.exports = {
     }
 
     return obj;
+  },
+
+  fetch: function (name, cb) {
+    if (searchReq) {
+      searchReq.abort();
+      searchReq = null;
+    }
+
+    console.log('Testing fetch')
+    request.get({
+      url: `${REGHUB2_ENDPOINT}/repositories/${name}`
+    }, (error, response, body) => {
+      if (error) {
+        repositoryServerActions.error({error});
+        return;
+      }
+
+      if (response.statusCode === 200) {
+        let data = JSON.parse(body);
+        console.log(data);
+        dockerUtil.run(data.name, data.user+'/'+data.name)
+        // cb(data);
+      } else {
+        repositoryServerActions.error({error: new Error('Could not fetch repository information from Docker Hub.')});
+        return;
+      }
+    });
   },
 
   search: function (query, page, sorting = null) {
