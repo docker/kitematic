@@ -101,20 +101,18 @@ var Setup = React.createClass({
           <button className="btn btn-action" onClick={this.handleLinuxDockerInstall}>Install Docker</button>
         );
       }
+    } else if (util.isNative()) {
+      deleteVmAndRetry = (
+        <button className="btn btn-action" onClick={this.handleUseVbox}>Use VirtualBox</button>
+      );
+    } else if (this.state.started) {
+      deleteVmAndRetry = (
+        <button className="btn btn-action" onClick={this.handleErrorRemoveRetry}>Delete VM &amp; Retry Setup</button>
+      );
     } else {
-      if (util.isNative()) {
-        deleteVmAndRetry = (
-          <button className="btn btn-action" onClick={this.handleUseVbox}>Use VirtualBox</button>
-        );
-      } else if (this.state.started) {
-        deleteVmAndRetry = (
-          <button className="btn btn-action" onClick={this.handleErrorRemoveRetry}>Delete VM &amp; Retry Setup</button>
-        );
-      } else {
-        deleteVmAndRetry = (
-          <button className="btn btn-action" onClick={this.handleToolBox}>Get Toolbox</button>
-        );
-      }
+      deleteVmAndRetry = (
+        <button className="btn btn-action" onClick={this.handleToolBox}>Get Toolbox</button>
+      );
     }
     return (
       <div className="setup">
