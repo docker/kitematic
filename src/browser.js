@@ -22,8 +22,11 @@ try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, 'settings.json'), 'utf8'));
 } catch (err) {}
 
+var mainWindow = null;
+var customUrl = null;
+
 app.on('ready', function () {
-  var mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: size.width || 1080,
     height: size.height || 680,
     'min-width': os.platform() === 'win32' ? 400 : 700,
@@ -76,5 +79,18 @@ app.on('ready', function () {
     mainWindow.setTitle('Kitematic');
     mainWindow.show();
     mainWindow.focus();
+    if (customUrl) {
+      mainWindow.webContents.send('custom-open-url', customUrl);
+      customUrl = null;
+    }
   });
+});
+
+app.on('open-url', function (e, url) {
+  e.preventDefault();
+  if (mainWindow) {
+    mainWindow.webContents.send('custom-open-url', url);
+  } else {
+    customUrl = url;
+  } 
 });

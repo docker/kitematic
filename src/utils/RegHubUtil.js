@@ -3,6 +3,7 @@ import request from 'request';
 import async from 'async';
 import util from '../utils/Util';
 import hubUtil from '../utils/HubUtil';
+import urlUtil from '../utils/UrlUtil';
 import dockerUtil from '../utils/DockerUtil';
 import repositoryServerActions from '../actions/RepositoryServerActions';
 import tagServerActions from '../actions/TagServerActions';
@@ -26,7 +27,11 @@ module.exports = {
     return obj;
   },
 
-  fetch: function (name, cb) {
+  fetch: function (url) {
+    let index = url.indexOf('://') + 3;
+    name = url.substr(index);
+    debugger;
+
     if (searchReq) {
       searchReq.abort();
       searchReq = null;
@@ -43,9 +48,7 @@ module.exports = {
 
       if (response.statusCode === 200) {
         let data = JSON.parse(body);
-        console.log(data);
         dockerUtil.run(data.name, data.user+'/'+data.name)
-        // cb(data);
       } else {
         repositoryServerActions.error({error: new Error('Could not fetch repository information from Docker Hub.')});
         return;
@@ -162,6 +165,12 @@ module.exports = {
   repos: function (callback) {
     repositoryServerActions.reposLoading({repos: []});
     let namespaces = [];
+    
+    let url = urlUtil.get()
+    if (url) {
+      debugger;
+      fetch(url);
+    }
     // Get Orgs for user
     hubUtil.request({
       url: `${REGHUB2_ENDPOINT}/user/orgs/`,

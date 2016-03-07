@@ -25,7 +25,6 @@ hubUtil.init();
 
 if (hubUtil.loggedin()) {
   repositoryActions.repos();
-  repositoryActions.fetch('tutum/hello-world');
 }
 
 repositoryActions.recommended();
@@ -73,4 +72,7 @@ ipcRenderer.on('application:quitting', () => {
   }
 });
 
-
+ipcRenderer.on('custom-open-url', (event, url) => {
+  debugger;
+  repositoryActions.fetch(url);
+});
