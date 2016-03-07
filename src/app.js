@@ -73,6 +73,9 @@ ipcRenderer.on('application:quitting', () => {
 });
 
 ipcRenderer.on('custom-open-url', (event, url) => {
-  debugger;
-  repositoryActions.fetch(url);
+  if (docker.client) {
+    repositoryActions.fetch(url);
+  } else {
+    repositoryActions.setPending(url);
+  }
 });

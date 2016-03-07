@@ -8,6 +8,7 @@ import util from './Util';
 import hubUtil from './HubUtil';
 import metrics from '../utils/MetricsUtil';
 import containerServerActions from '../actions/ContainerServerActions';
+import repositoryActions from '../actions/RepositoryActions';
 import rimraf from 'rimraf';
 import stream from 'stream';
 import JSONStream from 'JSONStream';
@@ -77,6 +78,7 @@ export default {
     this.placeholders = JSON.parse(localStorage.getItem('placeholders')) || {};
     this.fetchAllContainers();
     this.listen();
+    repositoryActions.fetchPending();
 
     // Resume pulling containers that were previously being pulled
     _.each(_.values(this.placeholders), container => {

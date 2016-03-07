@@ -21,6 +21,19 @@ class RepositoryActions {
     this.dispatch({});
     regHubUtil.fetch(name)
   }
+
+  setPending (name) {
+    this.dispatch({});
+    regHubUtil.pending(name);
+  }
+
+  fetchPending () {
+    this.dispatch({});
+    let name = regHubUtil.pending();
+    if (name) {
+      regHubUtil.fetch(name);
+    }
+  }
 }
 
 export default alt.createActions(RepositoryActions);

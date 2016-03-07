@@ -3,16 +3,25 @@ import request from 'request';
 import async from 'async';
 import util from '../utils/Util';
 import hubUtil from '../utils/HubUtil';
-import urlUtil from '../utils/UrlUtil';
 import dockerUtil from '../utils/DockerUtil';
 import repositoryServerActions from '../actions/RepositoryServerActions';
 import tagServerActions from '../actions/TagServerActions';
+import ContainerStore from '../stores/ContainerStore';
 
 let REGHUB2_ENDPOINT = process.env.REGHUB2_ENDPOINT || 'https://hub.docker.com/v2';
 let searchReq = null;
 let PAGING = 24;
+let pendingRepo = null;
 
 module.exports = {
+  pending: function(name) {
+    if (name) {
+      pendingRepo = name;
+    } else {
+      return pendingRepo;
+    }
+  },
+
   // Normalizes results from search to v2 repository results
   normalize: function (repo) {
     let obj = _.clone(repo);
@@ -28,18 +37,21 @@ module.exports = {
   },
 
   fetch: function (url) {
-    let index = url.indexOf('://') + 3;
-    name = url.substr(index);
-    debugger;
+    let index = url.indexOf('://');
+    
+    if (index > 0) {
+      url = url.substr(index+3);
+    }
 
+    let containerName = ContainerStore.generateName(url);
+    
     if (searchReq) {
       searchReq.abort();
       searchReq = null;
     }
 
-    console.log('Testing fetch')
     request.get({
-      url: `${REGHUB2_ENDPOINT}/repositories/${name}`
+      url: `${REGHUB2_ENDPOINT}/repositories/${url}`
     }, (error, response, body) => {
       if (error) {
         repositoryServerActions.error({error});
@@ -48,7 +60,7 @@ module.exports = {
 
       if (response.statusCode === 200) {
         let data = JSON.parse(body);
-        dockerUtil.run(data.name, data.user+'/'+data.name)
+        dockerUtil.run(containerName, data.user+'/'+data.name)
       } else {
         repositoryServerActions.error({error: new Error('Could not fetch repository information from Docker Hub.')});
         return;
@@ -166,11 +178,6 @@ module.exports = {
     repositoryServerActions.reposLoading({repos: []});
     let namespaces = [];
     
-    let url = urlUtil.get()
-    if (url) {
-      debugger;
-      fetch(url);
-    }
     // Get Orgs for user
     hubUtil.request({
       url: `${REGHUB2_ENDPOINT}/user/orgs/`,
