@@ -11,17 +11,8 @@ import ContainerStore from '../stores/ContainerStore';
 let REGHUB2_ENDPOINT = process.env.REGHUB2_ENDPOINT || 'https://hub.docker.com/v2';
 let searchReq = null;
 let PAGING = 24;
-let pendingRepo = null;
 
 module.exports = {
-  pending: function(name) {
-    if (name) {
-      pendingRepo = name;
-    } else {
-      return pendingRepo;
-    }
-  },
-
   // Normalizes results from search to v2 repository results
   normalize: function (repo) {
     let obj = _.clone(repo);

@@ -57,8 +57,8 @@ module.exports = function (grunt) {
           asar: true,
           'app-version': packagejson.version,
           protocols: [{
-            name: 'Foobar',
-            schemes: ['foobar']
+            name: 'Kitematic',
+            schemes: ['kitematic']
           }]
         }
       },

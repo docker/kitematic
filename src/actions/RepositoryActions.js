@@ -1,5 +1,6 @@
 import alt from '../alt';
 import regHubUtil from '../utils/RegHubUtil';
+import repositoryStore from '../stores/RepositoryStore';
 
 class RepositoryActions {
   recommended () {
@@ -24,12 +25,12 @@ class RepositoryActions {
 
   setPending (name) {
     this.dispatch({});
-    regHubUtil.pending(name);
+    repositoryStore.pendingRepo = name;
   }
 
   fetchPending () {
     this.dispatch({});
-    let name = regHubUtil.pending();
+    let name = repositoryStore.pendingRepo;
     if (name) {
       regHubUtil.fetch(name);
     }
