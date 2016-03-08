@@ -78,7 +78,6 @@ export default {
     this.placeholders = JSON.parse(localStorage.getItem('placeholders')) || {};
     this.fetchAllContainers();
     this.listen();
-    repositoryActions.fetchPending();
 
     // Resume pulling containers that were previously being pulled
     _.each(_.values(this.placeholders), container => {
@@ -207,6 +206,7 @@ export default {
           return;
         }
         containerServerActions.allUpdated({containers: _.indexBy(containers.concat(_.values(this.placeholders)), 'Name')});
+        repositoryActions.fetchPending();
       });
     });
   },
