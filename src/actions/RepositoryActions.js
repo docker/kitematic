@@ -20,7 +20,7 @@ class RepositoryActions {
 
   fetch (name) {
     this.dispatch({});
-    regHubUtil.fetch(name)
+    regHubUtil.fetch(name);
   }
 
   setPending (name) {

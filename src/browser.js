@@ -37,9 +37,9 @@ app.on('ready', function () {
     show: false
   });
 
-  // if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development') {
     mainWindow.openDevTools({detach: true});
-  // }
+  }
 
   mainWindow.loadURL(path.normalize('file://' + path.join(__dirname, 'index.html')));
 

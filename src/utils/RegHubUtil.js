@@ -51,7 +51,7 @@ module.exports = {
 
       if (response.statusCode === 200) {
         let data = JSON.parse(body);
-        dockerUtil.run(containerName, data.user+'/'+data.name)
+        dockerUtil.run(containerName, data.user+'/'+data.name);
       } else {
         repositoryServerActions.error({error: new Error('Could not fetch repository information from Docker Hub.')});
         return;
@@ -168,7 +168,6 @@ module.exports = {
   repos: function (callback) {
     repositoryServerActions.reposLoading({repos: []});
     let namespaces = [];
-    
     // Get Orgs for user
     hubUtil.request({
       url: `${REGHUB2_ENDPOINT}/user/orgs/`,
