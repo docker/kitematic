@@ -3,10 +3,8 @@ import request from 'request';
 import async from 'async';
 import util from '../utils/Util';
 import hubUtil from '../utils/HubUtil';
-import dockerUtil from '../utils/DockerUtil';
 import repositoryServerActions from '../actions/RepositoryServerActions';
 import tagServerActions from '../actions/TagServerActions';
-import ContainerStore from '../stores/ContainerStore';
 
 let REGHUB2_ENDPOINT = process.env.REGHUB2_ENDPOINT || 'https://hub.docker.com/v2';
 let searchReq = null;
@@ -25,38 +23,6 @@ module.exports = {
     }
 
     return obj;
-  },
-
-  fetch: function (url) {
-    let index = url.indexOf('://');
-    
-    if (index > 0) {
-      url = url.substr(index+3);
-    }
-
-    let containerName = ContainerStore.generateName(url);
-    
-    if (searchReq) {
-      searchReq.abort();
-      searchReq = null;
-    }
-
-    request.get({
-      url: `${REGHUB2_ENDPOINT}/repositories/${url}`
-    }, (error, response, body) => {
-      if (error) {
-        repositoryServerActions.error({error});
-        return;
-      }
-
-      if (response.statusCode === 200) {
-        let data = JSON.parse(body);
-        dockerUtil.run(containerName, data.user+'/'+data.name);
-      } else {
-        repositoryServerActions.error({error: new Error('Could not fetch repository information from Docker Hub.')});
-        return;
-      }
-    });
   },
 
   search: function (query, page, sorting = null) {

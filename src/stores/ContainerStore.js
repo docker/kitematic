@@ -10,9 +10,6 @@ class ContainerStore {
     this.bindActions(containerActions);
     this.bindActions(containerServerActions);
     this.containers = {};
-
-    // Pending container to create
-    this.pending = null;
   }
 
   error ({name, error}) {
@@ -155,8 +152,8 @@ class ContainerStore {
     this.setState({containers});
   }
 
-  pending ({repo, tag}) {
-    let pending = {repo, tag};
+  pending ({name, repo, tag}) {
+    let pending = {name, repo, tag};
     this.setState({pending});
   }
 

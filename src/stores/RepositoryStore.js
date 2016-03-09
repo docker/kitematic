@@ -21,7 +21,6 @@ class RepositoryStore {
     this.reposLoading = false;
     this.recommendedLoading = false;
     this.resultsLoading = false;
-    this.pendingRepo = null;
     this.error = null;
   }
 

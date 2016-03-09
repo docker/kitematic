@@ -7,8 +7,8 @@ import child_process from 'child_process';
 import util from './Util';
 import hubUtil from './HubUtil';
 import metrics from '../utils/MetricsUtil';
+import ContainerStore from '../stores/ContainerStore';
 import containerServerActions from '../actions/ContainerServerActions';
-import repositoryActions from '../actions/RepositoryActions';
 import rimraf from 'rimraf';
 import stream from 'stream';
 import JSONStream from 'JSONStream';
@@ -206,7 +206,6 @@ export default {
           return;
         }
         containerServerActions.allUpdated({containers: _.indexBy(containers.concat(_.values(this.placeholders)), 'Name')});
-        repositoryActions.fetchPending();
       });
     });
   },
@@ -214,6 +213,7 @@ export default {
   run (name, repository, tag) {
     tag = tag || 'latest';
     let imageName = repository + ':' + tag;
+    name = ContainerStore.generateName(name);
 
     let placeholderData = {
       Id: util.randomId(),
