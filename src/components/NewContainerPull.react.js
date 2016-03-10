@@ -8,9 +8,9 @@ module.exports = React.createClass({
   handleOpenClick: function () {
     var repo = this.props.pending.repo;
     if (repo.indexOf('/') === -1) {
-      shell.openExternal(`https://registry.hub.docker.com/_/${this.props.pending.repository}`);
+      shell.openExternal(`https://hub.docker.com/_/${this.props.pending.repository}`);
     } else {
-      shell.openExternal(`https://registry.hub.docker.com/u/${this.props.pending.repository}`);
+      shell.openExternal(`https://hub.docker.com/u/${this.props.pending.repository}`);
     }
   },
   handleCancelClick: function () {

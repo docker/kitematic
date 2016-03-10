@@ -43,16 +43,6 @@ module.exports = {
     var repo = tokens.slice(1).join('/');
     var name = containerStore.generateName(repo);
 
-    // Only accept official repos for now (one component)
-    // if (tokens > 1) {
-    //   return false;
-    // }
-
-    // Only accept official repos for now
-    // if (!util.isOfficialRepo(repo)) {
-    //   return false;
-    // }
-
     if (type === 'repository' && method === 'run') {
       let tag = 'latest';
       containerActions.pending({name, repo, tag});
