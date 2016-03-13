@@ -13,6 +13,9 @@ var DockerMachine = {
       return '/usr/local/bin/docker-machine';
     }
   },
+  commandElevated: function () {
+    return 'powershell.exe';
+  },
   name: function () {
     return 'default';
   },
@@ -57,21 +60,29 @@ var DockerMachine = {
       return false;
     });
   },
-  create: function (machineName = this.name(), provider = "virtualbox") {
+  create: function (machineName = this.name(), provider) {
     switch (provider){
         case "virtualbox":{
             console.log('started create with virtualbox');
             return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
         }
         case "hyperv":{
-            console.log('started create with hyperv');
-            return util.execFile([this.command(), '-D', 'create', '-d', 'hyperv', '--hyperv-memory', '2048', '--hyperv-virtual-switch', 'Docker Virtual Switch', machineName]);
-        }
+//TODO: in an ideal world, powershell has its own PowershellUtil.js ;)
+              console.log('create in: ', new Date());
+            return util.execFile([this.commandElevated(), 'start-process', 'powershell', '-verb', 'runas', '-wait',
+                                  '" docker-machine.exe -D create --driver hyperv --hyperv-memory 2048 --hyperv-virtual-switch DockerVirtualSwitch ' +
+                                  machineName + '"']).then(stdout => {
+              console.log('create out: ', new Date());
+              return Promise.resolve(null);
+            }).catch(() => {
+              throw new Error('User interupted elevated VM creation!');
+            });
+          }
         default:{
             console.log('started create with virtualbox');
             return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
         }
-    }  
+    }
   },
   start: function (machineName = this.name()) {
     return util.execFile([this.command(), '-D', 'start', machineName]);

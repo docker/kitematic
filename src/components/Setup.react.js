@@ -49,6 +49,14 @@ var Setup = React.createClass({
     shell.openExternal('https://www.docker.com/docker-toolbox');
   },
 
+  handleHypervAdminError: function () {
+    metrics.track('Goto Hyper-V help', {
+      from: 'setup'
+    });
+    //TODO: send user to the right FAQ place!
+    shell.openExternal('https://docs.docker.com/kitematic/known-issues/');
+  },
+
   handleLinuxDockerInstall: function () {
     metrics.track('Opening Linux Docker installation instructions', {
       from: 'setup'
@@ -110,9 +118,15 @@ var Setup = React.createClass({
         <button className="btn btn-action" onClick={this.handleErrorRemoveRetry}>Delete VM &amp; Retry Setup</button>
       );
     } else {
-      deleteVmAndRetry = (
-        <button className="btn btn-action" onClick={this.handleToolBox}>Get Toolbox</button>
-      );
+      if (this.state.error.sendUserTo && this.state.error.sendUserTo === 'hyperv-faq') {
+        deleteVmAndRetry = (
+          <button className="btn btn-action" onClick={this.handleHypervAdminError}>How to setup HyperV Admin</button>
+        )
+      } else {
+        deleteVmAndRetry = (
+          <button className="btn btn-action" onClick={this.handleToolBox}>Get Toolbox</button>
+        );
+      }
     }
     return (
       <div className="setup">
