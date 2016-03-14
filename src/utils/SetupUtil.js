@@ -174,11 +174,23 @@ export default {
           hypervBoxVersion
         });
         
-        let vmExists= await machine.exists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
+        // TODO: can be improved when more drivers are supported.
+        // Consistency checks. Sometimes users remove vms with the native GUI, but docker machine still knows it.
+        let existsInVmGui = false;
+        switch (provider){
+          case "virtualbox":{
+            existsInVmGui = await VirtualBox.vmExists(machine.name())
+          }
+          case "hyperv": {
+            existsInVmGui = await hypervBox.vmExists(machine.name())
+          }
+        }
+
+        let vmExists = existsInVmGui && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
         if (!vmExists) {
           router.get().transitionTo('setup');
           setupServerActions.started({started: true});
-          this.simulateProgress(60);
+          this.simulateProgress(80); // with hyperv it seems to need more than 60
           try {
             await machine.rm(machine.name());
           } catch (err) {}

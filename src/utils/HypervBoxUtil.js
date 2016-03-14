@@ -64,8 +64,9 @@ var HypervBox = {
 
   // TODO: remove imo obsolete
   vmExists: function (name) {
-    return util.execFile([machine.command(), 'ls']).then(out => {
-      return out.indexOf('"' + name + '"') !== -1;
+    return util.execFile([this.command(), "Get-VM | Where {$_.Name -eq '" + name + "'}"]).then(out => {
+      console.log(out)
+      return (out.indexOf(name) !== -1);
     }).catch(() => {
       return false;
     });
