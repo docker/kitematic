@@ -54,7 +54,7 @@ var Setup = React.createClass({
       from: 'setup'
     });
     //TODO: send user to the right FAQ place!
-    shell.openExternal('https://docs.docker.com/kitematic/known-issues/');
+    shell.openExternal('https://github.com/docker/kitematic/issues/1463#issuecomment-196257126');
   },
 
   handleLinuxDockerInstall: function () {

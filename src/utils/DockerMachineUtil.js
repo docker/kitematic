@@ -70,7 +70,7 @@ var DockerMachine = {
 //TODO: in an ideal world, powershell has its own PowershellUtil.js ;)
               console.log('create in: ', new Date());
             return util.execFile([this.commandElevated(), 'start-process', 'powershell', '-verb', 'runas', '-wait',
-                                  '" docker-machine.exe -D create --driver hyperv --hyperv-memory 2048 --hyperv-virtual-switch DockerVirtualSwitch ' +
+                                  '" docker-machine.exe -D create --driver hyperv --hyperv-memory 2048 --hyperv-virtual-switch KitematicVirtualSwitch ' +
                                   machineName + '"']).then(stdout => {
               console.log('create out: ', new Date());
               return Promise.resolve(null);
