@@ -7,7 +7,6 @@ import child_process from 'child_process';
 import util from './Util';
 import hubUtil from './HubUtil';
 import metrics from '../utils/MetricsUtil';
-import ContainerStore from '../stores/ContainerStore';
 import containerServerActions from '../actions/ContainerServerActions';
 import rimraf from 'rimraf';
 import stream from 'stream';
@@ -213,7 +212,6 @@ export default {
   run (name, repository, tag) {
     tag = tag || 'latest';
     let imageName = repository + ':' + tag;
-    name = ContainerStore.generateName(name);
 
     let placeholderData = {
       Id: util.randomId(),

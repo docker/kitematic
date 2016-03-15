@@ -1,7 +1,6 @@
 import util from './Util';
 import parseUri from 'parseUri';
 import containerActions from '../actions/ContainerActions';
-import containerStore from '../stores/ContainerStore';
 
 module.exports = {
   TYPE_WHITELIST: ['repository'],
@@ -41,7 +40,6 @@ module.exports = {
 
     // Get the repository namespace and repo name, e.g. 'redis' or 'myusername/myrepo'
     var repo = tokens.slice(1).join('/');
-    var name = containerStore.generateName(repo);
 
     if (type === 'repository' && method === 'run') {
       let tag = 'latest';

@@ -2,6 +2,7 @@ import React from 'react/addons';
 import Router from 'react-router';
 import shell from 'shell';
 import containerActions from '../actions/ContainerActions';
+import containerStore from '../stores/ContainerStore';
 
 module.exports = React.createClass({
   mixins: [Router.Navigation],
@@ -19,8 +20,9 @@ module.exports = React.createClass({
   },
   handleConfirmClick: function () {
     containerActions.clearPending();
+    var name = containerStore.generateName(this.props.pending.repo)
     
-    containerActions.run(this.props.pending.name, this.props.pending.repo, this.props.pending.tag);
+    containerActions.run(name, this.props.pending.repo, this.props.pending.tag);
   },
   render: function () {
     if (!this.props.pending) {
