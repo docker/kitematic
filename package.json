@@ -21,7 +21,6 @@
   "license": "Apache-2.0",
   "electron-version": "0.35.4",
   "dependencies": {
-    "JSONStream": "^1.0.7",
     "alt": "^0.16.2",
     "ansi-to-html": "0.3.0",
     "any-promise": "^0.1.0",
