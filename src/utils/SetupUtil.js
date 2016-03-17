@@ -114,8 +114,8 @@ export default {
     let hypervBoxVersion = null;
     let virtualBoxVersion = null;
     let machineVersion = null;
-//    let startedHyperv = false;
     let provider = "virtualbox";   //default
+    let hypervSwitchName = null;
    
     while (true) {
       try {
@@ -152,6 +152,18 @@ export default {
             await this.pause();
             continue;
           }
+
+          hypervSwitchName = await hypervBox.switchName();
+
+          if (!hypervSwitchName) {
+            setupServerActions.error({error: {message: 'It seems, there is no "external" vSwitch available. Check out the HowTo!', sendUserTo: 'hyperv-faq'}});
+            this.clearTimers();
+            await this.pause();
+            continue;
+          } else {
+            localStorage.setItem('virtualSwitch', hypervSwitchName);
+          }
+
         }
 
         // Existing behaviour

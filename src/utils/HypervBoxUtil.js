@@ -24,9 +24,12 @@ var HypervBox = {
     });
   },
   // TODO ?????????????????? what does this do
+  /*
   active: function () {
     return fs.existsSync('/dev/vboxnetctl');
   },
+  */
+
   hasAdminRights: function() {
     return util.execFile([this.command(), 'Get-VMHostSupportedVersion']).then(stdout => {
       console.log('stdout: ', stdout);
@@ -36,6 +39,14 @@ var HypervBox = {
       }
     }).catch(() => {
       return Promise.resolve(false);
+    });
+  },
+  switchName: function (name) {
+    return util.execFile([this.command(), '$(Get-VMSwitch | where {$_.SwitchType -eq "external"}).name']).then(out => {
+      // We use the same mechanism as docker-machine. Use the first switch we find.
+      return (out.split('\n')[0]);
+    }).catch(() => {
+      return false;
     });
   },
   version: function () {
@@ -61,8 +72,7 @@ var HypervBox = {
   mountSharedDir: function (vmName, pathName, hostPath) {
     return util.execFile([this.command(), 'sharedfolder', 'add', vmName, '--name', pathName, '--hostpath', hostPath, '--automount']);
   },
-
-  // TODO: remove imo obsolete
+  // Needed for consistency check
   vmExists: function (name) {
     return util.execFile([this.command(), "Get-VM | Where {$_.Name -eq '" + name + "'}"]).then(out => {
       console.log(out)

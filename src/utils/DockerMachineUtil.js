@@ -61,23 +61,27 @@ var DockerMachine = {
     });
   },
   create: function (machineName = this.name(), provider) {
+    //TODO: check options elements!
     switch (provider){
         case "virtualbox":{
-            console.log('started create with virtualbox');
-            return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
+          console.log('started create with virtualbox');
+          return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
         }
         case "hyperv":{
-//TODO: in an ideal world, powershell has its own PowershellUtil.js ;)
-              console.log('create in: ', new Date());
-            return util.execFile([this.commandElevated(), 'start-process', 'powershell', '-verb', 'runas', '-wait',
-                                  '" docker-machine.exe -D create --driver hyperv --hyperv-memory 2048 --hyperv-virtual-switch KitematicVirtualSwitch ' +
-                                  machineName + '"']).then(stdout => {
-              console.log('create out: ', new Date());
-              return Promise.resolve(null);
-            }).catch(() => {
-              throw new Error('User interupted elevated VM creation!');
-            });
-          }
+          //The switch may contain spaces!
+          let virtualSwitch = localStorage.getItem('virtualSwitch');
+
+          let args= `"` + `docker-machine.exe -D create --driver hyperv --hyperv-memory 2048 `+
+                    `--hyperv-virtual-switch '${virtualSwitch}' ${machineName}` + `"`;
+
+          //TODO: in an ideal world, powershell has its own PowershellUtil.js ;)
+          console.log("cmd: ", args)
+          return util.execFile([this.commandElevated(), 'start-process', 'powershell', '-verb', 'runas', '-wait', '-argumentList', args]).then(stdout => {
+            return Promise.resolve(null);
+          }).catch((error) => {
+            throw new Error(error.message);
+          });
+        }
         default:{
             console.log('started create with virtualbox');
             return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
