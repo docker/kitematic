@@ -98,29 +98,23 @@ var Header = React.createClass({
     accountActions.verify();
   },
   renderLogo: function () {
-    return (
-      <div className="logo">
-        <RetinaImage src="logo.png"/>
-      </div>
-    );
+    if(!util.isWindows()) {
+      return (
+          <div className="logo">
+            <RetinaImage src="logo.png"/>
+          </div>
+      );
+    }
   },
   renderWindowButtons: function () {
     let buttons;
-    if (util.isWindows()) {
+    if (!util.isWindows()) {
       buttons = (
-        <div className="windows-buttons">
-        <div className="windows-button button-minimize enabled" onClick={this.handleMinimize}><div className="icon"></div></div>
-        <div className={`windows-button ${this.state.fullscreen ? 'button-fullscreenclose' : 'button-fullscreen'} enabled`} onClick={this.handleFullscreen}><div className="icon"></div></div>
-        <div className="windows-button button-close enabled" onClick={this.handleClose}></div>
-        </div>
-      );
-    } else {
-      buttons = (
-        <div className="buttons">
-        <div className="button button-close enabled" onClick={this.handleClose}></div>
-        <div className="button button-minimize enabled" onClick={this.handleMinimize}></div>
-        <div className="button button-fullscreen enabled" onClick={this.handleFullscreen}></div>
-        </div>
+          <div className="buttons">
+            <div className="button button-close enabled" onClick={this.handleClose}></div>
+            <div className="button button-minimize enabled" onClick={this.handleMinimize}></div>
+            <div className="button button-fullscreen enabled" onClick={this.handleFullscreen}></div>
+          </div>
       );
     }
     return buttons;
@@ -134,7 +128,7 @@ var Header = React.createClass({
     let username;
     if (this.props.hideLogin) {
       username = null;
-    } else if (this.state.username) {
+    } else if (this.state.username && !util.isWindows()) {
       username = (
         <div className="login-wrapper">
           <div className="login no-drag" onClick={this.handleUserClick}>
@@ -147,7 +141,7 @@ var Header = React.createClass({
           </div>
         </div>
       );
-    } else {
+    } else if(!util.isWindows()){
       username = (
         <div className="login-wrapper">
           <div className="login no-drag" onClick={this.handleLoginClick}>

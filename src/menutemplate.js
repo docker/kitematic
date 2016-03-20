@@ -43,9 +43,6 @@ var MenuTemplate = function () {
         type: 'separator'
       },
       {
-        type: 'separator'
-      },
-      {
         label: 'Hide Kitematic',
         accelerator: util.CommandOrCtrl() + '+H',
         selector: 'hide:'

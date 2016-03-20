@@ -6,6 +6,8 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import child_process from 'child_process';
+import debug from 'electron-debug';
+debug();
 
 process.env.NODE_PATH = path.join(__dirname, 'node_modules');
 process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
@@ -30,8 +32,11 @@ app.on('ready', function () {
     'min-height': os.platform() === 'win32' ? 260 : 500,
     'standard-window': false,
     resizable: true,
-    frame: false,
-    show: false
+    frame: os.platform() === 'win32',
+    show: false,
+    autoHideMenuBar:true,
+    titleBarStyle: 'hidden',
+    icon:path.join(__dirname,'/../util/kitematic.ico')
   });
 
   if (process.env.NODE_ENV === 'development') {
