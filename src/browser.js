@@ -6,8 +6,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import child_process from 'child_process';
-import debug from 'electron-debug';
-debug();
+
 
 process.env.NODE_PATH = path.join(__dirname, 'node_modules');
 process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
