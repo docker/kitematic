@@ -5,6 +5,8 @@ import fs from 'fs';
 import util from './Util';
 import child_process from 'child_process';
 
+const supportedDrivers = ['virtualbox', 'parallels', 'vmwarefusion', 'vmwareworkstation', 'hyperv', 'xhyve', 'kvm'];
+
 var DockerMachine = {
   command: function () {
     if (util.isWindows()) {
@@ -55,7 +57,7 @@ var DockerMachine = {
             state: parts[3],
             url: parts[4]
           }
-        });
+        }).filter(m => { return _.contains(supportedDrivers, m.driver); });
         return Promise.resolve(machines);
       } catch (err) {
         return Promise.reject(err);
