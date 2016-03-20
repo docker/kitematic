@@ -137,20 +137,17 @@ export default {
             exists = true;
           } else {
             machine.resetName();
+            // Make sure virtualBox is installed
+            let virtualBoxInstalled = virtualBox.installed();
+            if (!virtualBoxInstalled) {
+              router.get().transitionTo('setup');
+              setupServerActions.error({error: 'VirtualBox is not installed. Please install it via the Docker Toolbox.'});
+              this.clearTimers();
+              await this.pause();
+              continue;
+            }
+            virtualBoxVersion = await virtualBox.version();
           }
-        }
-
-        if (!exists) {
-          // Make sure virtualBox is installed
-          let virtualBoxInstalled = virtualBox.installed();
-          if (!virtualBoxInstalled) {
-            router.get().transitionTo('setup');
-            setupServerActions.error({error: 'VirtualBox is not installed. Please install it via the Docker Toolbox.'});
-            this.clearTimers();
-            await this.pause();
-            continue;
-          }
-          virtualBoxVersion = await virtualBox.version();
         }
 
         setupServerActions.started({started: true});
