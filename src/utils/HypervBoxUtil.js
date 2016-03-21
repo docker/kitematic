@@ -23,7 +23,7 @@ var HypervBox = {
       return Promise.resolve(null);
     });
   },
-  // TODO ?????????????????? what does this do
+  // TODO  what does this do
   /*
   active: function () {
     return fs.existsSync('/dev/vboxnetctl');
