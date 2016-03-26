@@ -26,7 +26,7 @@ var Containers = React.createClass({
     containerStore.listen(this.update);
   },
 
-  componentDidUnmount: function () {
+  componentWillUnmount: function () {
     containerStore.unlisten(this.update);
   },
 
@@ -106,43 +106,7 @@ var Containers = React.createClass({
     metrics.track('Opened Issue Reporter', {
       from: 'app'
     });
-    shell.openExternal('https://github.com/kitematic/kitematic/issues/new');
-  },
-
-  handleMouseEnterDockerTerminal: function () {
-    this.setState({
-      currentButtonLabel: 'Open terminal to use Docker command line.'
-    });
-  },
-
-  handleMouseLeaveDockerTerminal: function () {
-    this.setState({
-      currentButtonLabel: ''
-    });
-  },
-
-  handleMouseEnterReportIssue: function () {
-    this.setState({
-      currentButtonLabel: 'Report an issue or suggest feedback.'
-    });
-  },
-
-  handleMouseLeaveReportIssue: function () {
-    this.setState({
-      currentButtonLabel: ''
-    });
-  },
-
-  handleMouseEnterPreferences: function () {
-    this.setState({
-      currentButtonLabel: 'Change app preferences.'
-    });
-  },
-
-  handleMouseLeavePreferences: function () {
-    this.setState({
-      currentButtonLabel: ''
-    });
+    shell.openExternal('https://github.com/docker/kitematic/issues/new');
   },
 
   render: function () {
@@ -169,9 +133,9 @@ var Containers = React.createClass({
               <ContainerList containers={this.state.sorted} newContainer={this.state.newContainer} />
             </section>
             <section className="sidebar-buttons">
-              <span className="btn-sidebar btn-terminal" onClick={this.handleClickDockerTerminal} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><span className="icon icon-docker-cli"></span><span className="text">DOCKER CLI</span></span>
-              <span className="btn-sidebar btn-feedback" onClick={this.handleClickReportIssue} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><span className="icon icon-feedback"></span></span>
-              <span className="btn-sidebar btn-preferences" onClick={this.handleClickPreferences} onMouseEnter={this.handleMouseEnterDockerTerminal} onMouseLeave={this.handleMouseLeaveDockerTerminal}><span className="icon icon-preferences"></span></span>
+              <span className="btn-sidebar btn-terminal" onClick={this.handleClickDockerTerminal} ><span className="icon icon-docker-cli"></span><span className="text">DOCKER CLI</span></span>
+              <span className="btn-sidebar btn-feedback" onClick={this.handleClickReportIssue} ><span className="icon icon-feedback"></span></span>
+              <span className="btn-sidebar btn-preferences" onClick={this.handleClickPreferences} ><span className="icon icon-preferences"></span></span>
             </section>
           </div>
           <Router.RouteHandler pending={this.state.pending} containers={this.state.containers} container={container}/>

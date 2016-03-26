@@ -76,11 +76,11 @@ var ImageCard = React.createClass({
     $tagOverlay.fadeOut(300);
   },
   handleRepoClick: function () {
-    var repoUri = 'https://registry.hub.docker.com/';
+    var repoUri = 'https://hub.docker.com/';
     if (this.props.image.namespace === 'library') {
       repoUri = repoUri + '_/' + this.props.image.name;
     } else {
-      repoUri = repoUri + 'u/' + this.props.image.namespace + '/' + this.props.image.name;
+      repoUri = repoUri + 'r/' + this.props.image.namespace + '/' + this.props.image.name;
     }
     shell.openExternal(repoUri);
   },
@@ -105,6 +105,8 @@ var ImageCard = React.createClass({
     var description;
     if (this.props.image.description) {
       description = this.props.image.description;
+    } else if(this.props.image.short_description){
+      description = this.props.image.short_description;
     } else {
       description = "No description.";
     }
