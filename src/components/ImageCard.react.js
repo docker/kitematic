@@ -105,6 +105,8 @@ var ImageCard = React.createClass({
     var description;
     if (this.props.image.description) {
       description = this.props.image.description;
+    } else if(this.props.image.short_description){
+      description = this.props.image.short_description;
     } else {
       description = "No description.";
     }

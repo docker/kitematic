@@ -73,7 +73,6 @@ module.exports = React.createClass({
       nextPage = (page + 1 > this.state.totalPage) ? this.state.totalPage : page + 1;
       totalPage = this.state.totalPage;
     }
-
     this.setState({
       query: query,
       loading: true,
