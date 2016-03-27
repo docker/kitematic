@@ -296,6 +296,7 @@ export default {
       data.Mounts = data.Mounts || existingData.Mounts;
 
       var fullData = _.extend(existingData, data);
+      console.log(fullData);
       this.createContainer(name, fullData);
     });
   },

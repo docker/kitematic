@@ -45,22 +45,24 @@ var ContainerSettingsPorts = React.createClass({
     document.getElementById('portValue').value = '';
   },
   addPort: function () {
-    var portKey = document.getElementById('portKey').value;
-    var portValue = document.getElementById('portValue').value;
-    var portTypeValue = document.getElementById('portType').textContent;
-    var ports = this.state.ports;
-    if (portKey !== '') {
-      ports[portKey] = {
-        ip: docker.host,
-        url: docker.host + ':' + portValue,
-        port: portValue,
-        portType: portTypeValue.trim(),
-        error: null
-      };
+    if (document.getElementById('portKey') != null){
+      var portKey = document.getElementById('portKey').value;
+      var portValue = document.getElementById('portValue').value;
+      var portTypeValue = document.getElementById('portType').textContent;
+      var ports = this.state.ports;
+      if (portKey !== '') {
+        ports[portKey] = {
+          ip: docker.host,
+          url: docker.host + ':' + portValue,
+          port: portValue,
+          portType: portTypeValue.trim(),
+          error: null
+        };
 
-      this.checkPort(ports, portKey, portKey);
-      if (ports[portKey].error === null) {
-        this.createEmptyPort(ports);
+        this.checkPort(ports, portKey, portKey);
+        if (ports[portKey].error === null) {
+          this.createEmptyPort(ports);
+        }
       }
     }
     return ports;
@@ -169,20 +171,19 @@ var ContainerSettingsPorts = React.createClass({
     let ports = this.state.ports;
     ports = this.addPort();
     this.setState({ports: ports});
-    let bindings = _.reduce(ports, (res, value, key) => {
+    let exposedPorts = {};
+    let portBindings = _.reduce(ports, (res, value, key) => {
       if (key !== '') {
         res[key + '/' + value.portType] = [{
           HostPort: value.port
         }];
+        exposedPorts[key + '/' + value.portType] = {};
       }
       return res;
     }, {});
 
-    containerActions.update(this.props.container.Name, {
-      NetworkSettings: {
-        Ports: bindings
-      }
-    });
+    let hostConfig = _.extend(this.props.container.HostConfig, {PortBindings: portBindings});
+    containerActions.update(this.props.container.Name, {ExposedPorts: exposedPorts, HostConfig: hostConfig});
 
   },
   render: function () {
@@ -201,7 +202,7 @@ var ContainerSettingsPorts = React.createClass({
       var portKey = '';
       var portValue = '';
       if (key === '') {
-        icon = <td><a disabled={isUpdating} onClick={this.handleAddPort.bind(this)} className="only-icon btn btn-positive small"><span className="icon icon-add"></span></a></td>;
+        icon = <td><a disabled={isUpdating} onClick={this.handleAddPort} className="only-icon btn btn-positive small"><span className="icon icon-add"></span></a></td>;
         portKey = <input id={'portKey' + key} type="text" disabled={isUpdating} defaultValue={key} />;
         portValue = <input id={'portValue' + key} type="text" disabled={isUpdating} defaultValue={port} />;
       }else {
