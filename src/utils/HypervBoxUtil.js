@@ -42,7 +42,8 @@ var HypervBox = {
     });
   },
   switchName: function (name) {
-    return util.execFile([this.command(), '$(Get-VMSwitch | where {$_.SwitchType -eq "external"}).name']).then(out => {
+//    return util.execFile([this.command(), '$(Get-VMSwitch | where {$_.SwitchType -eq "external"}).name']).then(out => {
+    return util.execFile([this.command(), '$(Get-VMSwitch).name']).then(out => {
       // We use the same mechanism as docker-machine. Use the first switch we find.
       return (out.replace('\r','').split('\n')[0]);
     }).catch(() => {
