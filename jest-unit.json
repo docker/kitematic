@@ -14,6 +14,7 @@
     "underscore",
     "source-map-support",
     "<rootDir>/node_modules/.*JSONStream",
-    "<rootDir>/node_modules/core-js"
+    "<rootDir>/node_modules/core-js",
+    "<rootDir>/node_modules/"
   ]
 }
