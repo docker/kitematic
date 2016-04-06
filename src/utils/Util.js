@@ -38,7 +38,6 @@ module.exports = {
     return process.platform === 'linux';
   },
   isNative: function () {
-    // let native = JSON.parse(localStorage.getItem('settings.useNative'));
     let native = null;
     if (native === null) {
       try {

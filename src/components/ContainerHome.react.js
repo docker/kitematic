@@ -32,6 +32,7 @@ var ContainerHome = React.createClass({
   },
 
   handleErrorClick: function () {
+    // Display wiki for proxy: https://github.com/docker/kitematic/wiki/Common-Proxy-Issues-&-Fixes
     shell.openExternal('https://github.com/kitematic/kitematic/issues/new');
   },
 
