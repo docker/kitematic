@@ -98,18 +98,15 @@ var Header = React.createClass({
     accountActions.verify();
   },
   renderLogo: function () {
-    if(!util.isWindows()) {
       return (
           <div className="logo">
             <RetinaImage src="logo.png"/>
           </div>
       );
-    }
   },
   renderWindowButtons: function () {
-    let buttons;
-    if (!util.isWindows()) {
-      buttons = (
+    if(!util.isWindows()){
+      return (
           <div className="buttons">
             <div className="button button-close enabled" onClick={this.handleClose}></div>
             <div className="button button-minimize enabled" onClick={this.handleMinimize}></div>
@@ -117,7 +114,6 @@ var Header = React.createClass({
           </div>
       );
     }
-    return buttons;
   },
   renderDashboardHeader: function () {
     let headerClasses = classNames({
@@ -141,23 +137,40 @@ var Header = React.createClass({
           </div>
         </div>
       );
-    } else if(!util.isWindows()){
+    } else if(util.isWindows()){
       username = (
-        <div className="login-wrapper">
-          <div className="login no-drag" onClick={this.handleLoginClick}>
-            <span className="icon icon-user"></span> LOGIN
+          <div className="login no-drag" onClick={this.handleUserClick}>
+            <span className="icon icon-user"></span>
+              <span className="text">
+                {this.state.username}
+                {this.state.verified ? null : '(Unverified)'}
+              </span>
+            <RetinaImage src="userdropdown.png"/>
           </div>
-        </div>
       );
+    }else{
+      username = (
+          <div className="login-wrapper">
+            <div className="login no-drag" onClick={this.handleLoginClick}>
+              <span className="icon icon-user"></span> LOGIN
+            </div>
+          </div>
+      );
+    }
+
+    if(util.isWindows ()){
+
+    }else{
+
     }
     return (
       <div className={headerClasses}>
         <div className="left-header">
-          {util.isWindows () ? this.renderLogo() : this.renderWindowButtons()}
+          {util.isWindows () ? null : this.renderWindowButtons()}
           {username}
         </div>
         <div className="right-header">
-          {util.isWindows () ? this.renderWindowButtons() : this.renderLogo()}
+          {util.isWindows () ? this.renderWindowButtons() : null}
         </div>
       </div>
     );
