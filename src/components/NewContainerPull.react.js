@@ -16,13 +16,14 @@ module.exports = React.createClass({
   },
   handleCancelClick: function () {
     containerActions.clearPending();
-    this.context.router.transitionTo('new');
+    this.context.router.transitionTo('search');
   },
   handleConfirmClick: function () {
     containerActions.clearPending();
     var name = containerStore.generateName(this.props.pending.repo)
     
     containerActions.run(name, this.props.pending.repo, this.props.pending.tag);
+    this.transitionTo('containerHome', {name});
   },
   render: function () {
     if (!this.props.pending) {

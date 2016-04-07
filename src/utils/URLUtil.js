@@ -31,6 +31,10 @@ module.exports = {
     // Separate the path into [run', 'redis']
     var tokens = parser.path.replace('/', '').split('/');
 
+    if (tokens.length > 3) {
+      return false;
+    }
+
     // Get the method trying to be executed, e.g. 'run'
     var method = tokens[0];
 
