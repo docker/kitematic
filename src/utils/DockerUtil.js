@@ -150,7 +150,7 @@ export default {
       if (image.Config.Cmd) {
         containerData.Cmd = image.Config.Cmd;
       } else if (!image.Config.Entrypoint) {
-        containerData.Cmd = 'bash';
+        containerData.Cmd = 'sh';
       }
 
       let existing = this.client.getContainer(name);
