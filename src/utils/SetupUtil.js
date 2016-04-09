@@ -69,12 +69,7 @@ export default {
     while (true) {
       try {
         if (util.isNative()) {
-          let stats = fs.statSync('/var/run/docker.sock');
-          if (stats.isSocket()) {
-            await this.nativeSetup();
-          } else {
-            throw new Error('File found is not a socket');
-          }
+          await this.nativeSetup();
         } else {
           await this.nonNativeSetup();
         }

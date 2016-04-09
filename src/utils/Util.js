@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import electron from 'electron';
+import request from 'request';
 const remote = electron.remote;
 const dialog = remote.dialog;
 const app = remote.app;
@@ -39,11 +40,24 @@ module.exports = {
   },
   isNative: function () {
     let native = null;
-    if (native === null) {
+    if (this.isWindows()) {
+      native = request.get({
+        url: `http://docker.local:2375/version`
+      }, (error, response, body) => {
+        if (response.statusCode === 200 ) {
+          let data = JSON.parse(body);
+          return data;
+        } else {
+          return false;
+        }
+      });
+    } else {
       try {
         // Check if file exists
-        fs.statSync('/var/run/docker.sock');
-        native = true;
+        let stats = fs.statSync('/var/run/docker.sock');
+        if (stats.isSocket()) {
+          native = true;
+        }
       } catch (e) {
         if (this.isLinux()) {
           native = true;
