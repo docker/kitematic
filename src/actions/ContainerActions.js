@@ -31,6 +31,10 @@ class ContainerActions {
     dockerUtil.updateContainer(name, container);
   }
 
+  pending ({repo, tag}) {
+    this.dispatch({repo, tag});
+  }
+
   clearPending () {
     this.dispatch();
   }

@@ -15,6 +15,7 @@ import Preferences from './components/Preferences.react';
 import About from './components/About.react';
 import Loading from './components/Loading.react';
 import NewContainerSearch from './components/NewContainerSearch.react';
+import NewContainerPull from './components/NewContainerPull.react';
 import Router from 'react-router';
 
 var Route = Router.Route;
@@ -46,6 +47,7 @@ var routes = (
         </Route>
       </Route>
       <Route name="search" handler={NewContainerSearch}/>
+      <Route name="pull" path="containers/new/pull" handler={NewContainerPull}></Route>
       <Route name="preferences" path="preferences" handler={Preferences}/>
       <Route name="about" path="about" handler={About}/>
     </Route>

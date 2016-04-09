@@ -22,6 +22,12 @@ try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, 'settings.json'), 'utf8'));
 } catch (err) {}
 
+var openURL = null;
+app.on('open-url', function (event, url) {
+  event.preventDefault();
+  openURL = url;
+});
+
 app.on('ready', function () {
   var mainWindow = new BrowserWindow({
     width: size.width || 1080,
@@ -32,6 +38,13 @@ app.on('ready', function () {
     resizable: true,
     frame: false,
     show: false
+  });
+
+  app.on('open-url', function (event, url) {
+    event.preventDefault();
+    mainWindow.webContents.send('application:open-url', {
+      url: url
+    });
   });
 
   if (process.env.NODE_ENV === 'development') {
@@ -76,5 +89,10 @@ app.on('ready', function () {
     mainWindow.setTitle('Kitematic');
     mainWindow.show();
     mainWindow.focus();
+    if (openURL) {
+      mainWindow.webContents.send('application:open-url', {
+        url: openURL
+      });
+    }
   });
 });

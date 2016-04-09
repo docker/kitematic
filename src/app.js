@@ -3,10 +3,12 @@ require.main.paths.splice(0, 0, process.env.NODE_PATH);
 import electron from 'electron';
 const remote = electron.remote;
 const Menu = remote.Menu;
+const app = remote.require('app');
 // ipcRenderer is used as we're in the process
 const ipcRenderer = electron.ipcRenderer;
 
 import React from 'react';
+import request from 'request';
 
 import metrics from './utils/MetricsUtil';
 import template from './menutemplate';
@@ -15,6 +17,7 @@ import hubUtil from './utils/HubUtil';
 import setupUtil from './utils/SetupUtil';
 import docker from './utils/DockerUtil';
 import hub from './utils/HubUtil';
+import urlUtil from './utils/URLUtil';
 import Router from 'react-router';
 import routes from './routes';
 import routerContainer from './router';
@@ -48,8 +51,6 @@ var router = Router.create({
 router.run(Handler => React.render(<Handler/>, document.body));
 routerContainer.set(router);
 
-
-
 setupUtil.setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   docker.init();
@@ -70,4 +71,21 @@ ipcRenderer.on('application:quitting', () => {
   if (localStorage.getItem('settings.closeVMOnQuit') === 'true') {
     machine.stop();
   }
+});
+
+// Event fires when the app receives a kitematic:// URL such as
+// kitematic://repository/run/redis
+ipcRenderer.on('application:open-url', (event, opts) => {
+  request.get('https://kitematic.com/flags.json', (err, response, body) => {
+    if (err || response.statusCode !== 200) {
+      return;
+    }
+
+    var flags = JSON.parse(body);
+    if (!flags) {
+      return;
+    }
+
+    urlUtil.openUrl(opts.url, flags, app.getVersion());
+  });
 });

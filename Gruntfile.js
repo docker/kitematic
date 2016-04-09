@@ -55,7 +55,11 @@ module.exports = function (grunt) {
           platform: 'darwin',
           arch: 'x64',
           asar: true,
-          'app-version': packagejson.version
+          'app-version': packagejson.version,
+          protocols: [{
+            name: 'kitematic',
+            schemes: ['Kitematic']
+          }]
         }
       },
       linux: {
