@@ -44,11 +44,11 @@ module.exports = {
       native = request.get({
         url: `http://docker.local:2375/version`
       }, (error, response, body) => {
-        if (response.statusCode === 200 ) {
+        if (error !== null || response.statusCode !== 200 ) {
+          return false;
+        } else {
           let data = JSON.parse(body);
           return data;
-        } else {
-          return false;
         }
       });
     } else {
