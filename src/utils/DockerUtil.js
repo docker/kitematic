@@ -19,7 +19,8 @@ export default {
   host: null,
   client: null,
   placeholders: {},
-  streams: {},
+  stream: null,
+  eventStream: null,
   activeContainerName: null,
 
   setup (ip, name) {
@@ -377,7 +378,7 @@ export default {
   },
 
   active (name) {
-    this.detach();
+    this.detachLog();
     this.activeContainerName = name;
 
     if (name) {
@@ -431,9 +432,7 @@ export default {
         return;
       }
 
-      if (this.stream) {
-        this.detach();
-      }
+      this.detachLog()
       this.stream = logStream;
 
       let timeout = null;
@@ -452,14 +451,22 @@ export default {
     });
   },
 
-  detach () {
+  detachLog() {
     if (this.stream) {
       this.stream.destroy();
       this.stream = null;
     }
   },
+  detachEvent() {
+    if (this.eventStream) {
+      this.eventStream.destroy();
+      this.eventStream = null;
+    }
+  },
+
 
   listen () {
+    this.detachEvent()
     this.client.getEvents((error, stream) => {
       if (error || !stream) {
         // TODO: Add app-wide error handler
@@ -474,13 +481,13 @@ export default {
 
         if (data.status === 'destroy') {
           containerServerActions.destroyed({id: data.id});
-          this.detach(data.id);
+          this.detachLog()
         } else if (data.status === 'kill') {
           containerServerActions.kill({id: data.id});
-          this.detach(data.id);
+          this.detachLog()
         } else if (data.status === 'stop') {
           containerServerActions.stopped({id: data.id});
-          this.detach(data.id);
+          this.detachLog()
         } else if (data.status === 'create') {
           this.logs();
           this.fetchContainer(data.id);
@@ -491,6 +498,7 @@ export default {
           this.fetchContainer(data.id);
         }
       });
+      this.eventStream = stream;
     });
   },
 
