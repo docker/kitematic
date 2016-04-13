@@ -400,6 +400,7 @@ export default {
       if (err) {
         // socket hang up can be captured
         console.error(err);
+        containerServerActions.error({name: this.activeContainerName, err});
         return;
       }
 

@@ -51,10 +51,20 @@ var ContainerHome = React.createClass({
 
     let body;
     if (this.props.container.Error) {
+      let error = this.props.container.Error.message;
+      console.log('Err: %o - %o', typeof error, error);
+      if (error.indexOf('ETIMEDOUT') !== -1) {
+        error = 'Timeout error - Try and restart your VM by running: \n"docker-machine restart default" in a terminal';
+      }
+      if (error.indexOf('ECONNREFUSED') !== -1) {
+        error = 'Is your VM up and running? Check that "docker ps" works in a terminal.';
+      }
       body = (
         <div className="details-progress error">
           <h2>We&#39;re sorry. There seems to be an error:</h2>
-          <p className="error-message">{this.props.container.Error}</p>
+          {error.split('\n').map(i => {
+            return <p className="error-message">{i}</p>;
+          })}
           <p>If this error is invalid, please file a ticket on our Github repo.</p>
           <a className="btn btn-action" onClick={this.handleErrorClick}>File Ticket</a>
         </div>
