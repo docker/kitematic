@@ -17,18 +17,18 @@ Before you file an issue or a pull request, read the following tips on how to ke
  - [License](#license)
 
 
-### Prerequisites for developing Kitematic on Mac 
-You will need to install: 
+### Prerequisites for developing Kitematic on Mac
+You will need to install:
 - The [Docker Toolbox](https://docker.com/toolbox)
 - [Node.js](https://nodejs.org/)
 - Wine `brew install wine` (only if you want to generate a Windows release on OS X)
-- The latest Xcode from the Apple App Store. 
+- The latest Xcode from the Apple App Store.
 
-### Prerequisites for developing Kitematic on Windows 
-You will need to install: 
+### Prerequisites for developing Kitematic on Windows
+You will need to install:
 - The [Docker Toolbox](https://docker.com/toolbox)
 - [Node.js](https://nodejs.org/)
-- Open a command prompt (`cmd`) and run the command `mkdir ~/AppData/Roaming/npm` 
+- Open a command prompt (`cmd`) and run the command `mkdir ~/AppData/Roaming/npm`
 - [Visual Studio 2013 Community](https://www.visualstudio.com/en-us/products/visual-studio-community-vs.aspx) (or similar) - You do not need to install any optional packages during install.
 - [Python](https://www.python.org/downloads/release/python-2710/)
 

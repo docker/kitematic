@@ -10,7 +10,7 @@ import metrics from './MetricsUtil';
 var WebUtil = {
   addWindowSizeSaving: function () {
     window.addEventListener('resize', function () {
-      fs.writeFileSync(path.join(util.supportDir(), 'size'), JSON.stringify({
+      fs.writeFileSync(path.join(app.getPath('userData'), 'size'), JSON.stringify({
         width: window.outerWidth,
         height: window.outerHeight
       }));

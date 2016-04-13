@@ -1,6 +1,6 @@
 {
   "name": "Kitematic",
-  "version": "0.9.6",
+  "version": "0.10.0",
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X.",
   "homepage": "https://kitematic.com/",
@@ -16,13 +16,11 @@
     "test": "jest -c jest-unit.json",
     "integration": "jest -c jest-integration.json",
     "release": "grunt release",
-    "release-mac": "grunt release-mac",
     "lint": "jsxhint src"
   },
   "license": "Apache-2.0",
   "electron-version": "0.35.4",
   "dependencies": {
-    "JSONStream": "^1.0.7",
     "alt": "^0.16.2",
     "ansi-to-html": "0.3.0",
     "any-promise": "^0.1.0",
@@ -35,6 +33,7 @@
     "dockerode": "^2.2.7",
     "install": "^0.1.8",
     "jquery": "^2.1.3",
+    "JSONStream": "^1.0.7",
     "mixpanel": "kitematic/mixpanel-node",
     "mkdirp": "^0.5.0",
     "node-uuid": "^1.4.3",

@@ -158,11 +158,13 @@ var DockerMachine = {
           }
         });
       });
-    } else if (util.isLinux()) {
+    } else if (util.isNative()) {
       cmd = cmd || process.env.SHELL;
-      var terminal = util.linuxTerminal();
-      if (terminal)
-        util.execFile(terminal.concat([cmd])).then(() => {});
+      var terminal = util.isLinux() ? util.linuxTerminal() : [path.join(process.env.RESOURCES_PATH, 'terminal')];
+      terminal.push(cmd);
+      if (terminal) {
+        util.execFile(terminal).then(() => {});
+      }
     } else {
       cmd = cmd || process.env.SHELL;
       this.url(machineName).then(machineUrl => {

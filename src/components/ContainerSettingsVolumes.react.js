@@ -28,7 +28,7 @@ var ContainerSettingsVolumes = React.createClass({
 
       metrics.track('Choose Directory for Volume');
 
-      var mounts = _.clone(this.props.container.Mounts);
+      let mounts = _.clone(this.props.container.Mounts);
       _.each(mounts, m => {
         if (m.Destination === dockerVol) {
           m.Source = util.windowsToLinuxPath(directory);
@@ -36,7 +36,7 @@ var ContainerSettingsVolumes = React.createClass({
         }
       });
 
-      var binds = mounts.map(m => {
+      let binds = mounts.map(m => {
         return m.Source + ':' + m.Destination;
       });
 
@@ -50,7 +50,7 @@ var ContainerSettingsVolumes = React.createClass({
       from: 'settings'
     });
 
-    var mounts = _.clone(this.props.container.Mounts);
+    let mounts = _.clone(this.props.container.Mounts);
     _.each(mounts, m => {
       if (m.Destination === dockerVol) {
         m.Source = null;

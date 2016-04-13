@@ -32,6 +32,7 @@ var ContainerHome = React.createClass({
   },
 
   handleErrorClick: function () {
+    // Display wiki for proxy: https://github.com/docker/kitematic/wiki/Common-Proxy-Issues-&-Fixes
     shell.openExternal('https://github.com/kitematic/kitematic/issues/new');
   },
 
@@ -52,7 +53,7 @@ var ContainerHome = React.createClass({
     if (this.props.container.Error) {
       body = (
         <div className="details-progress error">
-          <h2>We&#39;re sorry. There seem to be an error:</h2>
+          <h2>We&#39;re sorry. There seems to be an error:</h2>
           <p className="error-message">{this.props.container.Error}</p>
           <p>If this error is invalid, please file a ticket on our Github repo.</p>
           <a className="btn btn-action" onClick={this.handleErrorClick}>File Ticket</a>

@@ -4,18 +4,20 @@ const BrowserWindow = electron.BrowserWindow;
 
 import fs from 'fs';
 import os from 'os';
-
 import path from 'path';
 import child_process from 'child_process';
 
 process.env.NODE_PATH = path.join(__dirname, 'node_modules');
 process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
-process.env.PATH = '/usr/local/bin:' + process.env.PATH;
+if (process.platform !== 'win32') {
+  process.env.PATH = '/usr/local/bin:' + process.env.PATH;
+}
 
 var size = {}, settingsjson = {};
 try {
-  size = JSON.parse(fs.readFileSync(path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], 'Library', 'Application\ Support', 'Kitematic', 'size')));
+  size = JSON.parse(fs.readFileSync(path.join(app.getPath('userData'), 'size')));
 } catch (err) {}
+
 try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, 'settings.json'), 'utf8'));
 } catch (err) {}
@@ -44,6 +46,7 @@ app.on('ready', function () {
     }
     return false;
   });
+
 
   if (os.platform() === 'win32') {
     mainWindow.on('close', function () {

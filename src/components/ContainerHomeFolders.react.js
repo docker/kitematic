@@ -32,6 +32,7 @@ var ContainerHomeFolder = React.createClass({
           mounts.forEach(m => {
             if (m.Destination === destination) {
               m.Source = util.windowsToLinuxPath(newSource);
+              m.Driver = null;
             }
           });
 

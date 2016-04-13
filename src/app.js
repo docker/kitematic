@@ -1,4 +1,5 @@
 require.main.paths.splice(0, 0, process.env.NODE_PATH);
+
 import electron from 'electron';
 const remote = electron.remote;
 const Menu = remote.Menu;
@@ -65,8 +66,14 @@ setupUtil.setup().then(() => {
   throw err;
 });
 
+
 ipcRenderer.on('application:quitting', () => {
+  docker.detachEvent();
   if (localStorage.getItem('settings.closeVMOnQuit') === 'true') {
     machine.stop();
   }
 });
+
+window.onbeforeunload = function () {
+  docker.detachEvent();
+};
