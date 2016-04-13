@@ -18,7 +18,6 @@ const precreateCheckExitCode = 3;
 
 let _retryPromise = null;
 let _timers = [];
-let useNative = util.isNative() ? util.isNative() : true;
 
 export default {
   simulateProgress (estimateSeconds) {
@@ -40,6 +39,7 @@ export default {
   async useVbox () {
     metrics.track('Retried Setup with VBox');
     router.get().transitionTo('loading');
+    util.native = false;
     setupServerActions.error({ error: { message: null }});
     _retryPromise.resolve();
   },

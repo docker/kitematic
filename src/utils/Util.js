@@ -10,6 +10,7 @@ const dialog = remote.dialog;
 const app = remote.app;
 
 module.exports = {
+  native: null,
   execFile: function (args, options) {
     return new Promise((resolve, reject) => {
       child_process.execFile(args[0], args.slice(1), options, (error, stdout) => {
@@ -39,34 +40,34 @@ module.exports = {
     return process.platform === 'linux';
   },
   isNative: function () {
-    let native = null;
-    if (this.isWindows()) {
-      native = request.get({
-        url: `http://docker.local:2375/version`
-      }, (error, response, body) => {
-        if (error !== null || response.statusCode !== 200 ) {
-          return false;
-        } else {
-          let data = JSON.parse(body);
-          return data;
-        }
-      });
-    } else {
-      try {
-        // Check if file exists
-        let stats = fs.statSync('/var/run/docker.sock');
-        if (stats.isSocket()) {
-          native = true;
-        }
-      } catch (e) {
-        if (this.isLinux()) {
-          native = true;
-        } else {
-          native = false;
+    if (this.native === null) {
+      if (this.isWindows()) {
+        this.native = request.get({
+          url: `http://docker.local:2375/version`
+        }, (error, response) => {
+          if (error !== null || response.statusCode !== 200 ) {
+            return false;
+          } else {
+            return true;
+          }
+        });
+      } else {
+        try {
+          // Check if file exists
+          let stats = fs.statSync('/var/run/docker.sock');
+          if (stats.isSocket()) {
+            this.native = true;
+          }
+        } catch (e) {
+          if (this.isLinux()) {
+            this.native = true;
+          } else {
+            this.native = false;
+          }
         }
       }
     }
-    return native;
+    return this.native;
   },
   binsPath: function () {
     return this.isWindows() ? path.join(this.home(), 'Kitematic-bins') : path.join('/usr/local/bin');

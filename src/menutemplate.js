@@ -132,6 +132,17 @@ var MenuTemplate = function () {
       label: 'View',
       submenu: [
         {
+          label: 'Refresh Container List',
+          accelerator: util.CommandOrCtrl() + '+R',
+          enabled: !!docker.host,
+          click: function() {
+            metrics.track('Refreshed Container List', {
+              from: 'menu'
+            });
+            docker.fetchAllContainers();
+          }
+        },
+        {
           label: 'Toggle Chromium Developer Tools',
           accelerator: 'Alt+' + util.CommandOrCtrl() + '+I',
           click: function() { remote.getCurrentWindow().toggleDevTools(); }
