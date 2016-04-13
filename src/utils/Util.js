@@ -9,6 +9,7 @@ const dialog = remote.dialog;
 const app = remote.app;
 
 module.exports = {
+  native: null,
   execFile: function (args, options) {
     return new Promise((resolve, reject) => {
       child_process.execFile(args[0], args.slice(1), options, (error, stdout) => {
@@ -38,21 +39,20 @@ module.exports = {
     return process.platform === 'linux';
   },
   isNative: function () {
-    let native = null;
-    if (native === null) {
+    if (this.native === null) {
       try {
         // Check if file exists
         fs.statSync('/var/run/docker.sock');
-        native = true;
+        this.native = true;
       } catch (e) {
         if (this.isLinux()) {
-          native = true;
+          this.native = true;
         } else {
-          native = false;
+          this.native = false;
         }
       }
     }
-    return native;
+    return this.native;
   },
   binsPath: function () {
     return this.isWindows() ? path.join(this.home(), 'Kitematic-bins') : path.join('/usr/local/bin');
