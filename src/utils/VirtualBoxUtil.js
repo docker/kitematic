@@ -35,6 +35,7 @@ var VirtualBox = {
       return Promise.resolve(null);
     });
   },
+  // TODO: this function seems to be unused!
   mountSharedDir: function (vmName, pathName, hostPath) {
     return util.execFile([this.command(), 'sharedfolder', 'add', vmName, '--name', pathName, '--hostpath', hostPath, '--automount']);
   },

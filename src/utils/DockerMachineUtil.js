@@ -13,6 +13,9 @@ var DockerMachine = {
       return '/usr/local/bin/docker-machine';
     }
   },
+  commandElevated: function () {
+    return 'powershell.exe';
+  },
   name: function () {
     return 'default';
   },
@@ -57,8 +60,33 @@ var DockerMachine = {
       return false;
     });
   },
-  create: function (machineName = this.name()) {
-    return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
+  create: function (machineName = this.name(), provider) {
+    //TODO: check options elements!
+    switch (provider){
+        case "virtualbox":{
+          console.log('started create with virtualbox');
+          return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
+        }
+        case "hyperv":{
+          //The switch may contain spaces!
+          let virtualSwitch = localStorage.getItem('virtualSwitch');
+
+          let args= `"` + `docker-machine.exe -D create --driver hyperv --hyperv-memory 2048 `+
+                    `--hyperv-virtual-switch '${virtualSwitch}' ${machineName}` + `"`;
+
+          //TODO: in an ideal world, powershell has its own PowershellUtil.js ;)
+          console.log("cmd: ", args)
+          return util.execFile([this.commandElevated(), 'start-process', 'powershell', '-verb', 'runas', '-wait', '-argumentList', args]).then(stdout => {
+            return Promise.resolve(null);
+          }).catch((error) => {
+            throw new Error(error.message);
+          });
+        }
+        default:{
+            console.log('started create with virtualbox');
+            return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
+        }
+    }
   },
   start: function (machineName = this.name()) {
     return util.execFile([this.command(), '-D', 'start', machineName]);

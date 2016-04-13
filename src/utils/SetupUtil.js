@@ -5,6 +5,7 @@ import Promise from 'bluebird';
 import bugsnag from 'bugsnag-js';
 import util from './Util';
 import virtualBox from './VirtualBoxUtil';
+import hypervBox from './HypervBoxUtil';
 import setupServerActions from '../actions/SetupServerActions';
 import metrics from './MetricsUtil';
 import machine from './DockerMachineUtil';
@@ -65,6 +66,7 @@ export default {
     return _retryPromise.promise;
   },
 
+  // main setup loop
   async setup () {
     while (true) {
       try {
@@ -107,45 +109,112 @@ export default {
   },
 
   async nonNativeSetup () {
+    let hypervBoxVersion = null;
     let virtualBoxVersion = null;
     let machineVersion = null;
+    let provider = "virtualbox";   //default
+    let hypervSwitchName = null;
+   
     while (true) {
       try {
         setupServerActions.started({started: false});
 
-        // Make sure virtualBox and docker-machine are installed
+        // Make sure virtualBox or docker-machine are installed
         let virtualBoxInstalled = virtualBox.installed();
         let machineInstalled = machine.installed();
-        if (!virtualBoxInstalled || !machineInstalled) {
+
+        let hypervInstalled = await hypervBox.installed();
+        
+        if (!machineInstalled) {
           router.get().transitionTo('setup');
-          if (!virtualBoxInstalled) {
-            setupServerActions.error({error: 'VirtualBox is not installed. Please install it via the Docker Toolbox.'});
-          } else {
-            setupServerActions.error({error: 'Docker Machine is not installed. Please install it via the Docker Toolbox.'});
+
+          setupServerActions.error({error: 'Docker Machine is not installed. Please install it via the Docker Toolbox.'});
+
+          this.clearTimers();
+          await this.pause();
+          continue;
+        }
+        
+        if (hypervInstalled) {
+          //TODO: make UI for this setting!
+          localStorage.setItem('setting.useHyperv', true);
+          provider = 'hyperv';
+
+          // To read hyperv versions, you need to be in group: Hyper-V-Administrators
+          let userHasHypervAdminRights = await hypervBox.hasAdminRights();
+          router.get().transitionTo('setup');
+
+          if (!userHasHypervAdminRights) {
+            setupServerActions.error({error: {message: 'Hyper-V is installed, but user isn\'t member of "Hyper-V Administrators".  Check out the HowTo!', sendUserTo: 'hyperv-faq'}});
+            this.clearTimers();
+            await this.pause();
+            continue;
           }
+
+          hypervSwitchName = await hypervBox.switchName();
+
+          if (!hypervSwitchName) {
+            setupServerActions.error({error: {message: 'It seems, there is no "external" vSwitch available. Check out the HowTo!', sendUserTo: 'hyperv-faq'}});
+            this.clearTimers();
+            await this.pause();
+            continue;
+          } else {
+            localStorage.setItem('virtualSwitch', hypervSwitchName);
+          }
+
+        }
+
+        // Existing behaviour
+        if (!virtualBoxInstalled && !hypervInstalled) {
+          router.get().transitionTo('setup');
+          setupServerActions.error({error: 'Neither VirtualBox, nor Hyper-V is installed. Please install one of them! Help can be found at Docker Toolbox page.'});
           this.clearTimers();
           await this.pause();
           continue;
         }
 
-        virtualBoxVersion = await virtualBox.version();
+        (hypervInstalled) ? hypervBoxVersion = await hypervBox.version() : 'N/A';
+        (virtualBoxInstalled) ? virtualBoxVersion = await virtualBox.version() : 'N/A';
         machineVersion = await machine.version();
 
         setupServerActions.started({started: true});
         metrics.track('Started Setup', {
           virtualBoxVersion,
-          machineVersion
+          machineVersion,
+          hypervBoxVersion
         });
+        
+        // TODO: can be improved when more drivers are supported.
+        // Consistency checks. Sometimes users remove vms with the native GUI, but docker machine still knows it.
+        let existsInVmGui = false;
+        switch (provider){
+          case "virtualbox":{
+            existsInVmGui = await VirtualBox.vmExists(machine.name())
+          }
+          case "hyperv": {
+            existsInVmGui = await hypervBox.vmExists(machine.name())
+          }
+        }
 
-        let exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
-        if (!exists) {
+        let vmExists = existsInVmGui && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
+        if (!vmExists) {
           router.get().transitionTo('setup');
           setupServerActions.started({started: true});
-          this.simulateProgress(60);
+          this.simulateProgress(80); // with hyperv it seems to need more than 60
           try {
-            await machine.rm();
+            await machine.rm(machine.name());
           } catch (err) {}
-          await machine.create();
+/*
+*
+* Make Kitematic give more feedback. .. If Hyper-V is used tell them, we need to elevate the setup process.
+* due to some issues with docker-machine and MS hyper-v. resize vhd file access issues.
+*
+*
+*
+*
+*
+*/
+          await machine.create(machine.name(), provider);
         } else {
           let state = await machine.status();
           if (state !== 'Running') {
@@ -158,12 +227,12 @@ export default {
             } else {
               this.simulateProgress(40);
             }
-
             await machine.start();
           }
         }
 
         // Try to receive an ip address from machine, for at least to 80 seconds.
+        // TODO: user feedback !!!
         let tries = 80, ip = null;
         while (!ip && tries > 0) {
           try {
@@ -188,23 +257,26 @@ export default {
         if (error.code === precreateCheckExitCode) {
           metrics.track('Setup Halted', {
             virtualBoxVersion,
-            machineVersion
+            machineVersion,
+            hypervBoxVersion
           });
         } else {
           metrics.track('Setup Failed', {
             virtualBoxVersion,
-            machineVersion
+            machineVersion,
+            hypervBoxVersion
           });
         }
 
         let message = error.message.split('\n');
         let lastLine = message.length > 1 ? message[message.length - 2] : 'Docker Machine encountered an error.';
-        let virtualBoxLogs = machine.virtualBoxLogs();
+        let virtualBoxLogs = (provider === 'virtualbox') ? machine.virtualBoxLogs() : 'N/A';
         bugsnag.notify('Setup Failed', lastLine, {
           'Docker Machine Logs': error.message,
           'VirtualBox Logs': virtualBoxLogs,
           'VirtualBox Version': virtualBoxVersion,
           'Machine Version': machineVersion,
+          'Hyper-V Version': hypervBoxVersion,
           groupingHash: machineVersion
         }, 'info');
 
@@ -216,6 +288,7 @@ export default {
     }
     metrics.track('Setup Finished', {
       virtualBoxVersion,
+      hypervBoxVersion,
       machineVersion
     });
   }
