@@ -215,6 +215,7 @@ var DockerUtil = {
           return;
         }
         containerServerActions.allUpdated({containers: _.indexBy(containers.concat(_.values(this.placeholders)), 'Name')});
+        this.logs();
         this.fetchAllImages();
       });
     });
