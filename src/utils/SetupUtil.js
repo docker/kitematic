@@ -5,6 +5,7 @@ import Promise from 'bluebird';
 import bugsnag from 'bugsnag-js';
 import util from './Util';
 import virtualBox from './VirtualBoxUtil';
+import hypervBox from './HypervBoxUtil';
 import setupServerActions from '../actions/SetupServerActions';
 import metrics from './MetricsUtil';
 import machine from './DockerMachineUtil';
@@ -107,15 +108,31 @@ export default {
   },
 
   async nonNativeSetup () {
+    let hypervBoxVersion = null;
     let virtualBoxVersion = null;
     let machineVersion = null;
+    let startedHyperv = false;
+   
     while (true) {
       try {
         setupServerActions.started({started: false});
 
         // Make sure virtualBox and docker-machine are installed
         let virtualBoxInstalled = virtualBox.installed();
+        let hypervInstalled = hypervBox.installed();
         let machineInstalled = machine.installed();
+        
+        if (!hypervInstalled || !machineInstalled) {
+          router.get().transitionTo('setup');
+          if (!hypervInstalled) {
+            setupServerActions.error({error: 'Hyper-V is not installed. Please install it via the Docker Toolbox. Setup will continue and check for VirtualBox'});
+          } else {
+            setupServerActions.error({error: 'Docker Machine is not installed. Please install it via the Docker Toolbox.'});
+          }
+          
+          //do nothing
+        }
+        
         if (!virtualBoxInstalled || !machineInstalled) {
           router.get().transitionTo('setup');
           if (!virtualBoxInstalled) {
@@ -136,16 +153,17 @@ export default {
           virtualBoxVersion,
           machineVersion
         });
-
-        let exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
+        
+        let exists = await hypervBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
         if (!exists) {
+          startedHyperv = true;
           router.get().transitionTo('setup');
           setupServerActions.started({started: true});
           this.simulateProgress(60);
           try {
             await machine.rm();
           } catch (err) {}
-          await machine.create();
+          await machine.create('default', 'hyperv');
         } else {
           let state = await machine.status();
           if (state !== 'Running') {
@@ -161,6 +179,31 @@ export default {
 
             await machine.start();
           }
+        }
+        
+        if (!startedHyperv) {
+            exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
+            if (!exists) {
+                router.get().transitionTo('setup');
+                setupServerActions.started({started: true});
+                this.simulateProgress(60);
+                try {
+                    await machine.rm();
+                } catch (err) {}
+                await machine.create();
+            } else {
+                let state = await machine.status();
+                if (state !== 'Running') {
+                    if (state === 'Saved') {
+                    router.get().transitionTo('setup');
+                    this.simulateProgress(10);
+                    } else if (state === 'Stopped') {
+                    router.get().transitionTo('setup');
+                    this.simulateProgress(25);
+                    }
+                    await machine.start();
+                }
+            }
         }
 
         // Try to receive an ip address from machine, for at least to 80 seconds.
@@ -196,19 +239,20 @@ export default {
             machineVersion
           });
         }
+        if (!startedHyperv) {
+            let message = error.message.split('\n');
+            let lastLine = message.length > 1 ? message[message.length - 2] : 'Docker Machine encountered an error.';
+            let virtualBoxLogs = machine.virtualBoxLogs();
+            bugsnag.notify('Setup Failed', lastLine, {
+            'Docker Machine Logs': error.message,
+            'VirtualBox Logs': virtualBoxLogs,
+            'VirtualBox Version': virtualBoxVersion,
+            'Machine Version': machineVersion,
+            groupingHash: machineVersion
+            }, 'info');
 
-        let message = error.message.split('\n');
-        let lastLine = message.length > 1 ? message[message.length - 2] : 'Docker Machine encountered an error.';
-        let virtualBoxLogs = machine.virtualBoxLogs();
-        bugsnag.notify('Setup Failed', lastLine, {
-          'Docker Machine Logs': error.message,
-          'VirtualBox Logs': virtualBoxLogs,
-          'VirtualBox Version': virtualBoxVersion,
-          'Machine Version': machineVersion,
-          groupingHash: machineVersion
-        }, 'info');
-
-        setupServerActions.error({error: new Error(message)});
+            setupServerActions.error({error: new Error(message)});
+        }
 
         this.clearTimers();
         await this.pause();
