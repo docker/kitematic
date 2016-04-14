@@ -151,8 +151,8 @@ module.exports = function (grunt) {
 
     rename: {
       installer: {
-        src: 'dist/Setup.exe',
-        dest: 'dist/' + BASENAME + 'Setup-' + packagejson.version + '-Windows-Alpha.exe'
+        src: 'dist/' + BASENAME + '-install/Setup.exe',
+        dest: 'dist/' + BASENAME + '-install/' + BASENAME + '-Setup.exe'
       }
     },
 
@@ -213,22 +213,37 @@ module.exports = function (grunt) {
     },
 
     clean: {
-      release: ['build/', 'dist/'],
+      release: ['build/', 'dist/']
+    },
+
+    'create-windows-installer': {
+      x64: {
+        appDirectory: path.resolve(__dirname, 'dist', BASENAME + '-win32-x64'),
+        outputDirectory: path.resolve(__dirname, 'dist', BASENAME + '-install'),
+        authors: 'Docker Inc.',
+        loadingGif: 'util/loading.gif',
+        setupIcon: 'util/setup.ico',
+        iconUrl: 'https://raw.githubusercontent.com/kitematic/kitematic/master/util/kitematic.ico',
+        description: WINDOWS_APPNAME,
+        title: WINDOWS_APPNAME,
+        exe: BASENAME + '.exe',
+        version: packagejson.version
+      }
     },
 
     compress: {
       windows: {
         options: {
-	        archive: './release/' +  BASENAME + '-Windows.zip',
+          archive: './release/' + BASENAME + '-Windows.zip',
           mode: 'zip'
         },
         files: [{
           expand: true,
           dot: true,
-          cwd: './dist/Kitematic-win32-x64',
+          cwd: './dist/' + BASENAME + '-install',
           src: '**/*'
         }]
-	    },
+	    }
     },
 
     // livereload
@@ -256,7 +271,7 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('default', ['newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
-  grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress']);
+  grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'create-windows-installer', 'rename', 'compress']);
 
   process.on('SIGINT', function () {
     grunt.task.run(['shell:electron:kill']);
