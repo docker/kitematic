@@ -15,22 +15,49 @@ EOF`
 function open_iterm () {
   osascript > /dev/null <<EOF
   tell application "iTerm"
-    activate
-    try
-      tell the first terminal
-        launch session "Default Session"
-        tell the last session
-          write text "bash -c \"$CMD\""
-        end tell
-      end tell
-    on error
-      tell (make new terminal)
-        launch session "Default Session"
-        tell the last session
-          write text "bash -c \"$CMD\""
-        end tell
-      end tell
-    end try
+    if version < 2.9 then
+      activate
+      try
+      	tell current window
+          create tab with default profile
+    	    tell the current session of current window
+            write text "bash -c \"$CMD\""
+          end tell
+      	end tell
+      on error
+    	  try
+          tell the first terminal
+            launch session "Default Session"
+            tell the last session
+              write text "bash -c \"$CMD\""
+            end tell
+          end tell
+        on error
+          tell (make new terminal)
+            launch session "Default Session"
+            tell the last session
+              write text "bash -c \"$CMD\""
+            end tell
+          end tell
+        end try
+      end try
+    end if
+  end tell
+EOF
+}
+
+function open_iterm2point9 () {
+  osascript > /dev/null <<EOF
+  tell application "iTerm"
+  	if version ≥ 2.9 then
+      activate
+  		tell current window
+  			create tab with default profile
+  			tell first session of current tab
+  				write text "bash -c \"$CMD\""
+  			end tell
+  		end tell
+  	end if
   end tell
 EOF
 }
@@ -47,7 +74,7 @@ EOF
 }
 
 if [ "$ITERM_EXISTS" == "true" ]; then
-  open_iterm "$@" || open_terminal "$@"
+  open_iterm2point9 "$@" || open_iterm "$@" || open_terminal "$@"
 else
   open_terminal "$@"
 fi

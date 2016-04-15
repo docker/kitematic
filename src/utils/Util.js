@@ -48,6 +48,24 @@ module.exports = {
   isLinux: function () {
     return process.platform === 'linux';
   },
+  isNative: function () {
+    // let native = JSON.parse(localStorage.getItem('settings.useNative'));
+    let native = null;
+    if (native === null) {
+      try {
+        // Check if file exists
+        fs.statSync('/var/run/docker.sock');
+        native = true;
+      } catch (e) {
+        if (this.isLinux()) {
+          native = true;
+        } else {
+          native = false;
+        }
+      }
+    }
+    return native;
+  },
   binsPath: function () {
     return this.isWindows() ? path.join(this.home(), 'Kitematic-bins') : path.join('/usr/local/bin');
   },
@@ -174,9 +192,9 @@ module.exports = {
       dialog.showMessageBox({
         type: 'warning',
         buttons: ['OK'],
-        message: 'The terminal emulator symbolic link doesn\'t exists. Please read the Wiki at https://github.com/kitematic/kitematic/wiki/Common-Issues-and-Fixes#early-linux-support-from-zedtux.'
+        message: 'The terminal emulator symbolic link doesn\'t exists. Please read the Wiki at https://github.com/docker/kitematic/wiki/Early-Linux-Support.'
       });
-      return;
+      return false;
     }
   },
   webPorts: ['80', '8000', '8080', '8888', '3000', '5000', '2368', '9200', '8983']

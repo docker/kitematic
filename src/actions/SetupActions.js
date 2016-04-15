@@ -6,6 +6,11 @@ class SetupActions {
     this.dispatch({removeVM});
     setupUtil.retry(removeVM);
   }
+
+  useVbox () {
+    this.dispatch({});
+    setupUtil.useVbox();
+  }
 }
 
 export default alt.createActions(SetupActions);
