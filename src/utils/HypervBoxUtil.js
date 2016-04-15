@@ -31,7 +31,7 @@ var HypervBox = {
     return util.execFile([this.command(), 'Get-VMHost']).then(stdout => {
       console.log('stdout: ', stdout);
       // To execute the above command you'll need Admin or Hyper-V-Admin rights.
-      if (stdout.toLowerCase().indexOf('invalidoperation') === -1) {
+      if (stdout.toLowerCase().indexOf('fullyqualifiederrorid') === -1) {
         return Promise.resolve(true);
       }
       return Promise.resolve(false);
@@ -51,11 +51,11 @@ var HypervBox = {
       return false;
     });
   },
-  version: function () {
+  version: function (machineName) {
     // there seems to be a problem with elevated execution. see: https://github.com/nodejs/node-v0.x-archive/issues/6797
     // The only easy possibility seems to be to communicat with a file.
 
-      return util.execFile([this.command(), 'Get-VM | Where {$_.Name -eq "default" -and $_.Version} | select Version']).then(stdout => {
+      return util.execFile([this.command(), 'Get-VM | Where {$_.Name -eq "'+ machineName +'" -and $_.Version} | select Version']).then(stdout => {
         let match = stdout.match(/\d+(?:\.\d+)+/g);
         if (match != null) {
             // matched text: match[0]

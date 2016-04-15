@@ -175,7 +175,7 @@ export default {
           continue;
         }
 
-        (hypervInstalled) ? hypervBoxVersion = await hypervBox.version() : 'N/A';
+        (hypervInstalled) ? hypervBoxVersion = await hypervBox.version(machine.name()) : 'N/A';
         (virtualBoxInstalled) ? virtualBoxVersion = await virtualBox.version() : 'N/A';
         machineVersion = await machine.version();
 
