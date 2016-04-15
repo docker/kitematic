@@ -64,7 +64,7 @@ var DockerMachine = {
         case "hyperv":{
           console.log('started create with hyper-v');
           let virtualSwitch = localStorage.getItem('virtualSwitch');
-          console.log('will use this switch ' + virtualSwitch + ' with external')
+          console.log('will use this switch ' + virtualSwitch + ' with an existing switch')
 
           let args= `"` + `docker-machine.exe -D create --driver hyperv --hyperv-memory 2048 `+
                     `--hyperv-virtual-switch '${virtualSwitch}' ${machineName}` + `"`;
