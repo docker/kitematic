@@ -3,6 +3,7 @@ import path from 'path';
 import Promise from 'bluebird';
 import fs from 'fs';
 import util from './Util';
+import powershellUtil from './PowershellUtil';
 import child_process from 'child_process';
 
 var DockerMachine = {
@@ -12,9 +13,6 @@ var DockerMachine = {
     } else {
       return '/usr/local/bin/docker-machine';
     }
-  },
-  commandElevated: function () {
-    return 'powershell.exe';
   },
   name: function () {
     return 'default';
@@ -60,31 +58,24 @@ var DockerMachine = {
       return false;
     });
   },
-  create: function (machineName = this.name(), provider) {
+  create: function (machineName = this.name(), provider = "hyperv") {
     //TODO: check options elements!
     switch (provider){
-        case "virtualbox":{
-          console.log('started create with virtualbox');
-          return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
-        }
         case "hyperv":{
-          //The switch may contain spaces!
+          console.log('started create with hyper-v');
           let virtualSwitch = localStorage.getItem('virtualSwitch');
+          console.log('will use this switch ' + virtualSwitch + 'with external')
 
           let args= `"` + `docker-machine.exe -D create --driver hyperv --hyperv-memory 2048 `+
                     `--hyperv-virtual-switch '${virtualSwitch}' ${machineName}` + `"`;
 
-          //TODO: in an ideal world, powershell has its own PowershellUtil.js ;)
-          console.log("cmd: ", args)
-          return util.execFile([this.commandElevated(), 'start-process', 'powershell', '-verb', 'runas', '-wait', '-argumentList', args]).then(stdout => {
-            return Promise.resolve(null);
-          }).catch((error) => {
-            throw new Error(error.message);
-          });
+          powershellUtil.runCommandWithArgs(args);
         }
         default:{
-            console.log('started create with virtualbox');
-            return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
+          console.log('started create with virtualbox');
+          
+          let args= `"docker-machine.exe -D create --driver virtualbox --virtualbox-memory 2048 ` + machineName + `"`;
+          powershellUtil.runCommandWithArgs(args);
         }
     }
   },

@@ -9,9 +9,6 @@ var HypervBox = {
     return 'powershell.exe';
   },
   // TODO: ..We'll probably need a differnt command here in the future. That's why code dupe.
-  commandElevated: function () {
-    return 'powershell.exe';
-  },
   installed: function () {
     return util.execFile([this.command(), '@(Get-Command get-vm).ModuleName']).then(stdout => {
       console.log('stdout: ', stdout);
