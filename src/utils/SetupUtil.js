@@ -191,7 +191,7 @@ export default {
         let existsInVmGui = false;
         switch (provider){
           case "virtualbox":{
-            existsInVmGui = await VirtualBox.vmExists(machine.name())
+            existsInVmGui = await virtualBox.vmExists(machine.name())
           }
           case "hyperv": {
             existsInVmGui = await hypervBox.vmExists(machine.name())
@@ -272,7 +272,7 @@ export default {
 
         let message = error.message.split('\n');
         let lastLine = message.length > 1 ? message[message.length - 2] : 'Docker Machine encountered an error.';
-        let virtualBoxLogs = (provider === 'virtualbox') ? machine.virtualBoxLogs() : 'N/A';
+        let virtualBoxLogs = (provider === 'virtualbox') ? machine.virtualBoxLogs() || 'N/A' : 'N/A';
         bugsnag.notify('Setup Failed', lastLine, {
           'Docker Machine Logs': error.message,
           'VirtualBox Logs': virtualBoxLogs,

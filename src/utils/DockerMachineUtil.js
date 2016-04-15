@@ -196,12 +196,17 @@ var DockerMachine = {
     }
   },
   virtualBoxLogs: function (machineName = this.name()) {
-    let logsPath = path.join(util.home(), '.docker', 'machine', 'machines', machineName, machineName, 'Logs', 'VBox.log');
     let logData = null;
-    try {
-      logData = fs.readFileSync(logsPath, 'utf8');
-    } catch (e) {
-      console.error(e);
+    let logsPath = path.join(util.home(), '.docker', 'machine', 'machines', machineName, machineName, 'Logs');
+    
+    if (fs.existsSync(logsPath)) {
+      let logsFilePath = path.join(logsPath, 'VBox.log');
+      
+      try {
+        logData = fs.readFileSync(logsFilePath, 'utf8');
+      } catch (e) {
+        console.error(e);
+      }
     }
     return logData;
   }
