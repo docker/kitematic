@@ -57,7 +57,7 @@ var HypervBox = {
 
       return util.execFile([this.command(), 'Get-VM | Where {$_.Name -eq "'+ machineName +'" -and $_.Version} | select Version']).then(stdout => {
         let match = stdout.match(/\d+(?:\.\d+)+/g);
-        if (match != null) {
+        if (match != null && match.length >= 1) {
             // matched text: match[0]
             // match start: match.index
             // capturing group n: match[n]

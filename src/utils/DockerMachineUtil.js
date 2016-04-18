@@ -58,13 +58,13 @@ var DockerMachine = {
       return false;
     });
   },
-  create: function (machineName = this.name(), provider = "hyperv", virtualBoxIsInstalled = true) {
+  create: function (machineName = this.name(), provider = "hyperv") {
     //TODO: check options elements!
     switch (provider){
         case "hyperv":{
-          // console.log('started create with hyper-v');
+          console.log('started create with hyper-v');
           let virtualSwitch = localStorage.getItem('virtualSwitch');
-          // console.log('will use this switch ' + virtualSwitch + ' with an existing switch')
+          console.log('will use this switch ' + virtualSwitch + ' with an existing switch')
 
           let args= `"` + `docker-machine.exe -D create --driver hyperv --hyperv-memory 2048 `+
                     `--hyperv-virtual-switch '${virtualSwitch}' ${machineName}` + `"`;
@@ -72,14 +72,10 @@ var DockerMachine = {
           return powershellUtil.runCommandWithArgs(args);
         }
         default: {
-          // console.log("virtualboxInstalled: " + virtualBoxIsInstalled);
-          if (virtualBoxIsInstalled === true) {
-            //console.log('started create with virtualbox');
-            let args= `"` + `docker-machine.exe -D create --driver virtualbox --virtualbox-memory 2048 ${machineName}` + `"`;
-            return powershellUtil.runCommandWithArgs(args);
-          } else {
-            throw new Error('virtualbox is not installed. Process stopped!');
-          }
+          console.log('started create with virtualbox');
+          
+          let args= `"docker-machine.exe -D create --driver virtualbox --virtualbox-memory 2048 ` + machineName + `"`;
+          return powershellUtil.runCommandWithArgs(args);
         }
     }
   },
