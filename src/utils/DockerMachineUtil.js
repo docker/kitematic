@@ -58,7 +58,7 @@ var DockerMachine = {
       return false;
     });
   },
-  create: function (machineName = this.name(), provider = "hyperv", virtualBoxIsInstalled = true) {
+  create: function (machineName = this.name(), provider = "hyperv") {
     //TODO: check options elements!
     switch (provider){
         case "hyperv":{
@@ -72,15 +72,10 @@ var DockerMachine = {
           return powershellUtil.runCommandWithArgs(args);
         }
         default: {
-          console.log("virtualboxInstalled: " + virtualBoxIsInstalled);
-          if (virtualBoxIsInstalled === true) {
-            console.log('started create with virtualbox');
-            
-            let args= `"docker-machine.exe -D create --driver virtualbox --virtualbox-memory 2048 ` + machineName + `"`;
-            return powershellUtil.runCommandWithArgs(args);
-          } else {
-            throw new Error('virtualbox not installed, so this cannot continue');
-          }
+          console.log('started create with virtualbox');
+          
+          let args= `"docker-machine.exe -D create --driver virtualbox --virtualbox-memory 2048 ` + machineName + `"`;
+          return powershellUtil.runCommandWithArgs(args);
         }
     }
   },
