@@ -74,7 +74,7 @@ var DockerMachine = {
         default: {
           console.log('started create with virtualbox');
           
-          let args= `"docker-machine.exe -D create --driver virtualbox --virtualbox-memory 2048 ` + machineName + `"`;
+          let args= `"` + `docker-machine.exe -D create --driver virtualbox --virtualbox-memory 2048 ${machineName}` + `"`;
           return powershellUtil.runCommandWithArgs(args);
         }
     }
