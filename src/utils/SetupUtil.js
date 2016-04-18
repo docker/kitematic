@@ -216,7 +216,7 @@ export default {
 *
 *
 */
-          await machine.create(machine.name(), provider, virtualBoxInstalled);
+          await machine.create(machine.name(), provider);
         } else {
           let state = await machine.status();
           if (state !== 'Running') {
