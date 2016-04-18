@@ -61,9 +61,10 @@ var HypervBox = {
             // matched text: match[0]
             // match start: match.index
             // capturing group n: match[n]
-            return Promise.resolve(match[1]);
+          return Promise.resolve(match[0]);
+        } else {
+          Promise.reject('No VM version information found');
         }
-        Promise.reject('No VM version information found');
       }).catch(() => {
         return Promise.resolve(null);
       });
