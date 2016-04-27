@@ -47,6 +47,7 @@ app.on('ready', function () {
     return false;
   });
 
+
   if (os.platform() === 'win32') {
     mainWindow.on('close', function () {
       mainWindow.webContents.send('application:quitting');

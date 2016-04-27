@@ -67,6 +67,10 @@
       justify-content: center;
       flex-shrink: 0;
 
+      .error {
+        color: red;
+      }
+
       img {
         width: 380px;
       }
@@ -160,6 +164,11 @@
         font-weight: 500;
         margin-right: 0.7rem;
       }
+      .results-userimages {
+        border-left: 1px solid @gray-lighter;
+        padding-left: 1.2rem;
+        padding-right: 1.2rem;
+      }
     }
   }
 }
@@ -226,6 +235,31 @@
           position: absolute;
           bottom: 1rem;
           right: 1rem;
+        }
+        .remove {
+          display: flex;
+          flex: 1 auto;
+          justify-content: center;
+          margin: 0.8rem 0 0 0;
+          a {
+            display: block;
+            text-decoration: none;
+            cursor: default;
+            &:focus {
+              outline: 0;
+            }
+            &.active {
+              .btn-delete {
+                opacity: 0.3;
+              }
+            }
+          }
+        }
+        .small {
+          color: red;
+          text-align: center;
+          padding-top: 5px;
+          font-size: 75%;
         }
       }
       .tag-overlay {
