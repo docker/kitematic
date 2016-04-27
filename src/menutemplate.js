@@ -2,7 +2,6 @@ import electron from 'electron';
 const remote = electron.remote;
 import shell from 'shell';
 import router from './router';
-import util from './utils/Util';
 import metrics from './utils/MetricsUtil';
 import machine from './utils/DockerMachineUtil';
 import docker from './utils/DockerUtil';
@@ -30,7 +29,7 @@ var MenuTemplate = function () {
       },
       {
         label: 'Preferences',
-        accelerator: util.CommandOrCtrl() + '+,',
+        accelerator: 'CmdOrCtrl+,',
         enabled: !!docker.host,
         click: function () {
           metrics.track('Opened Preferences', {
@@ -43,16 +42,13 @@ var MenuTemplate = function () {
         type: 'separator'
       },
       {
-        type: 'separator'
-      },
-      {
         label: 'Hide Kitematic',
-        accelerator: util.CommandOrCtrl() + '+H',
+        accelerator: 'CmdOrCtrl+H',
         selector: 'hide:'
       },
       {
         label: 'Hide Others',
-        accelerator: util.CommandOrCtrl() + '+Shift+H',
+        accelerator: 'CmdOrCtrl+Shift+H',
         selector: 'hideOtherApplications:'
       },
       {
@@ -64,7 +60,7 @@ var MenuTemplate = function () {
       },
       {
         label: 'Quit',
-        accelerator: util.CommandOrCtrl() + '+Q',
+        accelerator: 'CmdOrCtrl+Q',
         click: function() {
           app.quit();
         }
@@ -79,7 +75,7 @@ var MenuTemplate = function () {
       },
       {
         label: 'Open Docker Command Line Terminal',
-        accelerator: util.CommandOrCtrl() + '+Shift+T',
+        accelerator: 'CmdOrCtrl+Shift+T',
         enabled: !!docker.host,
         click: function() {
           metrics.track('Opened Docker Terminal', {
@@ -95,12 +91,12 @@ var MenuTemplate = function () {
       submenu: [
       {
         label: 'Undo',
-        accelerator: util.CommandOrCtrl() + '+Z',
+        accelerator: 'CmdOrCtrl+Z',
         selector: 'undo:'
       },
       {
         label: 'Redo',
-        accelerator: 'Shift+' + util.CommandOrCtrl() + '+Z',
+        accelerator: 'Shift+CmdOrCtrl+Z',
         selector: 'redo:'
       },
       {
@@ -108,22 +104,22 @@ var MenuTemplate = function () {
       },
       {
         label: 'Cut',
-        accelerator: util.CommandOrCtrl() + '+X',
+        accelerator: 'CmdOrCtrl+X',
         selector: 'cut:'
       },
       {
         label: 'Copy',
-        accelerator: util.CommandOrCtrl() + '+C',
+        accelerator: 'CmdOrCtrl+C',
         selector: 'copy:'
       },
       {
         label: 'Paste',
-        accelerator: util.CommandOrCtrl() + '+V',
+        accelerator: 'CmdOrCtrl+V',
         selector: 'paste:'
       },
       {
         label: 'Select All',
-        accelerator: util.CommandOrCtrl() + '+A',
+        accelerator: 'CmdOrCtrl+A',
         selector: 'selectAll:'
       }
       ]
@@ -144,7 +140,7 @@ var MenuTemplate = function () {
         },
         {
           label: 'Toggle Chromium Developer Tools',
-          accelerator: 'Alt+' + util.CommandOrCtrl() + '+I',
+          accelerator: 'Alt+CmdOrCtrl+I',
           click: function() { remote.getCurrentWindow().toggleDevTools(); }
         }
       ]
@@ -154,12 +150,12 @@ var MenuTemplate = function () {
       submenu: [
       {
         label: 'Minimize',
-        accelerator: util.CommandOrCtrl() + '+M',
+        accelerator: 'CmdOrCtrl+M',
         selector: 'performMiniaturize:'
       },
       {
         label: 'Close',
-        accelerator: util.CommandOrCtrl() + '+W',
+        accelerator: 'CmdOrCtrl+W',
         click: function () {
           remote.getCurrentWindow().hide();
         }
