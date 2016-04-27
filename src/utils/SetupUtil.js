@@ -18,7 +18,6 @@ const precreateCheckExitCode = 3;
 
 let _retryPromise = null;
 let _timers = [];
-let useNative = util.isNative() ? util.isNative() : true;
 
 export default {
   simulateProgress (estimateSeconds) {
@@ -39,8 +38,8 @@ export default {
 
   async useVbox () {
     metrics.track('Retried Setup with VBox');
-    localStorage.setItem('settings.useNative', false);
     router.get().transitionTo('loading');
+    util.native = false;
     setupServerActions.error({ error: { message: null }});
     _retryPromise.resolve();
   },
@@ -70,7 +69,6 @@ export default {
     while (true) {
       try {
         if (util.isNative()) {
-          localStorage.setItem('setting.useNative', true);
           let stats = fs.statSync('/var/run/docker.sock');
           if (stats.isSocket()) {
             await this.nativeSetup();

@@ -8,19 +8,23 @@ import util from './Util';
 import hubUtil from './HubUtil';
 import metrics from '../utils/MetricsUtil';
 import containerServerActions from '../actions/ContainerServerActions';
+import imageServerActions from '../actions/ImageServerActions';
+import Promise from 'bluebird';
 import rimraf from 'rimraf';
 import stream from 'stream';
 import JSONStream from 'JSONStream';
-import Promise from 'bluebird';
 
 
 
-export default {
+var DockerUtil = {
   host: null,
   client: null,
   placeholders: {},
-  streams: {},
+  stream: null,
+  eventStream: null,
   activeContainerName: null,
+  localImages: null,
+  imagesUsed: [],
 
   setup (ip, name) {
     if (!ip && !name) {
@@ -75,7 +79,7 @@ export default {
 
   init () {
     this.placeholders = JSON.parse(localStorage.getItem('placeholders')) || {};
-    this.fetchAllContainers();
+    this.refresh();
     this.listen();
 
     // Resume pulling containers that were previously being pulled
@@ -150,7 +154,7 @@ export default {
       if (image.Config.Cmd) {
         containerData.Cmd = image.Config.Cmd;
       } else if (!image.Config.Entrypoint) {
-        containerData.Cmd = 'bash';
+        containerData.Cmd = 'sh';
       }
 
       let existing = this.client.getContainer(name);
@@ -165,6 +169,7 @@ export default {
             this.startContainer(name);
             delete this.placeholders[name];
             localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
+            this.refresh();
           });
         });
       });
@@ -188,11 +193,16 @@ export default {
         console.error(err);
         return;
       }
+      this.imagesUsed = [];
       async.map(containers, (container, callback) => {
         this.client.getContainer(container.Id).inspect((error, container) => {
           if (error) {
             callback(null, null);
             return;
+          }
+          let imgSha = container.Image.replace('sha256:', '');
+          if (_.indexOf(this.imagesUsed, imgSha) === -1) {
+            this.imagesUsed.push(imgSha);
           }
           container.Name = container.Name.replace('/', '');
           callback(null, container);
@@ -205,11 +215,51 @@ export default {
           return;
         }
         containerServerActions.allUpdated({containers: _.indexBy(containers.concat(_.values(this.placeholders)), 'Name')});
+        this.logs();
+        this.fetchAllImages();
       });
     });
   },
 
-  run (name, repository, tag) {
+  fetchAllImages () {
+    this.client.listImages((err, list) => {
+      if (err) {
+        imageServerActions.error(err);
+      } else {
+        list.map((image, idx) => {
+          let imgSha = image.Id.replace('sha256:', '');
+          if (_.indexOf(this.imagesUsed, imgSha) !== -1) {
+            list[idx].inUse = true;
+          } else {
+            list[idx].inUse = false;
+          }
+        });
+        this.localImages = list;
+        imageServerActions.updated(list);
+      }
+    });
+  },
+
+  removeImage (selectedRepoTag) {
+    this.localImages.some((image) => {
+      image.RepoTags.map(repoTag => {
+        if (repoTag === selectedRepoTag) {
+          this.client.getImage(selectedRepoTag).remove({'force': true}, (err, data) => {
+            if (err) {
+              console.error(err);
+              imageServerActions.error(err);
+            } else {
+              imageServerActions.destroyed(data);
+              this.refresh();
+            }
+          });
+          return true;
+        }
+      });
+    });
+  },
+
+  run (name, repository, tag, local = false) {
     tag = tag || 'latest';
     let imageName = repository + ':' + tag;
 
@@ -230,30 +280,34 @@ export default {
 
     this.placeholders[name] = placeholderData;
     localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
-
-    this.pullImage(repository, tag, error => {
-      if (error) {
-        containerServerActions.error({name, error});
-        return;
-      }
-
-      if (!this.placeholders[name]) {
-        return;
-      }
-
+    if (local) {
       this.createContainer(name, {Image: imageName, Tty: true, OpenStdin: true});
-    },
+    } else {
+      this.pullImage(repository, tag, error => {
+        if (error) {
+          containerServerActions.error({name, error});
+          this.refresh();
+          return;
+        }
 
-    // progress is actually the progression PER LAYER (combined in columns)
-    // not total because it's not accurate enough
-    progress => {
-      containerServerActions.progress({name, progress});
-    },
+        if (!this.placeholders[name]) {
+          return;
+        }
+
+        this.createContainer(name, {Image: imageName, Tty: true, OpenStdin: true});
+      },
+
+      // progress is actually the progression PER LAYER (combined in columns)
+      // not total because it's not accurate enough
+      progress => {
+        containerServerActions.progress({name, progress});
+      },
 
 
-    () => {
-      containerServerActions.waiting({name, waiting: true});
-    });
+      () => {
+        containerServerActions.waiting({name, waiting: true});
+      });
+    }
   },
 
   updateContainer (name, data) {
@@ -261,6 +315,7 @@ export default {
     existing.inspect((error, existingData) => {
       if (error) {
         containerServerActions.error({name, error});
+        this.refresh();
         return;
       }
 
@@ -297,6 +352,7 @@ export default {
         if (error) {
           // TODO: handle error
           containerServerActions.error({newName, error});
+          this.refresh();
         }
         rimraf(newPath, () => {
           if (fs.existsSync(oldPath)) {
@@ -318,11 +374,13 @@ export default {
     this.client.getContainer(name).stop({t: 5}, stopError => {
       if (stopError && stopError.statusCode !== 304) {
         containerServerActions.error({name, stopError});
+        this.refresh();
         return;
       }
       this.client.getContainer(name).start(startError => {
         if (startError && startError.statusCode !== 304) {
           containerServerActions.error({name, startError});
+          this.refresh();
           return;
         }
         this.fetchContainer(name);
@@ -334,6 +392,7 @@ export default {
     this.client.getContainer(name).stop({t: 5}, error => {
       if (error && error.statusCode !== 304) {
         containerServerActions.error({name, error});
+        this.refresh();
         return;
       }
       this.fetchContainer(name);
@@ -344,6 +403,7 @@ export default {
     this.client.getContainer(name).start(error => {
       if (error && error.statusCode !== 304) {
         containerServerActions.error({name, error});
+        this.refresh();
         return;
       }
       this.fetchContainer(name);
@@ -355,15 +415,17 @@ export default {
       containerServerActions.destroyed({id: name});
       delete this.placeholders[name];
       localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
+      this.refresh();
       return;
     }
 
     let container = this.client.getContainer(name);
-    container.unpause(function () {
-      container.kill(function () {
-        container.remove(function (error) {
+    container.unpause( () => {
+      container.kill( () => {
+        container.remove( (error) => {
           if (error) {
             containerServerActions.error({name, error});
+            this.refresh();
             return;
           }
           containerServerActions.destroyed({id: name});
@@ -371,13 +433,14 @@ export default {
           if (fs.existsSync(volumePath)) {
             rimraf(volumePath, () => {});
           }
+          this.refresh();
         });
       });
     });
   },
 
   active (name) {
-    this.detach();
+    this.detachLog();
     this.activeContainerName = name;
 
     if (name) {
@@ -400,6 +463,7 @@ export default {
       if (err) {
         // socket hang up can be captured
         console.error(err);
+        containerServerActions.error({name: this.activeContainerName, err});
         return;
       }
 
@@ -431,9 +495,7 @@ export default {
         return;
       }
 
-      if (this.stream) {
-        this.detach();
-      }
+      this.detachLog()
       this.stream = logStream;
 
       let timeout = null;
@@ -452,14 +514,22 @@ export default {
     });
   },
 
-  detach () {
+  detachLog() {
     if (this.stream) {
       this.stream.destroy();
       this.stream = null;
     }
   },
+  detachEvent() {
+    if (this.eventStream) {
+      this.eventStream.destroy();
+      this.eventStream = null;
+    }
+  },
+
 
   listen () {
+    this.detachEvent()
     this.client.getEvents((error, stream) => {
       if (error || !stream) {
         // TODO: Add app-wide error handler
@@ -467,20 +537,22 @@ export default {
       }
 
       stream.setEncoding('utf8');
-      stream.pipe(JSONStream.parse()).on('data', data => {
-        if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete' ||  data.status === 'attach') {
-          return;
+      stream.on('data', json => {
+        let data = JSON.parse(json);
+
+        if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete' || data.status === 'attach') {
+          this.refresh();
         }
 
         if (data.status === 'destroy') {
           containerServerActions.destroyed({id: data.id});
-          this.detach(data.id);
+          this.detachLog()
         } else if (data.status === 'kill') {
           containerServerActions.kill({id: data.id});
-          this.detach(data.id);
+          this.detachLog()
         } else if (data.status === 'stop') {
           containerServerActions.stopped({id: data.id});
-          this.detach(data.id);
+          this.detachLog()
         } else if (data.status === 'create') {
           this.logs();
           this.fetchContainer(data.id);
@@ -491,6 +563,7 @@ export default {
           this.fetchContainer(data.id);
         }
       });
+      this.eventStream = stream;
     });
   },
 
@@ -511,6 +584,7 @@ export default {
 
     this.client.pull(repository + ':' + tag, opts, (err, stream) => {
       if (err) {
+        console.log('Err: %o', err);
         callback(err);
         return;
       }
@@ -555,7 +629,7 @@ export default {
               if (i < leftOverLayers) {
                 layerAmount += 1;
               }
-              columns.progress[i] = {layerIDs: [], nbLayers:0 , maxLayers: layerAmount, value: 0.0};
+              columns.progress[i] = {layerIDs: [], nbLayers: 0, maxLayers: layerAmount, value: 0.0};
             }
           }
 
@@ -607,5 +681,11 @@ export default {
         callback(error);
       });
     });
+  },
+
+  refresh () {
+    this.fetchAllContainers();
   }
 };
+
+module.exports = DockerUtil;

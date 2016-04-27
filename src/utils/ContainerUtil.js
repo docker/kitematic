@@ -33,7 +33,6 @@ var ContainerUtil = {
       var [dockerPort, portType] = key.split('/');
       var localUrl = null;
       var port = null;
-
       if (value && value.length) {
         port = value[0].HostPort;
       }

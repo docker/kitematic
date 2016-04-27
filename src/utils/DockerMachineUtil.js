@@ -160,9 +160,10 @@ var DockerMachine = {
       });
     } else if (util.isNative()) {
       cmd = cmd || process.env.SHELL;
-      var terminal = util.isLinux() ? util.linuxTerminal() : path.join(process.env.RESOURCES_PATH, 'terminal');
+      var terminal = util.isLinux() ? util.linuxTerminal() : [path.join(process.env.RESOURCES_PATH, 'terminal')];
+      terminal.push(cmd);
       if (terminal) {
-        util.execFile([terminal, cmd]).then(() => {});
+        util.execFile(terminal).then(() => {});
       }
     } else {
       cmd = cmd || process.env.SHELL;

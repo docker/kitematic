@@ -21,6 +21,15 @@ class TagStore {
     this.emitChange();
   }
 
+  localTags ({repo, tags}) {
+    let data = [];
+    tags.map((value) => {
+      data.push({'name': value});
+    });
+    this.loading[repo] = true;
+    this.tagsUpdated({repo, tags: data || []});
+  }
+
   tagsUpdated ({repo, tags}) {
     this.tags[repo] = tags;
     this.loading[repo] = false;

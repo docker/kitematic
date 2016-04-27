@@ -66,8 +66,14 @@ setupUtil.setup().then(() => {
   throw err;
 });
 
+
 ipcRenderer.on('application:quitting', () => {
+  docker.detachEvent();
   if (localStorage.getItem('settings.closeVMOnQuit') === 'true') {
     machine.stop();
   }
 });
+
+window.onbeforeunload = function () {
+  docker.detachEvent();
+};
