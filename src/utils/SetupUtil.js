@@ -69,12 +69,7 @@ export default {
     while (true) {
       try {
         if (util.isNative()) {
-          let stats = fs.statSync('/var/run/docker.sock');
-          if (stats.isSocket()) {
-            await this.nativeSetup();
-          } else {
-            throw new Error('File found is not a socket');
-          }
+          await this.nativeSetup();
         } else {
           await this.nonNativeSetup();
         }
@@ -82,7 +77,6 @@ export default {
       } catch (error) {
         metrics.track('Native Setup Failed');
         setupServerActions.error({error});
-
         bugsnag.notify('Native Setup Failed', error.message, {
           'Docker Error': error.message
         }, 'info');
@@ -96,7 +90,7 @@ export default {
     while (true) {
       try {
         router.get().transitionTo('setup');
-        docker.setup(util.isLinux() ? 'localhost':'docker.local');
+        docker.setup(util.isWindows() ? 'docker.local':'localhost');
         setupServerActions.started({started: true});
         this.simulateProgress(20);
         return docker.version();
