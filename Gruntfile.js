@@ -26,7 +26,7 @@ module.exports = function (grunt) {
   var OSX_OUT = './dist';
   var OSX_OUT_X64 = OSX_OUT + '/' + OSX_APPNAME + '-darwin-x64';
   var OSX_FILENAME = OSX_OUT_X64 + '/' + OSX_APPNAME + '.app';
-
+  var IS_WINDOWS = process.platform === 'win32';
   grunt.initConfig({
     IDENTITY: 'Developer ID Application: Docker Inc',
     OSX_FILENAME: OSX_FILENAME,
@@ -256,7 +256,11 @@ module.exports = function (grunt) {
   });
 
   grunt.registerTask('default', ['newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
-  grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress']);
+  if (!IS_WINDOWS) {
+    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress']);
+  }else {
+    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'compress']);
+  }
 
   process.on('SIGINT', function () {
     grunt.task.run(['shell:electron:kill']);
