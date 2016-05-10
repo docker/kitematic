@@ -1,6 +1,6 @@
 {
   "name": "Kitematic",
-  "version": "0.10.2",
+  "version": "0.10.3",
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X.",
   "homepage": "https://kitematic.com/",
@@ -24,7 +24,7 @@
     "alt": "^0.16.2",
     "ansi-to-html": "0.3.0",
     "any-promise": "^0.1.0",
-    "async": "^1.4.2",
+    "async": "1.5.0",
     "bluebird": "^2.9.24",
     "bugsnag-js": "^2.4.7",
     "classnames": "^2.1.5",
@@ -45,8 +45,8 @@
     "react-bootstrap": "^0.20.3",
     "react-retina-image": "^1.1.2",
     "react-router": "^0.13.4",
-    "request": "^2.55.0",
-    "request-progress": "^0.3.1",
+    "request": "2.67.0",
+    "request-progress": "^2.0.1",
     "rimraf": "^2.3.2",
     "underscore": "^1.8.3",
     "validator": "^4.1.0"

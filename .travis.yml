@@ -2,7 +2,7 @@ sudo: false
 
 language: node_js
 node_js:
-    - "4.2.2"
+    - "5.11.1"
 
 cache:
   directories:
