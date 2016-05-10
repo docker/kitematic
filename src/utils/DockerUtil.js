@@ -34,7 +34,15 @@ var DockerUtil = {
 
     if (ip.indexOf('local') !== -1) {
       try {
-        this.client = new dockerode({socketPath: '/var/run/docker.sock'});
+        if (util.isWindows()) {
+          this.client = new dockerode({
+            protocol: 'http',
+            host: ip,
+            port: 2375
+          });
+        } else {
+          this.client = new dockerode({socketPath: '/var/run/docker.sock'});
+        }
       } catch (error) {
         throw new Error('Cannot connect to the Docker daemon. Is the daemon running?');
       }

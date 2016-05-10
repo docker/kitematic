@@ -3,6 +3,7 @@ import Promise from 'bluebird';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
+import http from 'http';
 import electron from 'electron';
 const remote = electron.remote;
 const dialog = remote.dialog;
@@ -40,15 +41,29 @@ module.exports = {
   },
   isNative: function () {
     if (this.native === null) {
-      try {
-        // Check if file exists
-        fs.statSync('/var/run/docker.sock');
-        this.native = true;
-      } catch (e) {
-        if (this.isLinux()) {
-          this.native = true;
-        } else {
-          this.native = false;
+      if (this.isWindows()) {
+        this.native = http.get({
+          url: `http:////./pipe/docker_engine/v1.23/version`
+        }, (response) => {
+          if (response.statusCode !== 200 ) {
+            return false;
+          } else {
+            return true;
+          }
+        });
+      } else {
+        try {
+          // Check if file exists
+          let stats = fs.statSync('/var/run/docker.sock');
+          if (stats.isSocket()) {
+            this.native = true;
+          }
+        } catch (e) {
+          if (this.isLinux()) {
+            this.native = true;
+          } else {
+            this.native = false;
+          }
         }
       }
     }
