@@ -7,23 +7,22 @@ import shell from 'shell';
 import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
 import containerActions from '../actions/ContainerActions';
+import virtualBox from '../utils/VirtualBoxUtil';
+import machine from '../utils/DockerMachineUtil';
 
 var ContainerSettingsVolumes = React.createClass({
+
   handleChooseVolumeClick: function (dockerVol) {
     dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']}, (filenames) => {
       if (!filenames) {
         return;
       }
 
-      var directory = filenames[0];
 
-      if (!directory || directory.indexOf(util.home()) === -1) {
-        dialog.showMessageBox({
-          type: 'warning',
-          buttons: ['OK'],
-          message: 'Invalid directory. Volume directories must be under your Users directory'
-        });
-        return;
+      var directory = filenames[0];
+      var original = directory;
+      if (util.isWindows()) {
+        directory = util.windowsToLinuxPath(directory);
       }
 
       metrics.track('Choose Directory for Volume');
@@ -81,10 +80,9 @@ var ContainerSettingsVolumes = React.createClass({
       return false;
     }
 
-    var homeDir = util.isWindows() ? util.windowsToLinuxPath(util.home()) : util.home();
     var mounts= _.map(this.props.container.Mounts, (m, i) => {
       let source = m.Source, destination = m.Destination;
-      if (!m.Source || m.Source.indexOf(homeDir) === -1) {
+      if (!m.Source ) {
         source = (
           <span className="value-right">No Folder</span>
         );

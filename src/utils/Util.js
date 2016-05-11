@@ -186,7 +186,10 @@ module.exports = {
     return fullPath;
   },
   linuxToWindowsPath: function (linuxAbsPath) {
-    return linuxAbsPath.replace('/c', 'C:').split('/').join('\\');
+    let idx = linuxAbsPath.indexOf('/', 1);
+    let drive = linuxAbsPath.substring(1, idx);
+    let restPath = linuxAbsPath.substring(idx + 1, linuxAbsPath.length);
+    return drive + ':\\' + restPath.split('/').join('\\');
   },
   linuxTerminal: function () {
     if (fs.existsSync('/usr/bin/x-terminal-emulator')) {
@@ -200,5 +203,6 @@ module.exports = {
       return false;
     }
   },
-  webPorts: ['80', '8000', '8080', '8888', '3000', '5000', '2368', '9200', '8983']
+  webPorts: ['80', '8000', '8080', '8888', '3000', '5000', '2368', '9200', '8983'],
+  folders: []
 };
