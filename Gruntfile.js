@@ -1,3 +1,4 @@
+var fs = require('fs');
 var path = require('path');
 var execFile = require('child_process').execFile;
 var packagejson = require('./package.json');
@@ -26,7 +27,16 @@ module.exports = function (grunt) {
   var OSX_OUT = './dist';
   var OSX_OUT_X64 = OSX_OUT + '/' + OSX_APPNAME + '-darwin-x64';
   var OSX_FILENAME = OSX_OUT_X64 + '/' + OSX_APPNAME + '.app';
+
   var IS_WINDOWS = process.platform === 'win32';
+  var IS_LINUX = process.platform == 'linux';
+
+  var IS_I386 = process.arch == 'ia32';
+  var IS_X64 = process.arch == 'x64';
+
+  var IS_DEB = fs.existsSync('/etc/lsb-release') || fs.existsSync('/etc/debian_version');
+  var IS_RPM = fs.existsSync('/etc/redhat-release');
+
   grunt.initConfig({
     IDENTITY: 'Developer ID Application: Docker Inc',
     OSX_FILENAME: OSX_FILENAME,
@@ -209,6 +219,9 @@ module.exports = function (grunt) {
       },
       zip: {
         command: 'ditto -c -k --sequesterRsrc --keepParent <%= OSX_FILENAME_ESCAPED %> release/' + BASENAME + '-Mac.zip',
+      },
+      linux_npm: {
+        command: 'cd build && npm install --production'
       }
     },
 
@@ -219,7 +232,7 @@ module.exports = function (grunt) {
     compress: {
       windows: {
         options: {
-	        archive: './release/' +  BASENAME + '-Windows.zip',
+          archive: './release/' +  BASENAME + '-Windows.zip',
           mode: 'zip'
         },
         files: [{
@@ -228,7 +241,7 @@ module.exports = function (grunt) {
           cwd: './dist/Kitematic-win32-x64',
           src: '**/*'
         }]
-	    },
+      },
     },
 
     // livereload
@@ -252,12 +265,126 @@ module.exports = function (grunt) {
         files: ['images/*', 'index.html', 'fonts/*'],
         tasks: ['newer:copy:dev']
       }
+    },
+    'electron-packager': {
+      build: {
+        options: {
+          platform: process.platform,
+          arch: process.arch,
+          dir: './build',
+          out: './dist/',
+          name: 'Kitematic',
+          ignore: 'bower.json',
+          version: packagejson['electron-version'], // set version of electron
+          overwrite: true
+        }
+      },
+      osxlnx: {
+          options: {
+            platform: 'linux',
+            arch: 'x64',
+            dir: './build',
+            out: './dist/',
+            name: 'Kitematic',
+            ignore: 'bower.json',
+            version: packagejson['electron-version'], // set version of electron
+            overwrite: true
+        }
+      }
+    },
+    'electron-installer-debian': {
+      options: {
+        productName: LINUX_APPNAME,
+        productDescription: 'Run containers through a simple, yet powerful graphical user interface.',
+        section: 'devel',
+        priority: 'optional',
+        icon: './util/kitematic.png',
+        lintianOverrides: [
+          'changelog-file-missing-in-native-package',
+          'executable-not-elf-or-script',
+          'extra-license-file'
+        ],
+        categories: [
+          'Utility'
+        ],
+        rename: function (dest, src) {
+          return dest + '<%= name %>_'+ packagejson.version +'-<%= revision %>_<%= arch %>.deb';
+        }
+      },
+      linux64: {
+        options: {
+          arch: 'amd64'
+        },
+        src: './dist/Kitematic-linux-x64/',
+        dest: './dist/',
+      },
+      linux32: {
+        options: {
+          arch: 'i386'
+        },
+        src: './dist/Kitematic-linux-ia32/',
+        dest: './dist/',
+      }      
+    },
+    'electron-installer-redhat': {
+      options: {
+        productName: LINUX_APPNAME,
+        productDescription: 'Run containers through a simple, yet powerful graphical user interface.',
+        priority: 'optional',
+        icon: './util/kitematic.png',        
+        categories: [
+          'Utilities'
+        ],
+        rename: function (dest, src) {
+          return dest + '<%= name %>_'+ packagejson.version +'-<%= revision %>_<%= arch %>.rpm';
+        }
+      },
+      linux64: {
+        options: {
+          arch: 'x86_64'
+        },
+        src: './dist/Kitematic-linux-x64/',
+        dest: './dist/'
+      },
+      linux32: {
+        options: {
+          arch: 'x86'
+        },
+        src: './dist/Kitematic-linux-ia32/',
+        dest: './dist/'
+      }
     }
   });
 
+  // Load the plugins for linux packaging
+  grunt.loadNpmTasks('grunt-electron-packager');
+  grunt.loadNpmTasks('grunt-electron-installer-debian');
+  grunt.loadNpmTasks('grunt-electron-installer-redhat');
+
   grunt.registerTask('default', ['newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
-  if (!IS_WINDOWS) {
-    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress']);
+
+  if (!IS_WINDOWS && !IS_LINUX) {
+    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress', 'shell:linux_npm', 'electron-packager:osxlnx', 'electron-installer-debian:linux64']);
+  }else if(IS_LINUX){
+
+    var linuxpackage = null;
+    // linux package detection
+    if(IS_DEB && IS_X64){
+      linuxpackage = 'electron-installer-debian:linux64'; 
+    }else if(IS_DEB && IS_I386){
+      linuxpackage = 'electron-installer-debian:linux32';
+    }else if(IS_RPM && IS_X64){
+       linuxpackage = 'electron-installer-redhat:linux64'; 
+    }else if(IS_RPM && IS_I386){
+      linuxpackage = 'electron-installer-redhat:linux32';
+    }
+
+    if(linuxpackage){
+      grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'shell:linux_npm', 'electron-packager:build', linuxpackage]);
+    }else{
+      grunt.log.errorlns('Your Linux distribution is not yet supported - arch:'+ process.arch + ' platform:' + process.platform);
+    }
+
   }else {
     grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'compress']);
   }
