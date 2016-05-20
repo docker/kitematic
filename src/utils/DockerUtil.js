@@ -125,6 +125,7 @@ var DockerUtil = {
 
   startContainer (name) {
     let container = this.client.getContainer(name);
+
     container.start((error) => {
       if (error) {
         containerServerActions.error({name, error});
@@ -190,6 +191,14 @@ var DockerUtil = {
         containerServerActions.error({name: id, error});
       } else {
         container.Name = container.Name.replace('/', '');
+        this.client.getImage(container.Image).inspect((error, image) => {
+          if (error) {
+            containerServerActions.error({name, error});
+            return;
+          }
+          container.InitialPorts = image.Config.ExposedPorts;
+        });
+
         containerServerActions.updated({container});
       }
     });
@@ -213,6 +222,13 @@ var DockerUtil = {
             this.imagesUsed.push(imgSha);
           }
           container.Name = container.Name.replace('/', '');
+          this.client.getImage(container.Image).inspect((error, image) => {
+            if (error) {
+              containerServerActions.error({name, error});
+              return;
+            }
+            container.InitialPorts = image.Config.ExposedPorts;
+          });
           callback(null, container);
         });
       }, (err, containers) => {
@@ -343,6 +359,7 @@ var DockerUtil = {
       data.Mounts = data.Mounts || existingData.Mounts;
 
       var fullData = _.extend(existingData, data);
+      console.log(fullData);
       this.createContainer(name, fullData);
     });
   },
