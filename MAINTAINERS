@@ -32,7 +32,7 @@
 
 	[people.FrenchBen]
 	Name = "Ben French"
-	Email = "me@frenchben.com"
+	Email = "frenchben@docker.com"
 	GitHub = "FrenchBen"
 
 	[people.jeffdm]
