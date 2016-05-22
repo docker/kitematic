@@ -15,10 +15,11 @@ var ContainerUtil = {
 
   // Provide Foreground options
   mode: function (container) {
-    if (!container || !container.Config) {
-      return [true, true];
-    }
-    return [container.Config.Tty, container.Config.OpenStdin];
+    return [
+        (container && container.Config) ? container.Config.Tty : true,
+        (container && container.Config) ? container.Config.OpenStdin : true,
+        (container && container.HostConfig) ? container.HostConfig.Privileged : false
+    ];
   },
 
   // TODO: inject host here instead of requiring Docker
