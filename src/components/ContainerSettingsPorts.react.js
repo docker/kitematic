@@ -32,7 +32,7 @@ var ContainerSettingsPorts = React.createClass({
     metrics.track('Opened In Browser', {
       from: 'settings'
     });
-    shell.openExternal(url);
+    shell.openExternal('http://' + url);
   },
   createEmptyPort: function (ports) {
     ports[''] = {
