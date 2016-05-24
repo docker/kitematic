@@ -57,9 +57,9 @@ var ContainerSettingsAdvanced = React.createClass({
         <div className="settings-section">
           <h3>Advanced Options</h3>
           <div className="checkboxes">
-            <p><input type="checkbox" checked={this.state.tty} onChange={this.handleChangeTty}/>Allocate a TTY for this container</p>
-            <p><input type="checkbox" checked={this.state.openStdin} onChange={this.handleChangeOpenStdin}/>Keep STDIN open even if not attached</p>
-            <p><input type="checkbox" checked={this.state.privileged} onChange={this.handleChangePrivileged}/>Privileged mode</p>
+            <p><label><input type="checkbox" checked={this.state.tty} onChange={this.handleChangeTty}/>Allocate a TTY for this container</label></p>
+            <p><label><input type="checkbox" checked={this.state.openStdin} onChange={this.handleChangeOpenStdin}/>Keep STDIN open even if not attached</label></p>
+            <p><label><input type="checkbox" checked={this.state.privileged} onChange={this.handleChangePrivileged}/>Privileged mode</label></p>
           </div>
           <a className="btn btn-action" disabled={this.props.container.State.Updating} onClick={this.handleSaveAdvancedOptions}>Save</a>
         </div>
