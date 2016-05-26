@@ -52,12 +52,15 @@ var ContainerHome = React.createClass({
     let body;
     if (this.props.container.Error) {
       let error = this.props.container.Error.message;
-      console.log('Err: %o - %o', typeof error, error);
-      if (error.indexOf('ETIMEDOUT') !== -1) {
-        error = 'Timeout error - Try and restart your VM by running: \n"docker-machine restart default" in a terminal';
-      }
-      if (error.indexOf('ECONNREFUSED') !== -1) {
-        error = 'Is your VM up and running? Check that "docker ps" works in a terminal.';
+      if (!error) {
+        error = this.props.container.Error;
+      } else {
+        if (error.indexOf('ETIMEDOUT') !== -1) {
+          error = 'Timeout error - Try and restart your VM by running: \n"docker-machine restart default" in a terminal';
+        }
+        if (error.indexOf('ECONNREFUSED') !== -1) {
+          error = 'Is your VM up and running? Check that "docker ps" works in a terminal.';
+        }
       }
       body = (
         <div className="details-progress error">
