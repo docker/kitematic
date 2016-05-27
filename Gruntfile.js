@@ -29,6 +29,7 @@ module.exports = function (grunt) {
   var OSX_FILENAME = OSX_OUT_X64 + '/' + OSX_APPNAME + '.app';
   var LINUX_FILENAME = OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_amd64.deb';
 
+
   var IS_WINDOWS = process.platform === 'win32';
   var IS_LINUX = process.platform === 'linux';
 
@@ -144,7 +145,9 @@ module.exports = function (grunt) {
           dest: 'build/'
         }, {
           cwd: 'node_modules/',
-          src: Object.keys(packagejson.dependencies).map(function (dep) { return dep + '/**/*';}),
+          src: Object.keys(packagejson.dependencies).map(function (dep) {
+            return dep + '/**/*';
+          }),
           dest: 'build/node_modules/',
           expand: true
         }]
@@ -384,7 +387,7 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (!IS_WINDOWS && !IS_LINUX) {
-    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'shell:linux_npm', 'electron-packager:osxlnx', 'electron-installer-debian:linux64', 'shell:linux_zip']);
+    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress', 'shell:linux_npm', 'electron-packager:osxlnx', 'electron-installer-debian:linux64', 'shell:linux_zip']);
   }else if (IS_LINUX) {
     if (linuxpackage) {
       grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'shell:linux_npm', 'electron-packager:build', linuxpackage]);
