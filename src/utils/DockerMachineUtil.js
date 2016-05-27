@@ -147,29 +147,33 @@ var DockerMachine = {
     });
   },
   dockerTerminal: function (cmd, machineName = this.name()) {
+    cmd = cmd || process.env.SHELL || '';
     if (util.isWindows()) {
-      cmd = cmd || '';
-      this.url(machineName).then(machineUrl => {
-        util.exec('start powershell.exe ' + cmd,
-          {env: {
-            'DOCKER_HOST': machineUrl,
-            'DOCKER_CERT_PATH': path.join(util.home(), '.docker', 'machine', 'machines', machineName),
-            'DOCKER_TLS_VERIFY': 1
-          }
+      if (util.isNative()) {
+        util.exec('start powershell.exe ' + cmd);
+      } else {
+        this.url(machineName).then(machineUrl => {
+          util.exec('start powershell.exe ' + cmd,
+            {env: {
+              'DOCKER_HOST': machineUrl,
+              'DOCKER_CERT_PATH': path.join(util.home(), '.docker', 'machine', 'machines', machineName),
+              'DOCKER_TLS_VERIFY': 1
+            }
+          });
         });
-      });
-    } else if (util.isNative()) {
-      cmd = cmd || process.env.SHELL;
-      var terminal = util.isLinux() ? util.linuxTerminal() : [path.join(process.env.RESOURCES_PATH, 'terminal')];
-      terminal.push(cmd);
-      if (terminal) {
-        util.execFile(terminal).then(() => {});
       }
     } else {
-      cmd = cmd || process.env.SHELL;
-      this.url(machineName).then(machineUrl => {
-        util.execFile([path.join(process.env.RESOURCES_PATH, 'terminal'), `DOCKER_HOST=${machineUrl} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machineName)} DOCKER_TLS_VERIFY=1 ${cmd}`]).then(() => {});
-      });
+      var terminal = util.isLinux() ? util.linuxTerminal() : [path.join(process.env.RESOURCES_PATH, 'terminal')];
+      if (util.isNative()) {
+        terminal.push(cmd);
+        util.execFile(terminal).then(() => {});
+      } else {
+        this.url(machineName).then(machineUrl => {
+          terminal.push(`DOCKER_HOST=${machineUrl} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machineName)} DOCKER_TLS_VERIFY=1`);
+          terminal.push(cmd);
+          util.execFile(terminal).then(() => {});
+        });
+      }
     }
   },
   virtualBoxLogs: function (machineName = this.name()) {
