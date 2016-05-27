@@ -13,3 +13,4 @@ deployment:
     commands:
       - github-release upload --user docker --repo kitematic --tag $CIRCLE_TAG --file release/Kitematic-Mac.zip --name Kitematic-$(echo $CIRCLE_TAG | cut -c2-)-Mac.zip
       - github-release upload --user docker --repo kitematic --tag $CIRCLE_TAG --file release/Kitematic-Windows.zip --name Kitematic-$(echo $CIRCLE_TAG | cut -c2-)-Windows.zip
+      - github-release upload --user docker --repo kitematic --tag $CIRCLE_TAG --file release/Kitematic-Ubuntu.deb --name Kitematic-$(echo $CIRCLE_TAG | cut -c2-)-Ubuntu.deb
