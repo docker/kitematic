@@ -16,6 +16,7 @@
     "test": "jest -c jest-unit.json",
     "integration": "jest -c jest-integration.json",
     "release": "grunt release",
+    "release-verbose": "grunt --verbose release",
     "lint": "jsxhint src"
   },
   "license": "Apache-2.0",

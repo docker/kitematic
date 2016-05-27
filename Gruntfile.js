@@ -27,6 +27,8 @@ module.exports = function (grunt) {
   var OSX_OUT = './dist';
   var OSX_OUT_X64 = OSX_OUT + '/' + OSX_APPNAME + '-darwin-x64';
   var OSX_FILENAME = OSX_OUT_X64 + '/' + OSX_APPNAME + '.app';
+  var LINUX_FILENAME = OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_amd64.deb';
+
 
   var IS_WINDOWS = process.platform === 'win32';
   var IS_LINUX = process.platform === 'linux';
@@ -37,10 +39,26 @@ module.exports = function (grunt) {
   var IS_DEB = fs.existsSync('/etc/lsb-release') || fs.existsSync('/etc/debian_version');
   var IS_RPM = fs.existsSync('/etc/redhat-release');
 
+  var linuxpackage = null;
+  // linux package detection
+  if (IS_DEB && IS_X64) {
+    linuxpackage = 'electron-installer-debian:linux64';
+  } else if (IS_DEB && IS_I386) {
+    linuxpackage = 'electron-installer-debian:linux32';
+    LINUX_FILENAME = OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_i386.deb';
+  } else if (IS_RPM && IS_X64) {
+    linuxpackage = 'electron-installer-redhat:linux64';
+    LINUX_FILENAME = OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_x86_64.rpm';
+  } else if (IS_RPM && IS_I386) {
+    linuxpackage = 'electron-installer-redhat:linux32';
+    LINUX_FILENAME = OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_x86.rpm';
+  }
+
   grunt.initConfig({
     IDENTITY: 'Developer ID Application: Docker Inc',
     OSX_FILENAME: OSX_FILENAME,
     OSX_FILENAME_ESCAPED: OSX_FILENAME.replace(/ /g, '\\ ').replace(/\(/g, '\\(').replace(/\)/g, '\\)'),
+    LINUX_FILENAME: LINUX_FILENAME,
 
     // electron
     electron: {
@@ -224,6 +242,9 @@ module.exports = function (grunt) {
       },
       linux_npm: {
         command: 'cd build && npm install --production'
+      },
+      linux_zip: {
+        command: 'ditto -c -k --sequesterRsrc --keepParent <%= LINUX_FILENAME %> release/' + BASENAME + '-Ubuntu.deb'
       }
     },
 
@@ -310,7 +331,7 @@ module.exports = function (grunt) {
           'Utility'
         ],
         rename: function (dest, src) {
-          return dest + '<%= name %>_' + packagejson.version + '-<%= revision %>_<%= arch %>.deb';
+          return LINUX_FILENAME;
         }
       },
       linux64: {
@@ -338,7 +359,7 @@ module.exports = function (grunt) {
           'Utilities'
         ],
         rename: function (dest, src) {
-          return dest + '<%= name %>_' + packagejson.version + '-<%= revision %>_<%= arch %>.rpm';
+          return LINUX_FILENAME;
         }
       },
       linux64: {
@@ -366,27 +387,13 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
   if (!IS_WINDOWS && !IS_LINUX) {
-    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress', 'shell:linux_npm', 'electron-packager:osxlnx', 'electron-installer-debian:linux64']);
+    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress', 'shell:linux_npm', 'electron-packager:osxlnx', 'electron-installer-debian:linux64', 'shell:linux_zip']);
   }else if (IS_LINUX) {
-
-    var linuxpackage = null;
-    // linux package detection
-    if (IS_DEB && IS_X64) {
-      linuxpackage = 'electron-installer-debian:linux64';
-    } else if (IS_DEB && IS_I386) {
-      linuxpackage = 'electron-installer-debian:linux32';
-    } else if (IS_RPM && IS_X64) {
-      linuxpackage = 'electron-installer-redhat:linux64';
-    }else if (IS_RPM && IS_I386) {
-      linuxpackage = 'electron-installer-redhat:linux32';
-    }
-
     if (linuxpackage) {
       grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'shell:linux_npm', 'electron-packager:build', linuxpackage]);
     }else {
       grunt.log.errorlns('Your Linux distribution is not yet supported - arch:' + process.arch + ' platform:' + process.platform);
     }
-
   }else {
     grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'compress']);
   }
