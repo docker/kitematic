@@ -41,7 +41,7 @@ app.on('ready', function () {
 
   mainWindow.loadURL(path.normalize('file://' + path.join(__dirname, 'index.html')));
 
-  app.on('activate-with-no-open-windows', function () {
+  app.on('activate', function () {
     if (mainWindow) {
       mainWindow.show();
     }
