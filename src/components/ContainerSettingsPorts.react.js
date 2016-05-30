@@ -124,6 +124,18 @@ var ContainerSettingsPorts = React.createClass({
 
     this.setState({ports: ports});
   },
+  handleChangeNewPort: function (e) {
+    let ports = this.state.ports;
+    let port = e.target.value;
+    // save updated port
+    if(ports[port] != null){
+      document.getElementById("saveButton").setAttribute("disabled","disabled");
+      document.getElementById("addButton").setAttribute("disabled","disabled");
+    }else{
+      document.getElementById('saveButton').removeAttribute("disabled");
+      document.getElementById('addButton').removeAttribute("disabled");
+    }
+  },
   handleChangePortKey: function (key, e) {
     let ports = this.state.ports;
     let portKey = e.target.value;
@@ -202,9 +214,9 @@ var ContainerSettingsPorts = React.createClass({
       var portKey = '';
       var portValue = '';
       if (key === '') {
-        icon = <td><a disabled={isUpdating} onClick={this.handleAddPort} className="only-icon btn btn-positive small"><span className="icon icon-add"></span></a></td>;
-        portKey = <input id={'portKey' + key} type="text" disabled={isUpdating} defaultValue={key} />;
-        portValue = <input id={'portValue' + key} type="text" disabled={isUpdating} defaultValue={port} />;
+        icon = <td><a id="addButton" disabled={isUpdating} onClick={this.handleAddPort} className="only-icon btn btn-positive small"><span className="icon icon-add"></span></a></td>;
+        portKey = <input id={'portKey' + key} type="text" disabled={isUpdating} onBlur={this.handleChangeNewPort} />;
+        portValue = <input  id={'portValue' + key} type="text" disabled={isUpdating} />;
       }else {
         if (this.isInitialPort(key, this.state.initialPorts)) {
           icon = <td></td>;
@@ -248,7 +260,7 @@ var ContainerSettingsPorts = React.createClass({
               {ports}
             </tbody>
           </table>
-          <a className="btn btn-action"
+          <a id="saveButton" className="btn btn-action"
              disabled={isUpdating || !isValid}
              onClick={this.handleSave}>
             Save
