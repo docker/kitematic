@@ -104,7 +104,7 @@ module.exports = React.createClass({
   },
 
   escapeAndHighlightLogs: function() {
-    const highlight = (line) => line.replace(this.state.searchText || null, '<mark>$&</mark>');
+    const highlight = (line) => line.replace(RegExp(this.state.searchText, 'i') || null, '<mark>$&</mark>');
     const markRegExp = RegExp(`((?!<mark)[\\s\\S]*?(<mark)){${this.state.currentHighlighted}}`);
 
     const highlightedLog = this.props.container.Logs.map((l, idx) => highlight(escape(l.substr(l.indexOf(' ')+1))).replace(/ /g, '&nbsp;<wbr>')).join('\n');
