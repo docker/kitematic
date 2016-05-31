@@ -52,7 +52,7 @@ module.exports = React.createClass({
   },
 
   componentDidUpdate: function () {
-    if (this.props.container.Logs.length != this.state.lineNum) {
+    if (this.props.container.Logs && this.props.container.Logs.length != this.state.lineNum) {
       this.scrollToEnd();
       this.setState({lineNum: this.props.container.Logs.length});
     }
