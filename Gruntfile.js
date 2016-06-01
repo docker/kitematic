@@ -244,7 +244,7 @@ module.exports = function (grunt) {
         command: 'cd build && npm install --production'
       },
       linux_zip: {
-        command: 'ditto -c -k --sequesterRsrc --keepParent <%= LINUX_FILENAME %> release/' + BASENAME + '-Ubuntu.deb'
+        command: 'ditto -c -k --sequesterRsrc --keepParent <%= LINUX_FILENAME %> release/' + BASENAME + '-Ubuntu.zip'
       }
     },
 
