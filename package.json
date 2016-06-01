@@ -1,6 +1,6 @@
 {
   "name": "Kitematic",
-  "version": "0.10.2",
+  "version": "0.10.4",
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X.",
   "homepage": "https://kitematic.com/",
@@ -16,6 +16,7 @@
     "test": "jest -c jest-unit.json",
     "integration": "jest -c jest-integration.json",
     "release": "grunt release",
+    "release-verbose": "grunt --verbose release",
     "lint": "jsxhint src"
   },
   "license": "Apache-2.0",
@@ -70,6 +71,7 @@
     "grunt-download-electron": "^2.1.1",
     "grunt-electron": "^2.0.0",
     "grunt-electron-installer": "^1.0.4",
+    "grunt-electron-packager": "0.0.7",
     "grunt-if-missing": "^1.0.0",
     "grunt-newer": "^1.1.1",
     "grunt-plistbuddy": "^0.1.1",
@@ -85,5 +87,9 @@
     "run-sequence": "^1.0.2",
     "shell-escape": "^0.2.0",
     "source-map-support": "^0.3.2"
+  },
+  "optionalDependencies": {
+    "grunt-electron-installer-debian": "^0.3.0",
+    "grunt-electron-installer-redhat": "^0.3.0"
   }
 }
