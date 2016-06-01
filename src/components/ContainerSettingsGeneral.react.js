@@ -72,7 +72,7 @@ var ContainerSettingsGeneral = React.createClass({
       _this.setState({ 
         copiedId: false
       });
-    }, 3000);
+    }, 5000);
   },
 
   handleSaveContainerName: function () {
@@ -189,7 +189,7 @@ var ContainerSettingsGeneral = React.createClass({
 
     if (this.state.copiedId) {
       clipboardStatus = (
-        <p><strong>Copied to Clipboard</strong></p>
+        <p className="fadeOut"><strong>Copied to Clipboard</strong></p>
       );
     }
 

@@ -83,6 +83,15 @@
       .disabled {
         border-bottom: none;
       }
+      .fadeOut {
+        animation: fade-out 5s ease-in-out forwards;
+      }
+      @keyframes fade-out {
+        0%  { opacity: 0; }
+        10% { opacity: 1; }
+        85% { opacity: 1; }
+        100% { opacity: 0; }
+      }
       p {
         font-weight: 300;
         margin-top: 5px;
