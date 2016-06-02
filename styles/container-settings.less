@@ -61,11 +61,36 @@
     .settings-section {
       margin-bottom: 4rem;
     }
-    .container-name {
-      margin-bottom: 2rem;
+    .container-info-row {
+      margin-bottom: 5px;
+      .label-id, .label-name {
+        .env-vars-labels;
+        display: inline-block;
+        width: 5%;
+        min-width: 75px;
+      }
+      a {
+        margin-left: 10px;
+      }
       input {
-        width: 100%;
+        width: 55%;
         max-width: 500px;
+      }
+      .btn-copy {
+        border: none;
+        margin-left: 11px;
+      }
+      .disabled {
+        border-bottom: none;
+      }
+      .fadeOut {
+        animation: fade-out 5s ease-in-out forwards;
+      }
+      @keyframes fade-out {
+        0%  { opacity: 0; }
+        10% { opacity: 1; }
+        85% { opacity: 1; }
+        100% { opacity: 0; }
       }
       p {
         font-weight: 300;
@@ -75,6 +100,8 @@
         strong {
           font-weight: 500;
         }
+        margin-left: 75px;
+        padding-left: 10px;
       }
     }
     .env-vars-labels {

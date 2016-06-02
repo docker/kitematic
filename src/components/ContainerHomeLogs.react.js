@@ -110,7 +110,9 @@ module.exports = React.createClass({
     const highlightedLog = this.props.container.Logs.map((l, idx) => highlight(escape(l.substr(l.indexOf(' ')+1))).replace(/ /g, '&nbsp;<wbr>')).join('\n');
     const highlightedLogs = highlightedLog.replace(markRegExp, "$& class='highlight'").split('\n');
 
-    return highlightedLogs.map((l, idx) => <div key={idx} dangerouslySetInnerHTML={{__html: convert.toHtml(l)}}></div>);
+    return (
+      highlightedLogs.map((l, idx) => <div key={`${this.props.container.Name}-${idx}`} dangerouslySetInnerHTML={{__html: convert.toHtml(l)}}></div>)
+    );
   },
 
   render: function () {
