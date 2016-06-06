@@ -17,7 +17,7 @@
     "integration": "jest -c jest-integration.json",
     "release": "grunt release",
     "release-verbose": "grunt --verbose release",
-    "lint": "jsxhint src"
+    "lint": "eslint src"
   },
   "license": "Apache-2.0",
   "electron-version": "0.35.4",
