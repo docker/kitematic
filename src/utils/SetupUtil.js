@@ -94,6 +94,7 @@ export default {
         docker.setup(util.isWindows() ? 'docker.local':'localhost');
         setupServerActions.started({started: true});
         this.simulateProgress(20);
+        metrics.track('Native Setup Finished');
         return docker.version();
       } catch (error) {
         throw new Error(error);
