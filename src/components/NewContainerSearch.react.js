@@ -250,10 +250,12 @@ module.exports = React.createClass({
         let tags = image.tags.join('-');
         image.star_count = 0;
         image.is_local = true;
-        console.log('Img: %o', image);
         const key = `local-${image.name}-${index}`;
-        console.log('User img key: %o', key);
-        return (<ImageCard key={key + ':' + tags} image={image} chosenTag={image.tags[0]} tags={image.tags} />);
+        let imageCard = null;
+        if (image.name !== '<none>') {
+          imageCard = (<ImageCard key={key + ':' + tags} image={image} chosenTag={image.tags[0]} tags={image.tags} />);
+        }
+        return imageCard;
       });
       let userImageResults = userImageItems.length ? (
         <div className="result-grids">
@@ -282,12 +284,10 @@ module.exports = React.createClass({
     } else if (repos.length) {
       let recommendedItems = repos.filter(repo => repo.is_recommended).map((image, index) => {
         const key = `rec-${image.name}-${index}`;
-        console.log('Rec img key: %o', key);
         return (<ImageCard key={key} image={image} />);
       });
       let otherItems = repos.filter(repo => !repo.is_recommended && !repo.is_user_repo).map((image, index) => {
         const key = `other-${image.name}-${index}`;
-        console.log('Other img key: %o', key);
         return (<ImageCard key={key} image={image} />);
       });
 
@@ -302,7 +302,6 @@ module.exports = React.createClass({
 
       let userRepoItems = repos.filter(repo => repo.is_user_repo).map((image, index) => {
         const key = `usr-${image.name}-${index}`;
-        console.log('User img key: %o', key);
         return (<ImageCard key={key} image={image} />);
       });
       let userRepoResults = userRepoItems.length ? (

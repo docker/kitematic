@@ -99,7 +99,6 @@ var ImageCard = React.createClass({
     shell.openExternal(repoUri);
   },
   render: function () {
-    var self = this;
     var name;
     if (this.props.image.namespace === 'library') {
       name = (
@@ -134,17 +133,26 @@ var ImageCard = React.createClass({
       imgsrc = 'https://kitematic.com/recommended/kitematic_html.png';
     }
     var tags;
-    if (self.state.loading) {
+    if (this.state.loading) {
       tags = <RetinaImage className="tags-loading" src="loading.png"/>;
-    } else if (self.state.tags.length === 0) {
+    } else if (this.state.tags.length === 0) {
       tags = <div className="no-tags">No Tags</div>;
     } else {
-      var tagDisplay = self.state.tags.map(function (tag) {
-        let t = tag.name;
-        if (t === self.state.chosenTag) {
-          return <div className="tag active" key={t} onClick={self.handleTagClick.bind(self, t)}>{t}</div>;
+      var tagDisplay = this.state.tags.map((tag) => {
+        let t = '';
+        if (tag.name) {
+          t = tag.name;
         } else {
-          return <div className="tag" key={t} onClick={self.handleTagClick.bind(self, t)}>{t}</div>;
+          t = tag;
+        }
+        let key = t;
+        if (typeof key === 'undefined') {
+          key = this.props.image.name;
+        }
+        if (t === this.state.chosenTag) {
+          return <div className="tag active" key={key} onClick={this.handleTagClick.bind(this, t)}>{t}</div>;
+        } else {
+          return <div className="tag" key={key} onClick={this.handleTagClick.bind(this, t)}>{t}</div>;
         }
       });
       tags = (
@@ -172,10 +180,10 @@ var ImageCard = React.createClass({
             <span className="icon icon-tag"> {this.state.chosenTag}</span>
             <span className="text"></span>
           </div>
-          <div className="more-menu" onClick={self.handleMenuOverlayClick}>
+          <div className="more-menu" onClick={this.handleMenuOverlayClick}>
             <span className="icon icon-more"></span>
           </div>
-          <div className="action" onClick={self.handleClick}>
+          <div className="action" onClick={this.handleClick}>
             CREATE
           </div>
         </div>
@@ -190,7 +198,7 @@ var ImageCard = React.createClass({
           </div>
           {this.props.image.inUse ? <p className="small">To delete, remove all containers<br/>using the above image</p> : null }
           <div className="close-overlay">
-            <a className="btn btn-action circular" onClick={self.handleCloseMenuOverlay}><span className="icon icon-delete"></span></a>
+            <a className="btn btn-action circular" onClick={this.handleCloseMenuOverlay}><span className="icon icon-delete"></span></a>
           </div>
         </div>
       );
@@ -205,10 +213,10 @@ var ImageCard = React.createClass({
             <span className="icon icon-download"></span>
             <span className="text">{pullCount}</span>
           </div>
-          <div className="more-menu" onClick={self.handleMenuOverlayClick}>
+          <div className="more-menu" onClick={this.handleMenuOverlayClick}>
             <span className="icon icon-more"></span>
           </div>
-          <div className="action" onClick={self.handleClick}>
+          <div className="action" onClick={this.handleClick}>
             CREATE
           </div>
         </div>
@@ -223,7 +231,7 @@ var ImageCard = React.createClass({
               <span className="icon icon-open-external"></span><span className="text">VIEW ON DOCKER HUB</span>
             </div>
             <div className="close-overlay">
-              <a className="btn btn-action circular" onClick={self.handleCloseMenuOverlay}><span className="icon icon-delete"></span></a>
+              <a className="btn btn-action circular" onClick={this.handleCloseMenuOverlay}><span className="icon icon-delete"></span></a>
             </div>
           </div>
       );
@@ -234,7 +242,7 @@ var ImageCard = React.createClass({
         <div className="overlay tag-overlay">
           <p>Please select an image tag.</p>
           {tags}
-          <div className="close-overlay" onClick={self.handleCloseTagOverlay}>
+          <div className="close-overlay" onClick={this.handleCloseTagOverlay}>
             <a className="btn btn-action circular"><span className="icon icon-delete"></span></a>
           </div>
         </div>
