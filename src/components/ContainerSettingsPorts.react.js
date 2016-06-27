@@ -116,7 +116,7 @@ var ContainerSettingsPorts = React.createClass({
     let port = e.target.value;
     // save updated port
     ports[key] = _.extend(ports[key], {
-      url: 'http://' + ports[key].ip + ':' + port,
+      url: ports[key].ip + ':' + port,
       port: port,
       error: null
     });
