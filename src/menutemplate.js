@@ -122,6 +122,10 @@ var MenuTemplate = function () {
         selector: 'paste:'
       },
       {
+        label: 'Find',
+        accelerator: util.CommandOrCtrl() + '+F'
+      },
+      {
         label: 'Select All',
         accelerator: util.CommandOrCtrl() + '+A',
         selector: 'selectAll:'
