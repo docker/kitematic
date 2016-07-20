@@ -91,7 +91,7 @@ export default {
     while (true) {
       try {
         router.get().transitionTo('setup');
-        docker.setup(util.isWindows() ? 'docker.local':'localhost');
+        docker.setup('localhost');
         setupServerActions.started({started: true});
         this.simulateProgress(20);
         metrics.track('Native Setup Finished');
