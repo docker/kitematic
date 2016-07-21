@@ -47,7 +47,7 @@ var DockerUtil = {
         throw new Error('Cannot connect to the Docker daemon. Is the daemon running?');
       }
     } else {
-      let certDir = path.join(util.home(), '.docker/machine/machines/', name);
+      let certDir = process.env.DOCKER_CERT_PATH || path.join(util.home(), '.docker/machine/machines/', name);
       if (!fs.existsSync(certDir)) {
         throw new Error('Certificate directory does not exist');
       }
