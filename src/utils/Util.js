@@ -43,7 +43,7 @@ module.exports = {
     if (this.native === null) {
       if (this.isWindows()) {
         this.native = http.get({
-          url: `http:////./pipe/docker_engine/v1.23/version`
+          url: `http:////./pipe/docker_engine/version`
         }, (response) => {
           if (response.statusCode !== 200 ) {
             return false;
