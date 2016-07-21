@@ -157,7 +157,10 @@ var DockerUtil = {
       }
 
       if (!containerData.HostConfig || (containerData.HostConfig && !containerData.HostConfig.PortBindings)) {
-        containerData.PublishAllPorts = true;
+        if (!containerData.HostConfig) {
+          containerData.HostConfig = {};
+        }
+        containerData.HostConfig.PublishAllPorts = true;
       }
 
       if (image.Config.Cmd) {
