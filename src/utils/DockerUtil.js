@@ -35,11 +35,7 @@ var DockerUtil = {
     if (ip.indexOf('local') !== -1) {
       try {
         if (util.isWindows()) {
-          this.client = new dockerode({
-            protocol: 'http',
-            host: ip,
-            port: 2375
-          });
+          this.client = new dockerode({socketPath: '//./pipe/docker_engine'});
         } else {
           this.client = new dockerode({socketPath: '/var/run/docker.sock'});
         }
