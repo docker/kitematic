@@ -328,25 +328,20 @@ module.exports = function (grunt) {
           'changelog-file-missing-in-native-package',
           'executable-not-elf-or-script',
           'extra-license-file',
-          //File permission overrides
           'non-standard-dir-perm',
           'non-standard-file-perm',
           'non-standard-executable-perm',
           'script-not-executable',
           'shlib-with-executable-bit',
-
-          'binary-without-manpage', //Kitematic does not have a manpage
-
-          'debian-changelog-file-missing', //incorrectly reports the debian changelog file as missing (probably looking in the wrong place)
-          'unusual-interpreter', //node does not appear as a "known" interpreter to lintian
-          'wrong-path-for-interpreter', //certain node_modules have hardcoded paths rather than using #!/usr/bin/env NAME
-          'backup-file-in-package', //node_modules contain README.md~, probably from npm packing
-          'package-contains-vcs-control-file', //node_modules contain .git folders, again, probably left over from npm packing
-
-          'embedded-javascript-library', //I'm assuming that JS libs are embedded intentionally into the Kitematic release
-          'embedded-library', //Ditto for embedded libaries like libnode and libgcrypt
-          'arch-dependent-file-in-usr-share' //for architecture (amd64 vs i386) specific .so libraries
-
+          'binary-without-manpage',
+          'debian-changelog-file-missing',
+          'unusual-interpreter',
+          'wrong-path-for-interpreter',
+          'backup-file-in-package',
+          'package-contains-vcs-control-file',
+          'embedded-javascript-library',
+          'embedded-library',
+          'arch-dependent-file-in-usr-share'
         ],
         categories: [
           'Utility'
