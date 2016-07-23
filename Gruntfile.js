@@ -317,15 +317,36 @@ module.exports = function (grunt) {
     },
     'electron-installer-debian': {
       options: {
-        productName: LINUX_APPNAME,
+        name: BASENAME.toLowerCase(), // spaces and brackets cause linting errors
+        productName: LINUX_APPNAME.toLowerCase(),
         productDescription: 'Run containers through a simple, yet powerful graphical user interface.',
+        maintainer: 'Ben French <frenchben@docker.com>',
         section: 'devel',
         priority: 'optional',
         icon: './util/kitematic.png',
         lintianOverrides: [
           'changelog-file-missing-in-native-package',
           'executable-not-elf-or-script',
-          'extra-license-file'
+          'extra-license-file',
+          //File permission overrides
+          'non-standard-dir-perm',
+          'non-standard-file-perm',
+          'non-standard-executable-perm',
+          'script-not-executable',
+          'shlib-with-executable-bit',
+
+          'binary-without-manpage', //Kitematic does not have a manpage
+
+          'debian-changelog-file-missing', //incorrectly reports the debian changelog file as missing (probably looking in the wrong place)
+          'unusual-interpreter', //node does not appear as a "known" interpreter to lintian
+          'wrong-path-for-interpreter', //certain node_modules have hardcoded paths rather than using #!/usr/bin/env NAME
+          'backup-file-in-package', //node_modules contain README.md~, probably from npm packing
+          'package-contains-vcs-control-file', //node_modules contain .git folders, again, probably left over from npm packing
+
+          'embedded-javascript-library', //I'm assuming that JS libs are embedded intentionally into the Kitematic release
+          'embedded-library', //Ditto for embedded libaries like libnode and libgcrypt
+          'arch-dependent-file-in-usr-share' //for architecture (amd64 vs i386) specific .so libraries
+
         ],
         categories: [
           'Utility'
