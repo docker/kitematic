@@ -317,15 +317,31 @@ module.exports = function (grunt) {
     },
     'electron-installer-debian': {
       options: {
-        productName: LINUX_APPNAME,
+        name: BASENAME.toLowerCase(), // spaces and brackets cause linting errors
+        productName: LINUX_APPNAME.toLowerCase(),
         productDescription: 'Run containers through a simple, yet powerful graphical user interface.',
+        maintainer: 'Ben French <frenchben@docker.com>',
         section: 'devel',
         priority: 'optional',
         icon: './util/kitematic.png',
         lintianOverrides: [
           'changelog-file-missing-in-native-package',
           'executable-not-elf-or-script',
-          'extra-license-file'
+          'extra-license-file',
+          'non-standard-dir-perm',
+          'non-standard-file-perm',
+          'non-standard-executable-perm',
+          'script-not-executable',
+          'shlib-with-executable-bit',
+          'binary-without-manpage',
+          'debian-changelog-file-missing',
+          'unusual-interpreter',
+          'wrong-path-for-interpreter',
+          'backup-file-in-package',
+          'package-contains-vcs-control-file',
+          'embedded-javascript-library',
+          'embedded-library',
+          'arch-dependent-file-in-usr-share'
         ],
         categories: [
           'Utility'
