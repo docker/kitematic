@@ -84,7 +84,7 @@ var ContainerSettingsVolumes = React.createClass({
     var homeDir = util.isWindows() ? util.windowsToLinuxPath(util.home()) : util.home();
     var mounts = _.map(this.props.container.Mounts, (m, i) => {
       let source = m.Source, destination = m.Destination;
-      if (!m.Source || (!util.isNative() && m.Source.indexOf(homeDir) === -1)) {
+      if (!m.Source || (!util.isNative() && m.Source.indexOf(homeDir) === -1) || (m.Source.indexOf('/var/lib/docker/volumes') !== -1)) {
         source = (
           <span className="value-right">No Folder</span>
         );
