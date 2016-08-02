@@ -558,6 +558,7 @@ var DockerUtil = {
         // TODO: Add app-wide error handler
         return;
       }
+      // TODO: Add health-check for existing connection
 
       stream.setEncoding('utf8');
       stream.on('data', json => {

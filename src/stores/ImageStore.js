@@ -33,19 +33,21 @@ class ImageStore {
     let tags = {};
     let finalImages = [];
     images.map((image) => {
-      image.RepoTags.map(repoTags => {
-        let [name, tag] = repoTags.split(':');
-        if (typeof tags[name] !== 'undefined') {
-          finalImages[tags[name]].tags.push(tag);
-          if (image.inUse) {
-            finalImages[tags[name]].inUse = image.inUse;
+      if (image.RepoTags !== null) {
+        image.RepoTags.map(repoTags => {
+          let [name, tag] = repoTags.split(':');
+          if (typeof tags[name] !== 'undefined') {
+            finalImages[tags[name]].tags.push(tag);
+            if (image.inUse) {
+              finalImages[tags[name]].inUse = image.inUse;
+            }
+          } else {
+            image.tags = [tag];
+            tags[name] = finalImages.length;
+            finalImages.push(image);
           }
-        } else {
-          image.tags = [tag];
-          tags[name] = finalImages.length;
-          finalImages.push(image);
-        }
-      });
+        });
+      }
     });
     this.setState({error: null, images: finalImages, imagesLoading: false});
   }

@@ -17,11 +17,11 @@ var ContainerSettingsVolumes = React.createClass({
 
       var directory = filenames[0];
 
-      if (!directory || directory.indexOf(util.home()) === -1) {
+      if (!directory || (!util.isNative() && directory.indexOf(util.home()) === -1)) {
         dialog.showMessageBox({
           type: 'warning',
           buttons: ['OK'],
-          message: 'Invalid directory. Volume directories must be under your Users directory'
+          message: 'Invalid directory - Please make sure the directory exists and you can read/write to it.'
         });
         return;
       }
@@ -82,9 +82,9 @@ var ContainerSettingsVolumes = React.createClass({
     }
 
     var homeDir = util.isWindows() ? util.windowsToLinuxPath(util.home()) : util.home();
-    var mounts= _.map(this.props.container.Mounts, (m, i) => {
+    var mounts = _.map(this.props.container.Mounts, (m, i) => {
       let source = m.Source, destination = m.Destination;
-      if (!m.Source || m.Source.indexOf(homeDir) === -1) {
+      if (!m.Source || (!util.isNative() && m.Source.indexOf(homeDir) === -1)) {
         source = (
           <span className="value-right">No Folder</span>
         );
