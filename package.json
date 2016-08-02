@@ -1,6 +1,6 @@
 {
   "name": "Kitematic",
-  "version": "0.12.0",
+  "version": "0.12.0.1",
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X, Windows and Ubuntu.",
   "homepage": "https://kitematic.com/",
@@ -28,6 +28,7 @@
     "async": "^1.4.2",
     "bluebird": "^2.9.24",
     "bugsnag-js": "^2.4.7",
+    "cached-request": "^0.1.4",
     "classnames": "^2.1.5",
     "coveralls": "^2.11.2",
     "deep-extend": "^0.4.0",
