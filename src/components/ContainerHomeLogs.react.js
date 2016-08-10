@@ -36,9 +36,11 @@ module.exports = React.createClass({
   },
 
   render: function () {
-    let logs = this.props.container.Logs ?
-        this.props.container.Logs.map((l) => <div key={l.substr(0,l.indexOf(' '))} dangerouslySetInnerHTML={{__html: convert.toHtml(escape(l.substr(l.indexOf(' ')+1)).replace(/ /g, '&nbsp;<wbr>'))}}></div>) :
-        ['0 No logs for this container.'];
+    let logs = this.props.container.Logs ? this.props.container.Logs.map((l, index) => {
+        const key = `${this.props.container.Name}-${index}`;
+        return <div key={key} dangerouslySetInnerHTML={{__html: convert.toHtml(escape(l.substr(l.indexOf(' ')+1)).replace(/ /g, '&nbsp;<wbr>'))}}></div>;
+      }) : ['0 No logs for this container.'];
+
     return (
       <div className="mini-logs wrapper">
         <div className="widget">

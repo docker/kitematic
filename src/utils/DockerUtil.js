@@ -34,12 +34,16 @@ var DockerUtil = {
 
     if (ip.indexOf('local') !== -1) {
       try {
-        this.client = new dockerode({socketPath: '/var/run/docker.sock'});
+        if (util.isWindows()) {
+          this.client = new dockerode({socketPath: '//./pipe/docker_engine'});
+        } else {
+          this.client = new dockerode({socketPath: '/var/run/docker.sock'});
+        }
       } catch (error) {
         throw new Error('Cannot connect to the Docker daemon. Is the daemon running?');
       }
     } else {
-      let certDir = path.join(util.home(), '.docker/machine/machines/', name);
+      let certDir = process.env.DOCKER_CERT_PATH || path.join(util.home(), '.docker/machine/machines/', name);
       if (!fs.existsSync(certDir)) {
         throw new Error('Certificate directory does not exist');
       }
@@ -117,6 +121,7 @@ var DockerUtil = {
 
   startContainer (name) {
     let container = this.client.getContainer(name);
+
     container.start((error) => {
       if (error) {
         containerServerActions.error({name, error});
@@ -148,7 +153,10 @@ var DockerUtil = {
       }
 
       if (!containerData.HostConfig || (containerData.HostConfig && !containerData.HostConfig.PortBindings)) {
-        containerData.PublishAllPorts = true;
+        if (!containerData.HostConfig) {
+          containerData.HostConfig = {};
+        }
+        containerData.HostConfig.PublishAllPorts = true;
       }
 
       if (image.Config.Cmd) {
@@ -182,6 +190,14 @@ var DockerUtil = {
         containerServerActions.error({name: id, error});
       } else {
         container.Name = container.Name.replace('/', '');
+        this.client.getImage(container.Image).inspect((error, image) => {
+          if (error) {
+            containerServerActions.error({name, error});
+            return;
+          }
+          container.InitialPorts = image.Config.ExposedPorts;
+        });
+
         containerServerActions.updated({container});
       }
     });
@@ -205,6 +221,13 @@ var DockerUtil = {
             this.imagesUsed.push(imgSha);
           }
           container.Name = container.Name.replace('/', '');
+          this.client.getImage(container.Image).inspect((error, image) => {
+            if (error) {
+              containerServerActions.error({name, error});
+              return;
+            }
+            container.InitialPorts = image.Config.ExposedPorts;
+          });
           callback(null, container);
         });
       }, (err, containers) => {
