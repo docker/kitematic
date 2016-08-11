@@ -240,7 +240,7 @@ module.exports = React.createClass({
       );
       paginateResults = null;
     } else if (filter === 'userimages') {
-      let userImageItems = this.state.images.map(image => {
+      let userImageItems = this.state.images.map((image, index) => {
         let repo = image.RepoTags[0].split(':')[0];
         if (repo.indexOf('/') === -1) {
           repo = 'local/' + repo;
@@ -250,7 +250,12 @@ module.exports = React.createClass({
         let tags = image.tags.join('-');
         image.star_count = 0;
         image.is_local = true;
-        return (<ImageCard key={image.namespace + '/' + image.name + ':' + tags} image={image} chosenTag={image.tags[0]} tags={image.tags} />);
+        const key = `local-${image.name}-${index}`;
+        let imageCard = null;
+        if (image.name !== '<none>') {
+          imageCard = (<ImageCard key={key + ':' + tags} image={image} chosenTag={image.tags[0]} tags={image.tags} />);
+        }
+        return imageCard;
       });
       let userImageResults = userImageItems.length ? (
         <div className="result-grids">
@@ -277,8 +282,14 @@ module.exports = React.createClass({
         </div>
       );
     } else if (repos.length) {
-      let recommendedItems = repos.filter(repo => repo.is_recommended).map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />);
-      let otherItems = repos.filter(repo => !repo.is_recommended && !repo.is_user_repo).map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />);
+      let recommendedItems = repos.filter(repo => repo.is_recommended).map((image, index) => {
+        const key = `rec-${image.name}-${index}`;
+        return (<ImageCard key={key} image={image} />);
+      });
+      let otherItems = repos.filter(repo => !repo.is_recommended && !repo.is_user_repo).map((image, index) => {
+        const key = `other-${image.name}-${index}`;
+        return (<ImageCard key={key} image={image} />);
+      });
 
       let recommendedResults = recommendedItems.length ? (
         <div>
@@ -289,7 +300,10 @@ module.exports = React.createClass({
         </div>
       ) : null;
 
-      let userRepoItems = repos.filter(repo => repo.is_user_repo).map(image => <ImageCard key={image.namespace + '/' + image.name} image={image} />);
+      let userRepoItems = repos.filter(repo => repo.is_user_repo).map((image, index) => {
+        const key = `usr-${image.name}-${index}`;
+        return (<ImageCard key={key} image={image} />);
+      });
       let userRepoResults = userRepoItems.length ? (
         <div>
           <h4>My Repositories</h4>

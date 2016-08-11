@@ -43,10 +43,10 @@ var Preferences = React.createClass({
           <div className="title">VM Settings</div>
           <div className="option">
             <div className="option-name">
-              Shutdown Linux VM on closing Kitematic
+              <label htmlFor="closeVMOnQuit">Shutdown Linux VM on closing Kitematic</label>
             </div>
             <div className="option-value">
-              <input type="checkbox" checked={this.state.closeVMOnQuit} onChange={this.handleChangeCloseVMOnQuit}/>
+              <input id="closeVMOnQuit" type="checkbox" checked={this.state.closeVMOnQuit} onChange={this.handleChangeCloseVMOnQuit}/>
             </div>
           </div>
         </div>
@@ -61,10 +61,10 @@ var Preferences = React.createClass({
           <div className="title">App Settings</div>
           <div className="option">
             <div className="option-name">
-              Report anonymous usage analytics
+              <label htmlFor="metricsEnabled">Report anonymous usage analytics</label>
             </div>
             <div className="option-value">
-              <input type="checkbox" checked={this.state.metricsEnabled} onChange={this.handleChangeMetricsEnabled}/>
+              <input id="metricsEnabled" type="checkbox" checked={this.state.metricsEnabled} onChange={this.handleChangeMetricsEnabled}/>
             </div>
           </div>
         </div>

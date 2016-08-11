@@ -6,6 +6,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import child_process from 'child_process';
+let Promise = require('bluebird');
 
 
 process.env.NODE_PATH = path.join(__dirname, 'node_modules');
@@ -13,7 +14,7 @@ process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
 if (process.platform !== 'win32') {
   process.env.PATH = '/usr/local/bin:' + process.env.PATH;
 }
-
+var exiting = false;
 var size = {}, settingsjson = {};
 try {
   size = JSON.parse(fs.readFileSync(path.join(app.getPath('userData'), 'size')));
@@ -44,7 +45,7 @@ app.on('ready', function () {
 
   mainWindow.loadURL(path.normalize('file://' + path.join(__dirname, 'index.html')));
 
-  app.on('activate-with-no-open-windows', function () {
+  app.on('activate', function () {
     if (mainWindow) {
       mainWindow.show();
     }
@@ -53,9 +54,15 @@ app.on('ready', function () {
 
 
   if (os.platform() === 'win32') {
-    mainWindow.on('close', function () {
+    mainWindow.on('close', function (e) {
       mainWindow.webContents.send('application:quitting');
-      return true;
+      if(!exiting){
+        Promise.delay(1000).then(function(){
+          mainWindow.close();
+        });
+        exiting = true;
+        e.preventDefault();
+      }
     });
 
     app.on('window-all-closed', function () {
