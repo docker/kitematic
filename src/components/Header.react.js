@@ -104,17 +104,6 @@ var Header = React.createClass({
           </div>
       );
   },
-  renderWindowButtons: function () {
-    if(!util.isWindows()){
-      return (
-          <div className="buttons">
-            <div className="button button-close enabled" onClick={this.handleClose}></div>
-            <div className="button button-minimize enabled" onClick={this.handleMinimize}></div>
-            <div className="button button-fullscreen enabled" onClick={this.handleFullscreen}></div>
-          </div>
-      );
-    }
-  },
   renderDashboardHeader: function () {
     let headerClasses = classNames({
       bordered: !this.props.hideLogin,
@@ -157,20 +146,10 @@ var Header = React.createClass({
           </div>
       );
     }
-
-    if(util.isWindows ()){
-
-    }else{
-
-    }
     return (
       <div className={headerClasses}>
         <div className="left-header">
-          {util.isWindows () ? null : this.renderWindowButtons()}
           {username}
-        </div>
-        <div className="right-header">
-          {util.isWindows () ? this.renderWindowButtons() : null}
         </div>
       </div>
     );
@@ -183,12 +162,6 @@ var Header = React.createClass({
     });
     return (
       <div className={headerClasses}>
-        <div className="left-header">
-          {util.isWindows () ? null : this.renderWindowButtons()}
-        </div>
-        <div className="right-header">
-          {util.isWindows () ? this.renderWindowButtons() : null}
-        </div>
       </div>
     );
   },
