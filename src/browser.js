@@ -32,7 +32,6 @@ app.on('ready', function () {
     'min-height': os.platform() === 'win32' ? 260 : 500,
     'standard-window': false,
     resizable: true,
-    frame: os.platform() === 'win32',
     show: false,
     autoHideMenuBar:true,
     titleBarStyle: 'hidden',
