@@ -45,7 +45,7 @@ var ContainerSettingsPorts = React.createClass({
     document.getElementById('portValue').value = '';
   },
   addPort: function () {
-    if (document.getElementById('portKey') != null){
+    if (document.getElementById('portKey') !== null) {
       var portKey = document.getElementById('portKey').value;
       var portValue = document.getElementById('portValue').value;
       var portTypeValue = document.getElementById('portType').textContent;
@@ -240,7 +240,7 @@ var ContainerSettingsPorts = React.createClass({
             <thead>
               <tr>
                 <th>DOCKER PORT</th>
-                <th>MAC IP:PORT</th>
+                <th>PUBLISHED IP:PORT</th>
                 <th></th>
               </tr>
             </thead>
