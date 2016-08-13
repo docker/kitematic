@@ -20,6 +20,7 @@ module.exports = React.createClass({
   getInitialState: function () {
     return {
       query: '',
+      defaultHub: 'https://hub.docker.com',
       hub: '',
       loading: repositoryStore.loading(),
       repos: repositoryStore.all(),
@@ -114,7 +115,7 @@ module.exports = React.createClass({
     if (hub === this.state.hub) {
       return;
     }
-    process.env.REGHUB2_ENDPOINT = (hub || 'https://hub.docker.com') + '/v2';
+    process.env.REGHUB2_ENDPOINT = (hub || this.state.defaultHub) + '/v2';
     let oldQuery = this.state.query;
     this.setState({
       hub: hub,
@@ -394,7 +395,7 @@ module.exports = React.createClass({
             <div className="search">
             <div className={searchClasses}>
               <input type="search" ref="searchInput" className="form-control" placeholder="Search for Docker images from Docker Hub" onChange={this.handleChange}/>
-              <input type="text" ref="hubInput" className="form-control" placeholder="hub.docker.com" onChange={this.hubChange}/>
+              <input type="text" ref="hubInput" className="form-control" placeholder="hub.docker.com" onChange={this.hubChange} oldValue={this.state.hub} value={this.state.hub} defaultValue={this.state.hub}/>
               <div className={magnifierClasses}></div>
               <div className={loadingClasses}><div></div></div>
             </div>
