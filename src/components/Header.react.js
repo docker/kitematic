@@ -151,6 +151,9 @@ var Header = React.createClass({
         <div className="left-header">
           {username}
         </div>
+        <div className="right-header">
+        {this.renderLogo()}
+        </div>
       </div>
     );
   },
