@@ -43,36 +43,6 @@ var Header = React.createClass({
       this.forceUpdate();
     }
   },
-  handleClose: function () {
-    if (util.isWindows()) {
-      remote.getCurrentWindow().close();
-    } else {
-      remote.getCurrentWindow().hide();
-    }
-  },
-  handleMinimize: function () {
-    remote.getCurrentWindow().minimize();
-  },
-  handleFullscreen: function () {
-    if (util.isWindows()) {
-      if (remote.getCurrentWindow().isMaximized()) {
-        remote.getCurrentWindow().unmaximize();
-      } else {
-        remote.getCurrentWindow().maximize();
-      }
-      this.setState({
-        fullscreen: remote.getCurrentWindow().isMaximized()
-      });
-    } else {
-      remote.getCurrentWindow().setFullScreen(!remote.getCurrentWindow().isFullScreen());
-      this.setState({
-        fullscreen: remote.getCurrentWindow().isFullScreen()
-      });
-    }
-  },
-  handleFullscreenHover: function () {
-    this.update();
-  },
   handleUserClick: function (e) {
     let menu = new Menu();
 
