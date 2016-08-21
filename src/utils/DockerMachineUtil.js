@@ -3,6 +3,7 @@ import path from 'path';
 import Promise from 'bluebird';
 import fs from 'fs';
 import util from './Util';
+import child_process from 'child_process';
 
 var DockerMachine = {
   command: function () {
@@ -22,7 +23,7 @@ var DockerMachine = {
     return fs.existsSync(this.command());
   },
   version: function () {
-    return util.exec([this.command(), '-v']).then(stdout => {
+    return util.execFile([this.command(), '-v']).then(stdout => {
       try {
         var matchlist = stdout.match(/(\d+\.\d+\.\d+).*/);
         if (!matchlist || matchlist.length < 2) {
@@ -57,40 +58,46 @@ var DockerMachine = {
     });
   },
   create: function (machineName = this.name()) {
-    return util.exec([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
+    return util.execFile([this.command(), '-D', 'create', '-d', 'virtualbox', '--virtualbox-memory', '2048', machineName]);
   },
   start: function (machineName = this.name()) {
-    return util.exec([this.command(), '-D', 'start', machineName]);
+    return util.execFile([this.command(), '-D', 'start', machineName]);
   },
   stop: function (machineName = this.name()) {
-    return util.exec([this.command(), 'stop', machineName]);
+    return util.execFile([this.command(), 'stop', machineName]);
   },
   upgrade: function (machineName = this.name()) {
-    return util.exec([this.command(), 'upgrade', machineName]);
+    return util.execFile([this.command(), 'upgrade', machineName]);
   },
   rm: function (machineName = this.name()) {
-    return util.exec([this.command(), 'rm', '-f', machineName]);
+    return util.execFile([this.command(), 'rm', '-f', machineName]);
   },
   ip: function (machineName = this.name()) {
-    return util.exec([this.command(), 'ip', machineName]).then(stdout => {
+    return util.execFile([this.command(), 'ip', machineName]).then(stdout => {
       return Promise.resolve(stdout.trim().replace('\n', ''));
     });
   },
   url: function (machineName = this.name()) {
-    return util.exec([this.command(), 'url', machineName]).then(stdout => {
+    return util.execFile([this.command(), 'url', machineName]).then(stdout => {
       return Promise.resolve(stdout.trim().replace('\n', ''));
     });
   },
   regenerateCerts: function (machineName = this.name()) {
-    return util.exec([this.command(), 'tls-regenerate-certs', '-f', machineName]);
+    return util.execFile([this.command(), 'tls-regenerate-certs', '-f', machineName]);
   },
   status: function (machineName = this.name()) {
-    return util.exec([this.command(), 'status', machineName]).then(stdout => {
-      return Promise.resolve(stdout.trim().replace('\n', ''));
+    return new Promise((resolve, reject) => {
+      child_process.execFile(this.command(), ['status', machineName], (error, stdout, stderr) => {
+        if (error) {
+          reject(new Error('Encountered an error: ' + error));
+        } else {
+          resolve(stdout.trim() + stderr.trim());
+        }
+      });
     });
   },
   disk: function (machineName = this.name()) {
-    return util.exec([this.command(), 'ssh', machineName, 'df']).then(stdout => {
+    return util.execFile([this.command(), 'ssh', machineName, 'df']).then(stdout => {
       try {
         var lines = stdout.split('\n');
         var dataline = _.find(lines, function (line) {
@@ -114,7 +121,7 @@ var DockerMachine = {
     });
   },
   memory: function (machineName = this.name()) {
-    return util.exec([this.command(), 'ssh', machineName, 'free -m']).then(stdout => {
+    return util.execFile([this.command(), 'ssh', machineName, 'free -m']).then(stdout => {
       try {
         var lines = stdout.split('\n');
         var dataline = _.find(lines, function (line) {
@@ -140,26 +147,44 @@ var DockerMachine = {
     });
   },
   dockerTerminal: function (cmd, machineName = this.name()) {
+    cmd = cmd || process.env.SHELL || '';
     if (util.isWindows()) {
-      cmd = cmd || '';
-      this.url(machineName).then(machineUrl => {
-        util.exec('start powershell.exe ' + cmd,
-          {env: {
-            'DOCKER_HOST': machineUrl,
-            'DOCKER_CERT_PATH': path.join(util.home(), '.docker', 'machine', 'machines', machineName),
-            'DOCKER_TLS_VERIFY': 1
-          }
+      if (util.isNative()) {
+        util.exec('start powershell.exe ' + cmd);
+      } else {
+        this.url(machineName).then(machineUrl => {
+          util.exec('start powershell.exe ' + cmd,
+            {env: {
+              'DOCKER_HOST': machineUrl,
+              'DOCKER_CERT_PATH': path.join(util.home(), '.docker', 'machine', 'machines', machineName),
+              'DOCKER_TLS_VERIFY': 1
+            }
+          });
         });
-      });
+      }
     } else {
-      cmd = cmd || process.env.SHELL;
-      this.url(machineName).then(machineUrl => {
-        util.exec([path.join(process.env.RESOURCES_PATH, 'terminal'), `DOCKER_HOST=${machineUrl} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machineName)} DOCKER_TLS_VERIFY=1 ${cmd}`]).then(() => {});
-      });
+      var terminal = util.isLinux() ? util.linuxTerminal() : [path.join(process.env.RESOURCES_PATH, 'terminal')];
+      if (util.isNative()) {
+        terminal.push(cmd);
+        util.execFile(terminal).then(() => {});
+      } else {
+        this.url(machineName).then(machineUrl => {
+          terminal.push(`DOCKER_HOST=${machineUrl} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machineName)} DOCKER_TLS_VERIFY=1`);
+          terminal.push(cmd);
+          util.execFile(terminal).then(() => {});
+        });
+      }
     }
   },
   virtualBoxLogs: function (machineName = this.name()) {
-    let logsPath = path.join(util.home(), '.docker', 'machine', 'machines', machineName, machineName, 'Logs', 'VBox.log');
+    
+    var logsPath = null;
+    if (process.env.MACHINE_STORAGE_PATH) {
+      logsPath = path.join(process.env.MACHINE_STORAGE_PATH, 'machines', machineName, machineName, 'Logs', 'VBox.log');
+    } else {
+      logsPath = path.join(util.home(), '.docker', 'machine', 'machines', machineName, machineName, 'Logs', 'VBox.log'); 
+    }
+
     let logData = null;
     try {
       logData = fs.readFileSync(logsPath, 'utf8');

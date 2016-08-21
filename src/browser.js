@@ -1,45 +1,27 @@
-import app from 'app';
-import BrowserWindow from 'browser-window';
+import electron from 'electron';
+const app = electron.app;
+const BrowserWindow = electron.BrowserWindow;
+
 import fs from 'fs';
 import os from 'os';
-import ipc from 'ipc';
 import path from 'path';
 import child_process from 'child_process';
+let Promise = require('bluebird');
 
 process.env.NODE_PATH = path.join(__dirname, 'node_modules');
 process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
-process.env.PATH = '/usr/local/bin:' + process.env.PATH;
-
+if (process.platform !== 'win32') {
+  process.env.PATH = '/usr/local/bin:' + process.env.PATH;
+}
+var exiting = false;
 var size = {}, settingsjson = {};
 try {
-  size = JSON.parse(fs.readFileSync(path.join(process.env[(process.platform === 'win32') ? 'USERPROFILE' : 'HOME'], 'Library', 'Application\ Support', 'Kitematic', 'size')));
+  size = JSON.parse(fs.readFileSync(path.join(app.getPath('userData'), 'size')));
 } catch (err) {}
+
 try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, 'settings.json'), 'utf8'));
 } catch (err) {}
-
-let updateCmd = (args, cb) => {
-  let updateExe = path.resolve(path.dirname(process.execPath), '..', 'Update.exe');
-  let child = child_process.spawn(updateExe, args, {detached: true});
-  child.on('close', cb);
-};
-
-if (process.platform === 'win32') {
-  var squirrelCommand = process.argv[1];
-  let target = path.basename(process.execPath);
-  switch (squirrelCommand) {
-    case '--squirrel-install':
-    case '--squirrel-updated':
-      updateCmd(['--createShortcut', target], app.quit);
-      break;
-    case '--squirrel-uninstall':
-      updateCmd(['--removeShortcut', target], app.quit);
-      break;
-    case '--squirrel-obsolete':
-      app.quit();
-      break;
-  }
-}
 
 app.on('ready', function () {
   var mainWindow = new BrowserWindow({
@@ -53,34 +35,38 @@ app.on('ready', function () {
     show: false
   });
 
-  mainWindow.loadUrl(path.normalize('file://' + path.join(__dirname, 'index.html')));
+  if (process.env.NODE_ENV === 'development') {
+    mainWindow.openDevTools({detach: true});
+  }
 
-  app.on('activate-with-no-open-windows', function () {
+  mainWindow.loadURL(path.normalize('file://' + path.join(__dirname, 'index.html')));
+
+  app.on('activate', function () {
     if (mainWindow) {
       mainWindow.show();
     }
     return false;
   });
 
-  var updating = false;
-  ipc.on('application:quit-install', function () {
-    updating = true;
-  });
 
   if (os.platform() === 'win32') {
-    mainWindow.on('close', function () {
+    mainWindow.on('close', function (e) {
       mainWindow.webContents.send('application:quitting');
-      return true;
+      if(!exiting){
+        Promise.delay(1000).then(function(){
+          mainWindow.close();
+        });
+        exiting = true;
+        e.preventDefault();
+      }
     });
 
-    app.on('window-all-closed', function() {
+    app.on('window-all-closed', function () {
       app.quit();
     });
   } else if (os.platform() === 'darwin') {
     app.on('before-quit', function () {
-      if (!updating) {
-        mainWindow.webContents.send('application:quitting');
-      }
+      mainWindow.webContents.send('application:quitting');
     });
   }
 

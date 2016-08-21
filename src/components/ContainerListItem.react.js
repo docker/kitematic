@@ -1,8 +1,9 @@
 import $ from 'jquery';
 import React from 'react/addons';
 import Router from 'react-router';
-import remote from 'remote';
-var dialog = remote.require('dialog');
+import electron from 'electron';
+const remote = electron.remote;
+const dialog = remote.dialog;
 import metrics from '../utils/MetricsUtil';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import containerActions from '../actions/ContainerActions';
@@ -96,7 +97,7 @@ var ContainerListItem = React.createClass({
 
     return (
       <Router.Link to="container" params={{name: container.Name}}>
-        <li onMouseEnter={self.handleItemMouseEnter} onMouseLeave={self.handleItemMouseLeave}>
+        <li onMouseEnter={self.handleItemMouseEnter} onMouseLeave={self.handleItemMouseLeave} onClick={self.handleClick} id={this.props.key}>
           {state}
           <div className="info">
             <div className="name">

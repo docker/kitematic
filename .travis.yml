@@ -1,10 +1,13 @@
+sudo: false
+
 language: node_js
 node_js:
-  - '4.1.2'
-
-sudo: false
+    - "4.2.2"
 
 cache:
   directories:
-  - resources
-  - node_modules
+    - node_modules
+
+script:
+  - npm install
+  - npm test

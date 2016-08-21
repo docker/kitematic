@@ -1,7 +1,8 @@
 import _ from 'underscore';
 import React from 'react/addons';
-import remote from 'remote';
-var dialog = remote.require('dialog');
+import electron from 'electron';
+const remote = electron.remote;
+const dialog = remote.dialog;
 import shell from 'shell';
 import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
@@ -27,22 +28,21 @@ var ContainerSettingsVolumes = React.createClass({
 
       metrics.track('Choose Directory for Volume');
 
-      if(util.isWindows()) {
-        directory = util.windowsToLinuxPath(directory);
-      }
-
-      var mounts = _.clone(this.props.container.Mounts);
+      let mounts = _.clone(this.props.container.Mounts);
       _.each(mounts, m => {
         if (m.Destination === dockerVol) {
-          m.Source = directory;
+          m.Source = util.windowsToLinuxPath(directory);
+          m.Driver = null;
         }
       });
 
-      var binds = mounts.map(m => {
+      let binds = mounts.map(m => {
         return m.Source + ':' + m.Destination;
       });
 
-      containerActions.update(this.props.container.Name, {Binds: binds, Mounts: mounts});
+      let hostConfig = _.extend(this.props.container.HostConfig, {Binds: binds});
+
+      containerActions.update(this.props.container.Name, {Mounts: mounts, HostConfig: hostConfig});
     });
   },
   handleRemoveVolumeClick: function (dockerVol) {
@@ -50,19 +50,21 @@ var ContainerSettingsVolumes = React.createClass({
       from: 'settings'
     });
 
-    var hostConfig = _.clone(this.props.container.HostConfig);
-    var binds = hostConfig.Binds;
-    var mounts = _.clone(this.props.container.Mounts);
+    let mounts = _.clone(this.props.container.Mounts);
     _.each(mounts, m => {
       if (m.Destination === dockerVol) {
         m.Source = null;
+        m.Driver = 'local';
       }
     });
-    var index = _.findIndex(binds, bind => bind.indexOf(`:${dockerVol}`) !== -1);
-    if (index >= 0) {
-      binds.splice(index, 1);
-    }
-    containerActions.update(this.props.container.Name, {HostConfig: hostConfig, Binds: binds, Mounts: mounts});
+
+    let binds = mounts.map(m => {
+      return m.Source + ':' + m.Destination;
+    });
+
+    let hostConfig = _.extend(this.props.container.HostConfig, {Binds: binds});
+
+    containerActions.update(this.props.container.Name, {Mounts: mounts, HostConfig: hostConfig});
   },
   handleOpenVolumeClick: function (path) {
     metrics.track('Opened Volume Directory', {

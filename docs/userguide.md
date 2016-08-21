@@ -4,7 +4,7 @@ title = "Kitematic User Guide: Intro & Overview"
 description = "Documentation that provides an overview of Kitematic and installation instructions"
 keywords = ["docker, documentation, about, technology, kitematic, gui"]
 [menu.main]
-parent="smn_workw_kitematic"
+parent="toolbox_kitematic"
 +++
 <![end-metadata]-->
 
@@ -30,7 +30,7 @@ stream logs, and single click terminal into your Docker container all from the
 GUI.
 
 First, if you haven't yet done so, [download and start
-Kitematic](/).
+Kitematic](index.md).
 
 ## Container list
 

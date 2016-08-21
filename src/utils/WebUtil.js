@@ -1,5 +1,6 @@
-import remote from 'remote';
-var app = remote.require('app');
+import electron from 'electron';
+const remote = electron.remote;
+const app = remote.app;
 import fs from 'fs';
 import util from './Util';
 import path from 'path';
@@ -9,7 +10,7 @@ import metrics from './MetricsUtil';
 var WebUtil = {
   addWindowSizeSaving: function () {
     window.addEventListener('resize', function () {
-      fs.writeFileSync(path.join(util.supportDir(), 'size'), JSON.stringify({
+      fs.writeFileSync(path.join(app.getPath('userData'), 'size'), JSON.stringify({
         width: window.outerWidth,
         height: window.outerHeight
       }));

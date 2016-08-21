@@ -3,10 +3,12 @@ import Router from 'react-router';
 import Radial from './Radial.react.js';
 import RetinaImage from 'react-retina-image';
 import Header from './Header.react';
+import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
 import setupStore from '../stores/SetupStore';
 import setupActions from '../actions/SetupActions';
 import shell from 'shell';
+
 
 var Setup = React.createClass({
   mixins: [Router.Navigation],
@@ -19,7 +21,7 @@ var Setup = React.createClass({
     setupStore.listen(this.update);
   },
 
-  componentDidUnmount: function () {
+  componentWillUnmount: function () {
     setupStore.unlisten(this.update);
   },
 
@@ -29,6 +31,10 @@ var Setup = React.createClass({
 
   handleErrorRetry: function () {
     setupActions.retry(false);
+  },
+
+  handleUseVbox: function () {
+    setupActions.useVbox();
   },
 
   handleErrorRemoveRetry: function () {
@@ -43,6 +49,13 @@ var Setup = React.createClass({
     shell.openExternal('https://www.docker.com/docker-toolbox');
   },
 
+  handleLinuxDockerInstall: function () {
+    metrics.track('Opening Linux Docker installation instructions', {
+      from: 'setup'
+    });
+    shell.openExternal('http://docs.docker.com/linux/started/');
+  },
+
   renderContents: function () {
     return (
       <div className="contents">
@@ -55,6 +68,12 @@ var Setup = React.createClass({
   },
 
   renderProgress: function () {
+    let title = 'Starting Docker VM';
+    let descr = 'To run Docker containers on your computer, Kitematic is starting a Linux virtual machine. This may take a minute...';
+    if (util.isNative()) {
+      title = 'Checking Docker';
+      descr = 'To run Docker containers on your computer, Kitematic is checking the Docker connection.';
+    }
     return (
       <div className="setup">
         <Header hideLogin={true}/>
@@ -64,8 +83,8 @@ var Setup = React.createClass({
           </div>
           <div className="desc">
             <div className="content">
-              <h1>Starting Docker VM</h1>
-              <p>To run Docker containers on your computer, Kitematic is starting a Linux virtual machine. This may take a minute...</p>
+              <h1>{title}</h1>
+              <p>{descr}</p>
             </div>
           </div>
         </div>
@@ -74,6 +93,27 @@ var Setup = React.createClass({
   },
 
   renderError: function () {
+    let deleteVmAndRetry;
+
+    if (util.isLinux()) {
+      if (!this.state.started) {
+        deleteVmAndRetry = (
+          <button className="btn btn-action" onClick={this.handleLinuxDockerInstall}>Install Docker</button>
+        );
+      }
+    } else if (util.isNative()) {
+      deleteVmAndRetry = (
+        <button className="btn btn-action" onClick={this.handleUseVbox}>Use VirtualBox</button>
+      );
+    } else if (this.state.started) {
+      deleteVmAndRetry = (
+        <button className="btn btn-action" onClick={this.handleErrorRemoveRetry}>Delete VM &amp; Retry Setup</button>
+      );
+    } else {
+      deleteVmAndRetry = (
+        <button className="btn btn-action" onClick={this.handleToolBox}>Get Toolbox</button>
+      );
+    }
     return (
       <div className="setup">
         <Header hideLogin={true}/>
@@ -93,7 +133,7 @@ var Setup = React.createClass({
               <p className="error">{this.state.error.message || this.state.error}</p>
               <p className="setup-actions">
                 <button className="btn btn-action" onClick={this.handleErrorRetry}>Retry Setup</button>
-                {this.state.started ? <button className="btn btn-action" onClick={this.handleErrorRemoveRetry}>Delete VM &amp; Retry Setup</button> : <button className="btn btn-action" onClick={this.handleToolBox}>Get Toolbox</button>}
+                {{deleteVmAndRetry}}
               </p>
             </div>
           </div>

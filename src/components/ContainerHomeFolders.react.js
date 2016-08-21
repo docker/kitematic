@@ -6,8 +6,9 @@ import shell from 'shell';
 import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
 import containerActions from '../actions/ContainerActions';
-import remote from 'remote';
-var dialog = remote.require('dialog');
+import electron from 'electron';
+const remote = electron.remote;
+const dialog = remote.dialog;
 import mkdirp from 'mkdirp';
 
 var ContainerHomeFolder = React.createClass({
@@ -28,17 +29,11 @@ var ContainerHomeFolder = React.createClass({
           var mounts = _.clone(this.props.container.Mounts);
           var newSource = path.join(util.home(), util.documents(), 'Kitematic', this.props.container.Name, destination);
 
-          var binds = mounts.map(function (m) {
-            let source = m.Source;
+          mounts.forEach(m => {
             if (m.Destination === destination) {
-              source = newSource;
+              m.Source = util.windowsToLinuxPath(newSource);
+              m.Driver = null;
             }
-
-            if(util.isWindows()) {
-              return util.windowsToLinuxPath(source) + ':' + m.Destination;
-            }
-
-            return source + ':' + m.Destination;
           });
 
           mkdirp(newSource, function (err) {
@@ -48,7 +43,13 @@ var ContainerHomeFolder = React.createClass({
             }
           });
 
-          containerActions.update(this.props.container.Name, {Binds: binds});
+          let binds = mounts.map(m => {
+            return m.Source + ':' + m.Destination;
+          });
+
+          let hostConfig = _.extend(this.props.container.HostConfig, {Binds: binds});
+
+          containerActions.update(this.props.container.Name, {Mounts: mounts, HostConfig: hostConfig});
         }
       });
     } else {

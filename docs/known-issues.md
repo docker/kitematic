@@ -4,7 +4,7 @@ title = "Known Issues"
 description = "Information about known issues in Kitematic"
 keywords = ["docker, documentation, about, technology, kitematic,  gui"]
 [menu.main]
-parent="smn_workw_kitematic"
+parent="toolbox_kitematic"
 weight=5
 +++
 <![end-metadata]-->

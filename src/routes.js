@@ -6,7 +6,6 @@ import AccountLogin from './components/AccountLogin.react';
 import Containers from './components/Containers.react';
 import ContainerDetails from './components/ContainerDetails.react';
 import ContainerHome from './components/ContainerHome.react';
-import ContainerLogs from './components/ContainerLogs.react';
 import ContainerSettings from './components/ContainerSettings.react';
 import ContainerSettingsGeneral from './components/ContainerSettingsGeneral.react';
 import ContainerSettingsPorts from './components/ContainerSettingsPorts.react';
@@ -39,7 +38,6 @@ var routes = (
     <Route name="containers" path="containers" handler={Containers}>
       <Route name="container" path="details/:name" handler={ContainerDetails}>
         <DefaultRoute name="containerHome" handler={ContainerHome} />
-        <Route name="containerLogs" path="logs" handler={ContainerLogs}/>
         <Route name="containerSettings" path="settings" handler={ContainerSettings}>
           <Route name="containerSettingsGeneral" path="general" handler={ContainerSettingsGeneral}/>
           <Route name="containerSettingsPorts" path="ports" handler={ContainerSettingsPorts}/>

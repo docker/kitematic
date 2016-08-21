@@ -1,8 +1,9 @@
 import _ from 'underscore';
 import React from 'react/addons';
 import metrics from '../utils/MetricsUtil';
-import remote from 'remote';
-var dialog = remote.require('dialog');
+import electron, { clipboard } from 'electron';
+const remote = electron.remote;
+const dialog = remote.dialog;
 import ContainerUtil from '../utils/ContainerUtil';
 import containerActions from '../actions/ContainerActions';
 import util from '../utils/Util';
@@ -25,6 +26,7 @@ var ContainerSettingsGeneral = React.createClass({
     return {
       slugName: null,
       nameError: null,
+      copiedId: false,
       env: env
     };
   },
@@ -57,6 +59,20 @@ var ContainerSettingsGeneral = React.createClass({
     if (e.keyCode === 13 && this.state.slugName) {
       this.handleSaveContainerName();
     }
+  },
+
+  handleCopyContainerId: function() {
+    clipboard.writeText(this.props.container.Id);
+    this.setState({ 
+      copiedId: true
+    });
+
+    var _this = this;
+    setTimeout(function() {
+      _this.setState({ 
+        copiedId: false
+      });
+    }, 5000);
   },
 
   handleSaveContainerName: function () {
@@ -153,6 +169,7 @@ var ContainerSettingsGeneral = React.createClass({
       return false;
     }
 
+    var clipboardStatus;
     var willBeRenamedAs;
     var btnSaveName = (
       <a className="btn btn-action" onClick={this.handleSaveContainerName} disabled="disabled">Save</a>
@@ -170,14 +187,27 @@ var ContainerSettingsGeneral = React.createClass({
       );
     }
 
-    let rename = (
+    if (this.state.copiedId) {
+      clipboardStatus = (
+        <p className="fadeOut"><strong>Copied to Clipboard</strong></p>
+      );
+    }
+
+    let containerInfo = (
       <div className="settings-section">
-        <h3>Container Name</h3>
-        <div className="container-name">
+        <h3>Container Info</h3>
+        <div className="container-info-row">
+          <div className="label-id">ID</div>
+          <input type="text" className="line disabled" defaultValue={this.props.container.Id} disabled></input>
+          <a className="btn btn-action btn-copy" onClick={this.handleCopyContainerId}>Copy</a>
+          {clipboardStatus}
+        </div>
+        <div className="container-info-row">
+          <div className="label-name">NAME</div>
           <input id="input-container-name" type="text" className="line" placeholder="Container Name" defaultValue={this.props.container.Name} onChange={this.handleNameChange} onKeyUp={this.handleNameOnKeyUp}></input>
+          {btnSaveName}
           {willBeRenamedAs}
         </div>
-        {btnSaveName}
       </div>
     );
 
@@ -201,7 +231,7 @@ var ContainerSettingsGeneral = React.createClass({
 
     return (
       <div className="settings-panel">
-        {rename}
+        {containerInfo}
         <div className="settings-section">
           <h3>Environment Variables</h3>
           <div className="env-vars-labels">

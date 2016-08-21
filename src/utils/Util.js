@@ -1,30 +1,32 @@
-import exec from 'exec';
 import child_process from 'child_process';
 import Promise from 'bluebird';
 import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
-import remote from 'remote';
-var app = remote.require('app');
+import http from 'http';
+import electron from 'electron';
+const remote = electron.remote;
+const dialog = remote.dialog;
+const app = remote.app;
 
 module.exports = {
-  exec: function (args, options) {
-    options = options || {};
-
-    // Add resources dir to exec path for Windows
-    if (this.isWindows()) {
-      options.env = options.env || {};
-      if (!options.env.PATH) {
-        options.env.PATH = process.env.RESOURCES_PATH + ';' + process.env.PATH;
-      }
-    }
-
-    let fn = Array.isArray(args) ? exec : child_process.exec;
+  native: null,
+  execFile: function (args, options) {
     return new Promise((resolve, reject) => {
-      fn(args, options, (stderr, stdout, code) => {
-        if (code) {
-          var cmd = Array.isArray(args) ? args.join(' ') : args;
-          reject(new Error(cmd + ' returned non zero exit code. Stderr: ' + stderr));
+      child_process.execFile(args[0], args.slice(1), options, (error, stdout) => {
+        if (error) {
+          reject(error);
+        } else {
+          resolve(stdout);
+        }
+      });
+    });
+  },
+  exec: function (args, options) {
+    return new Promise((resolve, reject) => {
+      child_process.exec(args, options, (error, stdout) => {
+        if (error) {
+          reject(new Error('Encountered an error: ' + error));
         } else {
           resolve(stdout);
         }
@@ -33,6 +35,39 @@ module.exports = {
   },
   isWindows: function () {
     return process.platform === 'win32';
+  },
+  isLinux: function () {
+    return process.platform === 'linux';
+  },
+  isNative: function () {
+    if (this.native === null) {
+      if (this.isWindows()) {
+        this.native = http.get({
+          url: `http:////./pipe/docker_engine/version`
+        }, (response) => {
+          if (response.statusCode !== 200 ) {
+            return false;
+          } else {
+            return true;
+          }
+        });
+      } else {
+        try {
+          // Check if file exists
+          let stats = fs.statSync('/var/run/docker.sock');
+          if (stats.isSocket()) {
+            this.native = true;
+          }
+        } catch (e) {
+          if (this.isLinux()) {
+            this.native = true;
+          } else {
+            this.native = false;
+          }
+        }
+      }
+    }
+    return this.native;
   },
   binsPath: function () {
     return this.isWindows() ? path.join(this.home(), 'Kitematic-bins') : path.join('/usr/local/bin');
@@ -58,9 +93,6 @@ module.exports = {
   documents: function () {
     // TODO: fix me for windows 7
     return 'Documents';
-  },
-  supportDir: function () {
-    return app.getPath('userData');
   },
   CommandOrCtrl: function () {
     return this.isWindows() ? 'Ctrl' : 'Command';
@@ -92,7 +124,7 @@ module.exports = {
     // An official repo is alphanumeric characters separated by dashes or
     // underscores.
     // Examples: myrepo, my-docker-repo, my_docker_repo
-    // Non-exapmles: mynamespace/myrepo, my%!repo
+    // Non-examples: mynamespace/myrepo, my%!repo
     var repoRegexp = /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/;
     return repoRegexp.test(name);
   },
@@ -155,6 +187,18 @@ module.exports = {
   },
   linuxToWindowsPath: function (linuxAbsPath) {
     return linuxAbsPath.replace('/c', 'C:').split('/').join('\\');
+  },
+  linuxTerminal: function () {
+    if (fs.existsSync('/usr/bin/x-terminal-emulator')) {
+      return ['/usr/bin/x-terminal-emulator', '-e'];
+    } else {
+      dialog.showMessageBox({
+        type: 'warning',
+        buttons: ['OK'],
+        message: 'The terminal emulator symbolic link doesn\'t exists. Please read the Wiki at https://github.com/docker/kitematic/wiki/Early-Linux-Support.'
+      });
+      return false;
+    }
   },
   webPorts: ['80', '8000', '8080', '8888', '3000', '5000', '2368', '9200', '8983']
 };

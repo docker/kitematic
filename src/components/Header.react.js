@@ -1,12 +1,11 @@
 import React from 'react/addons';
-import remote from 'remote';
 import RetinaImage from 'react-retina-image';
-import ipc from 'ipc';
-var autoUpdater = remote.require('auto-updater');
 import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
-var Menu = remote.require('menu');
-var MenuItem = remote.require('menu-item');
+import electron from 'electron';
+const remote = electron.remote;
+const Menu = remote.Menu;
+const MenuItem = remote.MenuItem;
 import accountStore from '../stores/AccountStore';
 import accountActions from '../actions/AccountActions';
 import Router from 'react-router';
@@ -26,13 +25,6 @@ var Header = React.createClass({
     document.addEventListener('keyup', this.handleDocumentKeyUp, false);
 
     accountStore.listen(this.update);
-
-    ipc.on('application:update-available', () => {
-      this.setState({
-        updateAvailable: true
-      });
-    });
-    autoUpdater.checkForUpdates();
   },
   componentWillUnmount: function () {
     document.removeEventListener('keyup', this.handleDocumentKeyUp, false);
@@ -80,10 +72,6 @@ var Header = React.createClass({
   },
   handleFullscreenHover: function () {
     this.update();
-  },
-  handleAutoUpdateClick: function () {
-    metrics.track('Restarted to Update');
-    ipc.send('application:quit-install');
   },
   handleUserClick: function (e) {
     let menu = new Menu();
@@ -168,7 +156,6 @@ var Header = React.createClass({
         </div>
       );
     }
-    let updateWidget = this.state.updateAvailable && !this.props.hideLogin ? <a className="btn btn-action small no-drag" onClick={this.handleAutoUpdateClick}>UPDATE NOW</a> : null;
     return (
       <div className={headerClasses}>
         <div className="left-header">
@@ -176,9 +163,6 @@ var Header = React.createClass({
           {username}
         </div>
         <div className="right-header">
-          <div className="updates">
-            {updateWidget}
-          </div>
           {util.isWindows () ? this.renderWindowButtons() : this.renderLogo()}
         </div>
       </div>

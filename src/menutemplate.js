@@ -1,4 +1,5 @@
-import remote from 'remote';
+import electron from 'electron';
+const remote = electron.remote;
 import shell from 'shell';
 import router from './router';
 import util from './utils/Util';
@@ -6,7 +7,7 @@ import metrics from './utils/MetricsUtil';
 import machine from './utils/DockerMachineUtil';
 import docker from './utils/DockerUtil';
 
-var app = remote.require('app');
+const app = remote.app;
 
 // main.js
 var MenuTemplate = function () {
@@ -131,6 +132,17 @@ var MenuTemplate = function () {
       label: 'View',
       submenu: [
         {
+          label: 'Refresh Container List',
+          accelerator: util.CommandOrCtrl() + '+R',
+          enabled: !!docker.host,
+          click: function() {
+            metrics.track('Refreshed Container List', {
+              from: 'menu'
+            });
+            docker.fetchAllContainers();
+          }
+        },
+        {
           label: 'Toggle Chromium Developer Tools',
           accelerator: 'Alt+' + util.CommandOrCtrl() + '+I',
           click: function() { remote.getCurrentWindow().toggleDevTools(); }
@@ -158,7 +170,17 @@ var MenuTemplate = function () {
       {
         label: 'Bring All to Front',
         selector: 'arrangeInFront:'
-      }
+      },
+      {
+        type: 'separator'
+      },
+      {
+        label: 'Kitematic',
+        accelerator: 'Cmd+0',
+        click: function () {
+          remote.getCurrentWindow().show();
+        }
+      },
       ]
     },
     {
