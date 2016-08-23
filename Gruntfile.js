@@ -218,7 +218,7 @@ module.exports = function (grunt) {
 
     shell: {
       electron: {
-        command: electron + ' ' + 'build',
+        command: '"electron" build',
         options: {
           async: true,
           execOptions: {
