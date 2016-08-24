@@ -52,7 +52,7 @@ var MenuTemplate = function () {
       },
       {
         label: 'Hide Others',
-        accelerator: util.CommandOrCtrl() + '+Shift+H',
+        accelerator: util.CommandOrCtrl() + '+Alt+H',
         selector: 'hideOtherApplications:'
       },
       {

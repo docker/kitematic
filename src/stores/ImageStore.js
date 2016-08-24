@@ -33,7 +33,7 @@ class ImageStore {
     let tags = {};
     let finalImages = [];
     images.map((image) => {
-      if (image.RepoTags !== null) {
+      if (image.RepoTags) {
         image.RepoTags.map(repoTags => {
           let [name, tag] = repoTags.split(':');
           if (typeof tags[name] !== 'undefined') {
