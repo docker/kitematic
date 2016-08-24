@@ -40,6 +40,7 @@ export default {
     metrics.track('Retried Setup with VBox');
     router.get().transitionTo('loading');
     util.native = false;
+    localStorage.setItem('settings.useVM', true);
     setupServerActions.error({ error: { message: null }});
     _retryPromise.resolve();
   },

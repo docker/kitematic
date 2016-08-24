@@ -40,7 +40,16 @@ module.exports = {
     return process.platform === 'linux';
   },
   isNative: function () {
-    this.native = (localStorage.getItem('settings.useVM')) ? localStorage.getItem('settings.useVM') === 'false' : null;
+    switch (localStorage.getItem('settings.useVM')) {
+      case 'true':
+        this.native = false;
+        break;
+      case 'false':
+        this.native = true;
+        break;
+      default:
+        this.native = null;
+    }
     if (this.native === null) {
       if (this.isWindows()) {
         this.native = http.get({
