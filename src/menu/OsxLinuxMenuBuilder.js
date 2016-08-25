@@ -16,7 +16,7 @@ class OsxLinuxMenuBuilder {
         });
         menuContainer.pushSubMenu({
             label: 'Kitematic',
-            subItem: {label: 'Hide Others', accelerator: 'CmdOrCtrl+Shift+H', selector: 'hideOtherApplications:'}
+            subItem: {label: 'Hide Others', accelerator: 'CmdOrCtrl+Alt+H', selector: 'hideOtherApplications:'}
         });
         menuContainer.pushSubMenu({
             label: 'Kitematic',
@@ -70,7 +70,18 @@ class OsxLinuxMenuBuilder {
                 }
             ]
         });
-
+        menuContainer.pushSubMenu({label: 'Window', subItem:  {
+                        label: 'Minimize',
+                        accelerator: 'CmdOrCtrl+M',
+                        selector: 'performMiniaturize:'
+                    }});
+         menuContainer.pushSubMenu({label: 'Window', subItem: {
+                        label: 'Close',
+                        accelerator: 'CmdOrCtrl+W',
+                        click: function () {
+                            remote.getCurrentWindow().hide();
+                        }
+                    }})
         menuContainer.pushSubMenu({label: 'Window', subItem: MenuContainer.separator()});
         menuContainer.pushSubMenu({
             label: 'Window',

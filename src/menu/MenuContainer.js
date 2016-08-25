@@ -63,23 +63,6 @@ class MenuContainer{
                 ]
             },
             {
-                label: 'Window',
-                submenu: [
-                    {
-                        label: 'Minimize',
-                        accelerator: 'CmdOrCtrl+M',
-                        selector: 'performMiniaturize:'
-                    },
-                    {
-                        label: 'Close',
-                        accelerator: 'CmdOrCtrl+W',
-                        click: function () {
-                            remote.getCurrentWindow().hide();
-                        }
-                    }
-                ]
-            },
-            {
                 label: 'View',
                 submenu: [
                     {
@@ -111,14 +94,18 @@ class MenuContainer{
 
     pushSubMenu({label, subItem}){
 
-        var menu = this.findMenu(label);
+        let menu = this.findMenu(label);
         menu.submenu.push(subItem);
     };
     findMenu(label){
         return this._baseMenu.find(function(menuItem){
             return menuItem.label === label;
         });
-    }
+    };
+    removeMenu(menuItem){
+        console.log(this);
+        this._baseMenu.splice(this._baseMenu.indexOf(menuItem), 1)
+    };
     static separator(){
     return {
         type:'separator'
