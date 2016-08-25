@@ -73,7 +73,7 @@ var DockerUtil = {
         }
         retries++;
       });
-      await Promise.delay(1000);
+      await Promise.delay(500);
     }
     if (version == null) {
        throw new Error(error_message);

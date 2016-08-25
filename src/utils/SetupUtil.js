@@ -94,7 +94,7 @@ export default {
         router.get().transitionTo('setup');
         docker.setup('localhost');
         setupServerActions.started({started: true});
-        this.simulateProgress(20);
+        this.simulateProgress(5);
         metrics.track('Native Setup Finished');
         return docker.version();
       } catch (error) {
