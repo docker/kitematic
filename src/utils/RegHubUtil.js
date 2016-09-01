@@ -5,6 +5,11 @@ import util from '../utils/Util';
 import hubUtil from '../utils/HubUtil';
 import repositoryServerActions from '../actions/RepositoryServerActions';
 import tagServerActions from '../actions/TagServerActions';
+import os from 'os';
+var cachedRequest = require('cached-request')(request);
+var cacheDirectory = os.tmpDir() + '/cachekitematic';
+cachedRequest.setCacheDirectory(cacheDirectory);
+cachedRequest.set('ttl', 3000);
 
 let REGHUB2_ENDPOINT = process.env.REGHUB2_ENDPOINT || 'https://hub.docker.com/v2';
 let searchReq = null;
@@ -27,7 +32,7 @@ module.exports = {
 
   search: function (query, page, sorting = null) {
     if (searchReq) {
-      searchReq.abort();
+      searchReq.request.abort();
       searchReq = null;
     }
 
@@ -43,7 +48,7 @@ module.exports = {
      * is_official: 1
      */
 
-    searchReq = request.get({
+    searchReq = cachedRequest({
       url: `${REGHUB2_ENDPOINT}/search/repositories/?`,
       qs: {query: query, page: page, page_size: PAGING, sorting}
     }, (error, response, body) => {
@@ -66,7 +71,9 @@ module.exports = {
   },
 
   recommended: function () {
-    request.get('https://kitematic.com/recommended.json', (error, response, body) => {
+    cachedRequest({
+      url: 'https://kitematic.com/recommended.json'
+    }, (error, response, body) => {
       if (error) {
         repositoryServerActions.error({error});
         return;
@@ -85,7 +92,7 @@ module.exports = {
           name = 'library/' + name;
         }
 
-        request.get({
+        cachedRequest({
           url: `${REGHUB2_ENDPOINT}/repositories/${name}`
         }, (error, response, body) => {
           if (error) {
@@ -168,7 +175,7 @@ module.exports = {
         });
         // Add current user
         namespaces.push(hubUtil.username());
-      } catch(jsonError) {
+      } catch (jsonError) {
         repositoryServerActions.error({jsonError});
         if (callback) {
           return callback(jsonError);

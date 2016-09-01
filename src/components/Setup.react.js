@@ -114,6 +114,30 @@ var Setup = React.createClass({
         <button className="btn btn-action" onClick={this.handleToolBox}>Get Toolbox</button>
       );
     }
+    let usualError = (
+      <div className="content">
+        <h4>Setup Error</h4>
+        <h1>We&#39;re Sorry!</h1>
+        <p>There seems to have been an unexpected error with Kitematic:</p>
+        <p className="error">{this.state.error.message || this.state.error}</p>
+        <p className="setup-actions">
+          <button className="btn btn-action" onClick={this.handleErrorRetry}>Retry Setup</button>
+          {{deleteVmAndRetry}}
+        </p>
+      </div>
+    );
+    if (util.isNative()) {
+      usualError = (
+        <div className="content">
+          <h1>Setup Initialization</h1>
+          <p>We couln&apos;t find a native setup - Click the VirtualBox button to use VirtualBox instead or Retry to check again.</p>
+          <p className="setup-actions">
+            <button className="btn btn-action" onClick={this.handleErrorRetry}>Retry Setup</button>
+            {{deleteVmAndRetry}}
+          </p>
+        </div>
+      );
+    }
     return (
       <div className="setup">
         <Header hideLogin={true}/>
@@ -126,16 +150,7 @@ var Setup = React.createClass({
             </div>
           </div>
           <div className="desc">
-            <div className="content">
-              <h4>Setup Error</h4>
-              <h1>We&#39;re Sorry!</h1>
-              <p>There seems to have been an unexpected error with Kitematic:</p>
-              <p className="error">{this.state.error.message || this.state.error}</p>
-              <p className="setup-actions">
-                <button className="btn btn-action" onClick={this.handleErrorRetry}>Retry Setup</button>
-                {{deleteVmAndRetry}}
-              </p>
-            </div>
+            {usualError}
           </div>
         </div>
       </div>

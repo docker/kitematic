@@ -156,7 +156,7 @@ var DockerMachine = {
           util.exec('start powershell.exe ' + cmd,
             {env: {
               'DOCKER_HOST': machineUrl,
-              'DOCKER_CERT_PATH': path.join(util.home(), '.docker', 'machine', 'machines', machineName),
+              'DOCKER_CERT_PATH': process.env.DOCKER_CERT_PATH || path.join(util.home(), '.docker', 'machine', 'machines', machineName),
               'DOCKER_TLS_VERIFY': 1
             }
           });
@@ -169,7 +169,7 @@ var DockerMachine = {
         util.execFile(terminal).then(() => {});
       } else {
         this.url(machineName).then(machineUrl => {
-          terminal.push(`DOCKER_HOST=${machineUrl} DOCKER_CERT_PATH=${path.join(util.home(), '.docker/machine/machines/' + machineName)} DOCKER_TLS_VERIFY=1`);
+          terminal.push(`DOCKER_HOST=${machineUrl} DOCKER_CERT_PATH=${process.env.DOCKER_CERT_PATH || path.join(util.home(), '.docker/machine/machines/' + machineName)} DOCKER_TLS_VERIFY=1`);
           terminal.push(cmd);
           util.execFile(terminal).then(() => {});
         });
@@ -177,12 +177,12 @@ var DockerMachine = {
     }
   },
   virtualBoxLogs: function (machineName = this.name()) {
-    
+
     var logsPath = null;
     if (process.env.MACHINE_STORAGE_PATH) {
       logsPath = path.join(process.env.MACHINE_STORAGE_PATH, 'machines', machineName, machineName, 'Logs', 'VBox.log');
     } else {
-      logsPath = path.join(util.home(), '.docker', 'machine', 'machines', machineName, machineName, 'Logs', 'VBox.log'); 
+      logsPath = path.join(util.home(), '.docker', 'machine', 'machines', machineName, machineName, 'Logs', 'VBox.log');
     }
 
     let logData = null;

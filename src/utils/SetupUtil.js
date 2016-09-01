@@ -40,6 +40,7 @@ export default {
     metrics.track('Retried Setup with VBox');
     router.get().transitionTo('loading');
     util.native = false;
+    localStorage.setItem('settings.useVM', true);
     setupServerActions.error({ error: { message: null }});
     _retryPromise.resolve();
   },
@@ -93,7 +94,7 @@ export default {
         router.get().transitionTo('setup');
         docker.setup('localhost');
         setupServerActions.started({started: true});
-        this.simulateProgress(20);
+        this.simulateProgress(5);
         metrics.track('Native Setup Finished');
         return docker.version();
       } catch (error) {

@@ -48,7 +48,7 @@ var MenuTemplate = function () {
       },
       {
         label: 'Hide Others',
-        accelerator: 'CmdOrCtrl+Shift+H',
+        accelerator: util.CommandOrCtrl() + '+Alt+H',
         selector: 'hideOtherApplications:'
       },
       {
