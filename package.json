@@ -21,6 +21,7 @@
   },
   "license": "Apache-2.0",
   "electron-version": "0.35.4",
+  "engines" : { "node" : "4.1.1" },
   "dependencies": {
     "alt": "^0.16.2",
     "ansi-to-html": "0.3.0",
