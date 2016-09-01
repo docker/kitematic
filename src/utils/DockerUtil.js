@@ -73,7 +73,7 @@ var DockerUtil = {
         }
         retries++;
       });
-      await Promise.delay(1000);
+      await Promise.delay(500);
     }
     if (version == null) {
        throw new Error(error_message);
@@ -558,6 +558,7 @@ var DockerUtil = {
         // TODO: Add app-wide error handler
         return;
       }
+      // TODO: Add health-check for existing connection
 
       stream.setEncoding('utf8');
       stream.on('data', json => {

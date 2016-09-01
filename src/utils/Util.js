@@ -40,6 +40,16 @@ module.exports = {
     return process.platform === 'linux';
   },
   isNative: function () {
+    switch (localStorage.getItem('settings.useVM')) {
+      case 'true':
+        this.native = false;
+        break;
+      case 'false':
+        this.native = true;
+        break;
+      default:
+        this.native = null;
+    }
     if (this.native === null) {
       if (this.isWindows()) {
         this.native = http.get({
@@ -113,7 +123,9 @@ module.exports = {
     var settingsjson = {};
     try {
       settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
-    } catch (err) {}
+    } catch (err) {
+      // log errors
+    }
     return settingsjson;
   },
   isOfficialRepo: function (name) {
