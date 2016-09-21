@@ -3,6 +3,7 @@ import React from 'react/addons';
 import request from 'request';
 import shell from 'shell';
 import metrics from '../utils/MetricsUtil';
+import ContainerHomeWebPreview from './ContainerHomeWebPreview.react';
 
 var ContainerHomePreview = React.createClass({
   contextTypes: {
@@ -48,24 +49,7 @@ var ContainerHomePreview = React.createClass({
   render: function () {
     var preview;
     if (this.props.defaultPort) {
-      var frame = React.createElement('webview', {className: 'frame', id: 'webview', src: 'http://' + this.props.ports[this.props.defaultPort].url, autosize: 'on'});
-      preview = (
-        <div className="web-preview wrapper">
-          <div className="widget">
-            <div className="top-bar">
-              <div className="text">Web Preview</div>
-              <div className="action" onClick={this.handleClickPreview}>
-                <span className="icon icon-open-external"></span>
-              </div>
-              <div className="action" onClick={this.handleClickNotShowingCorrectly}>
-                <span className="icon icon-preferences"></span>
-              </div>
-            </div>
-            {frame}
-            <div onClick={this.handleClickPreview} className="frame-overlay"></div>
-          </div>
-        </div>
-      );
+      preview = (<ContainerHomeWebPreview ports={this.props.ports} defaultPort={this.props.defaultPort}/>);
     } else {
       var ports = _.map(_.pairs(this.props.ports), pair => {
         var key = pair[0];
