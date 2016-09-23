@@ -4,14 +4,14 @@ import React from 'react/addons';
 var ContainerHomeIpPortsPreview = React.createClass({
   render: function () {
     var ports = _.map(_.pairs(this.props.ports), pair => {
-        var key = pair[0];
-        var val = pair[1];
-        return (
-                <tr key={key}>
-                <td>{key + '/' + val.portType}</td>
-                <td>{val.url}</td>
-                </tr>
-        );
+      var key = pair[0];
+      var val = pair[1];
+      return (
+          <tr key={key}>
+            <td>{key + '/' + val.portType}</td>
+            <td>{val.url}</td>
+          </tr>
+      );
     });
 
     return (
