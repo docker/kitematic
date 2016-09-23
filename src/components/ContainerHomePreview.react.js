@@ -1,6 +1,5 @@
 import React from 'react/addons';
 import request from 'request';
-import shell from 'shell';
 import metrics from '../utils/MetricsUtil';
 import ContainerHomeWebPreview from './ContainerHomeWebPreview.react';
 import ContainerHomeIpPortsPreview from './ContainerHomeIpPortsPreview.react';
@@ -30,16 +29,7 @@ var ContainerHomePreview = React.createClass({
     clearInterval(this.timer);
   },
 
-  handleClickPreview: function () {
-    if (this.props.defaultPort) {
-      metrics.track('Opened In Browser', {
-        from: 'preview'
-      });
-      shell.openExternal('http://' + this.props.ports[this.props.defaultPort].url);
-    }
-  },
-
-  handleClickNotShowingCorrectly: function () {
+  handleClickPortSettings: function () {
     metrics.track('Viewed Port Settings', {
       from: 'preview'
     });
@@ -49,9 +39,9 @@ var ContainerHomePreview = React.createClass({
   render: function () {
     var preview;
     if (this.props.defaultPort) {
-      preview = (<ContainerHomeWebPreview ports={this.props.ports} defaultPort={this.props.defaultPort}/>);
+      preview = (<ContainerHomeWebPreview ports={this.props.ports} defaultPort={this.props.defaultPort} handleClickPortSettings={this.handleClickPortSettings}/>);
     } else {
-      preview = (<ContainerHomeIpPortsPreview ports={this.props.ports}/>);
+      preview = (<ContainerHomeIpPortsPreview ports={this.props.ports} handleClickPortSettings={this.handleClickPortSettings}/>);
     }
     return preview;
   }

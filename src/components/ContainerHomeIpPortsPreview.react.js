@@ -2,6 +2,10 @@ import _ from 'underscore';
 import React from 'react/addons';
 
 var ContainerHomeIpPortsPreview = React.createClass({
+  handleClickPortSettings: function () {
+    this.props.handleClickPortSettings();
+  },
+
   render: function () {
     var ports = _.map(_.pairs(this.props.ports), pair => {
       var key = pair[0];
@@ -19,7 +23,7 @@ var ContainerHomeIpPortsPreview = React.createClass({
         <div className="widget">
           <div className="top-bar">
             <div className="text">IP & PORTS</div>
-            <div className="action" onClick={this.handleClickNotShowingCorrectly}>
+            <div className="action" onClick={this.handleClickPortSettings}>
               <span className="icon icon-preferences"></span>
             </div>
           </div>
