@@ -12,9 +12,18 @@ const dialog = remote.dialog;
 import mkdirp from 'mkdirp';
 
 var ContainerHomeFolder = React.createClass({
+  getInitialState: function () {
+    return {display: true};
+  },
+
   contextTypes: {
     router: React.PropTypes.func
   },
+
+  handleClickClose: function () {
+    this.setState({display: false});
+  },
+
   handleClickFolder: function (source, destination) {
     metrics.track('Opened Volume Directory', {
       from: 'home'
@@ -57,14 +66,16 @@ var ContainerHomeFolder = React.createClass({
       shell.showItemInFolder(path);
     }
   },
+
   handleClickChangeFolders: function () {
     metrics.track('Viewed Volume Settings', {
       from: 'preview'
     });
     this.context.router.transitionTo('containerSettingsVolumes', {name: this.context.router.getCurrentParams().name});
   },
+
   render: function () {
-    if (!this.props.container) {
+    if (!this.props.container || !this.state.display) {
       return false;
     }
 
@@ -84,6 +95,9 @@ var ContainerHomeFolder = React.createClass({
         <div className="widget">
           <div className="top-bar">
             <div className="text">Volumes</div>
+            <div className="action" onClick={this.handleClickClose}>
+              <span className="icon icon-delete"></span>
+            </div>
             <div className="action" onClick={this.handleClickChangeFolders}>
               <span className="icon icon-preferences"></span>
             </div>

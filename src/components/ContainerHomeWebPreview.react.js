@@ -3,6 +3,14 @@ import metrics from '../utils/MetricsUtil';
 import shell from 'shell';
 
 var ContainerHomeWebPreview = React.createClass({
+  getInitialState: function () {
+    return {display: true};
+  },
+
+  handleClickClose: function () {
+    this.setState({display: false});
+  },
+
   handleClickPreview: function () {
     metrics.track('Opened In Browser', {
       from: 'preview'
@@ -14,25 +22,33 @@ var ContainerHomeWebPreview = React.createClass({
     this.props.handleClickPortSettings();
   },
 
- render: function () {
-    var frame = React.createElement('webview', {className: 'frame', id: 'webview', src: 'http://' + this.props.ports[this.props.defaultPort].url, autosize: 'on'});
-    return (
-      <div className="web-preview wrapper">
-        <div className="widget">
-          <div className="top-bar">
-            <div className="text">Web Preview</div>
-            <div className="action" onClick={this.handleClickPreview}>
-              <span className="icon icon-open-external"></span>
+  render: function () {
+    if(!this.state.display) {
+      return false;
+    } else {
+      var frame = React.createElement('webview', {className: 'frame', id: 'webview', src: 'http://' + this.props.ports[this.props.defaultPort].url, autosize: 'on'});
+
+      return (
+        <div className="web-preview wrapper">
+          <div className="widget">
+            <div className="top-bar">
+              <div className="text">Web Preview</div>
+              <div className="action" onClick={this.handleClickClose}>
+                <span className="icon icon-delete"></span>
+              </div>
+              <div className="action" onClick={this.handleClickPreview}>
+                <span className="icon icon-open-external"></span>
+              </div>
+              <div className="action" onClick={this.handleClickPortSettings}>
+                <span className="icon icon-preferences"></span>
+              </div>
             </div>
-            <div className="action" onClick={this.handleClickPortSettings}>
-              <span className="icon icon-preferences"></span>
-            </div>
+            {frame}
+            <div onClick={this.handleClickPreview} className="frame-overlay"></div>
           </div>
-          {frame}
-          <div onClick={this.handleClickPreview} className="frame-overlay"></div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 });
 
