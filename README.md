@@ -57,4 +57,4 @@ Open `Programs and Features` from `Control Panel`
 ## Copyright and License
 
 Code released under the [Apache license](LICENSE).
-Images are copyrighted by Docker, Inc.
+Images are copyrighted by [Docker, Inc](https://www.docker.com/).
