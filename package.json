@@ -29,7 +29,7 @@
     "async": "^1.4.2",
     "bluebird": "^2.9.24",
     "bugsnag-js": "^2.4.7",
-    "cached-request": "^0.1.4",
+    "cached-request": "^1.1.0",
     "classnames": "^2.1.5",
     "coveralls": "^2.11.2",
     "deep-extend": "^0.4.0",

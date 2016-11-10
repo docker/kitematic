@@ -9,7 +9,7 @@ import os from 'os';
 var cachedRequest = require('cached-request')(request);
 var cacheDirectory = os.tmpDir() + '/cachekitematic';
 cachedRequest.setCacheDirectory(cacheDirectory);
-cachedRequest.set('ttl', 3000);
+cachedRequest.setValue('ttl', 3000);
 
 let REGHUB2_ENDPOINT = process.env.REGHUB2_ENDPOINT || 'https://hub.docker.com/v2';
 let searchReq = null;
