@@ -207,7 +207,7 @@ module.exports = {
       dialog.showMessageBox({
         type: 'warning',
         buttons: ['OK'],
-        message: 'The terminal emulator symbolic link doesn\'t exists. Please read the Wiki at https://github.com/docker/kitematic/wiki/Early-Linux-Support.'
+        message: 'The symbolic link /usr/bin/x-terminal-emulator does not exist. Please read the Wiki at https://github.com/docker/kitematic/wiki/Early-Linux-Support for more information.'
       });
       return false;
     }
