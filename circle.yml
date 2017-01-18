@@ -17,6 +17,11 @@ dependencies:
   cache_directories:
     - "node_modules"
 
+test:
+  override:
+    - npm test
+    - npm run integration
+
 deployment:
   release:
     tag: /v.*/
