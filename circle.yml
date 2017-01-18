@@ -3,7 +3,10 @@ machine:
     version: "7.0"
 
 dependencies:
-  override:
+  pre:
+    - curl -SL https://github.com/electron/electron/releases/download/v0.35.4/electron-v0.35.4-win32-x64.zip > ~/.electron/electron-v0.35.4-win32-x64.zip
+    - curl -SL https://github.com/electron/electron/releases/download/v0.35.4/electron-v0.35.4-darwin-x64.zip > ~/.electron/electron-v0.35.4-darwin-x64.zip
+    - curl -SL https://github.com/electron/electron/releases/download/v0.35.4/electron-v0.35.4-linux-x64.zip > ~/.electron/electron-v0.35.4-linux-x64.zip
     - brew unlink node
     - brew install home- brew/versions/node4-lts
     - brew install --ignore-dependencies wine
@@ -12,6 +15,7 @@ dependencies:
     - brew install fakeroot
     - brew install dpkg
     - npm install
+  override:
     - npm run release:
         timeout: 1200
   cache_directories:
