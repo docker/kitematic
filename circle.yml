@@ -3,6 +3,17 @@ machine:
     version: "7.0"
 
 dependencies:
+  override:
+    - brew unlink node
+    - brew install home- brew/versions/node4-lts
+    - brew install --ignore-dependencies wine
+    - brew install github-release
+    - brew install mono
+    - brew install fakeroot
+    - brew install dpkg
+    - npm install
+    - npm run release:
+        timeout: 1200
   cache_directories:
     - "node_modules"
 
