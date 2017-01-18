@@ -9,7 +9,7 @@ dependencies:
     - curl -SL https://github.com/electron/electron/releases/download/v0.35.4/electron-v0.35.4-darwin-x64.zip > ~/.electron/electron-v0.35.4-darwin-x64.zip
     - curl -SL https://github.com/electron/electron/releases/download/v0.35.4/electron-v0.35.4-linux-x64.zip > ~/.electron/electron-v0.35.4-linux-x64.zip
     - brew unlink node
-    - brew install home- brew/versions/node4-lts
+    - brew install homebrew/versions/node4-lts
     - brew install --ignore-dependencies wine
     - brew install github-release
     - brew install mono
