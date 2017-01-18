@@ -3,6 +3,9 @@ machine:
     version: "7.0"
 
 dependencies:
+  override:
+    - npm run release:
+      timeout: 1200
   cache_directories:
     - "node_modules"
 
