@@ -3,8 +3,26 @@ machine:
     version: "7.0"
 
 dependencies:
+  override:
+    - brew unlink node
+    - brew install homebrew/versions/node4-lts
+    - brew install --ignore-dependencies wine
+    - brew install github-release
+    - brew install mono
+    - brew install fakeroot
+    - brew install dpkg
+    - npm install
   cache_directories:
     - "node_modules"
+
+test:
+  override:
+    - npm test
+    - npm run integration
+  post:
+    - npm run release:
+        timeout: 12000
+    - cp release/* $CIRCLE_ARTIFACTS/
 
 deployment:
   release:
