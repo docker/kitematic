@@ -26,6 +26,7 @@ test:
   post:
     - npm run release:
         timeout: 12000
+    - cp release/* $CIRCLE_ARTIFACTS/
 
 deployment:
   release:
