@@ -105,7 +105,7 @@ module.exports = {
     return 'Documents';
   },
   CommandOrCtrl: function () {
-    return this.isWindows() ? 'Ctrl' : 'Command';
+    return (this.isWindows() || this.isLinux()) ? 'Ctrl' : 'Command';
   },
   removeSensitiveData: function (str) {
     if (!str || str.length === 0 || typeof str !== 'string' ) {
