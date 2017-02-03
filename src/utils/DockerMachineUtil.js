@@ -4,23 +4,32 @@ import Promise from 'bluebird';
 import fs from 'fs';
 import util from './Util';
 import child_process from 'child_process';
+import which from 'which';
 
 var DockerMachine = {
   command: function () {
     if (util.isWindows()) {
-      return path.join(process.env.DOCKER_TOOLBOX_INSTALL_PATH, 'docker-machine.exe');
-    } else {
-      return '/usr/local/bin/docker-machine';
+      if (process.env.DOCKER_TOOLBOX_INSTALL_PATH) {
+        return path.join(process.env.DOCKER_TOOLBOX_INSTALL_PATH, 'docker-machine.exe');
+      }
+    }
+
+    try {
+      return which.sync('docker-machine');
+    } catch (ex) {
+      return null;
     }
   },
   name: function () {
     return 'default';
   },
   installed: function () {
-    if (util.isWindows() && !process.env.DOCKER_TOOLBOX_INSTALL_PATH) {
+    try {
+      fs.accessSync(this.command(), fs.X_OK);
+      return true;
+    } catch (ex) {
       return false;
     }
-    return fs.existsSync(this.command());
   },
   version: function () {
     return util.execFile([this.command(), '-v']).then(stdout => {
