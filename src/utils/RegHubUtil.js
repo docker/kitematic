@@ -32,7 +32,9 @@ module.exports = {
 
   search: function (query, page, sorting = null) {
     if (searchReq) {
-      searchReq.request.abort();
+      if (searchReq.request) {
+        searchReq.request.abort();
+      }
       searchReq = null;
     }
 

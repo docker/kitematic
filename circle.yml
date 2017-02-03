@@ -5,7 +5,8 @@ machine:
 dependencies:
   override:
     - brew unlink node
-    - brew install homebrew/versions/node4-lts
+    - brew install node@4
+    - brew link node@4 --force
     - brew install --ignore-dependencies wine
     - brew install github-release
     - brew install mono

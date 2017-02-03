@@ -59,7 +59,12 @@ module.exports = {
 
     // First attempt with existing JWT
     request(req, (error, response, body) => {
-      let data = JSON.parse(body);
+      let data;
+      try {
+        data = JSON.parse(body);
+      } catch (e) {
+        console.error('Json parse error: %o', e);
+      }
 
       // If the JWT has expired, then log in again to get a new JWT
       if (data && data.detail && data.detail.indexOf('expired') !== -1) {
