@@ -5,8 +5,8 @@ machine:
 dependencies:
   override:
     - brew unlink node
-    - brew install nvm
-    - . "/usr/local/opt/nvm/nvm.sh" && nvm install 4.1.1 && nvm use --delete-prefix v4.1.1
+    - brew install node@4
+    - brew link node@4 --force
     - brew install --ignore-dependencies wine
     - brew install github-release
     - brew install mono
