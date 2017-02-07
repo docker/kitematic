@@ -15,6 +15,7 @@ dependencies:
     - npm install
   cache_directories:
     - "node_modules"
+    - "~/.electron"
 
 test:
   override:
