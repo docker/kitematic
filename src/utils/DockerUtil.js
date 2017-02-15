@@ -9,6 +9,8 @@ import hubUtil from './HubUtil';
 import metrics from '../utils/MetricsUtil';
 import containerServerActions from '../actions/ContainerServerActions';
 import imageServerActions from '../actions/ImageServerActions';
+import networkActions from '../actions/NetworkActions';
+import networkStore from '../stores/NetworkStore';
 import Promise from 'bluebird';
 import rimraf from 'rimraf';
 import stream from 'stream';
@@ -85,6 +87,7 @@ var DockerUtil = {
     this.placeholders = JSON.parse(localStorage.getItem('placeholders')) || {};
     this.refresh();
     this.listen();
+    this.fetchAllNetworks();
 
     // Resume pulling containers that were previously being pulled
     _.each(_.values(this.placeholders), container => {
@@ -159,6 +162,19 @@ var DockerUtil = {
         containerData.HostConfig.PublishAllPorts = true;
       }
 
+      let networks = [];
+      if (!_.has(containerData, 'NetworkingConfig') && _.has(containerData.NetworkSettings, 'Networks')) {
+        let EndpointsConfig = {};
+        networks = _.keys(containerData.NetworkSettings.Networks);
+        if (networks.length) {
+          let networkName = networks.shift();
+          EndpointsConfig[networkName] = _.extend(containerData.NetworkSettings.Networks[networkName], {Aliases: []});
+        }
+        containerData.NetworkingConfig = {
+          EndpointsConfig
+        };
+      }
+
       if (image.Config.Cmd) {
         containerData.Cmd = image.Config.Cmd;
       } else if (!image.Config.Entrypoint) {
@@ -174,10 +190,12 @@ var DockerUtil = {
               return;
             }
             metrics.track('Container Finished Creating');
-            this.startContainer(name);
-            delete this.placeholders[name];
-            localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
-            this.refresh();
+            this.addOrRemoveNetworks(name, networks, true).finally(() => {
+              this.startContainer(name);
+              delete this.placeholders[name];
+              localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
+              this.refresh();
+            });
           });
         });
       });
@@ -199,6 +217,7 @@ var DockerUtil = {
         });
 
         containerServerActions.updated({container});
+        networkActions.clearPending();
       }
     });
   },
@@ -263,6 +282,61 @@ var DockerUtil = {
     });
   },
 
+  fetchAllNetworks () {
+    this.client.listNetworks((err, networks) => {
+      if (err) {
+        networkActions.error(err)
+      } else {
+        networks = networks.sort((n1, n2) => {
+          if (n1.Name > n2.Name) {
+            return 1;
+          }
+          if (n1.Name < n2.Name) {
+            return -1;
+          }
+          return 0;
+        });
+        networkActions.updated(networks);
+      }
+    });
+  },
+
+  updateContainerNetworks(name, connectedNetworks, disconnectedNetworks) {
+    networkActions.pending();
+    let disconnectedPromise = this.addOrRemoveNetworks(name, disconnectedNetworks, false);
+
+    disconnectedPromise.then(() => {
+      let connectedPromise = this.addOrRemoveNetworks(name, connectedNetworks, true);
+      connectedPromise.finally(() => {
+        this.fetchContainer(name);
+      })
+    }).catch(() => {
+      this.fetchContainer(name);
+    });
+  },
+
+  addOrRemoveNetworks(name, networks, connect) {
+    let promises = _.map(networks, networkName => {
+      let network = this.client.getNetwork(networkName);
+      let operation = (connect === true ? network.connect : network.disconnect).bind(network);
+
+      return new Promise(function (resolve, reject) {
+        operation({
+          Container: name
+        }, (err, data) => {
+          if (err) {
+            console.log(err);
+            reject(err);
+          } else {
+            resolve(data);
+          }
+        });
+      });
+    });
+
+    return Promise.all(promises);
+  },
+
   removeImage (selectedRepoTag) {
     this.localImages.some((image) => {
       image.RepoTags.map(repoTag => {
@@ -282,7 +356,7 @@ var DockerUtil = {
     });
   },
 
-  run (name, repository, tag, local = false) {
+  run (name, repository, tag, network, local = false) {
     tag = tag || 'latest';
     let imageName = repository + ':' + tag;
 
@@ -303,8 +377,18 @@ var DockerUtil = {
 
     this.placeholders[name] = placeholderData;
     localStorage.setItem('placeholders', JSON.stringify(this.placeholders));
+    let containerData = {
+      Image: imageName,
+      Tty: true,
+      OpenStdin: true,
+      NetworkingConfig: {
+        EndpointsConfig: {
+          [network]: {}
+        }
+      }
+    };
     if (local) {
-      this.createContainer(name, {Image: imageName, Tty: true, OpenStdin: true});
+      this.createContainer(name, containerData);
     } else {
       this.pullImage(repository, tag, error => {
         if (error) {
@@ -317,7 +401,7 @@ var DockerUtil = {
           return;
         }
 
-        this.createContainer(name, {Image: imageName, Tty: true, OpenStdin: true});
+        this.createContainer(name, containerData);
       },
 
       // progress is actually the progression PER LAYER (combined in columns)
@@ -585,6 +669,18 @@ var DockerUtil = {
           this.fetchContainer(data.id);
         } else if (data.id) {
           this.fetchContainer(data.id);
+        }
+
+        if (data.Type === 'network') {
+          let action = data.Action;
+          if (action === 'connect' || action === 'disconnect') {
+            // do not fetch container while networks updating via Kitematic
+            if (!networkStore.getState().pending) {
+              this.fetchContainer(data.Actor.Attributes.container);
+            }
+          } else if (action === 'create' || action === 'destroy') {
+            this.fetchAllNetworks();
+          }
         }
       });
       this.eventStream = stream;

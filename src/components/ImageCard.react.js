@@ -9,6 +9,8 @@ import imageActions from '../actions/ImageActions';
 import containerStore from '../stores/ContainerStore';
 import tagStore from '../stores/TagStore';
 import tagActions from '../actions/TagActions';
+import networkActions from '../actions/NetworkActions';
+import networkStore from '../stores/NetworkStore';
 import numeral from 'numeral';
 
 var ImageCard = React.createClass({
@@ -16,16 +18,20 @@ var ImageCard = React.createClass({
   getInitialState: function () {
     return {
       tags: this.props.tags || [],
-      chosenTag: this.props.chosenTag || 'latest'
+      chosenTag: this.props.chosenTag || 'latest',
+      defaultNetwork: this.props.defaultNetwork || 'bridge',
+      networks: networkStore.all()
     };
   },
   componentDidMount: function () {
-    tagStore.listen(this.update);
+    tagStore.listen(this.updateTags);
+    networkStore.listen(this.updateNetworks);
   },
   componentWillUnmount: function () {
-    tagStore.unlisten(this.update);
+    tagStore.unlisten(this.updateTags);
+    networkStore.unlisten(this.updateNetworks);
   },
-  update: function () {
+  updateTags: function () {
     let repo = this.props.image.namespace + '/' + this.props.image.name;
     let state = tagStore.getState();
     if (this.state.tags.length && !state.tags[repo]) {
@@ -36,6 +42,11 @@ var ImageCard = React.createClass({
       tags: tagStore.getState().tags[repo] || []
     });
   },
+  updateNetworks: function () {
+    this.setState({
+      networks: networkStore.all()
+    });
+  },
   handleTagClick: function (tag) {
     this.setState({
       chosenTag: tag
@@ -43,6 +54,14 @@ var ImageCard = React.createClass({
     var $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
     $tagOverlay.fadeOut(300);
     metrics.track('Selected Image Tag');
+  },
+  handleNetworkClick: function (network) {
+    this.setState({
+      defaultNetwork: network
+    });
+    var $networkOverlay = $(this.getDOMNode()).find('.network-overlay');
+    $networkOverlay.fadeOut(300);
+    metrics.track('Selected Default Network');
   },
   handleClick: function () {
     metrics.track('Created Container', {
@@ -57,7 +76,7 @@ var ImageCard = React.createClass({
     let localImage = this.props.image.is_local || false;
     let repo = (this.props.image.namespace === 'library' || this.props.image.namespace === 'local') ? this.props.image.name : this.props.image.namespace + '/' + this.props.image.name;
 
-    containerActions.run(name, repo, this.state.chosenTag, localImage);
+    containerActions.run(name, repo, this.state.chosenTag, this.state.defaultNetwork, localImage);
     this.transitionTo('containerHome', {name});
   },
   handleMenuOverlayClick: function () {
@@ -83,6 +102,16 @@ var ImageCard = React.createClass({
     $menuOverlay.hide();
     var $tagOverlay = $(this.getDOMNode()).find('.tag-overlay');
     $tagOverlay.fadeOut(300);
+  },
+  handleNetworkOverlayClick: function () {
+    let $networkOverlay = $(this.getDOMNode()).find('.network-overlay');
+    $networkOverlay.fadeIn(300);
+  },
+  handleCloseNetworkOverlay: function () {
+    let $menuOverlay = $(this.getDOMNode()).find('.menu-overlay');
+    $menuOverlay.hide();
+    var $networkOverlay = $(this.getDOMNode()).find('.network-overlay');
+    $networkOverlay.fadeOut(300);
   },
   handleDeleteImgClick: function (image) {
     if (this.state.chosenTag && !this.props.image.inUse) {
@@ -134,9 +163,9 @@ var ImageCard = React.createClass({
     }
     var tags;
     if (this.state.loading) {
-      tags = <RetinaImage className="tags-loading" src="loading.png"/>;
+      tags = <RetinaImage className="items-loading" src="loading.png"/>;
     } else if (this.state.tags.length === 0) {
-      tags = <div className="no-tags">No Tags</div>;
+      tags = <div className="no-items">No Tags</div>;
     } else {
       var tagDisplay = this.state.tags.map((tag) => {
         let t = '';
@@ -150,17 +179,32 @@ var ImageCard = React.createClass({
           key = this.props.image.name;
         }
         if (t === this.state.chosenTag) {
-          return <div className="tag active" key={key} onClick={this.handleTagClick.bind(this, t)}>{t}</div>;
+          return <div className="item active" key={key} onClick={this.handleTagClick.bind(this, t)}>{t}</div>;
         } else {
-          return <div className="tag" key={key} onClick={this.handleTagClick.bind(this, t)}>{t}</div>;
+          return <div className="item" key={key} onClick={this.handleTagClick.bind(this, t)}>{t}</div>;
         }
       });
       tags = (
-        <div className="tag-list">
+        <div className="item-list tag-list">
           {tagDisplay}
         </div>
       );
     }
+
+    let networkDisplay = this.state.networks.map((network) => {
+      let networkName = network.Name;
+      if (networkName === this.state.defaultNetwork) {
+        return <div className="item active" key={networkName} onClick={this.handleNetworkClick.bind(this, networkName)}>{networkName}</div>;
+      } else {
+        return <div className="item" key={networkName} onClick={this.handleNetworkClick.bind(this, networkName)}>{networkName}</div>;
+      }
+    });
+    let networks = (
+      <div className="item-list network-list">
+        {networkDisplay}
+      </div>
+    );
+
     var badge = null;
     if (this.props.image.namespace === 'library') {
       badge = (
@@ -191,9 +235,9 @@ var ImageCard = React.createClass({
       overlay = (
         <div className="overlay menu-overlay">
           <div className="menu-item" onClick={this.handleTagOverlayClick.bind(this, this.props.image.name)}>
-            <span className="icon icon-tag"></span><span className="text">SELECTED TAG: <span className="selected-tag">{this.state.chosenTag}</span></span>
+            <span className="icon icon-tag"></span><span className="text">SELECTED TAG: <span className="selected-item">{this.state.chosenTag}</span></span>
           </div>
-          <div className="remove" onClick={this.handleDeleteImgClick.bind(this, this.props.image)}>
+          <div className="remove" onClick={this.handleDeleteImgClick.bind(this, this.props.imageq)}>
             <span className="btn btn-delete btn-action has-icon btn-hollow" disabled={this.props.image.inUse ? 'disabled' : null}><span className="icon icon-delete"></span>Delete Tag</span>
           </div>
           {this.props.image.inUse ? <p className="small">To delete, remove all containers<br/>using the above image</p> : null }
@@ -225,7 +269,10 @@ var ImageCard = React.createClass({
       overlay = (
           <div className="overlay menu-overlay">
             <div className="menu-item" onClick={this.handleTagOverlayClick.bind(this, this.props.image.name)}>
-              <span className="icon icon-tag"></span><span className="text">SELECTED TAG: <span className="selected-tag">{this.state.chosenTag}</span></span>
+              <span className="icon icon-tag"></span><span className="text">SELECTED TAG: <span className="selected-item">{this.state.chosenTag}</span></span>
+            </div>
+            <div className="menu-item" onClick={this.handleNetworkOverlayClick.bind(this, this.props.image.name)}>
+              <span className="icon icon-link"></span><span className="text">DEFAULT NETWORK: <span className="selected-item">{this.state.defaultNetwork}</span></span>
             </div>
             <div className="menu-item" onClick={this.handleRepoClick}>
               <span className="icon icon-open-external"></span><span className="text">VIEW ON DOCKER HUB</span>
@@ -239,10 +286,17 @@ var ImageCard = React.createClass({
     return (
       <div className="image-item">
         {overlay}
-        <div className="overlay tag-overlay">
+        <div className="overlay item-overlay tag-overlay">
           <p>Please select an image tag.</p>
           {tags}
           <div className="close-overlay" onClick={this.handleCloseTagOverlay}>
+            <a className="btn btn-action circular"><span className="icon icon-delete"></span></a>
+          </div>
+        </div>
+        <div className="overlay item-overlay network-overlay">
+          <p>Please select an default network.</p>
+          {networks}
+          <div className="close-overlay" onClick={this.handleCloseNetworkOverlay}>
             <a className="btn btn-action circular"><span className="icon icon-delete"></span></a>
           </div>
         </div>

@@ -218,7 +218,7 @@
           border-bottom: 1px solid @color-divider;
           height: 40px;
           .box-button();
-          .selected-tag {
+          .selected-item {
             color: @brand-primary;
             margin-left: 0.3rem;
           }
@@ -262,7 +262,7 @@
           font-size: 75%;
         }
       }
-      .tag-overlay {
+      .item-overlay {
         z-index: 1000;
         .close-overlay {
           position: absolute;
@@ -275,7 +275,7 @@
           margin-bottom: 0;
           border-bottom: 1px solid @color-divider;
         }
-        .tag-list {
+        .item-list {
           display: flex;
           flex-direction: row;
           align-items: flex-start;
@@ -284,7 +284,7 @@
           height: 90px;
           overflow: auto;
           padding: 0.5rem;
-          .tag {
+          .item {
             font-size: 11px;
             padding: 0.3rem 0.6rem;
             display: inline-block;
@@ -308,7 +308,7 @@
             }
           }
         }
-        .tags-loading {
+        .items-loading {
           position: relative;
           left: 45%;
           text-align: center;
@@ -318,7 +318,7 @@
           -webkit-animation-iteration-count: infinite;
           -webkit-animation-timing-function: linear;
         }
-        .no-tags {
+        .no-items {
           color: @gray-lighter;
           text-align: center;
           margin-top: 3rem;
@@ -416,7 +416,7 @@
               margin-right: 0.3rem;
             }
           }
-          .tags {
+          .items {
             flex: 1 auto;
             font-size: 11px;
             color: @gray-darker;
