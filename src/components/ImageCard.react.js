@@ -119,7 +119,7 @@ var ImageCard = React.createClass({
     }
   },
   handleRepoClick: function () {
-    var repoUri = 'https://hub.docker.com/';
+    let repoUri = process.env.REGHUB2 || 'https://hub.docker.com/';
     if (this.props.image.namespace === 'library') {
       repoUri = repoUri + '_/' + this.props.image.name;
     } else {
