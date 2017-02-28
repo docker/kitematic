@@ -88,7 +88,7 @@ var ContainerDetailsSubheader = React.createClass({
     }
   },
   handleDocs: function () {
-    let repoUri = 'https://hub.docker.com/r/';
+    let repoUri = process.env.REGHUB2 || 'https://hub.docker.com/r/';
     let imageName = this.props.container.Config.Image.split(':')[0];
     if (imageName.indexOf('/') === -1) {
       repoUri = repoUri + 'library/' + imageName;
