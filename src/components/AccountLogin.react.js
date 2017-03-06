@@ -28,7 +28,7 @@ module.exports = React.createClass({
   validate: function () {
     let errors = {};
 
-    if (this.state.username.indexOf('@') > -1 && !validator.isEmail(this.state.username) {
+    if (this.state.username.indexOf('@') > -1 && !validator.isEmail(this.state.username)) {
       errors.username = 'Must be a valid email';
     }
     else if (!validator.isLowercase(this.state.username) || !validator.isAlphanumeric(this.state.username) || !validator.isLength(this.state.username, 4, 30)) {
