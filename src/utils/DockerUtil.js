@@ -143,6 +143,10 @@ var DockerUtil = {
       containerData.Image = containerData.Config.Image;
     }
 
+    if (containerData.Config && containerData.Config.Hostname) {
+      containerData.Hostname = containerData.Config.Hostname;
+    }
+
     if (!containerData.Env && containerData.Config && containerData.Config.Env) {
       containerData.Env = containerData.Config.Env;
     }
