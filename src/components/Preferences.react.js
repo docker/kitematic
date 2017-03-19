@@ -11,7 +11,8 @@ var Preferences = React.createClass({
     return {
       closeVMOnQuit: localStorage.getItem('settings.closeVMOnQuit') === 'true',
       useVM: localStorage.getItem('settings.useVM') === 'true',
-      metricsEnabled: metrics.enabled()
+      metricsEnabled: metrics.enabled(),
+      terminalShell: localStorage.getItem('settings.terminalShell') || "sh"
     };
   },
   handleGoBackClick: function () {
@@ -50,6 +51,13 @@ var Preferences = React.createClass({
     metrics.track('Toggled util/MetricsUtil', {
       enabled: checked
     });
+  },
+  handleChangeTerminalShellEnabled: function (e) {
+    var value = e.target.value;
+    this.setState({
+      terminalShell: value
+    });
+    localStorage.setItem('settings.terminalShell', value);
   },
   render: function () {
     var vmSettings, vmShutdown, nativeSetting;
@@ -102,6 +110,17 @@ var Preferences = React.createClass({
             </div>
             <div className="option-value">
               <input id="metricsEnabled" type="checkbox" checked={this.state.metricsEnabled} onChange={this.handleChangeMetricsEnabled}/>
+            </div>
+          </div>
+          <div className="option">
+            <div className="option-name">
+              <label htmlFor="terminalShell">Terminal shell</label>
+            </div>
+            <div className="option-value">
+              <select id="terminalShell" value={this.state.terminalShell} onChange={this.handleChangeTerminalShellEnabled}>
+                <option value="sh">sh</option>
+                <option value="bash">bash</option>
+              </select>
             </div>
           </div>
         </div>
