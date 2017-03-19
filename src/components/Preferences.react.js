@@ -114,7 +114,7 @@ var Preferences = React.createClass({
           </div>
           <div className="option">
             <div className="option-name">
-              <label htmlFor="terminalShell">Terminal shell</label>
+              <label htmlFor="terminalShell">Exec command shell</label>
             </div>
             <div className="option-value">
               <select id="terminalShell" value={this.state.terminalShell} onChange={this.handleChangeTerminalShellEnabled}>
