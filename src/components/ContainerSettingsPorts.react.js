@@ -25,7 +25,8 @@ var ContainerSettingsPorts = React.createClass({
     };
     return {
       ports: ports,
-      initialPorts: initialPorts
+      initialPorts: initialPorts,
+      hostname: this.props.container.Config.Hostname
     };
   },
   handleViewLink: function (url) {
@@ -167,6 +168,12 @@ var ContainerSettingsPorts = React.createClass({
     }
     return false;
   },
+  handleChangeHostnameEnabled: function (e) {
+    var value = e.target.value;
+    this.setState({
+      hostname: value
+    });
+  },
   handleSave: function () {
     let ports = this.state.ports;
     ports = this.addPort();
@@ -182,8 +189,9 @@ var ContainerSettingsPorts = React.createClass({
       return res;
     }, {});
 
-    let hostConfig = _.extend(this.props.container.HostConfig, {PortBindings: portBindings});
-    containerActions.update(this.props.container.Name, {ExposedPorts: exposedPorts, HostConfig: hostConfig});
+    let hostConfig = _.extend(this.props.container.HostConfig, {PortBindings: portBindings, Hostname: this.state.hostname});
+    let config = _.extend(this.props.container.Config, {Hostname: this.state.hostname});
+    containerActions.update(this.props.container.Name, {ExposedPorts: exposedPorts, HostConfig: hostConfig, Config: config});
 
   },
   render: function () {
@@ -234,6 +242,13 @@ var ContainerSettingsPorts = React.createClass({
     });
     return (
       <div className="settings-panel">
+        <div className="settings-section">
+          <h3>Configure Hostname</h3>
+          <div className="container-info-row">
+            <div className="label-hostname">HOSTNAME</div>
+            <input id="hostname" className="line" type="text" disabled={isUpdating} value={this.state.hostname} onChange={this.handleChangeHostnameEnabled}/>
+          </div>
+        </div>
         <div className="settings-section">
           <h3>Configure Ports</h3>
           <table className="table ports">

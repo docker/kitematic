@@ -143,6 +143,10 @@ var DockerUtil = {
       containerData.Image = containerData.Config.Image;
     }
 
+    if (containerData.Config && containerData.Config.Hostname) {
+      containerData.Hostname = containerData.Config.Hostname;
+    }
+
     if (!containerData.Env && containerData.Config && containerData.Config.Env) {
       containerData.Env = containerData.Config.Env;
     }
@@ -186,6 +190,7 @@ var DockerUtil = {
         existing.remove(() => {
           this.client.createContainer(containerData, (error) => {
             if (error) {
+              console.error(err);
               containerServerActions.error({name, error});
               return;
             }
