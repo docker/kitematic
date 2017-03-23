@@ -107,7 +107,7 @@ var ContainerDetailsSubheader = React.createClass({
       }, {}).SHELL;
 
       if(!shell) {
-        shell = 'sh';
+        shell = localStorage.getItem('settings.terminalShell') || 'sh';
       }
       dockerMachineUtil.dockerTerminal(`docker exec -it ${this.props.container.Name} ${shell}`);
     }
