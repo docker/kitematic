@@ -47,7 +47,7 @@ var ContainerSettings = React.createClass({
               </Router.Link>
               <Router.Link to="containerSettingsPorts" params={{name: container.Name}}>
                 <li>
-                  Ports
+                  Hostname / Ports 
                 </li>
               </Router.Link>
               <Router.Link to="containerSettingsVolumes" params={{name: container.Name}}>
