@@ -441,12 +441,17 @@
             width: 30px;
             padding: 0.4rem 0.5rem;
             font-size: 20px;
+            transition: all 140ms;
+            cursor: pointer;
             .box-button();
             .box-button {
               .icon {
                 font-size: 1.5rem;
                 margin-left: 0.2rem;
               }
+            }
+            &:hover {
+              background-color: @color-box-button;
             }
           }
           .action {
