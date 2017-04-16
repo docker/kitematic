@@ -1,13 +1,14 @@
 import _ from 'underscore';
 import React from 'react/addons';
 import shell from 'shell';
+import util from '../utils/Util';
 import ContainerUtil from '../utils/ContainerUtil';
 import containerActions from '../actions/ContainerActions';
 import containerStore from '../stores/ContainerStore';
 import metrics from '../utils/MetricsUtil';
 import docker from '../utils/DockerUtil';
 import {DropdownButton, MenuItem} from 'react-bootstrap';
-import Chart from 'chart.js'
+import Chart from 'chart.js';
 
 var ContainerSettingsStats = React.createClass({
   contextTypes: {
@@ -58,11 +59,34 @@ var ContainerSettingsStats = React.createClass({
           }else{
 
             // CPU
-            var previousCPU = data.precpu_stats.cpu_usage.total_usage;
-				    var previousSystem = data.precpu_stats.system_cpu_usage;
-            var cpuDelta = parseFloat(data.cpu_stats.cpu_usage.total_usage) - parseFloat(previousCPU)
-		        var systemDelta = parseFloat(data.cpu_stats.system_cpu_usage) - parseFloat(previousSystem)
-	          var cpuPercent = (cpuDelta / systemDelta) * parseFloat(data.cpu_stats.cpu_usage.percpu_usage.length) * 100.0;
+	          var cpuPercent = 0;
+
+            if(util.isWindows()){
+              // Max number of 100ns intervals between the previous time read and now
+              var possIntervals = parseInt((new Date(data.pre_read)).getMilliseconds() - (new Date(data.read)).getMilliseconds())/1000000;
+            	possIntervals /= 100;
+            	possIntervals *= parseInt(data.num_procs);
+              // Intervals used
+            	var intervalsUsed = parseFloat(data.cpu_stats.cpu_usage.total_usage) - parseFloat(data.precpu_stats.cpu_usage.total_usage)
+              // Percentage avoiding divide-by-zero
+              if (possIntervals > 0) {
+            		cpuPercent = parseFloat(intervalsUsed) / parseFloat(possIntervals) * 100.0;
+            	}else{
+                cpuPercent = 0;
+              }
+            }else{
+              var previousCPU = data.precpu_stats.cpu_usage.total_usage;
+  		        var previousSystem = data.precpu_stats.system_cpu_usage;
+              // calculate the change for the cpu usage of the container in between readings
+              var cpuDelta = parseFloat(data.cpu_stats.cpu_usage.total_usage) - parseFloat(previousCPU);
+              // calculate the change for the entire system between readings
+  		        var systemDelta = parseFloat(data.cpu_stats.system_cpu_usage) - parseFloat(previousSystem);
+              if(data.cpu_stats.cpu_usage.percpu_usage){
+                cpuPercent = (cpuDelta / systemDelta) * parseFloat(data.cpu_stats.cpu_usage.percpu_usage.length) * 100.0;
+              }else{
+                cpuPercent = (cpuDelta / systemDelta) * 100.0;
+              }
+            }
 
             // Memory
             var memoryLimit = data.memory_stats.limit
@@ -199,7 +223,7 @@ var ContainerSettingsStats = React.createClass({
 
     // Network In
 
-    var max_networkIn = 25;
+    var max_networkIn = 5;
     canvas = document.getElementById('networkInChart');
     ctx = canvas.getContext('2d');
 
@@ -238,7 +262,7 @@ var ContainerSettingsStats = React.createClass({
 
     // Network Out
 
-    var max_networkOut = 15;
+    var max_networkOut = 5;
     canvas = document.getElementById('networkOutChart');
     ctx = canvas.getContext('2d');
 

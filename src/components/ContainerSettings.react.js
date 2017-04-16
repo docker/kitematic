@@ -67,7 +67,7 @@ var ContainerSettings = React.createClass({
               </Router.Link>
               <Router.Link to="ContainerSettingsStats" params={{name: container.Name}}>
                 <li>
-                  Status
+                  Stats
                 </li>
               </Router.Link>
             </ul>
