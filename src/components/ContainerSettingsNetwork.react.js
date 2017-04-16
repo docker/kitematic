@@ -110,9 +110,24 @@ var ContainerSettingsNetwork = React.createClass({
   },
 
   containerLinkOptions: function (containers) {
-    var currentContainerName = this.props.container.Name;
+    const usedNetworks = _.keys(this.props.container.NetworkSettings.Networks);
+    const currentContainerName =  this.props.container.Name;
+
     return _.values(containers).filter(function(container){
-      return !container.State.Downloading && container.Name != currentContainerName
+
+      var sameNetworks = _.keys(container.NetworkSettings.Networks).filter(function(network){
+        return _.contains(usedNetworks, network);
+      });
+
+      if(container.State.Downloading){ // is downloading
+        return false;
+      }else if(container.Name == currentContainerName){ // is current container
+        return false
+      }else if (sameNetworks.length == 0) { // not in the same network
+        return false;
+      }else{
+        return true;
+      }
     }).sort(function (a, b) {
       return a.Name.localeCompare(b.Name);
     });
