@@ -110,23 +110,40 @@ export default {
       try {
         setupServerActions.started({started: false});
 
-        // Make sure virtualBox and docker-machine are installed
-        let virtualBoxInstalled = virtualBox.installed();
+        // Make sure docker-machine is installed
         let machineInstalled = machine.installed();
-        if (!virtualBoxInstalled || !machineInstalled) {
+        if (!machineInstalled) {
           router.get().transitionTo('setup');
-          if (!virtualBoxInstalled) {
-            setupServerActions.error({error: 'VirtualBox is not installed. Please install it via the Docker Toolbox.'});
-          } else {
-            setupServerActions.error({error: 'Docker Machine is not installed. Please install it via the Docker Toolbox.'});
-          }
+          setupServerActions.error({error: 'Docker Machine is not installed. Please install it via the Docker Toolbox.'});
           this.clearTimers();
           await this.pause();
           continue;
         }
 
-        virtualBoxVersion = await virtualBox.version();
         machineVersion = await machine.version();
+
+        // Check default machine exists
+        let exists = await machine.exists();
+        if (!exists) {
+          let machines = await machine.list();
+          if (machines.length > 0) {
+            // Use first machine for now
+            machine.setName(machines[0].name);
+            exists = true;
+          } else {
+            machine.resetName();
+            // Make sure virtualBox is installed
+            let virtualBoxInstalled = virtualBox.installed();
+            if (!virtualBoxInstalled) {
+              router.get().transitionTo('setup');
+              setupServerActions.error({error: 'VirtualBox is not installed. Please install it via the Docker Toolbox.'});
+              this.clearTimers();
+              await this.pause();
+              continue;
+            }
+            virtualBoxVersion = await virtualBox.version();
+          }
+        }
 
         setupServerActions.started({started: true});
         metrics.track('Started Setup', {
@@ -134,7 +151,6 @@ export default {
           machineVersion
         });
 
-        let exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
         if (!exists) {
           router.get().transitionTo('setup');
           setupServerActions.started({started: true});

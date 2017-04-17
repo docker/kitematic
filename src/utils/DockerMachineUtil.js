@@ -6,6 +6,8 @@ import util from './Util';
 import child_process from 'child_process';
 import which from 'which';
 
+const supportedDrivers = ['virtualbox', 'parallels', 'vmwarefusion', 'vmwareworkstation', 'hyperv', 'xhyve', 'kvm'];
+
 var DockerMachine = {
   command: function () {
     if (util.isWindows()) {
@@ -21,7 +23,13 @@ var DockerMachine = {
     }
   },
   name: function () {
-    return 'default';
+    return localStorage.getItem('dockerMachine.name') || 'default';
+  },
+  setName: function (name) {
+    localStorage.setItem('dockerMachine.name', name);
+  },
+  resetName: function () {
+    localStorage.removeItem('dockerMachine.name');
   },
   installed: function () {
     try {
@@ -41,6 +49,27 @@ var DockerMachine = {
         return Promise.resolve(matchlist[1]);
       } catch (err) {
         return Promise.resolve(null);
+      }
+    }).catch(() => {
+      return Promise.resolve(null);
+    });
+  },
+  list: function () {
+    return util.execFile([this.command(), 'ls']).then(stdout => {
+      try {
+        var lines = stdout.match(/[^\r\n]+/g);
+        var machines = lines.slice(1).map(line => {
+          var parts = line.split(/\s+/);
+          return {
+            name: parts[0],
+            driver: parts[2],
+            state: parts[3],
+            url: parts[4]
+          }
+        }).filter(m => { return _.contains(supportedDrivers, m.driver); });
+        return Promise.resolve(machines);
+      } catch (err) {
+        return Promise.reject(err);
       }
     }).catch(() => {
       return Promise.resolve(null);
