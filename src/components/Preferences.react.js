@@ -12,7 +12,8 @@ var Preferences = React.createClass({
       closeVMOnQuit: localStorage.getItem('settings.closeVMOnQuit') === 'true',
       useVM: localStorage.getItem('settings.useVM') === 'true',
       metricsEnabled: metrics.enabled(),
-      terminalShell: localStorage.getItem('settings.terminalShell') || "sh"
+      terminalShell: localStorage.getItem('settings.terminalShell') || "sh",
+      startLinkedContainers: localStorage.getItem('settings.startLinkedContainers') === 'true'
     };
   },
   handleGoBackClick: function () {
@@ -52,12 +53,19 @@ var Preferences = React.createClass({
       enabled: checked
     });
   },
-  handleChangeTerminalShellEnabled: function (e) {
+  handleChangeTerminalShell: function (e) {
     var value = e.target.value;
     this.setState({
       terminalShell: value
     });
     localStorage.setItem('settings.terminalShell', value);
+  },
+  handleChangeStartLinkedContainers: function (e) {
+    var checked = e.target.checked;
+    this.setState({
+      startLinkedContainers: checked
+    });
+    localStorage.setItem('settings.startLinkedContainers', checked ? 'true' : 'false');
   },
   render: function () {
     var vmSettings, vmShutdown, nativeSetting;
@@ -117,10 +125,18 @@ var Preferences = React.createClass({
               <label htmlFor="terminalShell">Exec command shell</label>
             </div>
             <div className="option-value">
-              <select id="terminalShell" value={this.state.terminalShell} onChange={this.handleChangeTerminalShellEnabled}>
+              <select id="terminalShell" value={this.state.terminalShell} onChange={this.handleChangeTerminalShell}>
                 <option value="sh">sh</option>
                 <option value="bash">bash</option>
               </select>
+            </div>
+          </div>
+          <div className="option">
+            <div className="option-name">
+              <label htmlFor="startLinkedContainers">Start linked containers</label>
+            </div>
+            <div className="option-value">
+              <input id="startLinkedContainers" type="checkbox" checked={this.state.startLinkedContainers} onChange={this.handleChangeStartLinkedContainers}/>
             </div>
           </div>
         </div>
