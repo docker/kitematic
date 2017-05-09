@@ -66,7 +66,8 @@ module.exports = React.createClass({
   },
 
   handleClickForgotPassword: function () {
-    shell.openExternal('https://hub.docker.com/reset-password/');
+    let repoUri = process.env.REGHUB2 + "/reset-password/";
+    shell.openExternal(repoUri);
   },
 
   render: function () {
