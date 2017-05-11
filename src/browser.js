@@ -31,7 +31,7 @@ app.on('ready', function () {
     'min-height': os.platform() === 'win32' ? 260 : 500,
     'standard-window': false,
     resizable: true,
-    frame: false,
+    frame: true,
     show: false
   });
 

@@ -104,27 +104,6 @@ var Header = React.createClass({
       </div>
     );
   },
-  renderWindowButtons: function () {
-    let buttons;
-    if (util.isWindows()) {
-      buttons = (
-        <div className="windows-buttons">
-        <div className="windows-button button-minimize enabled" onClick={this.handleMinimize}><div className="icon"></div></div>
-        <div className={`windows-button ${this.state.fullscreen ? 'button-fullscreenclose' : 'button-fullscreen'} enabled`} onClick={this.handleFullscreen}><div className="icon"></div></div>
-        <div className="windows-button button-close enabled" onClick={this.handleClose}></div>
-        </div>
-      );
-    } else {
-      buttons = (
-        <div className="buttons">
-        <div className="button button-close enabled" onClick={this.handleClose}></div>
-        <div className="button button-minimize enabled" onClick={this.handleMinimize}></div>
-        <div className="button button-fullscreen enabled" onClick={this.handleFullscreen}></div>
-        </div>
-      );
-    }
-    return buttons;
-  },
   renderDashboardHeader: function () {
     let headerClasses = classNames({
       bordered: !this.props.hideLogin,
@@ -159,11 +138,11 @@ var Header = React.createClass({
     return (
       <div className={headerClasses}>
         <div className="left-header">
-          {util.isWindows () ? this.renderLogo() : this.renderWindowButtons()}
+          {util.isWindows () ? this.renderLogo() : null}
           {username}
         </div>
         <div className="right-header">
-          {util.isWindows () ? this.renderWindowButtons() : this.renderLogo()}
+          {util.isWindows () ? null : this.renderLogo()}
         </div>
       </div>
     );
@@ -177,10 +156,8 @@ var Header = React.createClass({
     return (
       <div className={headerClasses}>
         <div className="left-header">
-          {util.isWindows () ? null : this.renderWindowButtons()}
         </div>
         <div className="right-header">
-          {util.isWindows () ? this.renderWindowButtons() : null}
         </div>
       </div>
     );
