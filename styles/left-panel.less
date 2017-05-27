@@ -87,13 +87,17 @@
         &.active {
           background: @brand-action;
           li {
-            height: 45px;
+            height: 60px;
             border-bottom: none;
             background-color: @brand-primary;
             .name {
               color: white;
             }
             .image {
+              color: white;
+              opacity: 0.8;
+            }
+            .id {
               color: white;
               opacity: 0.8;
             }
@@ -134,7 +138,7 @@
         padding: 0.5rem 1rem 0.7rem 1.4rem;
         display: flex;
         flex-direction: row;
-        height: 45px;
+        height: 60px;
         border-top: 1px solid transparent;
         border-bottom: 1px solid transparent;
         &:hover {
@@ -151,7 +155,17 @@
             font-weight: 400;
             color: @gray-darkest;
           }
-          .image {
+          .image{
+            margin-top: -0.1rem;
+            color: @gray-light;
+            font-size: 11px;
+            font-weight: 400;
+            text-overflow: ellipsis;
+            max-width: @sidebar-text-overflow-width;
+            white-space: nowrap;
+            overflow: hidden;
+          }
+          .id{
             margin-top: -0.1rem;
             color: @gray-light;
             font-size: 11px;
@@ -166,7 +180,7 @@
           display: none;
           flex: 1;
           position: relative;
-          top: 0.4rem;
+          top: 1.1rem;
           text-align: right;
           .btn {
             border: 1px solid @gray-lighter;
@@ -176,7 +190,7 @@
           }
         }
         .state {
-          margin-top: 0.6rem;
+          margin-top: 1.4rem;
           display: inline-block;
           position: relative;
           min-width: @container-state-size;

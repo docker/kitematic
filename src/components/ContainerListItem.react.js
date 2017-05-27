@@ -106,6 +106,9 @@ var ContainerListItem = React.createClass({
             <div className="image">
               {imageName}
             </div>
+            <div className="id">
+              {container.Id.substr(0, 12)}
+            </div>
           </div>
           <div className="action">
             <span className="btn circular" onClick={this.handleDeleteContainer}><span className="icon icon-delete"></span></span>
