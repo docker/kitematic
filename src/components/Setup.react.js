@@ -130,7 +130,7 @@ var Setup = React.createClass({
       usualError = (
         <div className="content">
           <h1>Setup Initialization</h1>
-          <p>We couln&apos;t find a native setup - Click the VirtualBox button to use VirtualBox instead or Retry to check again.</p>
+          <p>We couldn&apos;t find a native setup - Click the VirtualBox button to use VirtualBox instead or Retry to check again.</p>
           <p className="setup-actions">
             <button className="btn btn-action" onClick={this.handleErrorRetry}>Retry Setup</button>
             {{deleteVmAndRetry}}
