@@ -241,11 +241,6 @@ module.exports = React.createClass({
       paginateResults = null;
     } else if (filter === 'userimages') {
       let userImageItems = this.state.images.map((image, index) => {
-        let repo = image.RepoTags[0].split(':')[0];
-        if (repo.indexOf('/') === -1) {
-          repo = 'local/' + repo;
-        }
-        [image.namespace, image.name] = repo.split('/');
         image.description = null;
         let tags = image.tags.join('-');
         image.star_count = 0;

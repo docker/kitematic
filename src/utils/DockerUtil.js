@@ -280,6 +280,20 @@ var DockerUtil = {
           } else {
             list[idx].inUse = false;
           }
+          let imageSplit = '';
+          if (image.RepoTags) {
+            imageSplit = image.RepoTags[0].split(':');
+          } else {
+            imageSplit = image.RepoDigests[0].split('@');
+          }
+          let repo = imageSplit[0];
+          if(imageSplit.length > 2) {
+            repo = imageSplit[0]+':'+imageSplit[1];
+          }
+          if (repo.indexOf('/') === -1) {
+            repo = 'local-library/' + repo;
+          }
+          [list[idx].namespace, list[idx].name] = repo.split('/');
         });
         this.localImages = list;
         imageServerActions.updated(list);
@@ -343,21 +357,27 @@ var DockerUtil = {
   },
 
   removeImage (selectedRepoTag) {
+    // Prune all dangling image first
     this.localImages.some((image) => {
-      image.RepoTags.map(repoTag => {
-        if (repoTag === selectedRepoTag) {
-          this.client.getImage(selectedRepoTag).remove({'force': true}, (err, data) => {
-            if (err) {
-              console.error(err);
-              imageServerActions.error(err);
-            } else {
-              imageServerActions.destroyed(data);
-              this.refresh();
-            }
-          });
-          return true;
-        }
-      });
+      if (image.namespace == "<none>" && image.name == "<none>") {
+        return false
+      }
+      if (image.RepoTags) {
+        image.RepoTags.map(repoTag => {
+          if (repoTag === selectedRepoTag) {
+            this.client.getImage(selectedRepoTag).remove({'force': true}, (err, data) => {
+              if (err) {
+                console.error(err);
+                imageServerActions.error(err);
+              } else {
+                imageServerActions.destroyed(data);
+                this.refresh();
+              }
+            });
+            return true;
+          }
+        });
+      }
     });
   },
 
