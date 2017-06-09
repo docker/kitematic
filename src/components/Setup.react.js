@@ -42,6 +42,14 @@ var Setup = React.createClass({
     setupActions.retry(true);
   },
 
+  handleResetSettings: function () {
+    metrics.track('Settings reset', {
+      from: 'setup'
+    });
+    localStorage.removeItem('settings');
+    setupActions.retry(false);
+  },
+
   handleToolBox: function () {
     metrics.track('Getting toolbox', {
       from: 'setup'
@@ -127,16 +135,28 @@ var Setup = React.createClass({
       </div>
     );
     if (util.isNative()) {
-      usualError = (
-        <div className="content">
-          <h1>Setup Initialization</h1>
-          <p>We couldn&apos;t find a native setup - Click the VirtualBox button to use VirtualBox instead or Retry to check again.</p>
-          <p className="setup-actions">
-            <button className="btn btn-action" onClick={this.handleErrorRetry}>Retry Setup</button>
-            {{deleteVmAndRetry}}
-          </p>
-        </div>
-      );
+      if (util.isLinux()) {
+        usualError = (
+          <div className="content">
+            <h1>Setup Initialization</h1>
+            <p>We couldn&apos;t find a native setup - Click the Retry button to check again.</p>
+            <p className="setup-actions">
+              <button className="btn btn-action" onClick={this.handleErrorRetry}>Retry Setup</button>
+            </p>
+          </div>
+        );
+      } else {
+        usualError = (
+          <div className="content">
+            <h1>Setup Initialization</h1>
+            <p>We couldn&apos;t find a native setup - Click the VirtualBox button to use VirtualBox instead or Retry to check again.</p>
+            <p className="setup-actions">
+              <button className="btn btn-action" onClick={this.handleErrorRetry}>Retry Setup</button>
+              {{deleteVmAndRetry}}
+            </p>
+          </div>
+        );
+      }
     }
     return (
       <div className="setup">
@@ -146,6 +166,7 @@ var Setup = React.createClass({
             <div className="contents">
               <RetinaImage src="install-error.png" checkIfRetinaImgExists={false}/>
               <div className="detail">
+               <a className="btn btn-danger small" onClick={this.handleResetSettings}>reset</a> 
               </div>
             </div>
           </div>
