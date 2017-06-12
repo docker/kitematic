@@ -237,7 +237,7 @@ var ImageCard = React.createClass({
           <div className="menu-item" onClick={this.handleTagOverlayClick.bind(this, this.props.image.name)}>
             <span className="icon icon-tag"></span><span className="text">SELECTED TAG: <span className="selected-item">{this.state.chosenTag}</span></span>
           </div>
-          <div className="remove" onClick={this.handleDeleteImgClick.bind(this, this.props.imageq)}>
+          <div className="remove" onClick={this.handleDeleteImgClick.bind(this, this.props.image)}>
             <span className="btn btn-delete btn-action has-icon btn-hollow" disabled={this.props.image.inUse ? 'disabled' : null}><span className="icon icon-delete"></span>Delete Tag</span>
           </div>
           {this.props.image.inUse ? <p className="small">To delete, remove all containers<br/>using the above image</p> : null }
