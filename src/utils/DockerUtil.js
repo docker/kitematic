@@ -531,14 +531,105 @@ var DockerUtil = {
     });
   },
 
-  start (name) {
-    this.client.getContainer(name).start(error => {
-      if (error && error.statusCode !== 304) {
-        containerServerActions.error({name, error});
-        this.refresh();
-        return;
+  start (name, callback) {
+    var self = this;
+    this.client.getContainer(name).inspect((error, container) => {
+      if (error) {
+        containerServerActions.error({name: name, error});
+        if(callback) callback(error);
+      } else {
+        if(container.HostConfig
+          && container.HostConfig.Links
+          && container.HostConfig.Links.length > 0
+          && localStorage.getItem('settings.startLinkedContainers') === 'true'
+        ){
+          self.startLinkedContainers(name, function(error){
+            if(error){
+              containerServerActions.error({name: name, error});
+              if(callback) callback(error);
+            }else{
+              self.client.getContainer(name).start(error => {
+                if (error && error.statusCode !== 304) {
+                  containerServerActions.error({name, error});
+                  this.refresh();
+                  return;
+                }else{
+                  self.fetchContainer(name);
+                  if(callback) callback(null);
+                }
+              });
+            }
+          })
+        }else{
+          self.client.getContainer(name).start(error => {
+            if (error && error.statusCode !== 304) {
+              containerServerActions.error({name, error});
+              this.refresh();
+              return;
+            }else{
+              self.fetchContainer(name);
+              if(callback) callback(null);
+            }
+          });
+        }
       }
-      this.fetchContainer(name);
+    })
+  },
+
+  startLinkedContainers (name, callback){
+    var self = this;
+
+    this.client.getContainer(name).inspect((error, container) => {
+      if (error) {
+        containerServerActions.error({name: name, error});
+        if(callback) callback(error);
+      } else {
+        var links = _.map(container.HostConfig.Links, (link, key) => {
+          return link.split(":")[0].split("/")[1];
+        });
+
+        async.map(links, function(link, cb){
+          var linkedContainer = self.client.getContainer(link);
+          if(linkedContainer){
+            linkedContainer.inspect((error, linkedContainerInfo) => {
+              if (error) {
+                containerServerActions.error({name: name, error});
+                cb(error);
+              } else {
+                if(linkedContainerInfo.State.Stopping
+                  || linkedContainerInfo.State.Downloading
+                  || linkedContainerInfo.State.ExitCode
+                  || !linkedContainerInfo.State.Running
+                  || linkedContainerInfo.State.Updating
+                ){
+                  self.start(linkedContainerInfo.Id, function(error){
+                    if (error) {
+                      containerServerActions.error({name: name, error});
+                      cb(error);
+                    }else{
+                      self.fetchContainer(linkedContainerInfo.Id);
+                      cb(null);
+                    }
+                  });
+                }else{
+                  cb(null);
+                }
+              }
+            });
+          }else{
+            cb("linked container "+link+" not found");
+          }
+        }, function(error, containers) {
+          if(error){
+            containerServerActions.error({name, error});
+            if(callback) callback(error);
+            return;
+          }else{
+            if(callback) callback(null);
+            return;
+          }
+        });
+      }
     });
   },
 

@@ -51,6 +51,22 @@ input[type="text"] {
   }
 }
 
+select {
+  &.line {
+    background: transparent;
+    border-left: 0px;
+    border-right: 0px;
+    border-top: 0px;
+    border-bottom: 1px solid #e6edf4;
+    padding: 0.3em;
+    padding-left: 0;
+    width: 100%;
+    &:focus {
+      outline: 0;
+    }
+  }
+}
+
 //
 // Buttons
 // --------------------------------------------------
@@ -114,7 +130,7 @@ input[type="text"] {
   border: none;
 	color: white;
   font-weight: 500;
-  
+
   &:hover {
     background-color: darken(@btn-color, 4%);
     color: white;

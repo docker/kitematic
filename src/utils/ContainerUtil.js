@@ -47,7 +47,31 @@ var ContainerUtil = {
       };
     });
     return res;
+  },
+
+  links: function (container) {
+    if (!container || !container.HostConfig || !container.HostConfig.Links) {
+      return [];
+    }
+
+    var res = _.map(container.HostConfig.Links, (link, key) => {
+        return {
+            "container": link.split(":")[0].split("/")[1],
+            "alias": link.split(":")[1].split("/")[2],
+        }
+    });
+
+    return res;
+  },
+
+  normalizeLinksPath: function (container, links) {
+    var res = _.map(links, (link) => {
+      return "/"+link.container+":/"+container.Name+"/"+link.alias;
+    });
+
+    return res;
   }
+
 };
 
 module.exports = ContainerUtil;
