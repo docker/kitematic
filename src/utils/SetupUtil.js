@@ -133,11 +133,11 @@ export default {
           virtualBoxVersion,
           machineVersion
         });
-
+        let exists
         if (process.env.MACHINE_STORAGE_PATH) {
-          let exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(process.env.MACHINE_STORAGE_PATH, 'machines', machine.name()));
+          exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(process.env.MACHINE_STORAGE_PATH, 'machines', machine.name()));
         } else {
-          let exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
+          exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
         }  
         if (!exists) {
           router.get().transitionTo('setup');
