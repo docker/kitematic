@@ -40,8 +40,6 @@ var Preferences = React.createClass({
     metrics.track('Toggled VM or Native settting', {
       vm: checked
     });
-    this.transitionTo('loading');
-    remote.getCurrentWindow().reload();
   },
   handleChangeMetricsEnabled: function (e) {
     var checked = e.target.checked;
