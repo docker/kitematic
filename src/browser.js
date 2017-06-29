@@ -8,6 +8,7 @@ import path from 'path';
 import child_process from 'child_process';
 let Promise = require('bluebird');
 
+
 process.env.NODE_PATH = path.join(__dirname, 'node_modules');
 process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
 if (process.platform !== 'win32') {
@@ -31,8 +32,10 @@ app.on('ready', function () {
     'min-height': os.platform() === 'win32' ? 260 : 500,
     'standard-window': false,
     resizable: true,
-    frame: false,
-    show: false
+    show: false,
+    autoHideMenuBar:true,
+    titleBarStyle: 'hidden',
+    icon:path.join(__dirname,'/../util/kitematic.ico')
   });
 
   if (process.env.NODE_ENV === 'development') {
