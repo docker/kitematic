@@ -35,10 +35,35 @@ module.exports = React.createClass({
     containerActions.active(null);
   },
 
+  getLogCategoryClass: function ( log ) {
+    if ( !log ) {
+      return '';
+    }
+    log = log.toLowerCase();
+    let logCategoryClass;
+    if ( log.includes('fatal') ) {
+      logCategoryClass = 'fatal';
+    }else if ( log.includes('err') ) {
+      logCategoryClass = 'error';
+    } else if ( log.includes('warn') ) {
+      logCategoryClass = 'warn';
+    } else if ( log.includes('inf') ) {
+      logCategoryClass = 'info';
+    } else if ( log.includes('debug') ) {
+      logCategoryClass = 'debug';
+    } else if ( log.includes('trace') ) {
+      logCategoryClass = 'trace';
+    } else {
+      logCategoryClass = '';
+    }
+    return logCategoryClass;
+  },
+
   render: function () {
     let logs = this.props.container.Logs ? this.props.container.Logs.map((l, index) => {
         const key = `${this.props.container.Name}-${index}`;
-        return <div key={key} dangerouslySetInnerHTML={{__html: convert.toHtml(escape(l.substr(l.indexOf(' ')+1)).replace(/ /g, '&nbsp;<wbr>'))}}></div>;
+        const categoryClass = this.getLogCategoryClass( l );
+        return <div className={categoryClass} key={key} dangerouslySetInnerHTML={{__html: convert.toHtml(escape(l.substr(l.indexOf(' ')+1)).replace(/ /g, '&nbsp;<wbr>'))}}></div>;
       }) : ['0 No logs for this container.'];
 
     return (
