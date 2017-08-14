@@ -3,6 +3,7 @@ import React from 'react/addons';
 import Router from 'react-router';
 import containerActions from '../actions/ContainerActions';
 import Convert from 'ansi-to-html';
+import Promise from 'bluebird';
 
 let escape = function (html) {
   var text = document.createTextNode(html);
@@ -14,6 +15,7 @@ let escape = function (html) {
 let convert = new Convert();
 let prevBottom = 0;
 
+var _searchPromise = null;
 module.exports = React.createClass({
 
   componentDidUpdate: function () {
@@ -25,6 +27,7 @@ module.exports = React.createClass({
     if (this.props.container && nextProps.container && this.props.container.Name !== nextProps.container.Name) {
       containerActions.active(nextProps.container.Name);
     }
+    this.setState({ logs: this.props.container.Logs, logCount: this.props.container.Logs.length || 0 });
   },
 
   componentDidMount: function () {
@@ -33,6 +36,14 @@ module.exports = React.createClass({
 
   componentWillUnmount: function () {
     containerActions.active(null);
+    if (_searchPromise) {
+      _searchPromise.cancel();
+    }
+  },
+
+  getInitialState: function () {
+    let logs = this.props.container.Logs || [];
+    return { filterText: '', logs: logs, logCount: 0 };
   },
 
   getLogCategoryClass: function ( log ) {
@@ -58,19 +69,60 @@ module.exports = React.createClass({
     }
     return logCategoryClass;
   },
+  handleDeleteFilter: function () {
+    if ( this.state.filter === '' ) {
+      return;
+    }
+    this.setState({
+      filterText: ''
+    });
+    this.refs.filterInput.getDOMNode().value = '';
+  },
+  handleFilterChange: function (e) {
+    let val = e.target.value, self = this;
+    if ( val === this.state.filterText ) {
+      return;
+    }
+    if ( _searchPromise ) {
+      _searchPromise.cancel();
+      _searchPromise = null;
+    }
+    _searchPromise = Promise.delay(500).cancellable().then(() => {
+      self.setState({
+        filterText: val
+      });
+    }).catch(Promise.CancellationError, () => {});
+  },
+  createFilterRegex: function ( regex ) {
+    try {
+      return new RegExp( regex );
+    } catch (e) {
+      return null;
+    }
+  },
 
   render: function () {
-    let logs = this.props.container.Logs ? this.props.container.Logs.map((l, index) => {
-        const key = `${this.props.container.Name}-${index}`;
-        const categoryClass = this.getLogCategoryClass( l );
-        return <div className={categoryClass} key={key} dangerouslySetInnerHTML={{__html: convert.toHtml(escape(l.substr(l.indexOf(' ')+1)).replace(/ /g, '&nbsp;<wbr>'))}}></div>;
-      }) : ['0 No logs for this container.'];
+    let filterRegex = this.createFilterRegex(this.state.filterText);
+    let logs = this.state.logs.length ? this.state.logs.filter(log => filterRegex && filterRegex.test(log) ? true : false ).map((l, index) => {
+      const key = `${this.props.container.Name}-${index}`;
+      const categoryClass = this.getLogCategoryClass( l );
+      return <div className={categoryClass} key={key} dangerouslySetInnerHTML={{__html: convert.toHtml(escape(l.substr(l.indexOf(' ') + 1)).replace(/ /g, '&nbsp;<wbr>'))}}></div>;
+    }) : ['0 No logs for this container.'];
 
     return (
       <div className="mini-logs wrapper">
         <div className="widget">
           <div className="top-bar">
             <div className="text">Container Logs</div>
+              {this.state.logCount > 50 &&
+                <div className="filter-wrapper" >
+                  <input ref="filterInput" type="text" className="input-filter" id="filter"
+                    onChange={this.handleFilterChange} placeholder="Enter text for filter"/>
+                  <span className="btn circular" onClick={this.handleDeleteFilter}>
+                    <span className="icon icon-delete"></span>
+                  </span>
+                </div>
+              }
           </div>
           <div className="logs">
             {logs}
