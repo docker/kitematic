@@ -93,9 +93,17 @@ module.exports = React.createClass({
       });
     }).catch(Promise.CancellationError, () => {});
   },
+  createFilterRegex: function ( regex ) {
+    try {
+      return new RegExp( regex );
+    } catch (e) {
+      return null;
+    }
+  },
 
   render: function () {
-    let logs = this.state.logs.length ? this.state.logs.filter(log => log.includes( this.state.filterText )).map((l, index) => {
+    let filterRegex = this.createFilterRegex(this.state.filterText);
+    let logs = this.state.logs.length ? this.state.logs.filter(log => filterRegex && filterRegex.test(log) ? true : false ).map((l, index) => {
       const key = `${this.props.container.Name}-${index}`;
       const categoryClass = this.getLogCategoryClass( l );
       return <div className={categoryClass} key={key} dangerouslySetInnerHTML={{__html: convert.toHtml(escape(l.substr(l.indexOf(' ') + 1)).replace(/ /g, '&nbsp;<wbr>'))}}></div>;
