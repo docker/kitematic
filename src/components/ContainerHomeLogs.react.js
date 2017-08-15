@@ -103,7 +103,7 @@ module.exports = React.createClass({
 
   render: function () {
     let filterRegex = this.createFilterRegex(this.state.filterText);
-    let logs = this.state.logs.length ? this.state.logs.filter(log => filterRegex && filterRegex.test(log) ? true : false ).map((l, index) => {
+    let logs = this.state.logs.length ? this.state.logs.filter(log => this.state.filterText === '' || filterRegex && filterRegex.test(log) ).map((l, index) => {
       const key = `${this.props.container.Name}-${index}`;
       const categoryClass = this.getLogCategoryClass( l );
       return <div className={categoryClass} key={key} dangerouslySetInnerHTML={{__html: convert.toHtml(escape(l.substr(l.indexOf(' ') + 1)).replace(/ /g, '&nbsp;<wbr>'))}}></div>;
@@ -117,10 +117,12 @@ module.exports = React.createClass({
               {this.state.logCount > 50 &&
                 <div className="filter-wrapper" >
                   <input ref="filterInput" type="text" className="input-filter" id="filter"
-                    onChange={this.handleFilterChange} placeholder="Enter text for filter"/>
-                  <span className="btn circular" onClick={this.handleDeleteFilter}>
-                    <span className="icon icon-delete"></span>
-                  </span>
+                    onChange={this.handleFilterChange} placeholder="Text or RegExp to filter"/>
+                  {this.state.filterText !== '' &&
+                    <span className="btn circular" onClick={this.handleDeleteFilter}>
+                      <span className="icon icon-delete"></span>
+                    </span>
+                  }
                 </div>
               }
           </div>
