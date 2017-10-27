@@ -291,7 +291,7 @@ var DockerUtil = {
             repo = imageSplit[0]+':'+imageSplit[1];
           }
           if (repo.indexOf('/') === -1) {
-            repo = 'local-library/' + repo;
+            repo = 'local/' + repo;
           }
           [list[idx].namespace, list[idx].name] = repo.split('/');
         });
