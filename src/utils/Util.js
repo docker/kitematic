@@ -1,4 +1,4 @@
-import child_process from 'child_process';
+import childProcess from 'child_process';
 import Promise from 'bluebird';
 import fs from 'fs';
 import path from 'path';
@@ -13,7 +13,7 @@ module.exports = {
   native: null,
   execFile: function (args, options) {
     return new Promise((resolve, reject) => {
-      child_process.execFile(args[0], args.slice(1), options, (error, stdout) => {
+      childProcess.execFile(args[0], args.slice(1), options, (error, stdout) => {
         if (error) {
           reject(error);
         } else {
@@ -24,7 +24,7 @@ module.exports = {
   },
   exec: function (args, options) {
     return new Promise((resolve, reject) => {
-      child_process.exec(args, options, (error, stdout) => {
+      childProcess.exec(args, options, (error, stdout) => {
         if (error) {
           reject(new Error('Encountered an error: ' + error));
         } else {
@@ -104,7 +104,7 @@ module.exports = {
     // TODO: fix me for windows 7
     return 'Documents';
   },
-  CommandOrCtrl: function () {
+  commandOrCtrl: function () {
     return (this.isWindows() || this.isLinux()) ? 'Ctrl' : 'Command';
   },
   removeSensitiveData: function (str) {
