@@ -159,11 +159,11 @@ var Header = React.createClass({
     return (
       <div className={headerClasses}>
         <div className="left-header">
-          {util.isWindows () ? this.renderLogo() : this.renderWindowButtons()}
+          {util.isWindows() ? this.renderLogo() : this.renderWindowButtons()}
           {username}
         </div>
         <div className="right-header">
-          {util.isWindows () ? this.renderWindowButtons() : this.renderLogo()}
+          {util.isWindows() ? this.renderWindowButtons() : this.renderLogo()}
         </div>
       </div>
     );
@@ -177,10 +177,10 @@ var Header = React.createClass({
     return (
       <div className={headerClasses}>
         <div className="left-header">
-          {util.isWindows () ? null : this.renderWindowButtons()}
+          {util.isWindows() ? null : this.renderWindowButtons()}
         </div>
         <div className="right-header">
-          {util.isWindows () ? this.renderWindowButtons() : null}
+          {util.isWindows() ? this.renderWindowButtons() : null}
         </div>
       </div>
     );

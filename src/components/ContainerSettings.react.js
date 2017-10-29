@@ -10,12 +10,12 @@ var ContainerSettings = React.createClass({
   componentWillReceiveProps: function () {
     this.init();
   },
-  componentDidMount: function() {
+  componentDidMount: function () {
     this.init();
     this.handleResize();
     window.addEventListener('resize', this.handleResize);
   },
-  componentWillUnmount: function() {
+  componentWillUnmount: function () {
     window.removeEventListener('resize', this.handleResize);
   },
   componentDidUpdate: function () {
@@ -47,7 +47,7 @@ var ContainerSettings = React.createClass({
               </Router.Link>
               <Router.Link to="containerSettingsPorts" params={{name: container.Name}}>
                 <li>
-                  Hostname / Ports 
+                  Hostname / Ports
                 </li>
               </Router.Link>
               <Router.Link to="containerSettingsVolumes" params={{name: container.Name}}>

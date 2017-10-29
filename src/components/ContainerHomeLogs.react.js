@@ -1,18 +1,16 @@
 import $ from 'jquery';
 import React from 'react/addons';
-import Router from 'react-router';
 import containerActions from '../actions/ContainerActions';
 import Convert from 'ansi-to-html';
 
-let escape = function (html) {
+function escape (html) {
   var text = document.createTextNode(html);
   var div = document.createElement('div');
   div.appendChild(text);
   return div.innerHTML;
-};
+}
 
 let convert = new Convert();
-let prevBottom = 0;
 
 module.exports = React.createClass({
 
@@ -37,9 +35,9 @@ module.exports = React.createClass({
 
   render: function () {
     let logs = this.props.container.Logs ? this.props.container.Logs.map((l, index) => {
-        const key = `${this.props.container.Name}-${index}`;
-        return <div key={key} dangerouslySetInnerHTML={{__html: convert.toHtml(escape(l.substr(l.indexOf(' ')+1)).replace(/ /g, '&nbsp;<wbr>'))}}></div>;
-      }) : ['0 No logs for this container.'];
+      const key = `${this.props.container.Name}-${index}`;
+      return <div key={key} dangerouslySetInnerHTML={{__html: convert.toHtml(escape(l.substr(l.indexOf(' ') + 1)).replace(/ /g, '&nbsp;<wbr>'))}}></div>;
+    }) : ['0 No logs for this container.'];
 
     return (
       <div className="mini-logs wrapper">

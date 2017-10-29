@@ -40,9 +40,9 @@ var ContainerSettingsGeneral = React.createClass({
     name = name.replace(/^\s+|\s+$/g, ''); // Trim
     name = name.toLowerCase();
     // Remove Accents
-    let from = "àáäâèéëêìíïîòóöôùúüûñç·/,:;";
-    let to   = "aaaaeeeeiiiioooouuuunc-----";
-    for (var i=0, l=from.length ; i<l ; i++) {
+    let from = 'àáäâèéëêìíïîòóöôùúüûñç·/,:;';
+    let to = 'aaaaeeeeiiiioooouuuunc-----';
+    for (let i = 0, l = from.length; i < l; i++) {
       name = name.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
     }
     name = name.replace(/[^a-z0-9-_.\s]/g, '') // Remove invalid chars
@@ -61,15 +61,15 @@ var ContainerSettingsGeneral = React.createClass({
     }
   },
 
-  handleCopyContainerId: function() {
+  handleCopyContainerId: function () {
     clipboard.writeText(this.props.container.Id);
-    this.setState({ 
+    this.setState({
       copiedId: true
     });
 
     var _this = this;
-    setTimeout(function() {
-      _this.setState({ 
+    setTimeout(function () {
+      _this.setState({
         copiedId: false
       });
     }, 5000);

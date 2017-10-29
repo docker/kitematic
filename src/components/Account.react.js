@@ -51,7 +51,7 @@ module.exports = React.createClass({
   render: function () {
     let close = this.state.prompted ?
         <a className="btn btn-action btn-close" disabled={this.state.loading} onClick={this.handleClose}>Close</a> :
-        <a className="btn btn-action btn-skip"  disabled={this.state.loading} onClick={this.handleSkip}>Skip For Now</a>;
+        <a className="btn btn-action btn-skip" disabled={this.state.loading} onClick={this.handleSkip}>Skip For Now</a>;
 
     return (
       <div className="setup">

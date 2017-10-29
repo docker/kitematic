@@ -2,8 +2,6 @@ import React from 'react/addons';
 import metrics from '../utils/MetricsUtil';
 import Router from 'react-router';
 import util from '../utils/Util';
-import electron from 'electron';
-const remote = electron.remote;
 
 var Preferences = React.createClass({
   mixins: [Router.Navigation],
@@ -12,7 +10,7 @@ var Preferences = React.createClass({
       closeVMOnQuit: localStorage.getItem('settings.closeVMOnQuit') === 'true',
       useVM: localStorage.getItem('settings.useVM') === 'true',
       metricsEnabled: metrics.enabled(),
-      terminalShell: localStorage.getItem('settings.terminalShell') || "sh",
+      terminalShell: localStorage.getItem('settings.terminalShell') || 'sh',
       startLinkedContainers: localStorage.getItem('settings.startLinkedContainers') === 'true'
     };
   },
