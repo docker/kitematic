@@ -1,3 +1,5 @@
+/* eslint guard-for-in: 0 */
+
 import electron from 'electron';
 const remote = electron.remote;
 const app = remote.app;
@@ -48,7 +50,6 @@ var WebUtil = {
         payload.name = util.removeSensitiveData(payload.name);
         payload.file = util.removeSensitiveData(payload.file);
 
-        // TODO: guard for in
         for (var key in payload.metaData) {
           payload.metaData[key] = util.removeSensitiveData(payload.metaData[key]);
         }
