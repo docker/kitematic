@@ -1,3 +1,5 @@
+/* eslint no-undefined: 0 */
+
 jest.dontMock('../src/utils/Util').dontMock('console');
 const util = require('../src/utils/Util');
 
