@@ -1,0 +1,9 @@
+/resources/**
+/images/**
+/docs/**
+/fonts/**
+/node_modules/**
+/styles/**
+/build/**
+/.git/**
+/.github/**
