@@ -6,7 +6,7 @@ let hubUtil = require('../src/utils/HubUtil');
 let Promise = require('bluebird');
 
 describe('HubUtil Integration Tests', () => {
-   describe('auth', () => {
+  describe('auth', () => {
     pit('successfully authenticates', () => {
       return new Promise((resolve) => {
         hubUtil.auth(process.env.INTEGRATION_USER, process.env.INTEGRATION_PASSWORD, (error, response, body) => {

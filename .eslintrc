@@ -2,6 +2,7 @@ root: true
 
 plugins:
     - react
+    - jasmine
 
 ecmaFeatures:
     modules: true
@@ -14,9 +15,10 @@ env:
     es6: true
     browser: true
     jest: true
+    jasmine: true
 
 extends:
-    "eslint:recommended"
+    - eslint:recommended
 
 rules:
     indent: [2, 2, {SwitchCase: 1}]
