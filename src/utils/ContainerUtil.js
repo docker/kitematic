@@ -16,9 +16,9 @@ var ContainerUtil = {
   // Provide Foreground options
   mode: function (container) {
     return [
-        (container && container.Config) ? container.Config.Tty : true,
-        (container && container.Config) ? container.Config.OpenStdin : true,
-        (container && container.HostConfig) ? container.HostConfig.Privileged : false
+      (container && container.Config) ? container.Config.Tty : true,
+      (container && container.Config) ? container.Config.OpenStdin : true,
+      (container && container.HostConfig) ? container.HostConfig.Privileged : false
     ];
   },
 
@@ -29,6 +29,7 @@ var ContainerUtil = {
     }
     var res = {};
     var ip = docker.host;
+    // TODO: nested ternanry
     var ports = (container.NetworkSettings.Ports) ? container.NetworkSettings.Ports : ((container.HostConfig.PortBindings) ? container.HostConfig.PortBindings : container.Config.ExposedPorts);
     _.each(ports, function (value, key) {
       var [dockerPort, portType] = key.split('/');
@@ -54,11 +55,11 @@ var ContainerUtil = {
       return [];
     }
 
-    var res = _.map(container.HostConfig.Links, (link, key) => {
-        return {
-            "container": link.split(":")[0].split("/")[1],
-            "alias": link.split(":")[1].split("/")[2],
-        }
+    var res = _.map(container.HostConfig.Links, (link) => {
+      return {
+        'container': link.split(':')[0].split('/')[1],
+        'alias': link.split(':')[1].split('/')[2]
+      };
     });
 
     return res;
@@ -66,7 +67,7 @@ var ContainerUtil = {
 
   normalizeLinksPath: function (container, links) {
     var res = _.map(links, (link) => {
-      return "/"+link.container+":/"+container.Name+"/"+link.alias;
+      return '/' + link.container + ':/' + container.Name + '/' + link.alias;
     });
 
     return res;
