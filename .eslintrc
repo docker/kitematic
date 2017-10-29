@@ -18,7 +18,7 @@ env:
     jasmine: true
 
 extends:
-    - eslint:recommended
+    "eslint:recommended"
 
 rules:
     indent: [2, 2, {SwitchCase: 1}]
