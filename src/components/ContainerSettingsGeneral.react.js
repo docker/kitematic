@@ -67,7 +67,9 @@ var ContainerSettingsGeneral = React.createClass({
       copiedId: true
     });
 
+    /* eslint-disable no-underscore-dangle */
     var _this = this;
+    /* eslint-enable no-underscore-dangle */
     setTimeout(function () {
       _this.setState({
         copiedId: false

@@ -177,7 +177,9 @@ var ContainerSettingsNetwork = React.createClass({
 
   handleRemoveLink: function (event) {
     let links = this.state.links;
-    links.splice(parseInt(event.target.name, 10), 1);
+    /* eslint-disable radix */
+    links.splice(parseInt(event.target.name), 1);
+    /* eslint-enable radix */
     this.setState({
       links
     });
@@ -194,7 +196,9 @@ var ContainerSettingsNetwork = React.createClass({
 
   render: function () {
     let isUpdating = (this.props.container.State.Updating || this.state.pending);
-    let networks = _.map(this.state.networks, (network) => {
+    /* eslint-disable no-unused-vars */
+    let networks = _.map(this.state.networks, (network, index) => {
+      /* eslint-enable no-unused-vars */
       if (network.Name !== 'host') {
         return (
           <tr key={network.Id}>
