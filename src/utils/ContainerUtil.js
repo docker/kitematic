@@ -1,3 +1,5 @@
+/* eslint no-nested-ternary: 0 */
+
 import _ from 'underscore';
 import docker from '../utils/DockerUtil';
 
@@ -29,7 +31,6 @@ var ContainerUtil = {
     }
     var res = {};
     var ip = docker.host;
-    // TODO: nested ternanry
     var ports = (container.NetworkSettings.Ports) ? container.NetworkSettings.Ports : ((container.HostConfig.PortBindings) ? container.HostConfig.PortBindings : container.Config.ExposedPorts);
     _.each(ports, function (value, key) {
       var [dockerPort, portType] = key.split('/');
