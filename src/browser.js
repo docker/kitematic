@@ -5,7 +5,6 @@ const BrowserWindow = electron.BrowserWindow;
 import fs from 'fs';
 import os from 'os';
 import path from 'path';
-import child_process from 'child_process';
 let Promise = require('bluebird');
 
 process.env.NODE_PATH = path.join(__dirname, 'node_modules');
@@ -14,11 +13,14 @@ if (process.platform !== 'win32') {
   process.env.PATH = '/usr/local/bin:' + process.env.PATH;
 }
 var exiting = false;
+// TODO: is settingsjson used?
 var size = {}, settingsjson = {};
+// TODO: uncaught error
 try {
   size = JSON.parse(fs.readFileSync(path.join(app.getPath('userData'), 'size')));
 } catch (err) {}
 
+// TODO: uncaught error
 try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, 'settings.json'), 'utf8'));
 } catch (err) {}
@@ -52,8 +54,8 @@ app.on('ready', function () {
   if (os.platform() === 'win32') {
     mainWindow.on('close', function (e) {
       mainWindow.webContents.send('application:quitting');
-      if(!exiting){
-        Promise.delay(1000).then(function(){
+      if (!exiting) {
+        Promise.delay(1000).then(function () {
           mainWindow.close();
         });
         exiting = true;

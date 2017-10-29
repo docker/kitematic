@@ -10,122 +10,122 @@ import docker from './utils/DockerUtil';
 const app = remote.app;
 
 // main.js
-var MenuTemplate = function () {
+function MenuTemplate () {
   return [
     {
       label: 'Kitematic',
       submenu: [
-      {
-        label: 'About Kitematic',
-        enabled: !!docker.host,
-        click: function () {
-          metrics.track('Opened About', {
-            from: 'menu'
-          });
-          router.get().transitionTo('about');
+        {
+          label: 'About Kitematic',
+          enabled: !!docker.host,
+          click: function () {
+            metrics.track('Opened About', {
+              from: 'menu'
+            });
+            router.get().transitionTo('about');
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Preferences',
+          accelerator: util.commandOrCtrl() + '+,',
+          enabled: !!docker.host,
+          click: function () {
+            metrics.track('Opened Preferences', {
+              from: 'menu'
+            });
+            router.get().transitionTo('preferences');
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Hide Kitematic',
+          accelerator: util.commandOrCtrl() + '+H',
+          selector: 'hide:'
+        },
+        {
+          label: 'Hide Others',
+          accelerator: util.commandOrCtrl() + '+Alt+H',
+          selector: 'hideOtherApplications:'
+        },
+        {
+          label: 'Show All',
+          selector: 'unhideAllApplications:'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Quit',
+          accelerator: util.commandOrCtrl() + '+Q',
+          click: function () {
+            app.quit();
+          }
         }
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Preferences',
-        accelerator: util.CommandOrCtrl() + '+,',
-        enabled: !!docker.host,
-        click: function () {
-          metrics.track('Opened Preferences', {
-            from: 'menu'
-          });
-          router.get().transitionTo('preferences');
-        }
-      },
-      {
-        type: 'separator'
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Hide Kitematic',
-        accelerator: util.CommandOrCtrl() + '+H',
-        selector: 'hide:'
-      },
-      {
-        label: 'Hide Others',
-        accelerator: util.CommandOrCtrl() + '+Alt+H',
-        selector: 'hideOtherApplications:'
-      },
-      {
-        label: 'Show All',
-        selector: 'unhideAllApplications:'
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Quit',
-        accelerator: util.CommandOrCtrl() + '+Q',
-        click: function() {
-          app.quit();
-        }
-      }
       ]
     },
     {
       label: 'File',
       submenu: [
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Open Docker Command Line Terminal',
-        accelerator: util.CommandOrCtrl() + '+Shift+T',
-        enabled: !!docker.host,
-        click: function() {
-          metrics.track('Opened Docker Terminal', {
-            from: 'menu'
-          });
-          machine.dockerTerminal();
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Open Docker Command Line Terminal',
+          accelerator: util.commandOrCtrl() + '+Shift+T',
+          enabled: !!docker.host,
+          click: function () {
+            metrics.track('Opened Docker Terminal', {
+              from: 'menu'
+            });
+            machine.dockerTerminal();
+          }
         }
-      }
       ]
     },
     {
       label: 'Edit',
       submenu: [
-      {
-        label: 'Undo',
-        accelerator: util.CommandOrCtrl() + '+Z',
-        selector: 'undo:'
-      },
-      {
-        label: 'Redo',
-        accelerator: 'Shift+' + util.CommandOrCtrl() + '+Z',
-        selector: 'redo:'
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Cut',
-        accelerator: util.CommandOrCtrl() + '+X',
-        selector: 'cut:'
-      },
-      {
-        label: 'Copy',
-        accelerator: util.CommandOrCtrl() + '+C',
-        selector: 'copy:'
-      },
-      {
-        label: 'Paste',
-        accelerator: util.CommandOrCtrl() + '+V',
-        selector: 'paste:'
-      },
-      {
-        label: 'Select All',
-        accelerator: util.CommandOrCtrl() + '+A',
-        selector: 'selectAll:'
-      }
+        {
+          label: 'Undo',
+          accelerator: util.commandOrCtrl() + '+Z',
+          selector: 'undo:'
+        },
+        {
+          label: 'Redo',
+          accelerator: 'Shift+' + util.commandOrCtrl() + '+Z',
+          selector: 'redo:'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Cut',
+          accelerator: util.commandOrCtrl() + '+X',
+          selector: 'cut:'
+        },
+        {
+          label: 'Copy',
+          accelerator: util.commandOrCtrl() + '+C',
+          selector: 'copy:'
+        },
+        {
+          label: 'Paste',
+          accelerator: util.commandOrCtrl() + '+V',
+          selector: 'paste:'
+        },
+        {
+          label: 'Select All',
+          accelerator: util.commandOrCtrl() + '+A',
+          selector: 'selectAll:'
+        }
       ]
     },
     {
@@ -133,9 +133,9 @@ var MenuTemplate = function () {
       submenu: [
         {
           label: 'Refresh Container List',
-          accelerator: util.CommandOrCtrl() + '+R',
+          accelerator: util.commandOrCtrl() + '+R',
           enabled: !!docker.host,
-          click: function() {
+          click: function () {
             metrics.track('Refreshed Container List', {
               from: 'menu'
             });
@@ -144,43 +144,45 @@ var MenuTemplate = function () {
         },
         {
           label: 'Toggle Chromium Developer Tools',
-          accelerator: 'Alt+' + util.CommandOrCtrl() + '+I',
-          click: function() { remote.getCurrentWindow().toggleDevTools(); }
+          accelerator: 'Alt+' + util.commandOrCtrl() + '+I',
+          click: function () {
+            remote.getCurrentWindow().toggleDevTools();
+          }
         }
       ]
     },
     {
       label: 'Window',
       submenu: [
-      {
-        label: 'Minimize',
-        accelerator: util.CommandOrCtrl() + '+M',
-        selector: 'performMiniaturize:'
-      },
-      {
-        label: 'Close',
-        accelerator: util.CommandOrCtrl() + '+W',
-        click: function () {
-          remote.getCurrentWindow().hide();
+        {
+          label: 'Minimize',
+          accelerator: util.commandOrCtrl() + '+M',
+          selector: 'performMiniaturize:'
+        },
+        {
+          label: 'Close',
+          accelerator: util.commandOrCtrl() + '+W',
+          click: function () {
+            remote.getCurrentWindow().hide();
+          }
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Bring All to Front',
+          selector: 'arrangeInFront:'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: 'Kitematic',
+          accelerator: 'Cmd+0',
+          click: function () {
+            remote.getCurrentWindow().show();
+          }
         }
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Bring All to Front',
-        selector: 'arrangeInFront:'
-      },
-      {
-        type: 'separator'
-      },
-      {
-        label: 'Kitematic',
-        accelerator: 'Cmd+0',
-        click: function () {
-          remote.getCurrentWindow().show();
-        }
-      },
       ]
     },
     {
@@ -198,6 +200,6 @@ var MenuTemplate = function () {
       ]
     }
   ];
-};
+}
 
 module.exports = MenuTemplate;
