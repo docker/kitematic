@@ -1,3 +1,6 @@
+/* eslint no-unused-vars: 0 */
+/* eslint no-empty: 0 */
+
 import electron from 'electron';
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
@@ -13,14 +16,11 @@ if (process.platform !== 'win32') {
   process.env.PATH = '/usr/local/bin:' + process.env.PATH;
 }
 var exiting = false;
-// TODO: is settingsjson used?
 var size = {}, settingsjson = {};
-// TODO: uncaught error
 try {
   size = JSON.parse(fs.readFileSync(path.join(app.getPath('userData'), 'size')));
 } catch (err) {}
 
-// TODO: uncaught error
 try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, 'settings.json'), 'utf8'));
 } catch (err) {}
