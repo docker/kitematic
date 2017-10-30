@@ -125,9 +125,9 @@ Kitematic is es6 ready. Please use es6 constructs where possible, they are power
 - Semicolons
 - 2 spaces (no tabs)
 
-#### Checking Javascript code standards with JSHint
+#### Checking Javascript code standards with ESlint
 
-Run `npm run lint` before committing to ensure your javascript is up to standard. Feel free to suggest changes to the lint spec in `.jshint`.
+Run `npm run lint` before committing to ensure your javascript is up to standard. Feel free to suggest changes to the lint spec in `.eslintrc`.
 
 We designed Kitematic to be easy to build, extend and distribute for developers.
 
