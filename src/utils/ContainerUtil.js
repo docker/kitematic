@@ -1,5 +1,3 @@
-/* eslint no-nested-ternary: 0 */
-
 import _ from 'underscore';
 import docker from '../utils/DockerUtil';
 
@@ -31,7 +29,9 @@ var ContainerUtil = {
     }
     var res = {};
     var ip = docker.host;
+    /* eslint-disable no-nested-ternary */
     var ports = (container.NetworkSettings.Ports) ? container.NetworkSettings.Ports : ((container.HostConfig.PortBindings) ? container.HostConfig.PortBindings : container.Config.ExposedPorts);
+    /* eslint-enable no-nested-ternary */
     _.each(ports, function (value, key) {
       var [dockerPort, portType] = key.split('/');
       var localUrl = null;
