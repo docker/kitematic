@@ -1,6 +1,3 @@
-/* eslint no-unused-vars: 0 */
-/* eslint no-empty: 0 */
-
 import electron from 'electron';
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
@@ -16,7 +13,12 @@ if (process.platform !== 'win32') {
   process.env.PATH = '/usr/local/bin:' + process.env.PATH;
 }
 var exiting = false;
+
+/* eslint-disable no-unused-vars */
 var size = {}, settingsjson = {};
+/* eslint-enable no-unused-vars */
+
+/* eslint-disable no-empty */
 try {
   size = JSON.parse(fs.readFileSync(path.join(app.getPath('userData'), 'size')));
 } catch (err) {}
@@ -24,6 +26,7 @@ try {
 try {
   settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, 'settings.json'), 'utf8'));
 } catch (err) {}
+/* eslint-enable no-empty */
 
 app.on('ready', function () {
   var mainWindow = new BrowserWindow({
