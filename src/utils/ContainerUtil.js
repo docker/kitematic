@@ -56,7 +56,9 @@ var ContainerUtil = {
       return [];
     }
 
-    var res = _.map(container.HostConfig.Links, (link) => {
+    /* eslint-disable no-unused-vars */
+    var res = _.map(container.HostConfig.Links, (link, key) => {
+      /* eslint-enable no-unused-vars */
       return {
         'container': link.split(':')[0].split('/')[1],
         'alias': link.split(':')[1].split('/')[2]
