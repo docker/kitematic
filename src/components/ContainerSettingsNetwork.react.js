@@ -17,7 +17,7 @@ var ContainerSettingsNetwork = React.createClass({
 
   getInitialState: function () {
     let usedNetworks = this.getUsedNetworks(networkStore.all());
-    var links =  ContainerUtil.links(this.props.container);
+    var links = ContainerUtil.links(this.props.container);
     return {
       networks: networkStore.all(),
       error: networkStore.getState().error,
@@ -25,15 +25,15 @@ var ContainerSettingsNetwork = React.createClass({
       usedNetworks,
       links: links,
       newLink: {
-        container: "",
-        alias: "",
+        container: '',
+        alias: ''
       },
       isNewLinkValid: false,
       containers: this.containerLinkOptions(containerStore.getState().containers)
     };
   },
 
-  getUsedNetworks(networks) {
+  getUsedNetworks (networks) {
     const usedKeys = _.keys(this.props.container.NetworkSettings.Networks);
 
     return _.object(_.map(networks, function (network) {
@@ -90,7 +90,7 @@ var ContainerSettingsNetwork = React.createClass({
       if (networkName === 'none') {
         usedNetworks = _.mapObject(usedNetworks, () => false);
       } else {
-        usedNetworks['none'] = false;
+        usedNetworks.none = false;
       }
     }
     usedNetworks[networkName] = newState;
@@ -111,21 +111,21 @@ var ContainerSettingsNetwork = React.createClass({
 
   containerLinkOptions: function (containers) {
     const usedNetworks = _.keys(this.props.container.NetworkSettings.Networks);
-    const currentContainerName =  this.props.container.Name;
+    const currentContainerName = this.props.container.Name;
 
-    return _.values(containers).filter(function(container){
+    return _.values(containers).filter(function (container) {
 
-      var sameNetworks = _.keys(container.NetworkSettings.Networks).filter(function(network){
+      var sameNetworks = _.keys(container.NetworkSettings.Networks).filter(function (network) {
         return _.contains(usedNetworks, network);
       });
 
-      if(container.State.Downloading){ // is downloading
+      if (container.State.Downloading) { // is downloading
         return false;
-      }else if(container.Name == currentContainerName){ // is current container
-        return false
-      }else if (sameNetworks.length == 0) { // not in the same network
+      } else if (container.Name === currentContainerName) { // is current container
         return false;
-      }else{
+      } else if (sameNetworks.length === 0) { // not in the same network
+        return false;
+      } else {
         return true;
       }
     }).sort(function (a, b) {
@@ -142,8 +142,8 @@ var ContainerSettingsNetwork = React.createClass({
     this.setState({
       links,
       newLink: {
-        container: "",
-        alias: "",
+        container: '',
+        alias: ''
       }
     });
 
@@ -170,14 +170,16 @@ var ContainerSettingsNetwork = React.createClass({
 
   checkNewLink: function () {
     this.setState({
-      isNewLinkValid: this.state.newLink.container != ""
+      isNewLinkValid: this.state.newLink.container !== ''
         && /[A-Za-z0-9\-]$/.test(this.state.newLink.alias)
     });
   },
 
   handleRemoveLink: function (event) {
     let links = this.state.links;
-    links.splice( parseInt(event.target.name), 1);
+    /* eslint-disable radix */
+    links.splice(parseInt(event.target.name), 1);
+    /* eslint-enable radix */
     this.setState({
       links
     });
@@ -194,7 +196,9 @@ var ContainerSettingsNetwork = React.createClass({
 
   render: function () {
     let isUpdating = (this.props.container.State.Updating || this.state.pending);
+    /* eslint-disable no-unused-vars */
     let networks = _.map(this.state.networks, (network, index) => {
+      /* eslint-enable no-unused-vars */
       if (network.Name !== 'host') {
         return (
           <tr key={network.Id}>
@@ -202,7 +206,7 @@ var ContainerSettingsNetwork = React.createClass({
             <td>{network.Name}</td>
             <td>{network.Driver}</td>
           </tr>
-        )
+        );
       }
     });
 
@@ -218,14 +222,14 @@ var ContainerSettingsNetwork = React.createClass({
             <a name={key} className="btn btn-action small" onClick={this.handleRemoveLink}>REMOVE</a>
           </td>
         </tr>
-      )
-    })
+      );
+    });
 
     let containerOptions = _.map(this.state.containers, (container) => {
       return (
         <option value={container.Name}>{container.Name}</option>
-      )
-    })
+      );
+    });
 
     return (
       <div className="settings-panel">

@@ -14,7 +14,7 @@ var ContainerHomeWebPreview = React.createClass({
     this.props.handleClickPortSettings();
   },
 
- render: function () {
+  render: function () {
     var frame = React.createElement('webview', {className: 'frame', id: 'webview', src: 'http://' + this.props.ports[this.props.defaultPort].url, autosize: 'on'});
     return (
       <div className="web-preview wrapper">

@@ -35,7 +35,7 @@ var WebUtil = {
       bugsnag.notifyReleaseStages = ['production'];
       bugsnag.appVersion = app.getVersion();
 
-      bugsnag.beforeNotify = function(payload) {
+      bugsnag.beforeNotify = function (payload) {
         if (!metrics.enabled()) {
           return false;
         }
@@ -48,9 +48,11 @@ var WebUtil = {
         payload.name = util.removeSensitiveData(payload.name);
         payload.file = util.removeSensitiveData(payload.file);
 
-        for(var key in payload.metaData) {
+        /* eslint-disable guard-for-in */
+        for (var key in payload.metaData) {
           payload.metaData[key] = util.removeSensitiveData(payload.metaData[key]);
         }
+        /* eslint-enable guard-for-in */
       };
     }
   },
@@ -72,7 +74,7 @@ var WebUtil = {
         e.preventDefault();
       }
     };
-  },
+  }
 };
 
 module.exports = WebUtil;

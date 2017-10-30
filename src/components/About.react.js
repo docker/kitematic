@@ -43,20 +43,20 @@ var Preferences = React.createClass({
             <div className="item">
               <RetinaImage src="cartoon-docker-machine.png"/>
               <h4>Docker Machine</h4>
-              <p>{packages["docker-machine-version"]}</p>
+              <p>{packages['docker-machine-version']}</p>
             </div>
           </div>
           <h3>Third-Party Software</h3>
           <div className="items">
             <div className="item">
               <h4>VirtualBox</h4>
-              <p>{packages["virtualbox-version"]}</p>
+              <p>{packages['virtualbox-version']}</p>
             </div>
           </div>
           <div className="items">
             <div className="item">
               <h4>Electron</h4>
-              <p>{packages["electron-version"]}</p>
+              <p>{packages['electron-version']}</p>
             </div>
           </div>
         </div>
