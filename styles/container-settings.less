@@ -200,5 +200,61 @@
         font-weight: 400;
       }
     }
+    &.stats-panel{
+      display: flex;
+      align-items: center;
+    }
+    .stats-charts-container{
+      display: block;
+      float: left;
+      &:after {
+        content: "";
+        clear: left;
+      }
+      &.stats-charts-container-horizontal{
+        width: 60%;
+        .stats-chart {
+          float: left;
+          width: 46%;
+          margin: 0 2% 0 2%;
+          .stats-chart-title{
+            margin-bottom: 0.5em;
+          }
+        }
+      }
+      &.stats-charts-container-vertical{
+        width: 40%;
+        .stats-chart {
+          margin: 0 2% 0 2%;
+          &:first-child {
+            margin-bottom: 2em;
+          }
+          .stats-chart-title-composite{
+            text-align: right;
+            .stats-chart-title{
+              margin-right: 0.5em;
+            }
+            .stats-chart-info{
+              min-width: 6em;
+              display: inline-block;
+            }
+          }
+        }
+      }
+      .stats-chart-title{
+        text-align: center;
+        text-transform: uppercase;
+        color: #233137;
+        >span{
+          margin: 0 0.5em 0 0.5em;
+        }
+      }
+      .stats-chart-info{
+        text-align: center;
+        color: #7a8491;
+        font-size: 11px;
+        font-weight: 400;
+      }
+    }
   }
 }
