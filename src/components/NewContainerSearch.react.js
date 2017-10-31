@@ -240,17 +240,17 @@ module.exports = React.createClass({
       );
       paginateResults = null;
     } else if (filter === 'userimages') {
-      let userImageItems = this.state.images.map((image, index) => {
+      // filter out dangling images (aka images with no name/tag)
+      let validImages = this.state.images.filter((image) => image.name !== '<none>');
+      let userImageItems = validImages.map((image, index) => {
         image.description = null;
         let tags = image.tags.join('-');
         image.star_count = 0;
         image.is_local = true;
         const key = `local-${image.name}-${index}`;
-        let imageCard = null;
-        if (image.name !== '<none>') {
-          imageCard = (<ImageCard key={key + ':' + tags} image={image} chosenTag={image.tags[0]} tags={image.tags} />);
-        }
-        return imageCard;
+        return (
+          <ImageCard key={key + ':' + tags} image={image} chosenTag={image.tags[0]} tags={image.tags} />
+        );
       });
       let userImageResults = userImageItems.length ? (
         <div className="result-grids">
@@ -261,11 +261,13 @@ module.exports = React.createClass({
             </div>
           </div>
         </div>
-      ) : <div className="no-results">
-        <h2>Cannot find any local image.</h2>
-      </div>;
+      ) : (
+        <div className="no-results">
+          <h2>Cannot find any local image.</h2>
+        </div>
+      );
       results = (
-          {userImageResults}
+        {userImageResults}
       );
     } else if (this.state.loading) {
       results = (
