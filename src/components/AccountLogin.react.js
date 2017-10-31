@@ -28,13 +28,10 @@ module.exports = React.createClass({
   validate: function () {
     let errors = {};
 
-    if (this.state.username.indexOf('@') > -1) {
-      if (!validator.isEmail(this.state.username)) {
-        errors.username = 'Must be a valid email';
-      }
-    }
-    else if (!validator.isLowercase(this.state.username) || !validator.isAlphanumeric(this.state.username) || !validator.isLength(this.state.username, 4, 30)) {
-      errors.username = 'Must be 4-30 lower case letters or numbers, or a valid email';
+    if (validator.isEmail(this.state.username)) {
+      errors.username = 'Must be a valid username (not an email)';
+    } else if (!validator.isLowercase(this.state.username) || !validator.isAlphanumeric(this.state.username) || !validator.isLength(this.state.username, 4, 30)) {
+      errors.username = 'Must be 4-30 lower case letters or numbers';
     }
 
     if (!validator.isLength(this.state.password, 5)) {
@@ -73,7 +70,7 @@ module.exports = React.createClass({
     let loading = this.props.loading ? <div className="spinner la-ball-clip-rotate la-dark"><div></div></div> : null;
     return (
       <form className="form-connect">
-        <input ref="usernameInput"maxLength="30" name="username" placeholder="Username or Email" type="text" disabled={this.props.loading} valueLink={this.linkState('username')} onBlur={this.handleBlur}/>
+        <input ref="usernameInput"maxLength="30" name="username" placeholder="Username" type="text" disabled={this.props.loading} valueLink={this.linkState('username')} onBlur={this.handleBlur}/>
         <p className="error-message">{this.state.errors.username}</p>
         <input ref="passwordInput" name="password" placeholder="Password" type="password" disabled={this.props.loading} valueLink={this.linkState('password')} onBlur={this.handleBlur}/>
         <p className="error-message">{this.state.errors.password}</p>
