@@ -764,7 +764,7 @@ var DockerUtil = {
       stream.on('data', json => {
         let data = JSON.parse(json);
 
-        if (data.status === 'pull' || data.status === 'untag' || data.status === 'delete' || data.status === 'attach') {
+        if (['pull', 'untag', 'tag', 'delete', 'attach'].includes(data.status)) {
           this.refresh();
         }
 
