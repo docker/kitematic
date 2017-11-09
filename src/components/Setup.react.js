@@ -46,7 +46,7 @@ var Setup = React.createClass({
     metrics.track('Settings reset', {
       from: 'setup'
     });
-    localStorage.removeItem('settings');
+    localStorage.removeItem('settings.useVM');
     setupActions.retry(false);
   },
 
