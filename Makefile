@@ -1,9 +1,31 @@
 .PHONY: docs docs-shell docs-build run
 
+VERSION := $(shell jq -r '.version' package.json)
+
 # TODO: clearly need to note pre-req's - OSX and node installed? - see contributing docs
-run:
+
+install:
 	npm install
-	npm run
+
+run: install
+	npm start
+
+release: install
+	npm run release
+	mv release/Kitematic-Mac.zip release/Kitematic-$(VERSION)-Mac.zip
+	mv release/Kitematic-Ubuntu.zip release/Kitematic-$(VERSION)-Ubuntu.zip
+	mv release/Kitematic-Windows.zip release/Kitematic-$(VERSION)-Windows.zip
+
+#zip:
+#	docker container run --rm -it -w /to_zip -v $(PWD)/dist/Kitematic\ \(Beta\)-darwin-x64:/to_zip -v $(PWD)/dist:/out kramos/alpine-zip -r /out/Kitematic-$(VERSION)-Mac.zip .
+
+clean:
+	-rm .DS_Store
+	-rm -Rf build/
+	-rm -Rf dist/
+	-rm -Rf releases/
+	-rm -Rf node_modules/
+
 
 # Get the IP ADDRESS
 DOCKER_IP=$(shell python -c "import urlparse ; print urlparse.urlparse('$(DOCKER_HOST)').hostname or ''")
@@ -27,3 +49,4 @@ docs-shell: docs-build
 
 docs-build:
 	docker build -t "$(DOCKER_DOCS_IMAGE)" -f docs/Dockerfile .
+
