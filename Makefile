@@ -11,6 +11,7 @@ run: install
 	npm start
 
 release: install
+	npm install electron-packager
 	npm run release
 	mv release/Kitematic-Mac.zip release/Kitematic-$(VERSION)-Mac.zip
 	mv release/Kitematic-Ubuntu.zip release/Kitematic-$(VERSION)-Ubuntu.zip
