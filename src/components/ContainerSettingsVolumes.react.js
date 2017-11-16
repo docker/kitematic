@@ -3,7 +3,7 @@ import React from 'react/addons';
 import electron from 'electron';
 const remote = electron.remote;
 const dialog = remote.dialog;
-import shell from 'shell';
+import {shell} from 'electron';
 import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
 import containerActions from '../actions/ContainerActions';

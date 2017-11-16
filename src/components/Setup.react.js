@@ -7,7 +7,7 @@ import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
 import setupStore from '../stores/SetupStore';
 import setupActions from '../actions/SetupActions';
-import shell from 'shell';
+import {shell} from 'electron';
 
 
 var Setup = React.createClass({

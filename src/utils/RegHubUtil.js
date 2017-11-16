@@ -7,7 +7,7 @@ import repositoryServerActions from '../actions/RepositoryServerActions';
 import tagServerActions from '../actions/TagServerActions';
 import os from 'os';
 var cachedRequest = require('cached-request')(request);
-var cacheDirectory = os.tmpDir() + '/cachekitematic';
+var cacheDirectory = os.tmpdir() + '/cachekitematic';
 cachedRequest.setCacheDirectory(cacheDirectory);
 cachedRequest.setValue('ttl', 3000);
 
