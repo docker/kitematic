@@ -2,7 +2,7 @@ import _ from 'underscore';
 import React from 'react/addons';
 import RetinaImage from 'react-retina-image';
 import path from 'path';
-import shell from 'shell';
+import {shell} from 'electron';
 import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
 import containerActions from '../actions/ContainerActions';

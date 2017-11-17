@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import React from 'react';
-import shell from 'shell';
+import {shell} from 'electron';
 import metrics from '../utils/MetricsUtil';
 import ContainerUtil from '../utils/ContainerUtil';
 import classNames from 'classnames';

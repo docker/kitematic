@@ -1,6 +1,6 @@
 import _ from 'underscore';
 import React from 'react/addons';
-import shell from 'shell';
+import {shell} from 'electron';
 import ContainerUtil from '../utils/ContainerUtil';
 import containerActions from '../actions/ContainerActions';
 import containerStore from '../stores/ContainerStore';

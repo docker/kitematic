@@ -4,7 +4,7 @@ import Router from 'react-router';
 import validator from 'validator';
 import accountActions from '../actions/AccountActions';
 import metrics from '../utils/MetricsUtil';
-import shell from 'shell';
+import {shell} from 'electron';
 
 module.exports = React.createClass({
   mixins: [Router.Navigation, React.addons.LinkedStateMixin],

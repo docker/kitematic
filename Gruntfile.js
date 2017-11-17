@@ -2,7 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var execFile = require('child_process').execFile;
 var packagejson = require('./package.json');
-var electron = require('electron-prebuilt');
+var electron = require('electron');
 
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);

@@ -1,6 +1,6 @@
 import React from 'react/addons';
 import metrics from '../utils/MetricsUtil';
-import shell from 'shell';
+import {shell} from 'electron';
 
 var ContainerHomeWebPreview = React.createClass({
   handleClickPreview: function () {

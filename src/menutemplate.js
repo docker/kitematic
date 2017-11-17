@@ -1,6 +1,6 @@
 import electron from 'electron';
 const remote = electron.remote;
-import shell from 'shell';
+import {shell} from 'electron';
 import router from './router';
 import util from './utils/Util';
 import metrics from './utils/MetricsUtil';

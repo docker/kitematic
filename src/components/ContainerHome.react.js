@@ -5,7 +5,7 @@ import ContainerProgress from './ContainerProgress.react';
 import ContainerHomePreview from './ContainerHomePreview.react';
 import ContainerHomeLogs from './ContainerHomeLogs.react';
 import ContainerHomeFolders from './ContainerHomeFolders.react';
-import shell from 'shell';
+import {shell} from 'electron';
 
 var ContainerHome = React.createClass({
   contextTypes: {
