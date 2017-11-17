@@ -24,7 +24,7 @@ clean:
 	-rm .DS_Store
 	-rm -Rf build/
 	-rm -Rf dist/
-	-rm -Rf releases/
+	-rm -Rf release/
 	-rm -Rf node_modules/
 
 
