@@ -97,6 +97,27 @@
           .text {
             color: white;
           }
+          .filter-wrapper {
+            margin-right: 10px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            .input-filter {
+              height: 30px;
+              border-radius: 3px;
+              border: none;
+              outline: none;
+              padding-left: 5px;
+              padding-right: 30px;
+            }
+            .circular {
+              position: absolute;
+              top: 8px;
+              right: 2px;
+            }
+          }
         }
         height: 100%;
         .logs {
@@ -108,6 +129,19 @@
           padding: 1.2rem 1.2rem 5rem 1.2rem;
           overflow: auto;
           height: 100%;
+          .fatal, .error {
+            background:  rgba(255,0,0,0.9);
+          }
+          .warn{
+            background: rgba(255,255,0,0.9);
+            color:#000000;
+          }
+          .debug {
+            background :rgba(0,150,255,0.9);
+          }
+          .info {
+            background: rgba(0,255,0,0.5);
+          }
         }
         p {
           margin-bottom: 0px;
