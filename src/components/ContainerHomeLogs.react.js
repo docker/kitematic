@@ -3,6 +3,7 @@ import React from 'react/addons';
 import Router from 'react-router';
 import containerActions from '../actions/ContainerActions';
 import Convert from 'ansi-to-html';
+const { clipboard } = require("electron");
 
 let escape = function (html) {
   var text = document.createTextNode(html);
@@ -36,16 +37,25 @@ module.exports = React.createClass({
   },
 
   render: function () {
+    let _logs = '';
     let logs = this.props.container.Logs ? this.props.container.Logs.map((l, index) => {
         const key = `${this.props.container.Name}-${index}`;
+        _logs = _logs.concat(escape(l.substr(l.indexOf(' ')+1)));
         return <div key={key} dangerouslySetInnerHTML={{__html: convert.toHtml(escape(l.substr(l.indexOf(' ')+1)).replace(/ /g, '&nbsp;<wbr>'))}}></div>;
       }) : ['0 No logs for this container.'];
+
+    let copyLogs = (event)=>{
+      clipboard.writeText(_logs);
+    };
 
     return (
       <div className="mini-logs wrapper">
         <div className="widget">
           <div className="top-bar">
             <div className="text">Container Logs</div>
+            <div>
+                <button onClick={copyLogs}>Copy</button>
+            </div>
           </div>
           <div className="logs">
             {logs}
