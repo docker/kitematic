@@ -17,14 +17,14 @@ var FontSelect = React.createClass({
   getFontSizes: function(start, end){
     let options = [];
     for(let i = start; i<=end; i++){
-      options.push(<option value={i}>{i+" px"}</option>);
+      options.push(<option value={i}>{i+' px'}</option>);
     }
     return options;
   },
 
   render: function(){
     return (
-      <select value={this.props.fontSize} onChange={this.props.onChange}>
+      <select className='logs-font-size__select' value={this.props.fontSize} onChange={this.props.onChange}>
         <option disabled="true" >Font size</option>
         {this.getFontSizes(10, 30)}
       </select>
