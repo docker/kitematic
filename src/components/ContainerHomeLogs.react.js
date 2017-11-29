@@ -12,11 +12,40 @@ let escape = function (html) {
   return div.innerHTML;
 };
 
+var FontSelect = React.createClass({
+  
+  getFontSizes: function(start, end){
+    let options = [];
+    for(let i = start; i<=end; i++){
+      options.push(<option value={i}>{i+" px"}</option>);
+    }
+    return options;
+  },
+
+  render: function(){
+    return (
+      <select value={this.props.fontSize} onChange={this.props.onChange}>
+        <option disabled="true" >Font size</option>
+        {this.getFontSizes(10, 30)}
+      </select>
+    );
+  }
+});
+
 let convert = new Convert();
 let prevBottom = 0;
 
 module.exports = React.createClass({
-
+  getInitialState: function(){
+    return {
+      fontSize: 10
+    };
+  },
+  onFontChange: function(event){
+    this.setState({
+      fontSize: event.target.value
+    });
+  },
   componentDidUpdate: function () {
     var node = $('.logs').get()[0];
     node.scrollTop = node.scrollHeight;
@@ -54,10 +83,11 @@ module.exports = React.createClass({
           <div className="top-bar">
             <div className="text">Container Logs</div>
             <div>
+                <FontSelect fontSize={this.state.fontSize} onChange={this.onFontChange} />
                 <button onClick={copyLogs}>Copy</button>
             </div>
           </div>
-          <div className="logs">
+          <div className="logs" style={{fontSize:this.state.fontSize+'px'}}>
             {logs}
           </div>
         </div>
