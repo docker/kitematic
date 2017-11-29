@@ -40,7 +40,7 @@ module.exports = React.createClass({
     let _logs = '';
     let logs = this.props.container.Logs ? this.props.container.Logs.map((l, index) => {
         const key = `${this.props.container.Name}-${index}`;
-        _logs = _logs.concat(escape(l.substr(l.indexOf(' ')+1)));
+        _logs = _logs.concat(escape(l.substr(l.indexOf(' ')+1)).replace(/\[\d+m/g,''));
         return <div key={key} dangerouslySetInnerHTML={{__html: convert.toHtml(escape(l.substr(l.indexOf(' ')+1)).replace(/ /g, '&nbsp;<wbr>'))}}></div>;
       }) : ['0 No logs for this container.'];
 
