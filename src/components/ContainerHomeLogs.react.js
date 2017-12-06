@@ -92,7 +92,7 @@ module.exports = React.createClass({
             <div className="text">Container Logs</div>
             <div>
                 <FontSelect fontSize={this.state.fontSize} onChange={this.onFontChange} />
-                <button onClick={copyLogs}>Copy</button>
+                <button className="copy-logs__btn" onClick={copyLogs}>Copy</button>
             </div>
           </div>
           <div className="logs" style={{fontSize:this.state.fontSize+'px'}}>
