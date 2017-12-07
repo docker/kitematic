@@ -78,7 +78,7 @@ module.exports = React.createClass({
 
       let btn = event.target;
       btn.innerHTML = 'Copied !';
-      btn.style.color = '#15CC35';
+      btn.style.color = '#FFF';
       setTimeout(()=>{
         btn.style.color = 'inherit'
         btn.innerHTML = 'Copy';
