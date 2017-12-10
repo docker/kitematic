@@ -17,6 +17,11 @@ var ContainerListItem = React.createClass({
     var $action = $(this.getDOMNode()).find('.action');
     $action.hide();
   },
+  handleStickyContainer: function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    containerActions.toggleSticky(this.props.container.Id);
+  },
   handleDeleteContainer: function (e) {
     e.preventDefault();
     e.stopPropagation();
@@ -108,6 +113,7 @@ var ContainerListItem = React.createClass({
             </div>
           </div>
           <div className="action">
+            <span className="btn circular" onClick={this.handleStickyContainer}><span className="icon icon-tag"></span></span>
             <span className="btn circular" onClick={this.handleDeleteContainer}><span className="icon icon-delete"></span></span>
           </div>
         </li>

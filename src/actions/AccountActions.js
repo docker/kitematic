@@ -12,7 +12,6 @@ class AccountActions {
     hub.signup(username, password, email, subscribe);
   }
 
-
   logout () {
     this.dispatch({});
     hub.logout();

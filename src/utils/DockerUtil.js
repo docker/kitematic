@@ -22,6 +22,7 @@ var DockerUtil = {
   host: null,
   client: null,
   placeholders: {},
+  stickyContainers: [],
   stream: null,
   eventStream: null,
   activeContainerName: null,
@@ -85,6 +86,7 @@ var DockerUtil = {
 
   init () {
     this.placeholders = JSON.parse(localStorage.getItem('placeholders')) || {};
+    this.stickyContainers = JSON.parse(localStorage.getItem('containers.sticky')) || [];
     this.refresh();
     this.listen();
     this.fetchAllNetworks();
@@ -669,6 +671,18 @@ var DockerUtil = {
     if (name) {
       this.logs();
     }
+  },
+
+  toggleSticky (toggleId) {
+    if (this.stickyContainers.includes(toggleId)) {
+      this.stickyContainers = this.stickyContainers.filter(id => toggleId === id)
+    }
+    else {
+      this.stickyContainers = [...this.stickyContainers, toggleId];
+    }
+
+    localStorage.setItem('containers.sticky', JSON.stringify(this.placeholders));
+    this.refresh();
   },
 
   logs () {
