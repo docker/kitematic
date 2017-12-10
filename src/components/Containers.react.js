@@ -32,17 +32,23 @@ var Containers = React.createClass({
 
   sorted: function (containers) {
     return _.values(containers).sort(function (a, b) {
-      if (a.State.Downloading && !b.State.Downloading) {
-        return -1;
-      } else if (!a.State.Downloading && b.State.Downloading) {
-        return 1;
+      if (dockerUtil.stickyContainers.includes(a.Id) && !dockerUtil.stickyContainers.includes(b.Id)) {
+        return -1
+      } else if (!dockerUtil.stickyContainers.includes(a.Id) && dockerUtil.stickyContainers.includes(b.Id)) {
+        return 1
       } else {
-        if (a.State.Running && !b.State.Running) {
+        if (a.State.Downloading && !b.State.Downloading) {
           return -1;
-        } else if (!a.State.Running && b.State.Running) {
+        } else if (!a.State.Downloading && b.State.Downloading) {
           return 1;
         } else {
-          return a.Name.localeCompare(b.Name);
+          if (a.State.Running && !b.State.Running) {
+             return -1;
+          } else if (!a.State.Running && b.State.Running) {
+              return 1;
+          } else {
+              return a.Name.localeCompare(b.Name);
+          }
         }
       }
     });

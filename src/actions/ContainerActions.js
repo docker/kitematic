@@ -42,6 +42,10 @@ class ContainerActions {
   active (name) {
     dockerUtil.active(name);
   }
+
+  toggleSticky (id) {
+    dockerUtil.toggleSticky(id);
+  }
 }
 
 export default alt.createActions(ContainerActions);
