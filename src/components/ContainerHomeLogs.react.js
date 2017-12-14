@@ -112,7 +112,9 @@ module.exports = React.createClass({
           <div className="top-bar">
             <div className="text">Container Logs</div>
             <div>
-                <button onClick={saveLogs}>Save</button>
+                <button className="save-logs__btn" onClick={saveLogs}>
+                  <i className="icon icon-download"></i>
+                </button>
                 <FontSelect fontSize={this.state.fontSize} onChange={this.onFontChange} />
                 <button className="copy-logs__btn" onClick={copyLogs}>Copy</button>
             </div>
