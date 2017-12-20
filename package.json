@@ -36,6 +36,9 @@
     "test": "jest -c jest-unit.json",
     "integration": "jest -c jest-integration.json",
     "release": "grunt release",
+    "release:linux": "grunt release && electron-builder --linux",
+    "release:mac": "grunt release && electron-builder --mac",
+    "release:windows": "grunt release && electron-builder --windows",   
     "release-verbose": "grunt --verbose release",
     "lint": "eslint src"
   },
