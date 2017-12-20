@@ -9,6 +9,26 @@
     "type": "git",
     "url": "git@github.com:kitematic/kitematic.git"
   },
+  "build": {
+    "appId": "com.docker.kitematic",
+    "directories": {
+      "output": "./dist-electron/"
+    },
+    "files": [
+      "./build/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.developer-tools"
+    },
+    "productName": "Kitematic",
+    "win": {
+      "target":[
+        {"target":"appx"},
+        {"target":"msi"},
+        {"target":"nsis"}
+      ]
+    }
+  },
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
     "start": "grunt",
