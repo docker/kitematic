@@ -88,7 +88,8 @@ module.exports = React.createClass({
     };
 
     let saveLogs = (event) => {
-      let path = `${this.props.container.Name}_logs.txt`;
+      //create default filename with timestamp
+      let path = `${this.props.container.Name} ${new Date().toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g,'-')}.txt`;
       dialog.showSaveDialog({
         defaultPath: path
       },function(fileName) {
