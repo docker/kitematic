@@ -1,0 +1,32 @@
+{
+  "appId": "com.docker.kitematic",
+  "asar":false,
+  "directories": {
+    "output": "./dist-electron-builder/"
+  },
+  "files": [
+    "build/**/*",
+    "./resources/**/*"
+  ],
+  "mac": {
+    "category": "public.app-category.developer-tools"
+  },
+  "msi":{
+    "warningsAsErrors": false
+  },
+  "productName": "Kitematic",
+  "win": {
+    "icon":"./util/kitematic.ico",
+    "target": [
+      {
+        "target": "appx"
+      },
+      {
+        "target": "msi"
+      },
+      {
+        "target": "portable"
+      }
+    ]
+  }
+}

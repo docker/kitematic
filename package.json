@@ -4,37 +4,10 @@
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X, Windows and Ubuntu.",
   "homepage": "https://kitematic.com/",
-  "main": "browser.js",
+  "main": "build/browser.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:kitematic/kitematic.git"
-  },
-  "build": {
-    "appId": "com.docker.kitematic",
-    "asar": false,
-    "directories": {
-      "output": "./dist-electron-builder/"
-    },
-    "files": [
-      "./build/**/*"
-    ],
-    "mac": {
-      "category": "public.app-category.developer-tools"
-    },
-    "productName": "Kitematic",
-    "win": {
-      "target": [
-        {
-          "target": "appx"
-        },
-        {
-          "target": "msi"
-        },
-        {
-          "target": "nsis"
-        }
-      ]
-    }
   },
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
