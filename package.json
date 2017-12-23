@@ -58,6 +58,7 @@
     "which": "^1.2.4"
   },
   "devDependencies": {
+    "@types/react": "^16.0.31",
     "babel": "^5.8.23",
     "babel-jest": "^5.2.0",
     "electron": "^1.7.10",
