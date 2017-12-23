@@ -4,13 +4,14 @@
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X, Windows and Ubuntu.",
   "homepage": "https://kitematic.com/",
-  "main": "browser.js",
+  "main": "build/main.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:kitematic/kitematic.git"
   },
   "build": {
     "appId": "com.docker.kitematic",
+    "asar": false,
     "directories": {
       "output": "./dist-electron-builder/"
     },
@@ -22,10 +23,16 @@
     },
     "productName": "Kitematic",
     "win": {
-      "target":[
-        {"target":"appx"},
-        {"target":"msi"},
-        {"target":"nsis"}
+      "target": [
+        {
+          "target": "appx"
+        },
+        {
+          "target": "msi"
+        },
+        {
+          "target": "nsis"
+        }
       ]
     }
   },
@@ -38,12 +45,12 @@
     "release": "grunt release",
     "release:linux": "grunt release && electron-builder --linux",
     "release:mac": "grunt release && electron-builder --mac",
-    "release:windows": "grunt release && electron-builder --windows",   
+    "release:windows": "grunt release && electron-builder --windows",
     "release-verbose": "grunt --verbose release",
     "lint": "eslint src"
   },
   "license": "Apache-2.0",
-  "electron-version": "0.35.4",
+  "electron-version": "1.6.1",
   "dependencies": {
     "alt": "^0.16.2",
     "ansi-to-html": "0.3.0",
@@ -81,7 +88,7 @@
     "babel": "^5.8.23",
     "babel-jest": "^5.2.0",
     "electron": "^1.6.1",
-    "electron-builder": "^19.49.0",
+    "electron-builder": "^19.49.2",
     "eslint": "^4.1.1",
     "eslint-plugin-react": "^3.3.0",
     "grunt": "^0.4.5",
