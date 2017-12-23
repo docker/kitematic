@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "charset": "utf-8",
     "jsx": "preserve",
     "module": "es2015",
@@ -19,8 +20,5 @@
   ],
   "files": [
     "./src/main.ts"
-  ],
-  "include": [
-    "./node_modules/**/*.d.ts"
   ]
 }
