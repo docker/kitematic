@@ -10,8 +10,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "target": "es2015",
-    "sourceMap": true
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "target": "es2015"
   },
   "exclude": [
     "./node_modules"
