@@ -11,10 +11,12 @@
   },
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
+    "build":"tslint --fix -p tsconfig.json && tsc",
     "start": "grunt",
     "start-dev": "NODE_ENV=development grunt",
     "test": "jest -c jest-unit.json",
     "integration": "jest -c jest-integration.json",
+    "postinstall": "npm run build",
     "release": "grunt release",
     "release-verbose": "grunt --verbose release",
     "lint": "eslint src"
@@ -57,7 +59,7 @@
   "devDependencies": {
     "babel": "^5.8.23",
     "babel-jest": "^5.2.0",
-    "electron": "^1.6.1",
+    "electron": "^1.7.10",
     "eslint": "^4.1.1",
     "eslint-plugin-react": "^3.3.0",
     "grunt": "^0.4.5",
@@ -88,7 +90,9 @@
     "minimist": "^1.1.1",
     "run-sequence": "^1.0.2",
     "shell-escape": "^0.2.0",
-    "source-map-support": "^0.3.2"
+    "source-map-support": "^0.3.2",
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.2"
   },
   "optionalDependencies": {
     "grunt-electron-installer-debian": "^0.3.0",

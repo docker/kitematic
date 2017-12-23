@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "charset": "utf-8",
+    "module": "es2015",
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noImplicitUseStrict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "target": "es2015",
+    "sourceMap": true
+  },
+  "exclude": [
+    "./node_modules"
+  ],
+  "files": [
+    "./src/main.ts"
+  ],
+  "include": [
+    "./node_modules/**/*.d.ts"
+  ]
+}
