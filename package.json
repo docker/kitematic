@@ -12,7 +12,7 @@
   "build": {
     "appId": "com.docker.kitematic",
     "directories": {
-      "output": "./dist-electron/"
+      "output": "./dist-electron-builder/"
     },
     "files": [
       "./build/**/*"

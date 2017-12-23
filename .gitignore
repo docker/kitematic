@@ -2,6 +2,7 @@
 .swp
 build
 dist
+dist-electron-builder/
 release
 installer
 node_modules
