@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "charset": "utf-8",
+    "jsx": "preserve",
     "module": "es2015",
     "noImplicitAny": true,
     "noImplicitReturns": true,
