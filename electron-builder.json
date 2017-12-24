@@ -2,11 +2,13 @@
   "appId": "com.docker.kitematic",
   "asar":false,
   "directories": {
+    "app":"./build/",
+    "buildResources":"./resources/",
     "output": "./dist-electron-builder/"
   },
   "files": [
-    "build/**/*",
-    "./resources/**/*"
+    "./**/*",
+    "../resources/**/*"
   ],
   "mac": {
     "category": "public.app-category.developer-tools"
