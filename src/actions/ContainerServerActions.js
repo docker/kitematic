@@ -17,7 +17,8 @@ class ContainerServerActions {
       'kill',
       'stopped',
       'log',
-      'logs'
+      'logs',
+      'toggleFavorite'
     );
   }
 }
