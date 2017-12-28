@@ -137,8 +137,14 @@
         height: 45px;
         border-top: 1px solid transparent;
         border-bottom: 1px solid transparent;
+        & {
+          cursor: pointer;
+        }
         &:hover {
           background-color: @color-box-button;
+          .action .btn {
+            visibility: visible;
+          }
         }
         .info {
           margin-left: 1rem;
@@ -163,15 +169,27 @@
           }
         }
         .action {
-          display: none;
+          display: block;
           flex: 1;
           position: relative;
           top: 0.4rem;
           text-align: right;
           .btn {
+            visibility: hidden;
+            cursor: pointer;
             border: 1px solid @gray-lighter;
+            margin-left: 2px;
             .icon {
               color: @gray-lighter;
+            }
+          }
+          .favorite {
+            visibility: visible;
+          }
+          .btn:hover {
+            border: 1px solid @gray-normal;
+            .icon {
+              color: @gray-normal;
             }
           }
         }

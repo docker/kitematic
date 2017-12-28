@@ -191,6 +191,16 @@ class ContainerStore {
     this.emitChange();
   }
 
+  toggleFavorite ({name}) {
+    let containers = this.containers;
+
+    if (containers[name]) {
+      containers[name].Favorite = !containers[name].Favorite;
+    }
+
+    this.setState({containers});
+  }
+
   static generateName (repo) {
     const base = _.last(repo.split('/'));
     const names = _.keys(this.getState().containers);

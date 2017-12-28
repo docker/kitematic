@@ -262,6 +262,8 @@ var DockerUtil = {
           return;
         }
         containerServerActions.allUpdated({containers: _.indexBy(containers.concat(_.values(this.placeholders)), 'Name')});
+        let favorites = JSON.parse(localStorage.getItem('containers.favorites')) || [];
+        favorites.forEach(name => containerServerActions.toggleFavorite({name}));
         this.logs();
         this.fetchAllImages();
       });
