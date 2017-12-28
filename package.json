@@ -11,16 +11,16 @@
   },
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
-    "build":"npm run tslint && tsc",
-    "start": "grunt",
-    "start-dev": "NODE_ENV=development grunt",
+    "build": "npm run tslint && tsc",
+    "start": "npm run build && grunt",
+    "start-dev": "npm run build && NODE_ENV=development grunt",
     "test": "jest -c jest-unit.json",
     "integration": "jest -c jest-integration.json",
     "postinstall": "npm run build",
-    "release": "grunt release",
-    "release-verbose": "grunt --verbose release",
+    "release": "npm run build && grunt release",
+    "release-verbose": "npm run build && grunt --verbose release",
     "lint": "eslint src",
-    "tslint":"tslint --fix -p tsconfig.json"
+    "tslint": "tslint --fix -p tsconfig.json"
   },
   "license": "Apache-2.0",
   "electron-version": "1.7.10",
