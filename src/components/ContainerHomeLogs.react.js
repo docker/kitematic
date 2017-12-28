@@ -3,7 +3,9 @@ import React from 'react/addons';
 import Router from 'react-router';
 import containerActions from '../actions/ContainerActions';
 import Convert from 'ansi-to-html';
-const { clipboard } = require('electron');
+import * as fs from 'fs';
+import { clipboard, remote } from 'electron';
+const dialog = remote.dialog;
 
 let escape = function (html) {
   var text = document.createTextNode(html);
@@ -69,11 +71,11 @@ module.exports = React.createClass({
     let _logs = '';
     let logs = this.props.container.Logs ? this.props.container.Logs.map((l, index) => {
         const key = `${this.props.container.Name}-${index}`;
-        _logs = _logs.concat(escape(l.substr(l.indexOf(' ')+1)).replace(/\[\d+m/g,''));
+        _logs = _logs.concat((l.substr(l.indexOf(' ')+1)).replace(/\[\d+m/g,'').concat('\n'));
         return <div key={key} dangerouslySetInnerHTML={{__html: convert.toHtml(escape(l.substr(l.indexOf(' ')+1)).replace(/ /g, '&nbsp;<wbr>'))}}></div>;
       }) : ['0 No logs for this container.'];
 
-    let copyLogs = (event)=>{
+    let copyLogs = (event) => {
       clipboard.writeText(_logs);
 
       let btn = event.target;
@@ -85,12 +87,35 @@ module.exports = React.createClass({
       }, 1000);
     };
 
+    let saveLogs = (event) => {
+      //create default filename with timestamp
+      let path = `${this.props.container.Name} ${new Date().toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g,'-')}.txt`;
+      dialog.showSaveDialog({
+        defaultPath: path
+      },function(fileName) {
+        if (!fileName) return;
+        fs.writeFile(fileName, _logs, (err) => {
+          if(!!err){
+            dialog.showErrorBox('Oops! an error occured', err.message);
+          }else{
+            dialog.showMessageBox({
+              message: 'Container logs saved successfully.',
+              buttons: ['Ok']
+            });
+          }
+        });
+      });
+    };
+
     return (
       <div className="mini-logs wrapper">
         <div className="widget">
           <div className="top-bar">
             <div className="text">Container Logs</div>
             <div>
+                <button className="save-logs__btn" onClick={saveLogs}>
+                  <i className="icon icon-download"></i>
+                </button>
                 <FontSelect fontSize={this.state.fontSize} onChange={this.onFontChange} />
                 <button className="copy-logs__btn" onClick={copyLogs}>Copy</button>
             </div>

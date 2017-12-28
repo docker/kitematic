@@ -9,13 +9,10 @@ import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import containerActions from '../actions/ContainerActions';
 
 var ContainerListItem = React.createClass({
-  handleItemMouseEnter: function () {
-    var $action = $(this.getDOMNode()).find('.action');
-    $action.show();
-  },
-  handleItemMouseLeave: function () {
-    var $action = $(this.getDOMNode()).find('.action');
-    $action.hide();
+  toggleFavoriteContainer: function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    containerActions.toggleFavorite(this.props.container.Name);
   },
   handleDeleteContainer: function (e) {
     e.preventDefault();
@@ -108,6 +105,7 @@ var ContainerListItem = React.createClass({
             </div>
           </div>
           <div className="action">
+            <span className={container.Favorite ? 'btn circular favorite' : 'btn circular'} onClick={this.toggleFavoriteContainer}><span className="icon icon-favorite"></span></span>
             <span className="btn circular" onClick={this.handleDeleteContainer}><span className="icon icon-delete"></span></span>
           </div>
         </li>
