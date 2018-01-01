@@ -116,8 +116,16 @@ var Containers = React.createClass({
     shell.openExternal('https://github.com/docker/kitematic/issues/new');
   },
 
-  refreshContainerList: function () {
+  refreshContainerList: function ($event) {
+    let btn = $event.target;
+    btn.disabled = true;
+    btn.className += ' refreshing';
     docker.fetchAllContainers();
+    // rotate for one second
+    setTimeout(() => {
+      btn.className = 'btn btn-action btn-refresh';
+      btn.disabled = false;
+    }, 1000);
   },
 
   render: function () {
@@ -134,7 +142,9 @@ var Containers = React.createClass({
           <div className="sidebar">
             <section className={sidebarHeaderClass}>
               <h4>Containers</h4>
-              <button onClick={this.refreshContainerList}>Refresh</button>
+              <button onClick={this.refreshContainerList} className="btn btn-action btn-refresh">
+                &#x21bb;
+              </button>
               <div className="create">
                 <Router.Link to="search">
                   <span className="btn btn-new btn-action has-icon btn-hollow"><span className="icon icon-add"></span>New</span>
