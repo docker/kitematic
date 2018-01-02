@@ -61,7 +61,7 @@
     "babel": "^5.8.23",
     "babel-jest": "^5.2.0",
     "electron": "^1.6.1",
-    "electron-builder": "^19.49.2",
+    "electron-builder": "^19.50.0",
     "eslint": "^4.1.1",
     "eslint-plugin-react": "^3.3.0",
     "grunt": "^0.4.5",
