@@ -1,5 +1,5 @@
 {
-  "$schema":"http://json.schemastore.org/package",
+  "$schema": "http://json.schemastore.org/package",
   "name": "Kitematic",
   "version": "0.17.3",
   "author": "Kitematic",
@@ -11,8 +11,8 @@
     "url": "git@github.com:kitematic/kitematic.git"
   },
   "bugs": "https://github.com/kitematic/kitematic/issues",
-  "engine":{
-    "node":"^7.9.0"
+  "engine": {
+    "node": "^7.9.0"
   },
   "scripts": {
     "start": "grunt",
@@ -30,7 +30,7 @@
     "ansi-to-html": "0.3.0",
     "any-promise": "^0.1.0",
     "async": "^1.4.2",
-    "bluebird": "^2.9.24",
+    "bluebird": "^3.5.1",
     "bugsnag-js": "^2.4.7",
     "cached-request": "^1.1.0",
     "classnames": "^2.1.5",
