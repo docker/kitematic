@@ -13,8 +13,10 @@
   "scripts": {
     "start": "grunt",
     "start-dev": "NODE_ENV=development grunt",
-    "test": "jest -c jest-unit.json",
-    "integration": "jest -c jest-integration.json",
+    "pretest": "grunt release",
+    "test": "npm run test:unit && npm run test:integration",
+    "test:unit":"jest -c jest-unit.json",
+    "test:integration": "jest -c jest-integration.json",
     "release": "grunt release",
     "release-verbose": "grunt --verbose release",
     "lint": "eslint src"
