@@ -13,7 +13,7 @@
   "scripts": {
     "start": "grunt",
     "start-dev": "NODE_ENV=development grunt",
-    "pretest": "grunt release",
+    "pretest": "grunt build",
     "test": "npm run test:unit && npm run test:integration",
     "test:unit":"jest -c jest-unit.json",
     "test:integration": "jest -c jest-integration.json",
