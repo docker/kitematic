@@ -4,6 +4,7 @@ machine:
 
 dependencies:
   override:
+    - brew update
     - brew unlink node
     - brew install node@4
     - brew link node@4 --force
