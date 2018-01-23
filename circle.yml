@@ -8,7 +8,7 @@ dependencies:
     - brew unlink node
     - brew install node@4
     - brew link node@4 --force
-    - brew install --ignore-dependencies https://github.com/Homebrew/homebrew-core/blob/7e34b4761ca203b8b03e88ee6c14aabbf83db82a/Formula/wine.rb
+    - brew install --ignore-dependencies https://raw.githubusercontent.com/Homebrew/homebrew-core/7e34b4761ca203b8b03e88ee6c14aabbf83db82a/Formula/wine.rb
     - brew install github-release
     - brew install mono
     - brew install fakeroot
