@@ -22,6 +22,7 @@
   "license": "Apache-2.0",
   "electron-version": "0.35.4",
   "dependencies": {
+    "JSONStream": "^1.0.7",
     "alt": "^0.16.2",
     "ansi-to-html": "0.3.0",
     "any-promise": "^0.1.0",
@@ -33,9 +34,9 @@
     "coveralls": "^2.11.2",
     "deep-extend": "^0.4.0",
     "dockerode": "^2.2.10",
+    "electron-packager": "^10.1.1",
     "install": "^0.1.8",
     "jquery": "^3.0.1",
-    "JSONStream": "^1.0.7",
     "mixpanel": "kitematic/mixpanel-node",
     "mkdirp": "^0.5.0",
     "node-uuid": "^1.4.3",
