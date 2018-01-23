@@ -13,6 +13,7 @@ dependencies:
     - brew install mono
     - brew install fakeroot
     - brew install dpkg
+    - brew cleanup -s
     - npm install
   cache_directories:
     - "node_modules"
