@@ -22,6 +22,7 @@
   "license": "Apache-2.0",
   "electron-version": "0.35.4",
   "dependencies": {
+    "JSONStream": "^1.0.7",
     "alt": "^0.16.2",
     "ansi-to-html": "0.3.0",
     "any-promise": "^0.1.0",
@@ -35,7 +36,6 @@
     "dockerode": "^2.2.10",
     "install": "^0.1.8",
     "jquery": "^3.0.1",
-    "JSONStream": "^1.0.7",
     "mixpanel": "kitematic/mixpanel-node",
     "mkdirp": "^0.5.0",
     "node-uuid": "^1.4.3",
@@ -57,7 +57,7 @@
   "devDependencies": {
     "babel": "^5.8.23",
     "babel-jest": "^5.2.0",
-    "electron": "^1.6.1",
+    "electron": "^1.7.11",
     "eslint": "^4.1.1",
     "eslint-plugin-react": "^3.3.0",
     "grunt": "^0.4.5",
