@@ -24,7 +24,7 @@ test:
     - npm test
     - npm run integration
   post:
-    - npm run release:
+    - make release:
         timeout: 12000
     - cp release/* $CIRCLE_ARTIFACTS/
 
