@@ -23,7 +23,7 @@
     "lint": "eslint src"
   },
   "license": "Apache-2.0",
-  "electron-version": "1.6.1",
+  "electron-version": "1.7.11",
   "dependencies": {
     "JSONStream": "^1.0.7",
     "alt": "^0.16.2",
