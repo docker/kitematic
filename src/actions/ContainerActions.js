@@ -45,7 +45,7 @@ class ContainerActions {
   }
 
   toggleFavorite (name) {
-    let favorites = JSON.parse(localStorage.getItem('containers.favorites'));
+    let favorites = JSON.parse(localStorage.getItem('containers.favorites')) || [];
     if (favorites.includes(name)) {
       favorites = favorites.filter(favoriteName => favoriteName !== name);
     } else {

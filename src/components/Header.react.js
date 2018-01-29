@@ -44,7 +44,7 @@ var Header = React.createClass({
     }
   },
   handleClose: function () {
-    if (util.isWindows()) {
+    if (util.isWindows() || util.isLinux()) {
       remote.getCurrentWindow().close();
     } else {
       remote.getCurrentWindow().hide();

@@ -49,7 +49,7 @@ app.on('ready', function () {
   });
 
 
-  if (os.platform() === 'win32') {
+  if (os.platform() === 'win32' || os.platform() === 'linux') {
     mainWindow.on('close', function (e) {
       mainWindow.webContents.send('application:quitting');
       if(!exiting){
