@@ -1,0 +1,38 @@
+{
+  "appId": "com.docker.kitematic",
+  "asar": true,
+  "directories": {
+    "output": "./dist/"
+  },
+  "files": [
+    {
+      "filter": [
+        "!./node_modules/**/*",
+        "!./package.json"
+      ],
+      "from": "./build/",
+      "to": "."
+    },
+    "packages.json"
+  ],
+  "linux": {},
+  "mac": {
+    "category": "public.app-category.developer-tools"
+  },
+  "msi": {
+    "warningsAsErrors": false
+  },
+  "productName": "Kitematic",
+  "win": {
+    "extraResources": "./resources/**/*",
+    "icon": "./util/kitematic.ico",
+    "target": [
+      {
+        "target": "appx"
+      },
+      {
+        "target": "msi"
+      }
+    ]
+  }
+}
