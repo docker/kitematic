@@ -11,19 +11,21 @@
   },
   "bugs": "https://github.com/kitematic/kitematic/issues",
   "scripts": {
-    "build": "npm run tslint && tsc",
-    "start": "npm run build && grunt",
-    "start-dev": "npm run build && NODE_ENV=development grunt",
-    "test": "jest -c jest-unit.json",
+    "build": "tsc && npm run tslint",
     "integration": "jest -c jest-integration.json",
     "postinstall": "npm run build",
+    "prestart": "npm run build",
     "release": "npm run build && grunt release",
     "release-verbose": "npm run build && grunt --verbose release",
-    "lint": "eslint src",
-    "tslint": "tslint --fix -p tsconfig.json"
+    "release:linux": "grunt release && electron-builder --linux",
+    "release:mac": "grunt release && electron-builder --mac",
+    "release:windows": "grunt release && electron-builder --windows",
+    "start": "grunt",
+    "start-dev": "npm run build && NODE_ENV=development grunt",
+    "test": "jest -c jest-unit.json",
+    "tslint": "tslint --fix --project ./tsconfig.json"
   },
-  "license": "Apache-2.0",
-  "electron-version": "1.7.10",
+  "electron-version": "1.8.2",
   "dependencies": {
     "JSONStream": "^1.0.7",
     "alt": "^0.16.2",
@@ -61,7 +63,8 @@
     "@types/react": "^16.0.31",
     "babel": "^5.8.23",
     "babel-jest": "^5.2.0",
-    "electron": "^1.7.11",
+    "electron": "^1.8.2",
+    "electron-builder": "^20.2.0",
     "eslint": "^4.1.1",
     "eslint-plugin-react": "^3.3.0",
     "grunt": "^0.4.5",
@@ -77,7 +80,7 @@
     "grunt-download-electron": "^2.1.1",
     "grunt-electron": "^2.0.0",
     "grunt-electron-installer": "^1.0.4",
-    "grunt-electron-packager": "0.1.1",
+    "grunt-electron-packager": "^0.1.1",
     "grunt-if-missing": "^1.0.0",
     "grunt-newer": "^1.1.1",
     "grunt-plistbuddy": "^0.1.1",
@@ -94,7 +97,7 @@
     "shell-escape": "^0.2.0",
     "source-map-support": "^0.3.2",
     "tslint": "^5.9.1",
-    "typescript": "^2.6.2"
+    "typescript": "^2.7.2"
   },
   "optionalDependencies": {
     "grunt-electron-installer-debian": "^0.3.0",
