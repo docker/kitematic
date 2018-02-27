@@ -4,6 +4,7 @@ build
 dist
 dist-electron-builder/
 release
+src/**/*.js.map
 installer
 node_modules
 coverage
