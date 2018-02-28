@@ -1,24 +1,25 @@
 .DS_Store
 .swp
-build
-dist
+build/
+dist/
 dist-electron-builder/
-release
-src/**/*.js.map
 installer
-node_modules
-coverage
+node_modules/
+release/
+src/**/*.js
+src/**/*.js.map
+coverage/
 npm-debug.log
 
 # Integration test environment
-integration
+integration/
 
 # Resources
 resources/docker*
 resources/boot2docker*
 
 # Cache
-cache
+cache/
 
 # Tests
 .test
