@@ -12,7 +12,7 @@ var ContainerSettingsAdvanced = React.createClass({
   },
 
   getInitialState: function () {
-    let [tty, openStdin, privileged, restartPolicy] = ContainerUtil.mode(this.props.container) || [true, true, false, {MaximumRetryCount: 0, Name: ''}];
+    let [tty, openStdin, privileged, restartPolicy] = ContainerUtil.mode(this.props.container) || [true, true, false, {MaximumRetryCount: 0, Name: 'no'}];
     return {
       tty: tty,
       openStdin: openStdin,
@@ -26,7 +26,7 @@ var ContainerSettingsAdvanced = React.createClass({
     let tty = this.state.tty;
     let openStdin = this.state.openStdin;
     let privileged = this.state.privileged;
-    let restartPolicy = this.state.restartPolicy? {MaximumRetryCount: 0, Name: 'always'} : {MaximumRetryCount: 0, Name: ''};
+    let restartPolicy = this.state.restartPolicy? {MaximumRetryCount: 0, Name: 'always'} : {MaximumRetryCount: 0, Name: 'no'};
     let hostConfig = _.extend(this.props.container.HostConfig, {Privileged: privileged, RestartPolicy: restartPolicy});
     containerActions.update(this.props.container.Name, {Tty: tty, OpenStdin: openStdin, HostConfig: hostConfig});
   },
@@ -68,7 +68,7 @@ var ContainerSettingsAdvanced = React.createClass({
             <p><label><input type="checkbox" checked={this.state.tty} onChange={this.handleChangeTty}/>Allocate a TTY for this container</label></p>
             <p><label><input type="checkbox" checked={this.state.openStdin} onChange={this.handleChangeOpenStdin}/>Keep STDIN open even if not attached</label></p>
             <p><label><input type="checkbox" checked={this.state.privileged} onChange={this.handleChangePrivileged}/>Privileged mode</label></p>
-            <p><label><input type="checkbox" checked={this.state.restartPolicy} onChange={this.handleChangeRestartPolicy}/>Start on docker startup</label></p>
+            <p><label><input type="checkbox" checked={this.state.restartPolicy} onChange={this.handleChangeRestartPolicy}/>Enable 'always' restart policy</label></p>
           </div>
           <a className="btn btn-action" disabled={this.props.container.State.Updating} onClick={this.handleSaveAdvancedOptions}>Save</a>
         </div>
