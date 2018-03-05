@@ -18,7 +18,8 @@ var ContainerUtil = {
     return [
         (container && container.Config) ? container.Config.Tty : true,
         (container && container.Config) ? container.Config.OpenStdin : true,
-        (container && container.HostConfig) ? container.HostConfig.Privileged : false
+        (container && container.HostConfig) ? container.HostConfig.Privileged : false,
+        (container && container.HostConfig) ? container.HostConfig.RestartPolicy : {MaximumRetryCount: 0, Name: ''}
     ];
   },
 

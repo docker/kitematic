@@ -12,11 +12,12 @@ var ContainerSettingsAdvanced = React.createClass({
   },
 
   getInitialState: function () {
-    let [tty, openStdin, privileged] = ContainerUtil.mode(this.props.container) || [true, true, false];
+    let [tty, openStdin, privileged, restartPolicy] = ContainerUtil.mode(this.props.container) || [true, true, false, {MaximumRetryCount: 0, Name: ''}];
     return {
       tty: tty,
       openStdin: openStdin,
-      privileged: privileged
+      privileged: privileged,
+      restartPolicy: restartPolicy.Name === 'always'
     };
   },
 
@@ -25,7 +26,8 @@ var ContainerSettingsAdvanced = React.createClass({
     let tty = this.state.tty;
     let openStdin = this.state.openStdin;
     let privileged = this.state.privileged;
-    let hostConfig = _.extend(this.props.container.HostConfig, {Privileged: privileged});
+    let restartPolicy = this.state.restartPolicy? {MaximumRetryCount: 0, Name: 'always'} : {MaximumRetryCount: 0, Name: ''};
+    let hostConfig = _.extend(this.props.container.HostConfig, {Privileged: privileged, RestartPolicy: restartPolicy});
     containerActions.update(this.props.container.Name, {Tty: tty, OpenStdin: openStdin, HostConfig: hostConfig});
   },
 
@@ -47,6 +49,12 @@ var ContainerSettingsAdvanced = React.createClass({
     });
   },
 
+  handleChangeRestartPolicy: function () {
+    this.setState({
+      restartPolicy: !this.state.restartPolicy
+    });
+  },
+
   render: function () {
     if (!this.props.container) {
       return false;
@@ -60,6 +68,7 @@ var ContainerSettingsAdvanced = React.createClass({
             <p><label><input type="checkbox" checked={this.state.tty} onChange={this.handleChangeTty}/>Allocate a TTY for this container</label></p>
             <p><label><input type="checkbox" checked={this.state.openStdin} onChange={this.handleChangeOpenStdin}/>Keep STDIN open even if not attached</label></p>
             <p><label><input type="checkbox" checked={this.state.privileged} onChange={this.handleChangePrivileged}/>Privileged mode</label></p>
+            <p><label><input type="checkbox" checked={this.state.restartPolicy} onChange={this.handleChangeRestartPolicy}/>Start on docker startup</label></p>
           </div>
           <a className="btn btn-action" disabled={this.props.container.State.Updating} onClick={this.handleSaveAdvancedOptions}>Save</a>
         </div>
