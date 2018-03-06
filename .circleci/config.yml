@@ -65,6 +65,8 @@ jobs:
     # This is based on your 1.0 configuration file or project settings
     - run: brew update
     - run: brew install node@8
+    - run: export PATH="/usr/local/opt/node@8/bin:$PATH"
+    - run: echo 'export PATH="/usr/local/opt/node@8/bin:$PATH"' >> ~/.bash_profile
     - run: brew install --ignore-dependencies https://raw.githubusercontent.com/Homebrew/homebrew-core/7e34b4761ca203b8b03e88ee6c14aabbf83db82a/Formula/wine.rb
     - run: brew install github-release
     - run: brew install mono
