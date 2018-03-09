@@ -53,7 +53,9 @@ module.exports = React.createClass({
   },
   componentDidUpdate: function () {
     var node = $('.logs').get()[0];
-    node.scrollTop = (this.state.follow)? node.scrollHeight: 0;
+    if(this.state.follow){
+      node.scrollTop = node.scrollHeight;
+    }
   },
 
   componentWillReceiveProps: function (nextProps) {
