@@ -1,7 +1,12 @@
 {
+  "$schema":"http://json.schemastore.org/package",
   "name": "Kitematic",
   "version": "0.17.3",
-  "author": "Kitematic",
+  "author": {
+    "name": "Kitematic Team",
+    "email": "support@docker.com",
+    "url" : "https://github.com/docker/kitematic"
+  },
   "description": "Simple Docker Container management for Mac OS X, Windows and Ubuntu.",
   "homepage": "https://kitematic.com/",
   "main": "browser.js",
