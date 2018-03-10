@@ -1,5 +1,5 @@
-import alt from '../alt';
-import regHubUtil from '../utils/RegHubUtil';
+import alt from "../alt";
+import regHubUtil from "../utils/RegHubUtil";
 class RepositoryActions {
     recommended() {
         this.dispatch({});
