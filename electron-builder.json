@@ -21,18 +21,17 @@
         "target":"AppImage"
       },
       {
-        "target":"deb"
-      },
-      {
-        "target":"rpm"
-      },
-      {
-        "target":"snap"
+        "target":"zip"
       }
     ]
   },
   "mac": {
-    "category": "public.app-category.developer-tools"
+    "category": "public.app-category.developer-tools",
+    "target":[
+      {
+        "target":"zip"
+      }
+    ]
   },
   "msi": {
     "warningsAsErrors": false
@@ -47,6 +46,9 @@
       },
       {
         "target": "msi"
+      },
+      {
+        "target":"zip"
       }
     ]
   }
