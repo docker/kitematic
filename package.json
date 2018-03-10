@@ -38,7 +38,7 @@
     "classnames": "^2.1.5",
     "coveralls": "^2.11.2",
     "deep-extend": "^0.4.0",
-    "dockerode": "^2.2.10",
+    "dockerode": "^2.5.4",
     "install": "^0.1.8",
     "jquery": "^3.0.1",
     "mixpanel": "kitematic/mixpanel-node",
@@ -60,6 +60,7 @@
     "which": "^1.2.4"
   },
   "devDependencies": {
+    "@types/dockerode": "^2.5.4",
     "@types/react": "^16.0.31",
     "babel": "^5.8.23",
     "babel-jest": "^5.2.0",
