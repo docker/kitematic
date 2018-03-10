@@ -1,9 +1,5 @@
 import {ipcRenderer, Menu} from "electron";
-
-require.main.paths.splice(0, 0, process.env.NODE_PATH);
-
 import * as React from "react";
-
 import Router from "react-router";
 import repositoryActions from "./actions/RepositoryActions";
 import template from "./menutemplate";
@@ -16,6 +12,8 @@ import hub from "./utils/HubUtil";
 import metrics from "./utils/MetricsUtil";
 import setupUtil from "./utils/SetupUtil";
 import webUtil from "./utils/WebUtil";
+
+require.main.paths.splice(0, 0, process.env.NODE_PATH);
 
 hubUtil.init();
 

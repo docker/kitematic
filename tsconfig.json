@@ -19,7 +19,7 @@
     "target": "es2015"
   },
   "files": [
-    "./src/index.renderer.ts",
-    "./src/main/index.main.ts"
+    "./src/index.main.ts",
+    "./src/index.renderer.ts"
   ]
 }
