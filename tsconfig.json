@@ -18,6 +18,6 @@
   },
   "files": [
     "./src/index.renderer.ts",
-    "./src/index.main.ts"
+    "./src/main/index.main.ts"
   ]
 }
