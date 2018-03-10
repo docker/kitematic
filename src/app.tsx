@@ -1,4 +1,4 @@
-import {ipcRenderer, Menu, remote} from "electron";
+import {ipcRenderer, Menu} from "electron";
 
 require.main.paths.splice(0, 0, process.env.NODE_PATH);
 
