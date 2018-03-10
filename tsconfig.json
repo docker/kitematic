@@ -5,6 +5,7 @@
     "charset": "utf-8",
     "jsx": "preserve",
     "module": "es2015",
+    "moduleResolution": "node",
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,

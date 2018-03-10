@@ -60,12 +60,13 @@
     "which": "^1.2.4"
   },
   "devDependencies": {
+    "@types/bluebird": "^3.5.20",
     "@types/dockerode": "^2.5.4",
     "@types/react": "^16.0.31",
     "babel": "^5.8.23",
     "babel-jest": "^5.2.0",
-    "electron": "^1.8.2",
-    "electron-builder": "^20.2.0",
+    "electron": "^1.8.3",
+    "electron-builder": "^20.4.1",
     "eslint": "^4.1.1",
     "eslint-plugin-react": "^3.3.0",
     "grunt": "^0.4.5",
