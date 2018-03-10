@@ -15,7 +15,22 @@
     },
     "packages.json"
   ],
-  "linux": {},
+  "linux": {
+    "target":[
+      {
+        "target":"AppImage"
+      },
+      {
+        "target":"deb"
+      },
+      {
+        "target":"rpm"
+      },
+      {
+        "target":"snap"
+      }
+    ]
+  },
   "mac": {
     "category": "public.app-category.developer-tools"
   },
