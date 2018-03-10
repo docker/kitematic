@@ -103,9 +103,5 @@
     "source-map-support": "^0.3.2",
     "tslint": "^5.9.1",
     "typescript": "^2.7.2"
-  },
-  "optionalDependencies": {
-    "grunt-electron-installer-debian": "^0.3.0",
-    "grunt-electron-installer-redhat": "^0.3.0"
   }
 }
