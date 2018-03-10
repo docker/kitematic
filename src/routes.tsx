@@ -1,36 +1,36 @@
-import React from 'react/addons';
-import Setup from './components/Setup.react';
-import Account from './components/Account.react';
-import AccountSignup from './components/AccountSignup.react';
-import AccountLogin from './components/AccountLogin.react';
-import Containers from './components/Containers.react';
-import ContainerDetails from './components/ContainerDetails.react';
-import ContainerHome from './components/ContainerHome.react';
-import ContainerSettings from './components/ContainerSettings.react';
-import ContainerSettingsGeneral from './components/ContainerSettingsGeneral.react';
-import ContainerSettingsPorts from './components/ContainerSettingsPorts.react';
-import ContainerSettingsVolumes from './components/ContainerSettingsVolumes.react';
-import ContainerSettingsNetwork from './components/ContainerSettingsNetwork.react';
-import ContainerSettingsAdvanced from './components/ContainerSettingsAdvanced.react';
-import Preferences from './components/Preferences.react';
-import About from './components/About.react';
-import Loading from './components/Loading.react';
-import NewContainerSearch from './components/NewContainerSearch.react';
-import Router from 'react-router';
+import Router from "react-router";
+import React from "react/addons";
+import About from "./components/About.react";
+import Account from "./components/Account.react";
+import AccountLogin from "./components/AccountLogin.react";
+import AccountSignup from "./components/AccountSignup.react";
+import ContainerDetails from "./components/ContainerDetails.react";
+import ContainerHome from "./components/ContainerHome.react";
+import Containers from "./components/Containers.react";
+import ContainerSettings from "./components/ContainerSettings.react";
+import ContainerSettingsAdvanced from "./components/ContainerSettingsAdvanced.react";
+import ContainerSettingsGeneral from "./components/ContainerSettingsGeneral.react";
+import ContainerSettingsNetwork from "./components/ContainerSettingsNetwork.react";
+import ContainerSettingsPorts from "./components/ContainerSettingsPorts.react";
+import ContainerSettingsVolumes from "./components/ContainerSettingsVolumes.react";
+import Loading from "./components/Loading.react";
+import NewContainerSearch from "./components/NewContainerSearch.react";
+import Preferences from "./components/Preferences.react";
+import Setup from "./components/Setup.react";
 
-var Route = Router.Route;
-var DefaultRoute = Router.DefaultRoute;
-var RouteHandler = Router.RouteHandler;
+const Route = Router.Route;
+const DefaultRoute = Router.DefaultRoute;
+const RouteHandler = Router.RouteHandler;
 
-var App = React.createClass({
-  render: function () {
+const App = React.createClass({
+  render() {
     return (
       <RouteHandler/>
     );
-  }
+  },
 });
 
-var routes = (
+export default (
   <Route name="app" path="/" handler={App}>
     <Route name="account" path="account" handler={Account}>
       <Route name="signup" path="signup" handler={AccountSignup}/>
@@ -55,5 +55,3 @@ var routes = (
     <Route name="setup" handler={Setup}/>
   </Route>
 );
-
-module.exports = routes;
