@@ -2,7 +2,6 @@ import {ipcRenderer, Menu} from "electron";
 import * as React from "react";
 import Router from "react-router";
 import repositoryActions from "./actions/RepositoryActions";
-import template from "./menutemplate";
 import routerContainer from "./router";
 import routes from "./routes";
 import machine from "./utils/DockerMachineUtil";
@@ -27,9 +26,6 @@ webUtil.addWindowSizeSaving();
 webUtil.addLiveReload();
 webUtil.addBugReporting();
 webUtil.disableGlobalBackspace();
-
-Menu.setApplicationMenu(Menu.buildFromTemplate(template() as any));
-
 metrics.track("Started App");
 metrics.track("app heartbeat");
 setInterval(function() {
@@ -43,7 +39,6 @@ router.run((Handler) => (React as any).render(<Handler/>, document.body));
 routerContainer.set(router);
 
 setupUtil.setup().then(() => {
-  Menu.setApplicationMenu(Menu.buildFromTemplate(template() as any));
   docker.init();
   if (!hub.prompted() && !hub.loggedin()) {
     router.transitionTo("login");
