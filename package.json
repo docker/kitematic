@@ -4,7 +4,7 @@
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X, Windows and Ubuntu.",
   "homepage": "https://kitematic.com/",
-  "main": "browser.js",
+  "main": "index.main.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:kitematic/kitematic.git"

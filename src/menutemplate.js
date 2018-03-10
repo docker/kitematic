@@ -9,7 +9,7 @@ import docker from './utils/DockerUtil';
 
 const app = remote.app;
 
-// main.js
+// index.renderer.js
 var MenuTemplate = function () {
   return [
     {
