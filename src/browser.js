@@ -1,12 +1,8 @@
-import electron from 'electron';
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
-
-import fs from 'fs';
-import os from 'os';
-import path from 'path';
-import child_process from 'child_process';
-let Promise = require('bluebird');
+import {app, BrowserWindow} from 'electron';
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import {Promise} from 'bluebird';
 
 process.env.NODE_PATH = path.join(__dirname, 'node_modules');
 process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');
