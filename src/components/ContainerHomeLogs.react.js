@@ -40,17 +40,22 @@ let prevBottom = 0;
 module.exports = React.createClass({
   getInitialState: function(){
     return {
-      fontSize: 10
+      fontSize: 10,
+      follow: true,
     };
   },
   onFontChange: function(event){
-    this.setState({
-      fontSize: event.target.value
-    });
+    let $target = event.target;
+    this.setState((prevState)=>({
+      fontSize: $target.value,
+      follow: prevState.follow
+    }));
   },
   componentDidUpdate: function () {
     var node = $('.logs').get()[0];
-    node.scrollTop = node.scrollHeight;
+    if(this.state.follow){
+      node.scrollTop = node.scrollHeight;
+    }
   },
 
   componentWillReceiveProps: function (nextProps) {
@@ -65,6 +70,13 @@ module.exports = React.createClass({
 
   componentWillUnmount: function () {
     containerActions.active(null);
+  },
+  
+  toggleFollow: function () {
+    this.setState((prevState)=>({
+      fontSize: prevState.fontsize,
+      follow: !prevState.follow
+    }));
   },
 
   render: function () {
@@ -113,11 +125,15 @@ module.exports = React.createClass({
           <div className="top-bar">
             <div className="text">Container Logs</div>
             <div>
-                <button className="save-logs__btn" onClick={saveLogs}>
-                  <i className="icon icon-download"></i>
-                </button>
-                <FontSelect fontSize={this.state.fontSize} onChange={this.onFontChange} />
-                <button className="copy-logs__btn" onClick={copyLogs}>Copy</button>
+              <label className="follow-logs__label">
+                Follow&nbsp;
+                <input type="checkbox" onChange={ this.toggleFollow } checked={ this.state.follow }></input>
+              </label>
+              <button className="save-logs__btn" onClick={saveLogs}>
+                <i className="icon icon-download"></i>
+              </button>
+              <FontSelect fontSize={this.state.fontSize} onChange={this.onFontChange} />
+              <button className="copy-logs__btn" onClick={copyLogs}>Copy</button>
             </div>
           </div>
           <div className="logs" style={{fontSize:this.state.fontSize+'px'}}>
