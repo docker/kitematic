@@ -1,11 +1,11 @@
 {
-  "$schema":"http://json.schemastore.org/package",
+  "$schema": "http://json.schemastore.org/package",
   "name": "Kitematic",
   "version": "0.17.3",
   "author": {
     "name": "Kitematic Team",
     "email": "support@docker.com",
-    "url" : "https://github.com/docker/kitematic"
+    "url": "https://github.com/docker/kitematic"
   },
   "description": "Simple Docker Container management for Mac OS X, Windows and Ubuntu.",
   "homepage": "https://kitematic.com/",
@@ -22,6 +22,7 @@
     "prestart": "npm run build",
     "release": "npm run build && grunt release",
     "release-verbose": "npm run build && grunt --verbose release",
+    "release:all-zip":"npm run build && grunt electron-builder && electron-builder --linux zip && electron-builder --mac zip && electron-builder --windows zip",
     "release:linux": "npm run build && grunt electron-builder && electron-builder --linux",
     "release:mac": "npm run build && grunt electron-builder && electron-builder --mac",
     "release:windows": "npm run build && grunt electron-builder && electron-builder --windows",
@@ -46,7 +47,6 @@
     "dockerode": "^2.2.10",
     "install": "^0.1.8",
     "jquery": "^3.0.1",
-    "mixpanel": "kitematic/mixpanel-node",
     "mkdirp": "^0.5.0",
     "node-uuid": "^1.4.3",
     "numeral": "^1.5.3",
@@ -69,7 +69,7 @@
     "babel": "^5.8.23",
     "babel-jest": "^5.2.0",
     "electron": "^1.8.3",
-    "electron-builder": "^20.4.1",
+    "electron-builder": "^20.5.1",
     "eslint": "^4.1.1",
     "eslint-plugin-react": "^3.3.0",
     "grunt": "^0.4.5",
