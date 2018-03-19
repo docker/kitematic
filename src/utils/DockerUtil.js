@@ -185,6 +185,9 @@ var DockerUtil = {
         containerData.Cmd = 'sh';
       }
 
+      // Keep current config for new container if no changes
+      _.extend(containerData, _.omit(containerData.Config, Object.keys(containerData)));
+
       let existing = this.client.getContainer(name);
       existing.kill(() => {
         existing.remove(() => {
