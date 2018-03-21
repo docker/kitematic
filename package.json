@@ -4,7 +4,7 @@
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X, Windows and Ubuntu.",
   "homepage": "https://kitematic.com/",
-  "main": "browser.js",
+  "main": "./main/index.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:kitematic/kitematic.git"
@@ -38,7 +38,7 @@
     "classnames": "^2.1.5",
     "coveralls": "^2.11.2",
     "deep-extend": "^0.4.0",
-    "dockerode": "^2.2.10",
+    "dockerode": "^2.5.4",
     "install": "^0.1.8",
     "jquery": "^3.0.1",
     "mixpanel": "kitematic/mixpanel-node",
@@ -60,11 +60,13 @@
     "which": "^1.2.4"
   },
   "devDependencies": {
+    "@types/bluebird": "^3.5.20",
+    "@types/dockerode": "^2.5.4",
     "@types/react": "^16.0.31",
     "babel": "^5.8.23",
     "babel-jest": "^5.2.0",
-    "electron": "^1.8.2",
-    "electron-builder": "^20.2.0",
+    "electron": "^1.8.3",
+    "electron-builder": "^20.4.1",
     "eslint": "^4.1.1",
     "eslint-plugin-react": "^3.3.0",
     "grunt": "^0.4.5",

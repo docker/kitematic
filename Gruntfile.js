@@ -210,7 +210,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: 'src/',
-          src: ['**/*.js'],
+          src: ['**/*.js','**/*.jsx'],
           dest: 'build/'
         }]
       }
@@ -277,7 +277,7 @@ module.exports = function (grunt) {
         files: ['build/**/*']
       },
       js: {
-        files: ['src/**/*.js'],
+        files: ['src/**/*.js', 'src/**/*.jsx'],
         tasks: ['newer:babel']
       },
       less: {

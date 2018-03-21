@@ -1,4 +1,13 @@
 {
   "$schema": "http://json.schemastore.org/tslint",
-  "extends": "tslint:recommended"
+  "extends": "tslint:recommended",
+  "rules": {
+    "max-line-length": [false],
+    "no-console": false,
+    "no-empty": false,
+    "no-var-requires": false,
+    "object-literal-sort-keys": false,
+    "only-arrow-functions": false,
+    "no-shadowed-variable": false
+  }
 }

@@ -1,11 +1,12 @@
-module.exports = {
+export default {
   router: null,
 
-  get: function () {
+  get() {
     return this.router;
   },
 
-  set: function (router) {
+  set(router) {
     this.router = router;
-  }
+  },
+
 };

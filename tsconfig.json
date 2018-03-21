@@ -3,20 +3,23 @@
   "compilerOptions": {
     "checkJs": false,
     "charset": "utf-8",
-    "jsx": "preserve",
+    "jsx": "react",
     "module": "es2015",
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitUseStrict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "noImplicitReturns": false,
+    "noImplicitThis": false,
+    "noImplicitUseStrict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": false,
     "sourceMap": true,
-    "strictNullChecks": true,
+    "strictNullChecks": false,
+    "strict": false,
     "target": "es2015"
   },
   "files": [
-    "./src/main.ts"
+    "./src/index.renderer.ts",
+    "./src/main/index.ts"
   ]
 }
