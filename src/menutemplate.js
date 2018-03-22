@@ -8,6 +8,7 @@ import machine from './utils/DockerMachineUtil';
 import docker from './utils/DockerUtil';
 
 const app = remote.app;
+const window = remote.getCurrentWindow();
 
 // main.js
 var MenuTemplate = function () {
@@ -37,6 +38,9 @@ var MenuTemplate = function () {
             from: 'menu'
           });
           router.get().transitionTo('preferences');
+          if (window.isMinimized()){
+            window.restore();
+          }
         }
       },
       {
