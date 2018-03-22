@@ -24,6 +24,9 @@ var MenuTemplate = function () {
             from: 'menu'
           });
           router.get().transitionTo('about');
+          if (window.isMinimized()){
+            window.restore();
+          }
         }
       },
       {
