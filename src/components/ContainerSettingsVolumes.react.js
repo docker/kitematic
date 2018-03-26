@@ -84,11 +84,8 @@ var ContainerSettingsVolumes = React.createClass({
     });
 
     let mounts = _.clone(this.props.container.Mounts);
-    _.each(mounts, m => {
-      if (m.Destination === dockerVol) {
-        m.Source = null;
-        m.Driver = 'local';
-      }
+    mounts = _.filter(mounts, m => {
+      return m.Destination != dockerVol;
     });
 
     let binds = mounts.map(m => {
@@ -135,7 +132,7 @@ var ContainerSettingsVolumes = React.createClass({
         let local = util.isWindows() ? util.linuxToWindowsPath(source) : source;
         icons = ( 
         <div>
-          <a className="only-icon btn btn-action small"><span className="icon icon-delete"></span></a>
+          <a className="only-icon btn btn-action small" onClick={this.handleRemoveVolumeClick.bind(this, m.Destination)}><span className="icon icon-delete"></span></a>
           <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleChooseVolumeClick.bind(this, destination)}>Change</a>
         </div>
       );
