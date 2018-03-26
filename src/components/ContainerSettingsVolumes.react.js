@@ -133,7 +133,7 @@ var ContainerSettingsVolumes = React.createClass({
         icons = ( 
         <div>
           <a className="only-icon btn btn-action small" onClick={this.handleRemoveVolumeClick.bind(this, m.Destination)}><span className="icon icon-delete"></span></a>
-          <a className="btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleChooseVolumeClick.bind(this, destination)}>Change</a>
+          <a className="only-icon btn btn-action small" disabled={this.props.container.State.Updating} onClick={this.handleChooseVolumeClick.bind(this, destination)}><span className="icon icon-edit"></span></a>
         </div>
       );
         source = (
