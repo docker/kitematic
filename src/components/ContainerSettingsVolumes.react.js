@@ -60,7 +60,7 @@ var ContainerSettingsVolumes = React.createClass({
           dialog.showMessageBox({
             type: 'error',
             buttons: ['OK'],
-            message: 'Invalid docker volume path'
+            message: 'Invalid docker folder path'
           });
           return;
         }
@@ -130,7 +130,7 @@ var ContainerSettingsVolumes = React.createClass({
       if (!m.Source || (!util.isNative() && m.Source.indexOf(homeDir) === -1) || (m.Source.indexOf('/var/lib/docker/volumes') !== -1)) {
         icons = (
           <div>
-            <a className="only-icon btn btn-positive small" disabled={this.props.container.State.Updating} onClick={this.handleChooseVolumeClick.bind(this, this.state.dockerVol)}><span className="icon icon-add"></span></a>
+            <a className="only-icon btn btn-positive small" disabled={this.props.container.State.Updating} onClick={this.handleChooseVolumeClick.bind(this, m.Destination || this.state.dockerVol)}><span className="icon icon-add"></span></a>
           </div>
         )
         source = (
