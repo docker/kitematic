@@ -148,6 +148,7 @@
         }
         .info {
           margin-left: 1rem;
+          max-width: 120px;
           .name {
             text-overflow: ellipsis;
             max-width: @sidebar-text-overflow-width;
@@ -166,6 +167,9 @@
             max-width: @sidebar-text-overflow-width;
             white-space: nowrap;
             overflow: hidden;
+          }
+          span {
+            display: inline-block;
           }
         }
         .action {
