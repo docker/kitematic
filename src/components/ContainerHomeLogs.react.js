@@ -4,7 +4,7 @@ import Router from 'react-router';
 import containerActions from '../actions/ContainerActions';
 import Convert from 'ansi-to-html';
 import * as fs from 'fs';
-import { clipboard, remote } from 'electron';
+import { clipboard, remote, shell } from 'electron';
 const dialog = remote.dialog;
 
 let escape = function (html) {
@@ -107,13 +107,10 @@ module.exports = React.createClass({
       },function(fileName) {
         if (!fileName) return;
         fs.writeFile(fileName, _logs, (err) => {
-          if(!!err){
-            dialog.showErrorBox('Oops! an error occured', err.message);
+          if(!err){
+            shell.showItemInFolder(fileName);
           }else{
-            dialog.showMessageBox({
-              message: 'Container logs saved successfully.',
-              buttons: ['Ok']
-            });
+            dialog.showErrorBox('Oops! an error occured', err.message);
           }
         });
       });
