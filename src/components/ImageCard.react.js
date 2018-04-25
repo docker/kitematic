@@ -12,6 +12,7 @@ import tagActions from '../actions/TagActions';
 import networkActions from '../actions/NetworkActions';
 import networkStore from '../stores/NetworkStore';
 import numeral from 'numeral';
+import classNames from 'classnames';
 
 var ImageCard = React.createClass({
   mixins: [Router.Navigation],
@@ -20,7 +21,8 @@ var ImageCard = React.createClass({
       tags: this.props.tags || [],
       chosenTag: this.props.chosenTag || 'latest',
       defaultNetwork: this.props.defaultNetwork || 'bridge',
-      networks: networkStore.all()
+      networks: networkStore.all(),
+      searchTag: ''
     };
   },
   componentDidMount: function () {
@@ -96,6 +98,7 @@ var ImageCard = React.createClass({
     } else {
       tagActions.tags(this.props.image.namespace + '/' + this.props.image.name);
     }
+    this.focusSearchTagInput();
   },
   handleCloseTagOverlay: function () {
     let $menuOverlay = $(this.getDOMNode()).find('.menu-overlay');
@@ -127,7 +130,15 @@ var ImageCard = React.createClass({
     }
     shell.openExternal(repoUri);
   },
-  render: function () {
+  searchTag: function(event) {
+    this.setState({ searchTag: event.target.value });
+  },
+
+  focusSearchTagInput: function() {
+    this.refs.searchTagInput.getDOMNode().focus();
+  },
+
+  render: function() {
     var name;
     if (this.props.image.namespace === 'library') {
       name = (
@@ -167,7 +178,7 @@ var ImageCard = React.createClass({
     } else if (this.state.tags.length === 0) {
       tags = <div className="no-items">No Tags</div>;
     } else {
-      var tagDisplay = this.state.tags.map((tag) => {
+      var tagDisplay = this.state.tags.filter(tag => tag.name.includes(this.state.searchTag)).map((tag) => {
         let t = '';
         if (tag.name) {
           t = tag.name;
@@ -283,11 +294,22 @@ var ImageCard = React.createClass({
           </div>
       );
     }
+
+    let searchTagInputStyle = { outline: 'none', width: 'calc(100% - 30px)' };
+
     return (
       <div className="image-item">
         {overlay}
         <div className="overlay item-overlay tag-overlay">
-          <p>Please select an image tag.</p>
+          <p>
+            <input
+              ref="searchTagInput"
+              style={searchTagInputStyle}
+              type="text"
+              placeholder="Filter image tag."
+              onChange={this.searchTag}
+            />
+          </p>
           {tags}
           <div className="close-overlay" onClick={this.handleCloseTagOverlay}>
             <a className="btn btn-action circular"><span className="icon icon-delete"></span></a>
