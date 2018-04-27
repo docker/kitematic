@@ -202,8 +202,7 @@
         flex: 1 0;
         background-color: white;
         border-radius: @border-radius;
-        min-width: @image-card-width;
-        max-width: @image-card-width;
+        width: 100%;
         height: @image-card-height;
         position: absolute;
         color: @gray-normal;
@@ -233,8 +232,8 @@
         }
         .close-overlay {
           position: absolute;
-          bottom: 1rem;
-          right: 1rem;
+          top: 0.5rem;
+          right: 0.5rem;
         }
         .remove {
           display: flex;
@@ -266,8 +265,8 @@
         z-index: 1000;
         .close-overlay {
           position: absolute;
-          top: 0.6rem;
-          right: 0.7rem;
+          top: 0.5rem;
+          right: 0.5rem;
         }
         p {
           color: @gray-normal;
