@@ -81,7 +81,7 @@ rules:
     no-unused-vars: [2, {vars: "all", args: "after-used"}]
     no-use-before-define: 2
     no-with: 2
-    quotes: [2, "single"]
+    quotes: [2, "double"]
     radix: 2
     semi: 2
     semi-spacing: [2, {before: false, after: true}]
