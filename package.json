@@ -63,8 +63,8 @@
     "@types/react": "^16.0.31",
     "babel": "^5.8.23",
     "babel-jest": "^5.2.0",
-    "electron": "^1.8.2",
-    "electron-builder": "^20.2.0",
+    "electron": "^2.0.0",
+    "electron-builder": "^20.11.1",
     "eslint": "^4.1.1",
     "eslint-plugin-react": "^3.3.0",
     "grunt": "^0.4.5",
@@ -93,11 +93,12 @@
     "jsxhint": "^0.15.1",
     "load-grunt-tasks": "^3.2.0",
     "minimist": "^1.1.1",
+    "node": "^8.11.1",
     "run-sequence": "^1.0.2",
     "shell-escape": "^0.2.0",
     "source-map-support": "^0.3.2",
-    "tslint": "^5.9.1",
-    "typescript": "^2.7.2"
+    "tslint": "^5.10.0",
+    "typescript": "^2.8.3"
   },
   "optionalDependencies": {
     "grunt-electron-installer-debian": "^0.3.0",
