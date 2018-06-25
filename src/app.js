@@ -1,13 +1,5 @@
-require.main.paths.splice(0, 0, process.env.NODE_PATH);
-
-import electron from 'electron';
-const remote = electron.remote;
-const Menu = remote.Menu;
-// ipcRenderer is used as we're in the process
-const ipcRenderer = electron.ipcRenderer;
-
+import {ipcRenderer,remote} from "electron";
 import React from 'react';
-
 import metrics from './utils/MetricsUtil';
 import template from './menutemplate';
 import webUtil from './utils/WebUtil';
@@ -20,6 +12,10 @@ import routes from './routes';
 import routerContainer from './router';
 import repositoryActions from './actions/RepositoryActions';
 import machine from './utils/DockerMachineUtil';
+
+require.main.paths.splice(0, 0, process.env.NODE_PATH);
+
+const Menu = remote.Menu;
 
 hubUtil.init();
 
@@ -38,12 +34,12 @@ Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
 
 metrics.track('Started App');
 metrics.track('app heartbeat');
-setInterval(function () {
+setInterval( () => {
   metrics.track('app heartbeat');
 }, 14400000);
 
-var router = Router.create({
-  routes: routes
+const router = Router.create({
+    routes: routes
 });
 router.run(Handler => React.render(<Handler/>, document.body));
 routerContainer.set(router);
@@ -74,6 +70,6 @@ ipcRenderer.on('application:quitting', () => {
   }
 });
 
-window.onbeforeunload = function () {
+window.onbeforeunload = ()=> {
   docker.detachEvent();
 };
