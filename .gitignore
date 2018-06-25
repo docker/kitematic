@@ -1,9 +1,15 @@
 src/common/**/*.js
 src/common/**/*.js.map
+src/common/**/*.jsx
+src/common/**/*.jsx.map
 src/main/**/*.js
 src/main/**/*.js.map
+src/main/**/*.jsx
+src/main/**/*.jsx.map
 src/renderer/**/*.js
+src/renderer/**/*.jsx
 src/renderer/**/*.js.map
+src/renderer/**/*.jsx.map
 .DS_Store
 .swp
 build
