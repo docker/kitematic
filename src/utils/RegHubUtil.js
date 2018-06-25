@@ -2,7 +2,7 @@ import _ from 'underscore';
 import request from 'request';
 import async from 'async';
 import util from '../utils/Util';
-import hubUtil from '../utils/HubUtil';
+import hubUtil from './HubUtil';
 import repositoryServerActions from '../actions/RepositoryServerActions';
 import tagServerActions from '../actions/TagServerActions';
 import os from 'os';

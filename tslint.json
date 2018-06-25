@@ -2,10 +2,14 @@
 	"$schema": "http://json.schemastore.org/tslint",
 	"extends": "tslint:recommended",
 	"rules": {
+		"forin": false,
 		"indent": [true, "tabs", 4],
+		"no-console": false,
 		"no-empty": false,
 		"no-require-imports": false,
+		"no-shadowed-variable": false,
 		"no-var-requires": false,
+		"object-literal-sort-keys": false,
 		"one-variable-per-declaration": false,
 		"only-arrow-functions": false
 	}
