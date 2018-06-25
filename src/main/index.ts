@@ -1,11 +1,11 @@
 import {Promise} from "bluebird";
 import {app, BrowserWindow} from "electron";
 import {readFileSync} from "fs";
-import * as os from "os";
-import * as path from "path";
+import {platform} from "os";
+import {join, normalize} from "path";
 
-process.env.NODE_PATH = path.join(__dirname, "../node_modules");
-process.env.RESOURCES_PATH = path.join(__dirname, "/../resources");
+process.env.NODE_PATH = join(__dirname, "../node_modules");
+process.env.RESOURCES_PATH = join(__dirname, "/../resources");
 if (process.platform !== "win32") {
     process.env.PATH = "/usr/local/bin:" + process.env.PATH;
 }
@@ -13,19 +13,19 @@ let exiting = false;
 let size: {height, width} = {} as any;
 let settingsjson: {} = {} as any;
 try {
-    size = JSON.parse(readFileSync(path.join(app.getPath("userData"), "size"), "utf8"));
+    size = JSON.parse(readFileSync(join(app.getPath("userData"), "size"), "utf8"));
 } catch (err) {}
 
 try {
-    settingsjson = JSON.parse(readFileSync(path.join(__dirname, "settings.json"), "utf8"));
+    settingsjson = JSON.parse(readFileSync(join(__dirname, "settings.json"), "utf8"));
 } catch (err) {}
 
-app.on("ready", function() {
+app.on("ready", () => {
     const mainWindow = new BrowserWindow({
         frame: false,
         height: size.height || 680,
-        minHeight: os.platform() === "win32" ? 260 : 500,
-        minWidth: os.platform() === "win32" ? 400 : 700,
+        minHeight: platform() === "win32" ? 260 : 500,
+        minWidth: platform() === "win32" ? 400 : 700,
         resizable: true,
         show: false,
         width: size.width || 1080,
@@ -35,17 +35,17 @@ app.on("ready", function() {
         mainWindow.webContents.openDevTools({mode: "detach"});
     }
 
-    mainWindow.loadURL(path.normalize("file://" + path.join(__dirname, "../index.html")));
+    mainWindow.loadURL(normalize("file://" + join(__dirname, "../index.html")));
 
-    app.on("activate", function() {
+    app.on("activate", () => {
         if (mainWindow) {
             mainWindow.show();
         }
         return false;
     });
 
-    if (os.platform() === "win32" || os.platform() === "linux") {
-        mainWindow.on("close", function(e) {
+    if (platform() === "win32" || platform() === "linux") {
+        mainWindow.on("close", (e) => {
             mainWindow.webContents.send("application:quitting");
             if (!exiting) {
                 Promise.delay(1000).then(function() {
@@ -56,26 +56,26 @@ app.on("ready", function() {
             }
         });
 
-        app.on("window-all-closed", function() {
+        app.on("window-all-closed", () => {
             app.quit();
         });
-    } else if (os.platform() === "darwin") {
-        app.on("before-quit", function() {
+    } else if (platform() === "darwin") {
+        app.on("before-quit", () => {
             mainWindow.webContents.send("application:quitting");
         });
     }
 
-    mainWindow.webContents.on("new-window", function(e) {
+    mainWindow.webContents.on("new-window", (e) => {
         e.preventDefault();
     });
 
-    mainWindow.webContents.on("will-navigate", function(e, url) {
+    mainWindow.webContents.on("will-navigate", (e, url) => {
         if (url.indexOf("build/index.html#") < 0) {
             e.preventDefault();
         }
     });
 
-    mainWindow.webContents.on("did-finish-load", function() {
+    mainWindow.webContents.on("did-finish-load", () => {
         mainWindow.setTitle("Kitematic");
         mainWindow.show();
         mainWindow.focus();
