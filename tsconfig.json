@@ -13,7 +13,8 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "sourceMap": true,
-    "strictNullChecks": false
+    "strictNullChecks": false,
+    "target": "es2015"
   },
   "files": [
     "./src/main/index.ts",

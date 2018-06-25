@@ -2,8 +2,7 @@ import {app, BrowserWindow} from "electron";
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-
-let Promise = require('bluebird');
+import {Promise} from "bluebird";
 
 process.env.NODE_PATH = path.join(__dirname, 'node_modules');
 process.env.RESOURCES_PATH = path.join(__dirname, '/../resources');

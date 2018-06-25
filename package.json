@@ -37,6 +37,7 @@
   },
   "description": "Simple Docker Container management for Mac OS X, Windows and Ubuntu.",
   "devDependencies": {
+    "@types/bluebird": "^3.5.20",
     "@types/node": "^10.3.5",
     "@types/react": "^16.0.31",
     "babel": "^5.8.23",
