@@ -11,7 +11,7 @@ export default {
 	window.addEventListener("resize", function() {
 		fs.writeFileSync(path.join(app.getPath("userData"), "size"), JSON.stringify({
 		width: window.outerWidth,
-		height: window.outerHeight
+		height: window.outerHeight,
 		}));
 	});
   },
@@ -47,18 +47,18 @@ export default {
 		payload.name = util.removeSensitiveData(payload.name);
 		payload.file = util.removeSensitiveData(payload.file);
 
-		for(let key in payload.metaData) {
+		for (let key in payload.metaData) {
 			payload.metaData[key] = util.removeSensitiveData(payload.metaData[key]);
 		}
 		};
 	}
   },
   disableGlobalBackspace() {
-	document.onkeydown = function(e:any) {
+	document.onkeydown = function(e: any) {
 		e = e || window.event;
 		let doPrevent;
 		if (e.keyCode === 8) {
-		let d:any = e.srcElement || e.target;
+		let d: any = e.srcElement || e.target;
 		if (d.tagName.toUpperCase() === "INPUT" || d.tagName.toUpperCase() === "TEXTAREA") {
 			doPrevent = d.readOnly || d.disabled;
 		} else {
