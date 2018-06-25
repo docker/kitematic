@@ -39,7 +39,7 @@ setInterval( () => {
 }, 14400000);
 
 const router = Router.create({
-    routes,
+	routes,
 });
 router.run((Handler) => React.render(<Handler/>, document.body));
 routerContainer.set(router);
@@ -48,14 +48,14 @@ setupUtil.setup().then(() => {
   Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
   docker.init();
   if (!hub.prompted() && !hub.loggedin()) {
-    router.transitionTo("login");
+	router.transitionTo("login");
   } else {
-    router.transitionTo("search");
+	router.transitionTo("search");
   }
 }).catch((err) => {
   metrics.track("Setup Failed", {
-      message: err.message,
-      step: "catch",
+		message: err.message,
+		step: "catch",
   });
   throw err;
 });
@@ -63,7 +63,7 @@ setupUtil.setup().then(() => {
 ipcRenderer.on("application:quitting", () => {
   docker.detachEvent();
   if (localStorage.getItem("settings.closeVMOnQuit") === "true") {
-    machine.stop();
+	machine.stop();
   }
 });
 

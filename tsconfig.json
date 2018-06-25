@@ -1,24 +1,24 @@
 {
-  "$schema": "http://json.schemastore.org/tsconfig",
-  "compilerOptions": {
-    "charset": "utf-8",
-    "checkJs": false,
-    "jsx": "preserve",
-    "module": "es2015",
-    "moduleResolution": "node",
-    "noFallthroughCasesInSwitch": false,
-    "noImplicitAny": false,
-    "noImplicitReturns": false,
-    "noImplicitThis": false,
-    "noImplicitUseStrict": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "sourceMap": true,
-    "strictNullChecks": false,
-    "target": "es2015"
-  },
-  "files": [
-    "./src/main/index.ts",
-    "./src/renderer/index.ts"
-  ]
+	"$schema": "http://json.schemastore.org/tsconfig",
+	"compilerOptions": {
+		"charset": "utf-8",
+		"checkJs": false,
+		"jsx": "preserve",
+		"module": "es2015",
+		"moduleResolution": "node",
+		"noFallthroughCasesInSwitch": false,
+		"noImplicitAny": false,
+		"noImplicitReturns": false,
+		"noImplicitThis": false,
+		"noImplicitUseStrict": false,
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"sourceMap": true,
+		"strictNullChecks": false,
+		"target": "es2015"
+	},
+	"files": [
+		"./src/main/index.ts",
+		"./src/renderer/index.ts"
+	]
 }

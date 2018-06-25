@@ -1,21 +1,18 @@
-import alt from '../alt';
-import regHubUtil from '../utils/RegHubUtil';
-
+import alt from "../alt";
+import regHubUtil from "../utils/RegHubUtil";
 class RepositoryActions {
-  recommended () {
-    this.dispatch({});
-    regHubUtil.recommended();
-  }
-
-  search (query, page = 1) {
-    this.dispatch({query, page});
-    regHubUtil.search(query, page);
-  }
-
-  repos () {
-    this.dispatch({});
-    regHubUtil.repos();
-  }
+    recommended() {
+        regHubUtil.recommended();
+        return {};
+    }
+    search(query, page = 1) {
+        regHubUtil.search(query, page);
+        return { query, page };
+    }
+    repos() {
+        regHubUtil.repos();
+        return {};
+    }
 }
-
 export default alt.createActions(RepositoryActions);
+//# sourceMappingURL=RepositoryActions.js.map
