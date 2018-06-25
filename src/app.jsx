@@ -1,5 +1,5 @@
 import { ipcRenderer, remote } from "electron";
-import React from "react";
+import * as React from "react";
 import Router from "react-router";
 import repositoryActions from "./actions/RepositoryActions";
 import template from "./menutemplate";

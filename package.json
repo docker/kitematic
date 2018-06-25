@@ -3,7 +3,7 @@
 	"author": "Kitematic",
 	"bugs": "https://github.com/kitematic/kitematic/issues",
 	"dependencies": {
-		"alt": "^0.16.2",
+		"alt": "^0.18.6",
 		"ansi-to-html": "0.3.0",
 		"any-promise": "^0.1.0",
 		"async": "^1.4.2",
@@ -37,6 +37,7 @@
 	},
 	"description": "Simple Docker Container management for Mac OS X, Windows and Ubuntu.",
 	"devDependencies": {
+		"@types/alt": "0.16.35",
 		"@types/bluebird": "^3.5.20",
 		"@types/dockerode": "^2.5.4",
 		"@types/jquery": "^3.3.4",
