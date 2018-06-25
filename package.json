@@ -43,6 +43,7 @@
     "babel-jest": "^5.2.0",
     "electron": "^2.0.3",
     "electron-builder": "^20.16.0",
+    "electron-webpack": "^2.1.2",
     "eslint": "^4.1.1",
     "eslint-plugin-react": "^3.3.0",
     "grunt": "^0.4.5",

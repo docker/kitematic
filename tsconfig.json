@@ -4,7 +4,7 @@
     "charset": "utf-8",
     "checkJs": false,
     "jsx": "preserve",
-    "module": "commonjs",
+    "module": "es2015",
     "noFallthroughCasesInSwitch": false,
     "noImplicitAny": false,
     "noImplicitReturns": false,
