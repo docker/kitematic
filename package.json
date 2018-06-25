@@ -15,7 +15,7 @@
     "deep-extend": "^0.4.0",
     "dockerode": "^2.5.5",
     "install": "^0.1.8",
-    "jquery": "^3.0.1",
+    "jquery": "^3.3.1",
     "JSONStream": "^1.0.7",
     "mixpanel": "kitematic/mixpanel-node",
     "mkdirp": "^0.5.0",
@@ -39,6 +39,7 @@
   "devDependencies": {
     "@types/bluebird": "^3.5.20",
     "@types/dockerode": "^2.5.4",
+    "@types/jquery": "^3.3.4",
     "@types/node": "^10.3.5",
     "@types/react": "^16.0.31",
     "babel": "^5.8.23",
