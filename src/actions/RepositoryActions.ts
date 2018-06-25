@@ -20,4 +20,4 @@ class RepositoryActions {
 
 }
 
-export default alt.createActions(RepositoryActions);
+export default alt.createActions(RepositoryActions as any);

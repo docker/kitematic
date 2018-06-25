@@ -20,10 +20,10 @@ const Menu = remote.Menu;
 hubUtil.init();
 
 if (hubUtil.loggedin()) {
-	repositoryActions.repos();
+	(repositoryActions as any).repos();
 }
 
-repositoryActions.recommended();
+(repositoryActions as any).recommended();
 
 webUtil.addWindowSizeSaving();
 webUtil.addLiveReload();
