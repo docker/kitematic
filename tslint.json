@@ -9,8 +9,12 @@
 		"no-require-imports": false,
 		"no-shadowed-variable": false,
 		"no-var-requires": false,
+		"max-line-length": false,
 		"object-literal-sort-keys": false,
 		"one-variable-per-declaration": false,
-		"only-arrow-functions": false
+		"only-arrow-functions": false,
+		"prefer-const": false,
+		"variable-name": false,
+		"triple-equals": false
 	}
 }
