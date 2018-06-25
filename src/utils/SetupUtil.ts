@@ -1,7 +1,7 @@
 import _ from 'underscore';
-import fs from 'fs';
-import path from 'path';
-import Promise from 'bluebird';
+import * as fs from 'fs';
+import * as path from 'path';
+import {Promise as BPromise} from 'bluebird';
 import bugsnag from 'bugsnag-js';
 import util from './Util';
 import virtualBox from './VirtualBoxUtil';
@@ -40,7 +40,7 @@ export default {
     metrics.track('Retried Setup with VBox');
     router.get().transitionTo('loading');
     util.native = false;
-    localStorage.setItem('settings.useVM', true);
+    localStorage.setItem('settings.useVM', true as any);
     setupServerActions.error({ error: { message: null }});
     _retryPromise.resolve();
   },
@@ -62,7 +62,7 @@ export default {
   },
 
   pause () {
-    _retryPromise = Promise.defer();
+    _retryPromise = BPromise.defer();
     return _retryPromise.promise;
   },
 
@@ -138,7 +138,7 @@ export default {
           exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(process.env.MACHINE_STORAGE_PATH, 'machines', machine.name()));
         } else {
           exists = await virtualBox.vmExists(machine.name()) && fs.existsSync(path.join(util.home(), '.docker', 'machine', 'machines', machine.name()));
-        }  
+        }
         if (!exists) {
           router.get().transitionTo('setup');
           setupServerActions.started({started: true});
@@ -171,7 +171,7 @@ export default {
             tries -= 1;
             console.log('Trying to fetch machine IP, tries left: ' + tries);
             ip = await machine.ip();
-            await Promise.delay(1000);
+            await BPromise.delay(1000);
           } catch (err) {}
         }
 
