@@ -30,7 +30,7 @@ webUtil.addLiveReload();
 webUtil.addBugReporting();
 webUtil.disableGlobalBackspace();
 
-Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
+Menu.setApplicationMenu(Menu.buildFromTemplate(template() as any));
 
 metrics.track("Started App");
 metrics.track("app heartbeat");
@@ -45,7 +45,7 @@ router.run((Handler) => (React as any).render(<Handler/>, document.body));
 routerContainer.set(router);
 
 setupUtil.setup().then(() => {
-	Menu.setApplicationMenu(Menu.buildFromTemplate(template()));
+	Menu.setApplicationMenu(Menu.buildFromTemplate(template() as any));
 	docker.init();
 	if (!hub.prompted() && !hub.loggedin()) {
 		router.transitionTo("login");
