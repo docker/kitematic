@@ -18,7 +18,7 @@ import JSONStream from 'JSONStream';
 
 
 
-var DockerUtil = {
+export default {
   host: null,
   client: null,
   placeholders: {},
@@ -928,5 +928,3 @@ var DockerUtil = {
     this.fetchAllContainers();
   }
 };
-
-module.exports = DockerUtil;

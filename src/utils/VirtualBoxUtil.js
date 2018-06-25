@@ -3,7 +3,7 @@ import path from 'path';
 import util from './Util';
 import Promise from 'bluebird';
 
-var VirtualBox = {
+export default {
   command: function () {
     if (util.isWindows()) {
       if (process.env.VBOX_MSI_INSTALL_PATH) {
@@ -46,5 +46,3 @@ var VirtualBox = {
     });
   }
 };
-
-module.exports = VirtualBox;

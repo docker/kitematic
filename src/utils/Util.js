@@ -9,7 +9,7 @@ const remote = electron.remote;
 const dialog = remote.dialog;
 const app = remote.app;
 
-module.exports = {
+export default {
   native: null,
   execFile: function (args, options) {
     return new Promise((resolve, reject) => {

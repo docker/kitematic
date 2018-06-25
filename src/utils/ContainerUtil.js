@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import docker from '../utils/DockerUtil';
 
-var ContainerUtil = {
+export default {
   env: function (container) {
     if (!container || !container.Config || !container.Config.Env) {
       return [];
@@ -74,5 +74,3 @@ var ContainerUtil = {
   }
 
 };
-
-module.exports = ContainerUtil;

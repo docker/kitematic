@@ -15,7 +15,7 @@ let REGHUB2_ENDPOINT = process.env.REGHUB2_ENDPOINT || 'https://hub.docker.com/v
 let searchReq = null;
 let PAGING = 24;
 
-module.exports = {
+export default {
   // Normalizes results from search to v2 repository results
   normalize: function (repo) {
     let obj = _.clone(repo);

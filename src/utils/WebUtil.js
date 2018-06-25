@@ -1,35 +1,35 @@
-import { remote } from 'electron';
+import { remote } from "electron";
 const app = remote.app;
-import * as fs from 'fs';
-import util from './Util';
-import * as path from 'path';
-import bugsnag from 'bugsnag-js';
-import metrics from './MetricsUtil';
+import bugsnag from "bugsnag-js";
+import * as fs from "fs";
+import * as path from "path";
+import metrics from "./MetricsUtil";
+import util from "./Util";
 export default {
-    addWindowSizeSaving: function () {
-        window.addEventListener('resize', function () {
-            fs.writeFileSync(path.join(app.getPath('userData'), 'size'), JSON.stringify({
+    addWindowSizeSaving() {
+        window.addEventListener("resize", function () {
+            fs.writeFileSync(path.join(app.getPath("userData"), "size"), JSON.stringify({
                 width: window.outerWidth,
-                height: window.outerHeight
+                height: window.outerHeight,
             }));
         });
     },
-    addLiveReload: function () {
-        if (process.env.NODE_ENV === 'development') {
-            var head = document.getElementsByTagName('head')[0];
-            var script = document.createElement('script');
-            script.type = 'text/javascript';
-            script.src = 'http://localhost:35729/livereload.js';
+    addLiveReload() {
+        if (process.env.NODE_ENV === "development") {
+            let head = document.getElementsByTagName("head")[0];
+            let script = document.createElement("script");
+            script.type = "text/javascript";
+            script.src = "http://localhost:35729/livereload.js";
             head.appendChild(script);
         }
     },
-    addBugReporting: function () {
-        var settingsjson = util.settingsjson();
+    addBugReporting() {
+        let settingsjson = util.settingsjson();
         if (settingsjson.bugsnag) {
             bugsnag.apiKey = settingsjson.bugsnag;
             bugsnag.autoNotify = true;
-            bugsnag.releaseStage = process.env.NODE_ENV === 'development' ? 'development' : 'production';
-            bugsnag.notifyReleaseStages = ['production'];
+            bugsnag.releaseStage = process.env.NODE_ENV === "development" ? "development" : "production";
+            bugsnag.notifyReleaseStages = ["production"];
             bugsnag.appVersion = app.getVersion();
             bugsnag.beforeNotify = function (payload) {
                 if (!metrics.enabled()) {
@@ -42,19 +42,19 @@ export default {
                 payload.url = util.removeSensitiveData(payload.url);
                 payload.name = util.removeSensitiveData(payload.name);
                 payload.file = util.removeSensitiveData(payload.file);
-                for (var key in payload.metaData) {
+                for (let key in payload.metaData) {
                     payload.metaData[key] = util.removeSensitiveData(payload.metaData[key]);
                 }
             };
         }
     },
-    disableGlobalBackspace: function () {
+    disableGlobalBackspace() {
         document.onkeydown = function (e) {
             e = e || window.event;
-            var doPrevent;
+            let doPrevent;
             if (e.keyCode === 8) {
-                var d = e.srcElement || e.target;
-                if (d.tagName.toUpperCase() === 'INPUT' || d.tagName.toUpperCase() === 'TEXTAREA') {
+                let d = e.srcElement || e.target;
+                if (d.tagName.toUpperCase() === "INPUT" || d.tagName.toUpperCase() === "TEXTAREA") {
                     doPrevent = d.readOnly || d.disabled;
                 }
                 else {
