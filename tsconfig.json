@@ -5,6 +5,7 @@
     "checkJs": false,
     "jsx": "preserve",
     "module": "es2015",
+    "moduleResolution": "node",
     "noFallthroughCasesInSwitch": false,
     "noImplicitAny": false,
     "noImplicitReturns": false,
