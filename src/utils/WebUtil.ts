@@ -25,7 +25,7 @@ export default {
 	}
   },
   addBugReporting() {
-	let settingsjson = util.settingsjson();
+	let settingsjson = util.settingsjson() as any;
 
 	if (settingsjson.bugsnag) {
 		bugsnag.apiKey = settingsjson.bugsnag;

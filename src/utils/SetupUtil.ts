@@ -53,7 +53,7 @@ export default {
 	router.get().transitionTo("loading");
 	setupServerActions.error({ error: { message: null }});
 	if (removeVM) {
-		machine.rm().finally(() => {
+		(machine.rm() as any).finally(() => {
 		_retryPromise.resolve();
 		});
 	} else {
