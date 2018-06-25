@@ -1,17 +1,17 @@
 {
   "$schema": "http://json.schemastore.org/tsconfig",
   "compilerOptions": {
-    "checkJs": false,
     "charset": "utf-8",
+    "checkJs": false,
     "jsx": "preserve",
     "module": "commonjs",
+    "noFallthroughCasesInSwitch": false,
     "noImplicitAny": false,
     "noImplicitReturns": false,
     "noImplicitThis": false,
     "noImplicitUseStrict": false,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noFallthroughCasesInSwitch": false,
     "sourceMap": true,
     "strictNullChecks": false
   },

@@ -1,33 +1,8 @@
 {
-  "name": "Kitematic",
-  "version": "0.17.3",
+  "$shema": "http://json.schemastore.org/package",
   "author": "Kitematic",
-  "description": "Simple Docker Container management for Mac OS X, Windows and Ubuntu.",
-  "homepage": "https://kitematic.com/",
-  "main": "main/index.js",
-  "repository": {
-    "type": "git",
-    "url": "git@github.com:kitematic/kitematic.git"
-  },
   "bugs": "https://github.com/kitematic/kitematic/issues",
-  "scripts": {
-    "build": "tsc && npm run tslint",
-    "integration": "jest -c jest-integration.json",
-    "postinstall": "npm run build",
-    "prestart": "npm run build",
-    "release": "npm run build && grunt release",
-    "release-verbose": "npm run build && grunt --verbose release",
-    "release:linux": "npm run release && electron-builder --linux",
-    "release:mac": "npm run release && electron-builder --mac",
-    "release:windows": "npm run release && electron-builder --windows",
-    "start": "grunt",
-    "start-dev": "npm run build && NODE_ENV=development grunt",
-    "test": "jest -c jest-unit.json",
-    "tslint": "tslint --fix --project ./tsconfig.json"
-  },
-  "electron-version": "1.8.2",
   "dependencies": {
-    "JSONStream": "^1.0.7",
     "alt": "^0.16.2",
     "ansi-to-html": "0.3.0",
     "any-promise": "^0.1.0",
@@ -41,6 +16,7 @@
     "dockerode": "^2.2.10",
     "install": "^0.1.8",
     "jquery": "^3.0.1",
+    "JSONStream": "^1.0.7",
     "mixpanel": "kitematic/mixpanel-node",
     "mkdirp": "^0.5.0",
     "node-uuid": "^1.4.3",
@@ -59,6 +35,7 @@
     "validator": "^4.1.0",
     "which": "^1.2.4"
   },
+  "description": "Simple Docker Container management for Mac OS X, Windows and Ubuntu.",
   "devDependencies": {
     "@types/node": "^10.3.5",
     "@types/react": "^16.0.31",
@@ -101,8 +78,33 @@
     "tslint": "^5.10.0",
     "typescript": "^2.9.2"
   },
+  "electron-version": "1.8.2",
+  "homepage": "https://kitematic.com/",
+  "main": "main/index.js",
+  "name": "Kitematic",
   "optionalDependencies": {
     "grunt-electron-installer-debian": "^0.3.0",
     "grunt-electron-installer-redhat": "^0.3.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:kitematic/kitematic.git"
+  },
+  "scripts": {
+    "build": "tsc && npm run tslint",
+    "integration": "jest -c jest-integration.json",
+    "postinstall": "npm run build",
+    "prestart": "npm run build",
+    "release": "npm run build && grunt release",
+    "release-verbose": "npm run build && grunt --verbose release",
+    "release:linux": "npm run release && electron-builder --linux",
+    "release:mac": "npm run release && electron-builder --mac",
+    "release:windows": "npm run release && electron-builder --windows",
+    "start": "grunt",
+    "start-dev": "npm run build && NODE_ENV=development grunt",
+    "start:electron-builder": "electron-builder start",
+    "test": "jest -c jest-unit.json",
+    "tslint": "tslint --fix --project ./tsconfig.json"
+  },
+  "version": "0.17.3"
 }
