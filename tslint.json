@@ -1,4 +1,8 @@
 {
   "$schema": "http://json.schemastore.org/tslint",
-  "extends": "tslint:recommended"
+  "extends": "tslint:recommended",
+  "rules": {
+    "no-require-imports": false,
+    "no-var-requires": false
+  }
 }

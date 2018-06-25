@@ -4,7 +4,7 @@
     "checkJs": false,
     "charset": "utf-8",
     "jsx": "preserve",
-    "module": "es2015",
+    "module": "commonjs",
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
@@ -13,10 +13,10 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
-    "strictNullChecks": true,
-    "target": "es2015"
+    "strictNullChecks": true
   },
   "files": [
-    "./src/main.ts"
+    "./src/main/index.ts",
+    "./src/renderer/index.ts"
   ]
 }

@@ -4,7 +4,7 @@
   "author": "Kitematic",
   "description": "Simple Docker Container management for Mac OS X, Windows and Ubuntu.",
   "homepage": "https://kitematic.com/",
-  "main": "browser.js",
+  "main": "main/index.js",
   "repository": {
     "type": "git",
     "url": "git@github.com:kitematic/kitematic.git"
@@ -98,7 +98,7 @@
     "shell-escape": "^0.2.0",
     "source-map-support": "^0.3.2",
     "tslint": "^5.10.0",
-    "typescript": "^2.8.3"
+    "typescript": "^2.9.2"
   },
   "optionalDependencies": {
     "grunt-electron-installer-debian": "^0.3.0",
