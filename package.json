@@ -60,6 +60,7 @@
     "which": "^1.2.4"
   },
   "devDependencies": {
+    "@types/node": "^10.3.5",
     "@types/react": "^16.0.31",
     "babel": "^5.8.23",
     "babel-jest": "^5.2.0",

@@ -5,15 +5,15 @@
     "charset": "utf-8",
     "jsx": "preserve",
     "module": "commonjs",
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noImplicitUseStrict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "noImplicitReturns": false,
+    "noImplicitThis": false,
+    "noImplicitUseStrict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": false,
     "sourceMap": true,
-    "strictNullChecks": true
+    "strictNullChecks": false
   },
   "files": [
     "./src/main/index.ts",
