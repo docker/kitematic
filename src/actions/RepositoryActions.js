@@ -2,16 +2,16 @@ import alt from "../alt";
 import regHubUtil from "../utils/RegHubUtil";
 class RepositoryActions {
     recommended() {
+        this.dispatch({});
         regHubUtil.recommended();
-        return {};
     }
     search(query, page = 1) {
+        this.dispatch({ query, page });
         regHubUtil.search(query, page);
-        return { query, page };
     }
     repos() {
+        this.dispatch({});
         regHubUtil.repos();
-        return {};
     }
 }
 export default alt.createActions(RepositoryActions);

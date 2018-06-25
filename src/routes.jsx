@@ -17,15 +17,21 @@ import Loading from "./components/Loading.react";
 import NewContainerSearch from "./components/NewContainerSearch.react";
 import Preferences from "./components/Preferences.react";
 import Setup from "./components/Setup.react";
+
 const Route = Router.Route;
 const DefaultRoute = Router.DefaultRoute;
 const RouteHandler = Router.RouteHandler;
+
 const App = React.createClass({
-    render() {
-        return (<RouteHandler />);
-    },
+	render() {
+		return (
+			<RouteHandler/>
+		);
+	},
 });
-const routes = (<Route name="app" path="/" handler={App}>
+
+const routes = (
+	<Route name="app" path="/" handler={App}>
 		<Route name="account" path="account" handler={Account}>
 			<Route name="signup" path="signup" handler={AccountSignup}/>
 			<Route name="login" path="login" handler={AccountLogin}/>
@@ -47,7 +53,8 @@ const routes = (<Route name="app" path="/" handler={App}>
 		</Route>
 		<DefaultRoute name="loading" handler={Loading}/>
 		<Route name="setup" handler={Setup}/>
-	</Route>);
+	</Route>
+);
+
 export default routes;
 module.exports = routes;
-//# sourceMappingURL=routes.jsx.map
