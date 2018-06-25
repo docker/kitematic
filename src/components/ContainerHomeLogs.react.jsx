@@ -1,6 +1,5 @@
 import $ from 'jquery';
 import React from 'react/addons';
-import Router from 'react-router';
 import containerActions from '../actions/ContainerActions';
 import Convert from 'ansi-to-html';
 import * as fs from 'fs';
@@ -15,7 +14,7 @@ let escape = function (html) {
 };
 
 var FontSelect = React.createClass({
-  
+
   getFontSizes: function(start, end){
     let options = [];
     for(let i = start; i<=end; i++){
@@ -71,7 +70,7 @@ module.exports = React.createClass({
   componentWillUnmount: function () {
     containerActions.active(null);
   },
-  
+
   toggleFollow: function () {
     this.setState((prevState)=>({
       fontSize: prevState.fontsize,

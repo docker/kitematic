@@ -1,16 +1,15 @@
 import React from 'react/addons';
 import Router from 'react-router';
-import Radial from './Radial.react.js';
+import Radial from './Radial.react.jsx';
 import RetinaImage from 'react-retina-image';
-import Header from './Header.react';
+import Header from './Header.react.jsx';
 import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
 import setupStore from '../stores/SetupStore';
 import setupActions from '../actions/SetupActions';
 import {shell} from 'electron';
 
-
-var Setup = React.createClass({
+export default React.createClass({
   mixins: [Router.Navigation],
 
   getInitialState: function () {
@@ -166,7 +165,7 @@ var Setup = React.createClass({
             <div className="contents">
               <RetinaImage src="install-error.png" checkIfRetinaImgExists={false}/>
               <div className="detail">
-               <a className="btn btn-danger small" onClick={this.handleResetSettings}>reset</a> 
+               <a className="btn btn-danger small" onClick={this.handleResetSettings}>reset</a>
               </div>
             </div>
           </div>
@@ -186,5 +185,3 @@ var Setup = React.createClass({
     }
   }
 });
-
-module.exports = Setup;

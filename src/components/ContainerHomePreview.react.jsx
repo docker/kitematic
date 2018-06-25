@@ -1,8 +1,8 @@
 import React from 'react/addons';
 import request from 'request';
 import metrics from '../utils/MetricsUtil';
-import ContainerHomeWebPreview from './ContainerHomeWebPreview.react';
-import ContainerHomeIpPortsPreview from './ContainerHomeIpPortsPreview.react';
+import ContainerHomeWebPreview from './ContainerHomeWebPreview.react.jsx';
+import ContainerHomeIpPortsPreview from './ContainerHomeIpPortsPreview.react.jsx';
 
 var ContainerHomePreview = React.createClass({
   contextTypes: {

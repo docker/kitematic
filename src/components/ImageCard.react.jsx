@@ -9,10 +9,8 @@ import imageActions from '../actions/ImageActions';
 import containerStore from '../stores/ContainerStore';
 import tagStore from '../stores/TagStore';
 import tagActions from '../actions/TagActions';
-import networkActions from '../actions/NetworkActions';
 import networkStore from '../stores/NetworkStore';
 import numeral from 'numeral';
-import classNames from 'classnames';
 
 var ImageCard = React.createClass({
   mixins: [Router.Navigation],

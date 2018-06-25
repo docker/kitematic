@@ -1,14 +1,14 @@
-import * as child_process from 'child_process';
-import * as fs from 'fs';
-import * as path from 'path';
-import * as crypto from 'crypto';
-import * as http from 'http';
-import { remote } from 'electron';
+import * as child_process from "child_process";
+import * as crypto from "crypto";
+import { remote } from "electron";
+import * as fs from "fs";
+import * as http from "http";
+import * as path from "path";
 const dialog = remote.dialog;
 const app = remote.app;
 export default {
     native: null,
-    execFile: function (args, options) {
+    execFile(args, options) {
         return new Promise((resolve, reject) => {
             child_process.execFile(args[0], args.slice(1), options, (error, stdout) => {
                 if (error) {
@@ -20,11 +20,11 @@ export default {
             });
         });
     },
-    exec: function (args, options) {
+    exec(args, options) {
         return new Promise((resolve, reject) => {
             child_process.exec(args, options, (error, stdout) => {
                 if (error) {
-                    reject(new Error('Encountered an error: ' + error));
+                    reject(new Error("Encountered an error: " + error));
                 }
                 else {
                     resolve(stdout);
@@ -32,18 +32,18 @@ export default {
             });
         });
     },
-    isWindows: function () {
-        return process.platform === 'win32';
+    isWindows() {
+        return process.platform === "win32";
     },
-    isLinux: function () {
-        return process.platform === 'linux';
+    isLinux() {
+        return process.platform === "linux";
     },
-    isNative: function () {
-        switch (localStorage.getItem('settings.useVM')) {
-            case 'true':
+    isNative() {
+        switch (localStorage.getItem("settings.useVM")) {
+            case "true":
                 this.native = false;
                 break;
-            case 'false':
+            case "false":
                 this.native = true;
                 break;
             default:
@@ -52,7 +52,7 @@ export default {
         if (this.native === null) {
             if (this.isWindows()) {
                 this.native = http.get({
-                    url: `http:////./pipe/docker_engine/version`
+                    url: `http:////./pipe/docker_engine/version`,
                 }, (response) => {
                     if (response.statusCode !== 200) {
                         return false;
@@ -65,7 +65,7 @@ export default {
             else {
                 try {
                     // Check if file exists
-                    let stats = fs.statSync('/var/run/docker.sock');
+                    let stats = fs.statSync("/var/run/docker.sock");
                     if (stats.isSocket()) {
                         this.native = true;
                     }
@@ -82,57 +82,57 @@ export default {
         }
         return this.native;
     },
-    binsPath: function () {
-        return this.isWindows() ? path.join(this.home(), 'Kitematic-bins') : path.join('/usr/local/bin');
+    binsPath() {
+        return this.isWindows() ? path.join(this.home(), "Kitematic-bins") : path.join("/usr/local/bin");
     },
-    binsEnding: function () {
-        return this.isWindows() ? '.exe' : '';
+    binsEnding() {
+        return this.isWindows() ? ".exe" : "";
     },
-    dockerBinPath: function () {
-        return path.join(this.binsPath(), 'docker' + this.binsEnding());
+    dockerBinPath() {
+        return path.join(this.binsPath(), "docker" + this.binsEnding());
     },
-    dockerMachineBinPath: function () {
-        return path.join(this.binsPath(), 'docker-machine' + this.binsEnding());
+    dockerMachineBinPath() {
+        return path.join(this.binsPath(), "docker-machine" + this.binsEnding());
     },
-    dockerComposeBinPath: function () {
-        return path.join(this.binsPath(), 'docker-compose' + this.binsEnding());
+    dockerComposeBinPath() {
+        return path.join(this.binsPath(), "docker-compose" + this.binsEnding());
     },
-    escapePath: function (str) {
-        return str.replace(/ /g, '\\ ').replace(/\(/g, '\\(').replace(/\)/g, '\\)');
+    escapePath(str) {
+        return str.replace(/ /g, "\\ ").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
     },
-    home: function () {
-        return app.getPath('home');
+    home() {
+        return app.getPath("home");
     },
-    documents: function () {
+    documents() {
         // TODO: fix me for windows 7
-        return 'Documents';
+        return "Documents";
     },
-    CommandOrCtrl: function () {
-        return (this.isWindows() || this.isLinux()) ? 'Ctrl' : 'Command';
+    CommandOrCtrl() {
+        return (this.isWindows() || this.isLinux()) ? "Ctrl" : "Command";
     },
-    removeSensitiveData: function (str) {
-        if (!str || str.length === 0 || typeof str !== 'string') {
+    removeSensitiveData(str) {
+        if (!str || str.length === 0 || typeof str !== "string") {
             return str;
         }
-        return str.replace(/-----BEGIN CERTIFICATE-----.*-----END CERTIFICATE-----/mg, '<redacted>')
-            .replace(/-----BEGIN RSA PRIVATE KEY-----.*-----END RSA PRIVATE KEY-----/mg, '<redacted>')
-            .replace(/\/Users\/[^\/]*\//mg, '/Users/<redacted>/')
-            .replace(/\\Users\\[^\/]*\\/mg, '\\Users\\<redacted>\\');
+        return str.replace(/-----BEGIN CERTIFICATE-----.*-----END CERTIFICATE-----/mg, "<redacted>")
+            .replace(/-----BEGIN RSA PRIVATE KEY-----.*-----END RSA PRIVATE KEY-----/mg, "<redacted>")
+            .replace(/\/Users\/[^\/]*\//mg, "/Users/<redacted>/")
+            .replace(/\\Users\\[^\/]*\\/mg, "\\Users\\<redacted>\\");
     },
-    packagejson: function () {
-        return JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8'));
+    packagejson() {
+        return JSON.parse(fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf8"));
     },
-    settingsjson: function () {
-        var settingsjson = {};
+    settingsjson() {
+        let settingsjson = {};
         try {
-            settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'settings.json'), 'utf8'));
+            settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "settings.json"), "utf8"));
         }
         catch (err) {
             // log errors
         }
         return settingsjson;
     },
-    isOfficialRepo: function (name) {
+    isOfficialRepo(name) {
         if (!name || !name.length) {
             return false;
         }
@@ -140,11 +140,11 @@ export default {
         // underscores.
         // Examples: myrepo, my-docker-repo, my_docker_repo
         // Non-examples: mynamespace/myrepo, my%!repo
-        var repoRegexp = /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/;
+        let repoRegexp = /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/;
         return repoRegexp.test(name);
     },
-    compareVersions: function (v1, v2, options) {
-        var lexicographical = options && options.lexicographical, zeroExtend = options && options.zeroExtend, v1parts = v1.split('.'), v2parts = v2.split('.');
+    compareVersions(v1, v2, options) {
+        let lexicographical = options && options.lexicographical, zeroExtend = options && options.zeroExtend, v1parts = v1.split("."), v2parts = v2.split(".");
         function isValidPart(x) {
             return (lexicographical ? /^\d+[A-Za-z]*$/ : /^\d+$/).test(x);
         }
@@ -153,17 +153,17 @@ export default {
         }
         if (zeroExtend) {
             while (v1parts.length < v2parts.length) {
-                v1parts.push('0');
+                v1parts.push("0");
             }
             while (v2parts.length < v1parts.length) {
-                v2parts.push('0');
+                v2parts.push("0");
             }
         }
         if (!lexicographical) {
             v1parts = v1parts.map(Number);
             v2parts = v2parts.map(Number);
         }
-        for (var i = 0; i < v1parts.length; ++i) {
+        for (let i = 0; i < v1parts.length; ++i) {
             if (v2parts.length === i) {
                 return 1;
             }
@@ -182,32 +182,32 @@ export default {
         }
         return 0;
     },
-    randomId: function () {
-        return crypto.randomBytes(32).toString('hex');
+    randomId() {
+        return crypto.randomBytes(32).toString("hex");
     },
-    windowsToLinuxPath: function (windowsAbsPath) {
-        var fullPath = windowsAbsPath.replace(':', '').split(path.sep).join('/');
-        if (fullPath.charAt(0) !== '/') {
-            fullPath = '/' + fullPath.charAt(0).toLowerCase() + fullPath.substring(1);
+    windowsToLinuxPath(windowsAbsPath) {
+        let fullPath = windowsAbsPath.replace(":", "").split(path.sep).join("/");
+        if (fullPath.charAt(0) !== "/") {
+            fullPath = "/" + fullPath.charAt(0).toLowerCase() + fullPath.substring(1);
         }
         return fullPath;
     },
-    linuxToWindowsPath: function (linuxAbsPath) {
-        return linuxAbsPath.replace('/c', 'C:').split('/').join('\\');
+    linuxToWindowsPath(linuxAbsPath) {
+        return linuxAbsPath.replace("/c", "C:").split("/").join("\\");
     },
-    linuxTerminal: function () {
-        if (fs.existsSync('/usr/bin/x-terminal-emulator')) {
-            return ['/usr/bin/x-terminal-emulator', '-e'];
+    linuxTerminal() {
+        if (fs.existsSync("/usr/bin/x-terminal-emulator")) {
+            return ["/usr/bin/x-terminal-emulator", "-e"];
         }
         else {
             dialog.showMessageBox({
-                type: 'warning',
-                buttons: ['OK'],
-                message: 'The symbolic link /usr/bin/x-terminal-emulator does not exist. Please read the Wiki at https://github.com/docker/kitematic/wiki/Early-Linux-Support for more information.'
+                type: "warning",
+                buttons: ["OK"],
+                message: "The symbolic link /usr/bin/x-terminal-emulator does not exist. Please read the Wiki at https://github.com/docker/kitematic/wiki/Early-Linux-Support for more information.",
             });
             return false;
         }
     },
-    webPorts: ['80', '8000', '8080', '8888', '3000', '5000', '2368', '9200', '8983']
+    webPorts: ["80", "8000", "8080", "8888", "3000", "5000", "2368", "9200", "8983"],
 };
 //# sourceMappingURL=Util.js.map

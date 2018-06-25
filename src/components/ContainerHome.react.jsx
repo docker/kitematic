@@ -1,10 +1,10 @@
 import _ from 'underscore';
 import $ from 'jquery';
 import React from 'react/addons';
-import ContainerProgress from './ContainerProgress.react';
-import ContainerHomePreview from './ContainerHomePreview.react';
-import ContainerHomeLogs from './ContainerHomeLogs.react';
-import ContainerHomeFolders from './ContainerHomeFolders.react';
+import ContainerProgress from './ContainerProgress.react.jsx';
+import ContainerHomePreview from './ContainerHomePreview.react.jsx';
+import ContainerHomeLogs from './ContainerHomeLogs.react.jsx';
+import ContainerHomeFolders from './ContainerHomeFolders.react.jsx';
 import {shell} from 'electron';
 
 var ContainerHome = React.createClass({

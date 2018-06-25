@@ -2,7 +2,7 @@ import _ from 'underscore';
 import React from 'react/addons';
 import Router from 'react-router';
 import RetinaImage from 'react-retina-image';
-import ImageCard from './ImageCard.react';
+import ImageCard from './ImageCard.react.jsx';
 import Promise from 'bluebird';
 import metrics from '../utils/MetricsUtil';
 import classNames from 'classnames';
@@ -13,9 +13,9 @@ import accountActions from '../actions/AccountActions';
 import imageActions from '../actions/ImageActions';
 import imageStore from '../stores/ImageStore';
 
-var _searchPromise = null;
+let _searchPromise = null;
 
-module.exports = React.createClass({
+export default React.createClass({
   mixins: [Router.Navigation, Router.State],
   getInitialState: function () {
     return {
