@@ -35,7 +35,7 @@ app.on("ready", () => {
 		mainWindow.webContents.openDevTools({mode: "detach"});
 	}
 
-	mainWindow.loadURL(normalize("file://" + join(__dirname, "../index.html")));
+	mainWindow.loadURL(normalize(`file://${join(__dirname, "../index.html")}`));
 
 	app.on("activate", () => {
 		if (mainWindow) {
