@@ -1,4 +1,4 @@
-import alt from '../alt';
+import alt from '../renderer/alt';
 import setupUtil from '../utils/SetupUtil';
 
 class SetupActions {

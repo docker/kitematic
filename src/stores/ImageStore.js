@@ -1,4 +1,4 @@
-import alt from '../alt';
+import alt from '../renderer/alt';
 import imageActions from '../actions/ImageActions';
 import imageServerActions from '../actions/ImageServerActions';
 

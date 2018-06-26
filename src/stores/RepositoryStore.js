@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import alt from '../alt';
+import alt from '../renderer/alt';
 import repositoryServerActions from '../actions/RepositoryServerActions';
 import repositoryActions from '../actions/RepositoryActions';
 import accountServerActions from '../actions/AccountServerActions';

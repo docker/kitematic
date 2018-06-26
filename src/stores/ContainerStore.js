@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import alt from '../alt';
+import alt from '../renderer/alt';
 import containerServerActions from '../actions/ContainerServerActions';
 import containerActions from '../actions/ContainerActions';
 

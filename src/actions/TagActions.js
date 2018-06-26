@@ -1,4 +1,4 @@
-import alt from '../alt';
+import alt from '../renderer/alt';
 import regHubUtil from '../utils/RegHubUtil';
 
 class TagActions {
@@ -6,7 +6,7 @@ class TagActions {
     this.dispatch({repo});
     regHubUtil.tags(repo);
   }
-  
+
   localTags (repo, tags) {
     this.dispatch({repo, tags});
   }

@@ -1,4 +1,4 @@
-import alt from '../alt';
+import alt from '../renderer/alt';
 import setupServerActions from '../actions/SetupServerActions';
 import setupActions from '../actions/SetupActions';
 

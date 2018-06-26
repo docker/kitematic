@@ -1,4 +1,4 @@
-import alt from '../alt';
+import alt from '../renderer/alt';
 import tagActions from '../actions/TagActions';
 import tagServerActions from '../actions/TagServerActions';
 import accountServerActions from '../actions/AccountServerActions';

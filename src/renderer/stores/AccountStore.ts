@@ -1,6 +1,6 @@
 import accountActions from "../../actions/AccountActions";
 import accountServerActions from "../../actions/AccountServerActions";
-import alt from "../../alt";
+import alt from "../alt";
 
 class AccountStore {
 	constructor() {
