@@ -9,6 +9,7 @@
 		"no-require-imports": false,
 		"no-shadowed-variable": false,
 		"no-var-requires": false,
+		"max-classes-per-file": false,
 		"max-line-length": false,
 		"object-literal-sort-keys": false,
 		"one-variable-per-declaration": false,

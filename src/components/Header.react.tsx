@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import {remote} from "electron";
+import {Component} from "react";
 import RetinaImage from "react-retina-image";
 import Router from "react-router";
 import React from "react/addons";
@@ -8,30 +9,17 @@ import accountStore from "../stores/AccountStore";
 import metrics from "../utils/MetricsUtil";
 import util from "../utils/Util";
 
-const Menu = remote.Menu;
-const MenuItem = remote.MenuItem;
-
-export default class Header extends React.Component {
+export default class Header extends Component<{}, HeaderState> {
 
 	public mixins = [Router.Navigation];
 
 	public constructor(props) {
 		super(props);
-		(this as any).state = this.getInitialState();
-	}
-
-	public getInitialState() {
-		return {
-			fullscreen: false,
-			updateAvailable: false,
-			username: accountStore.getState().username,
-			verified: accountStore.getState().verified,
-		};
+		(this as any).state = new HeaderState();
 	}
 
 	public componentDidMount() {
 		document.addEventListener("keyup", this.handleDocumentKeyUp, false);
-
 		accountStore.listen(this.update);
 	}
 
@@ -41,7 +29,7 @@ export default class Header extends React.Component {
 	}
 
 	public update() {
-		let accountState = accountStore.getState();
+		const accountState = accountStore.getState();
 		(this as any).setState({
 			username: accountState.username,
 			verified: accountState.verified,
@@ -90,13 +78,12 @@ export default class Header extends React.Component {
 	}
 
 	public handleUserClick(e) {
-		let menu = new Menu();
-
+		const menu = new remote.Menu();
 		if (!(this as any).state.verified) {
-			menu.append(new MenuItem({label: "I've Verified My Email Address", click: this.handleVerifyClick}));
+			menu.append(new remote.MenuItem({label: "I've Verified My Email Address", click: this.handleVerifyClick}));
 		}
 
-		menu.append(new MenuItem({label: "Sign Out", click: this.handleLogoutClick}));
+		menu.append(new remote.MenuItem({label: "Sign Out", click: this.handleLogoutClick}));
 		menu.popup({
 			window: remote.getCurrentWindow(),
 			x: e.currentTarget.offsetLeft,
@@ -130,9 +117,8 @@ export default class Header extends React.Component {
 	}
 
 	public renderWindowButtons() {
-		let buttons;
 		if (util.isWindows()) {
-			buttons = (
+			return (
 				<div className="windows-buttons">
 					<div className="windows-button button-minimize enabled" onClick={this.handleMinimize}>
 						<div className="icon"></div>
@@ -146,7 +132,7 @@ export default class Header extends React.Component {
 				</div>
 			);
 		} else {
-			buttons = (
+			return  (
 				<div className="buttons">
 					<div className="button button-close enabled" onClick={this.handleClose}></div>
 					<div className="button button-minimize enabled" onClick={this.handleMinimize}></div>
@@ -154,11 +140,10 @@ export default class Header extends React.Component {
 				</div>
 			);
 		}
-		return buttons;
 	}
 
 	public renderDashboardHeader() {
-		let headerClasses = classNames({
+		const headerClasses = classNames({
 			"bordered": !(this as any).props.hideLogin,
 			"header": true,
 			"no-drag": true,
@@ -202,7 +187,7 @@ export default class Header extends React.Component {
 	}
 
 	public renderBasicHeader() {
-		let headerClasses = classNames({
+		const headerClasses = classNames({
 			"bordered": !(this as any).props.hideLogin,
 			"header": true,
 			"no-drag": true,
@@ -226,5 +211,17 @@ export default class Header extends React.Component {
 			return this.renderDashboardHeader();
 		}
 	}
+
+}
+
+export class HeaderState {
+
+	public fullscreen = false;
+
+	public updateAvailable = false;
+
+	public username = accountStore.getState().username;
+
+	public verified = accountStore.getState().verified;
 
 }

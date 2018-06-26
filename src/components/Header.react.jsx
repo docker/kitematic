@@ -1,5 +1,6 @@
 import classNames from "classnames";
 import { remote } from "electron";
+import { Component } from "react";
 import RetinaImage from "react-retina-image";
 import Router from "react-router";
 import React from "react/addons";
@@ -7,21 +8,11 @@ import accountActions from "../actions/AccountActions";
 import accountStore from "../stores/AccountStore";
 import metrics from "../utils/MetricsUtil";
 import util from "../utils/Util";
-const Menu = remote.Menu;
-const MenuItem = remote.MenuItem;
-export default class Header extends React.Component {
+export default class Header extends Component {
     constructor(props) {
         super(props);
         this.mixins = [Router.Navigation];
-        this.state = this.getInitialState();
-    }
-    getInitialState() {
-        return {
-            fullscreen: false,
-            updateAvailable: false,
-            username: accountStore.getState().username,
-            verified: accountStore.getState().verified,
-        };
+        this.state = new HeaderState();
     }
     componentDidMount() {
         document.addEventListener("keyup", this.handleDocumentKeyUp, false);
@@ -32,7 +23,7 @@ export default class Header extends React.Component {
         accountStore.unlisten(this.update);
     }
     update() {
-        let accountState = accountStore.getState();
+        const accountState = accountStore.getState();
         this.setState({
             username: accountState.username,
             verified: accountState.verified,
@@ -78,11 +69,11 @@ export default class Header extends React.Component {
         this.update();
     }
     handleUserClick(e) {
-        let menu = new Menu();
+        const menu = new remote.Menu();
         if (!this.state.verified) {
-            menu.append(new MenuItem({ label: "I've Verified My Email Address", click: this.handleVerifyClick }));
+            menu.append(new remote.MenuItem({ label: "I've Verified My Email Address", click: this.handleVerifyClick }));
         }
-        menu.append(new MenuItem({ label: "Sign Out", click: this.handleLogoutClick }));
+        menu.append(new remote.MenuItem({ label: "Sign Out", click: this.handleLogoutClick }));
         menu.popup({
             window: remote.getCurrentWindow(),
             x: e.currentTarget.offsetLeft,
@@ -109,9 +100,8 @@ export default class Header extends React.Component {
 			</div>);
     }
     renderWindowButtons() {
-        let buttons;
         if (util.isWindows()) {
-            buttons = (<div className="windows-buttons">
+            return (<div className="windows-buttons">
 					<div className="windows-button button-minimize enabled" onClick={this.handleMinimize}>
 						<div className="icon"></div>
 					</div>
@@ -122,16 +112,15 @@ export default class Header extends React.Component {
 				</div>);
         }
         else {
-            buttons = (<div className="buttons">
+            return (<div className="buttons">
 					<div className="button button-close enabled" onClick={this.handleClose}></div>
 					<div className="button button-minimize enabled" onClick={this.handleMinimize}></div>
 					<div className="button button-fullscreen enabled" onClick={this.handleFullscreen}></div>
 				</div>);
         }
-        return buttons;
     }
     renderDashboardHeader() {
-        let headerClasses = classNames({
+        const headerClasses = classNames({
             "bordered": !this.props.hideLogin,
             "header": true,
             "no-drag": true,
@@ -170,7 +159,7 @@ export default class Header extends React.Component {
 			</div>);
     }
     renderBasicHeader() {
-        let headerClasses = classNames({
+        const headerClasses = classNames({
             "bordered": !this.props.hideLogin,
             "header": true,
             "no-drag": true,
@@ -191,6 +180,14 @@ export default class Header extends React.Component {
         else {
             return this.renderDashboardHeader();
         }
+    }
+}
+export class HeaderState {
+    constructor() {
+        this.fullscreen = false;
+        this.updateAvailable = false;
+        this.username = accountStore.getState().username;
+        this.verified = accountStore.getState().verified;
     }
 }
 //# sourceMappingURL=Header.react.jsx.map
