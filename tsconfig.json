@@ -19,6 +19,8 @@
 	},
 	"files": [
 		"./src/main/index.ts",
-		"./src/renderer/index.ts"
+		"./src/renderer/index.ts",
+
+		"./src/components/Header.react.tsx"
 	]
 }
