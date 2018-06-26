@@ -1,7 +1,6 @@
 import classNames from "classnames";
 import {remote} from "electron";
 import {Component} from "react";
-import RetinaImage from "react-retina-image";
 import Router from "react-router";
 import React from "react/addons";
 import accountActions from "../../actions/AccountActions";
@@ -111,7 +110,7 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 	public renderLogo() {
 		return (
 			<div className="logo">
-				<RetinaImage src="logo.png"/>
+				<img src="logo.png"/>
 			</div>
 		);
 	}
@@ -160,7 +159,7 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 				{(this as any).state.username}
 							{(this as any).state.verified ? null : "(Unverified)"}
 				</span>
-						<RetinaImage src="userdropdown.png"/>
+						<img src="userdropdown.png"/>
 					</div>
 				</div>
 			);
