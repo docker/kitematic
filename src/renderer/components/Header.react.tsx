@@ -4,9 +4,9 @@ import {Component} from "react";
 import Router from "react-router";
 import React from "react/addons";
 import accountActions from "../../actions/AccountActions";
-import accountStore from "../../stores/AccountStore";
 import metrics from "../../utils/MetricsUtil";
 import util from "../../utils/Util";
+import accountStore from "../stores/AccountStore";
 
 export default class Header extends Component<HeaderProps, HeaderState> {
 
@@ -14,7 +14,7 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 
 	public constructor(props) {
 		super(props);
-		(this as any).state = new HeaderState();
+		this.state = new HeaderState();
 	}
 
 	public componentDidMount() {
@@ -29,7 +29,7 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 
 	public update() {
 		const accountState = accountStore.getState();
-		(this as any).setState({
+		this.setState({
 			username: accountState.username,
 			verified: accountState.verified,
 		});
@@ -38,7 +38,7 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 	public handleDocumentKeyUp(e) {
 		if (e.keyCode === 27 && remote.getCurrentWindow().isFullScreen()) {
 			remote.getCurrentWindow().setFullScreen(false);
-			(this as any).forceUpdate();
+			this.forceUpdate();
 		}
 	}
 
@@ -61,12 +61,12 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 			} else {
 				remote.getCurrentWindow().maximize();
 			}
-			(this as any).setState({
+			this.setState({
 				fullscreen: remote.getCurrentWindow().isMaximized(),
 			});
 		} else {
 			remote.getCurrentWindow().setFullScreen(!remote.getCurrentWindow().isFullScreen());
-			(this as any).setState({
+			this.setState({
 				fullscreen: remote.getCurrentWindow().isFullScreen(),
 			});
 		}
@@ -78,11 +78,14 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 
 	public handleUserClick(e) {
 		const menu = new remote.Menu();
-		if (!(this as any).state.verified) {
+		if (!this.state.verified) {
 			menu.append(new remote.MenuItem({label: "I've Verified My Email Address", click: this.handleVerifyClick}));
 		}
 
-		menu.append(new remote.MenuItem({label: "Sign Out", click: this.handleLogoutClick}));
+		menu.append(new remote.MenuItem({
+			label: "Sign Out",
+			click: this.handleLogoutClick,
+		}));
 		menu.popup({
 			window: remote.getCurrentWindow(),
 			x: e.currentTarget.offsetLeft,
@@ -143,14 +146,14 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 
 	public renderDashboardHeader() {
 		const headerClasses = classNames({
-			"bordered": !(this as any).props.hideLogin,
+			"bordered": !this.props.hideLogin,
 			"header": true,
 			"no-drag": true,
 		});
 		let username;
-		if ((this as any).props.hideLogin) {
+		if (this.props.hideLogin) {
 			username = null;
-		} else if ((this as any).state.username) {
+		} else if (this.state.username) {
 			username = (
 				<div className="login-wrapper">
 					<div className="login no-drag" onClick={this.handleUserClick}>
@@ -187,7 +190,7 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 
 	public renderBasicHeader() {
 		const headerClasses = classNames({
-			"bordered": !(this as any).props.hideLogin,
+			"bordered": !this.props.hideLogin,
 			"header": true,
 			"no-drag": true,
 		});
@@ -204,7 +207,7 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 	}
 
 	public render() {
-		if ((this as any).props.hideLogin) {
+		if (this.props.hideLogin) {
 			return this.renderBasicHeader();
 		} else {
 			return this.renderDashboardHeader();

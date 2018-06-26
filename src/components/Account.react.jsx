@@ -3,7 +3,7 @@ import Router from 'react-router';
 import RetinaImage from 'react-retina-image';
 import Header from '../renderer/components/Header.react.jsx';
 import metrics from '../utils/MetricsUtil';
-import accountStore from '../stores/AccountStore';
+import accountStore from '../renderer/stores/AccountStore';
 import accountActions from '../actions/AccountActions';
 
 module.exports = React.createClass({

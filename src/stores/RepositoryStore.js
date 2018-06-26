@@ -3,7 +3,7 @@ import alt from '../alt';
 import repositoryServerActions from '../actions/RepositoryServerActions';
 import repositoryActions from '../actions/RepositoryActions';
 import accountServerActions from '../actions/AccountServerActions';
-import accountStore from './AccountStore';
+import accountStore from '../renderer/stores/AccountStore';
 
 class RepositoryStore {
   constructor () {

@@ -8,7 +8,7 @@ import metrics from '../utils/MetricsUtil';
 import classNames from 'classnames';
 import repositoryActions from '../actions/RepositoryActions';
 import repositoryStore from '../stores/RepositoryStore';
-import accountStore from '../stores/AccountStore';
+import accountStore from '../renderer/stores/AccountStore';
 import accountActions from '../actions/AccountActions';
 import imageActions from '../actions/ImageActions';
 import imageStore from '../stores/ImageStore';
