@@ -74,7 +74,6 @@
 		"jsxhint": "^0.15.1",
 		"load-grunt-tasks": "^3.2.0",
 		"minimist": "^1.1.1",
-		"node": "^8.11.1",
 		"run-sequence": "^1.0.2",
 		"shell-escape": "^0.2.0",
 		"source-map-support": "^0.3.2",
