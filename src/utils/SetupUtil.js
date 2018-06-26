@@ -12,7 +12,7 @@ import * as fs from "fs";
 import * as path from "path";
 import _ from "underscore";
 import setupServerActions from "../actions/SetupServerActions";
-import router from "../router";
+import router from "../renderer/router";
 import machine from "./DockerMachineUtil";
 import docker from "./DockerUtil";
 import metrics from "./MetricsUtil";

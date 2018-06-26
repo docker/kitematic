@@ -1,5 +1,5 @@
 import {remote, shell} from "electron";
-import router from "./router";
+import router from "./renderer/router";
 import machine from "./utils/DockerMachineUtil";
 import docker from "./utils/DockerUtil";
 import metrics from "./utils/MetricsUtil";

@@ -12,7 +12,7 @@ import Router from "react-router";
 import repositoryActions from "./actions/RepositoryActions";
 import template from "./menutemplate";
 import routes from "./renderer/routes.jsx";
-import routerContainer from "./router";
+import routerContainer from "./renderer/router";
 import machine from "./utils/DockerMachineUtil";
 import docker from "./utils/DockerUtil";
 import hub from "./utils/HubUtil";
