@@ -1,4 +1,4 @@
-import * as React from "react";
+import {Component} from "react";
 import Router from "react-router";
 import About from "../components/About.react.jsx";
 import Account from "../components/Account.react.jsx";
@@ -18,7 +18,7 @@ import Preferences from "../components/Preferences.react.jsx";
 import Setup from "../components/Setup.react.jsx";
 import Loading from "./components/Loading.react.jsx";
 
-export class App extends React.Component {
+export class App extends Component {
 
 	public constructor(props) {
 		super(props);
