@@ -9,7 +9,7 @@ import accountStore from "../stores/AccountStore";
 import metrics from "../utils/MetricsUtil";
 import util from "../utils/Util";
 
-export default class Header extends Component<{}, HeaderState> {
+export default class Header extends Component<HeaderProps, HeaderState> {
 
 	public mixins = [Router.Navigation];
 
@@ -211,6 +211,10 @@ export default class Header extends Component<{}, HeaderState> {
 			return this.renderDashboardHeader();
 		}
 	}
+
+}
+
+export class HeaderProps {
 
 }
 
