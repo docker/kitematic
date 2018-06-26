@@ -216,6 +216,8 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 
 export class HeaderProps {
 
+	public hideLogin: boolean;
+
 }
 
 export class HeaderState {
