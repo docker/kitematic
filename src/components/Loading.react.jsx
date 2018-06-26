@@ -1,5 +1,5 @@
 import React from 'react/addons';
-import Header from './Header.react.jsx';
+import Header from '../renderer/components/Header.react.jsx';
 
 module.exports = React.createClass({
   render: function () {

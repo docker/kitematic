@@ -4,7 +4,7 @@ import React from 'react';
 import Router from 'react-router';
 import containerStore from '../stores/ContainerStore';
 import ContainerList from './ContainerList.react.jsx';
-import Header from './Header.react.jsx';
+import Header from '../renderer/components/Header.react.jsx';
 import metrics from '../utils/MetricsUtil';
 import {shell} from 'electron';
 import machine from '../utils/DockerMachineUtil';

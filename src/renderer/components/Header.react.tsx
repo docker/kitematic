@@ -4,10 +4,10 @@ import {Component} from "react";
 import RetinaImage from "react-retina-image";
 import Router from "react-router";
 import React from "react/addons";
-import accountActions from "../actions/AccountActions";
-import accountStore from "../stores/AccountStore";
-import metrics from "../utils/MetricsUtil";
-import util from "../utils/Util";
+import accountActions from "../../actions/AccountActions";
+import accountStore from "../../stores/AccountStore";
+import metrics from "../../utils/MetricsUtil";
+import util from "../../utils/Util";
 
 export default class Header extends Component<HeaderProps, HeaderState> {
 

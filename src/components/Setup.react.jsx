@@ -2,7 +2,7 @@ import React from 'react/addons';
 import Router from 'react-router';
 import Radial from './Radial.react.jsx';
 import RetinaImage from 'react-retina-image';
-import Header from './Header.react.jsx';
+import Header from '../renderer/components/Header.react.jsx';
 import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
 import setupStore from '../stores/SetupStore';
