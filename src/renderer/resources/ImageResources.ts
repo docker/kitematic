@@ -4,4 +4,6 @@ export class ImageResources {
 
 	public static readonly USER_DROP_DOWN = "userdropdown.png";
 
+	public static readonly VIRTUAL_BOX = "virtualbox.svg";
+
 }

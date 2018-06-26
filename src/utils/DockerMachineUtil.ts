@@ -31,8 +31,8 @@ export default {
 			return false;
 		}
 	},
-	version() {
-		return util.execFile([this.command(), "-v"]).then((stdout: any) => {
+	async version() {
+		return await util.execFile([this.command(), "-v"]).then((stdout: any) => {
 			try {
 				let matchlist = stdout.match(/(\d+\.\d+\.\d+).*/);
 				if (!matchlist || matchlist.length < 2) {
@@ -66,36 +66,36 @@ export default {
 			return false;
 		});
 	},
-	create(machineName = this.name()) {
-		return util.execFile([this.command(), "-D", "create", "-d", "virtualbox", "--virtualbox-memory", "2048", machineName]);
+	async create(machineName = this.name()) {
+		return await util.execFile([this.command(), "-D", "create", "-d", "virtualbox", "--virtualbox-memory", "2048", machineName]);
 	},
-	start(machineName = this.name()) {
-		return util.execFile([this.command(), "-D", "start", machineName]);
+	async start(machineName = this.name()) {
+		return await util.execFile([this.command(), "-D", "start", machineName]);
 	},
-	stop(machineName = this.name()) {
-		return util.execFile([this.command(), "stop", machineName]);
+	async stop(machineName = this.name()) {
+		return await util.execFile([this.command(), "stop", machineName]);
 	},
-	upgrade(machineName = this.name()) {
-		return util.execFile([this.command(), "upgrade", machineName]);
+	async upgrade(machineName = this.name()) {
+		return await util.execFile([this.command(), "upgrade", machineName]);
 	},
-	rm(machineName = this.name()) {
-		return util.execFile([this.command(), "rm", "-f", machineName]);
+	async rm(machineName = this.name()) {
+		return await util.execFile([this.command(), "rm", "-f", machineName]);
 	},
-	ip(machineName = this.name()) {
-		return util.execFile([this.command(), "ip", machineName]).then((stdout: any) => {
+	async ip(machineName = this.name()) {
+		return await util.execFile([this.command(), "ip", machineName]).then((stdout: any) => {
 			return Promise.resolve(stdout.trim().replace("\n", ""));
 		});
 	},
-	url(machineName = this.name()) {
-		return util.execFile([this.command(), "url", machineName]).then((stdout: any) => {
+	async url(machineName = this.name()) {
+		return await util.execFile([this.command(), "url", machineName]).then((stdout: any) => {
 			return Promise.resolve(stdout.trim().replace("\n", ""));
 		});
 	},
-	regenerateCerts(machineName = this.name()) {
-		return util.execFile([this.command(), "tls-regenerate-certs", "-f", machineName]);
+	async regenerateCerts(machineName = this.name()) {
+		return await util.execFile([this.command(), "tls-regenerate-certs", "-f", machineName]);
 	},
-	status(machineName = this.name()) {
-		return new Promise((resolve, reject) => {
+	async status(machineName = this.name()) {
+		return await new Promise((resolve, reject) => {
 			child_process.execFile(this.command(), ["status", machineName], (error, stdout, stderr) => {
 				if (error) {
 					reject(new Error("Encountered an error: " + error));
@@ -105,8 +105,8 @@ export default {
 			});
 		});
 	},
-	disk(machineName = this.name()) {
-		return util.execFile([this.command(), "ssh", machineName, "df"]).then((stdout: any) => {
+	async disk(machineName = this.name()) {
+		return await util.execFile([this.command(), "ssh", machineName, "df"]).then((stdout: any) => {
 			try {
 				let lines = stdout.split("\n");
 				let dataline = _.find(lines, function(line) {
@@ -129,8 +129,8 @@ export default {
 			}
 		});
 	},
-	memory(machineName = this.name()) {
-		return util.execFile([this.command(), "ssh", machineName, "free -m"]).then((stdout: any) => {
+	async memory(machineName = this.name()) {
+		return await util.execFile([this.command(), "ssh", machineName, "free -m"]).then((stdout: any) => {
 			try {
 				let lines = stdout.split("\n");
 				let dataline = _.find(lines, function(line) {
@@ -155,7 +155,7 @@ export default {
 			}
 		});
 	},
-	dockerTerminal(cmd?, machineName = this.name()) {
+	async dockerTerminal(cmd?, machineName = this.name()) {
 		cmd = cmd || process.env.SHELL || "";
 		if (util.isWindows()) {
 			if (util.isNative()) {
@@ -185,8 +185,7 @@ export default {
 			}
 		}
 	},
-	virtualBoxLogs(machineName = this.name()) {
-
+	virtualBoxLogs(machineName = this.name()): string {
 		let logsPath = null;
 		if (process.env.MACHINE_STORAGE_PATH) {
 			logsPath = path.join(process.env.MACHINE_STORAGE_PATH, "machines", machineName, machineName, "Logs", "VBox.log");

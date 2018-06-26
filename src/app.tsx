@@ -60,10 +60,10 @@ setupUtil.setup().then(() => {
 	throw err;
 });
 
-ipcRenderer.on("application:quitting", () => {
+ipcRenderer.on("application:quitting", async () => {
 	docker.detachEvent();
 	if (localStorage.getItem("settings.closeVMOnQuit") === "true") {
-		machine.stop();
+		await machine.stop();
 	}
 });
 

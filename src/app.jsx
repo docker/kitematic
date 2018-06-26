@@ -1,3 +1,11 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import { ipcRenderer, remote } from "electron";
 import * as React from "react";
 import Router from "react-router";
@@ -50,12 +58,12 @@ setupUtil.setup().then(() => {
     });
     throw err;
 });
-ipcRenderer.on("application:quitting", () => {
+ipcRenderer.on("application:quitting", () => __awaiter(this, void 0, void 0, function* () {
     docker.detachEvent();
     if (localStorage.getItem("settings.closeVMOnQuit") === "true") {
-        machine.stop();
+        yield machine.stop();
     }
-});
+}));
 window.onbeforeunload = () => {
     docker.detachEvent();
 };

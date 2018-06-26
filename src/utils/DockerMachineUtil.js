@@ -1,3 +1,11 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import * as child_process from "child_process";
 import * as fs from "fs";
 import * as path from "path";
@@ -31,19 +39,21 @@ export default {
         }
     },
     version() {
-        return util.execFile([this.command(), "-v"]).then((stdout) => {
-            try {
-                let matchlist = stdout.match(/(\d+\.\d+\.\d+).*/);
-                if (!matchlist || matchlist.length < 2) {
-                    return Promise.reject("docker-machine -v output format not recognized.");
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield util.execFile([this.command(), "-v"]).then((stdout) => {
+                try {
+                    let matchlist = stdout.match(/(\d+\.\d+\.\d+).*/);
+                    if (!matchlist || matchlist.length < 2) {
+                        return Promise.reject("docker-machine -v output format not recognized.");
+                    }
+                    return Promise.resolve(matchlist[1]);
                 }
-                return Promise.resolve(matchlist[1]);
-            }
-            catch (err) {
+                catch (err) {
+                    return Promise.resolve(null);
+                }
+            }).catch(() => {
                 return Promise.resolve(null);
-            }
-        }).catch(() => {
-            return Promise.resolve(null);
+            });
         });
     },
     isoversion(machineName = this.name()) {
@@ -69,128 +79,152 @@ export default {
         });
     },
     create(machineName = this.name()) {
-        return util.execFile([this.command(), "-D", "create", "-d", "virtualbox", "--virtualbox-memory", "2048", machineName]);
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield util.execFile([this.command(), "-D", "create", "-d", "virtualbox", "--virtualbox-memory", "2048", machineName]);
+        });
     },
     start(machineName = this.name()) {
-        return util.execFile([this.command(), "-D", "start", machineName]);
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield util.execFile([this.command(), "-D", "start", machineName]);
+        });
     },
     stop(machineName = this.name()) {
-        return util.execFile([this.command(), "stop", machineName]);
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield util.execFile([this.command(), "stop", machineName]);
+        });
     },
     upgrade(machineName = this.name()) {
-        return util.execFile([this.command(), "upgrade", machineName]);
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield util.execFile([this.command(), "upgrade", machineName]);
+        });
     },
     rm(machineName = this.name()) {
-        return util.execFile([this.command(), "rm", "-f", machineName]);
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield util.execFile([this.command(), "rm", "-f", machineName]);
+        });
     },
     ip(machineName = this.name()) {
-        return util.execFile([this.command(), "ip", machineName]).then((stdout) => {
-            return Promise.resolve(stdout.trim().replace("\n", ""));
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield util.execFile([this.command(), "ip", machineName]).then((stdout) => {
+                return Promise.resolve(stdout.trim().replace("\n", ""));
+            });
         });
     },
     url(machineName = this.name()) {
-        return util.execFile([this.command(), "url", machineName]).then((stdout) => {
-            return Promise.resolve(stdout.trim().replace("\n", ""));
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield util.execFile([this.command(), "url", machineName]).then((stdout) => {
+                return Promise.resolve(stdout.trim().replace("\n", ""));
+            });
         });
     },
     regenerateCerts(machineName = this.name()) {
-        return util.execFile([this.command(), "tls-regenerate-certs", "-f", machineName]);
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield util.execFile([this.command(), "tls-regenerate-certs", "-f", machineName]);
+        });
     },
     status(machineName = this.name()) {
-        return new Promise((resolve, reject) => {
-            child_process.execFile(this.command(), ["status", machineName], (error, stdout, stderr) => {
-                if (error) {
-                    reject(new Error("Encountered an error: " + error));
-                }
-                else {
-                    resolve(stdout.trim() + stderr.trim());
-                }
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield new Promise((resolve, reject) => {
+                child_process.execFile(this.command(), ["status", machineName], (error, stdout, stderr) => {
+                    if (error) {
+                        reject(new Error("Encountered an error: " + error));
+                    }
+                    else {
+                        resolve(stdout.trim() + stderr.trim());
+                    }
+                });
             });
         });
     },
     disk(machineName = this.name()) {
-        return util.execFile([this.command(), "ssh", machineName, "df"]).then((stdout) => {
-            try {
-                let lines = stdout.split("\n");
-                let dataline = _.find(lines, function (line) {
-                    return line.indexOf("/dev/sda1") !== -1;
-                });
-                let tokens = dataline.split(" ");
-                tokens = tokens.filter(function (token) {
-                    return token !== "";
-                });
-                let usedGb = parseInt(tokens[2], 10) / 1000000;
-                let totalGb = parseInt(tokens[3], 10) / 1000000;
-                let percent = parseInt(tokens[4].replace("%", ""), 10);
-                return {
-                    used_gb: usedGb.toFixed(2),
-                    total_gb: totalGb.toFixed(2),
-                    percent,
-                };
-            }
-            catch (err) {
-                return Promise.reject(err);
-            }
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield util.execFile([this.command(), "ssh", machineName, "df"]).then((stdout) => {
+                try {
+                    let lines = stdout.split("\n");
+                    let dataline = _.find(lines, function (line) {
+                        return line.indexOf("/dev/sda1") !== -1;
+                    });
+                    let tokens = dataline.split(" ");
+                    tokens = tokens.filter(function (token) {
+                        return token !== "";
+                    });
+                    let usedGb = parseInt(tokens[2], 10) / 1000000;
+                    let totalGb = parseInt(tokens[3], 10) / 1000000;
+                    let percent = parseInt(tokens[4].replace("%", ""), 10);
+                    return {
+                        used_gb: usedGb.toFixed(2),
+                        total_gb: totalGb.toFixed(2),
+                        percent,
+                    };
+                }
+                catch (err) {
+                    return Promise.reject(err);
+                }
+            });
         });
     },
     memory(machineName = this.name()) {
-        return util.execFile([this.command(), "ssh", machineName, "free -m"]).then((stdout) => {
-            try {
-                let lines = stdout.split("\n");
-                let dataline = _.find(lines, function (line) {
-                    return line.indexOf("-/+ buffers") !== -1;
-                });
-                let tokens = dataline.split(" ");
-                tokens = tokens.filter((token) => {
-                    return token !== "";
-                });
-                let usedGb = parseInt(tokens[2], 10) / 1000;
-                let freeGb = parseInt(tokens[3], 10) / 1000;
-                let totalGb = usedGb + freeGb;
-                let percent = Math.round(usedGb / totalGb * 100);
-                return {
-                    used_gb: usedGb.toFixed(2),
-                    total_gb: totalGb.toFixed(2),
-                    free_gb: freeGb.toFixed(2),
-                    percent,
-                };
-            }
-            catch (err) {
-                return Promise.reject(err);
-            }
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield util.execFile([this.command(), "ssh", machineName, "free -m"]).then((stdout) => {
+                try {
+                    let lines = stdout.split("\n");
+                    let dataline = _.find(lines, function (line) {
+                        return line.indexOf("-/+ buffers") !== -1;
+                    });
+                    let tokens = dataline.split(" ");
+                    tokens = tokens.filter((token) => {
+                        return token !== "";
+                    });
+                    let usedGb = parseInt(tokens[2], 10) / 1000;
+                    let freeGb = parseInt(tokens[3], 10) / 1000;
+                    let totalGb = usedGb + freeGb;
+                    let percent = Math.round(usedGb / totalGb * 100);
+                    return {
+                        used_gb: usedGb.toFixed(2),
+                        total_gb: totalGb.toFixed(2),
+                        free_gb: freeGb.toFixed(2),
+                        percent,
+                    };
+                }
+                catch (err) {
+                    return Promise.reject(err);
+                }
+            });
         });
     },
     dockerTerminal(cmd, machineName = this.name()) {
-        cmd = cmd || process.env.SHELL || "";
-        if (util.isWindows()) {
-            if (util.isNative()) {
-                util.exec("start powershell.exe " + cmd);
-            }
-            else {
-                this.url(machineName).then((machineUrl) => {
-                    util.exec("start powershell.exe " + cmd, { env: {
-                            DOCKER_HOST: machineUrl,
-                            DOCKER_CERT_PATH: process.env.DOCKER_CERT_PATH || path.join(util.home(), ".docker", "machine", "machines", machineName),
-                            DOCKER_TLS_VERIFY: 1,
-                        },
+        return __awaiter(this, void 0, void 0, function* () {
+            cmd = cmd || process.env.SHELL || "";
+            if (util.isWindows()) {
+                if (util.isNative()) {
+                    util.exec("start powershell.exe " + cmd);
+                }
+                else {
+                    this.url(machineName).then((machineUrl) => {
+                        util.exec("start powershell.exe " + cmd, { env: {
+                                DOCKER_HOST: machineUrl,
+                                DOCKER_CERT_PATH: process.env.DOCKER_CERT_PATH || path.join(util.home(), ".docker", "machine", "machines", machineName),
+                                DOCKER_TLS_VERIFY: 1,
+                            },
+                        });
                     });
-                });
-            }
-        }
-        else {
-            let terminal = util.isLinux() ? util.linuxTerminal() : [path.join(process.env.RESOURCES_PATH, "terminal")];
-            if (util.isNative()) {
-                terminal.push(cmd);
-                util.execFile(terminal).then(() => { });
+                }
             }
             else {
-                this.url(machineName).then((machineUrl) => {
-                    terminal.push(`DOCKER_HOST=${machineUrl} DOCKER_CERT_PATH=${process.env.DOCKER_CERT_PATH || path.join(util.home(), ".docker/machine/machines/" + machineName)} DOCKER_TLS_VERIFY=1`);
+                let terminal = util.isLinux() ? util.linuxTerminal() : [path.join(process.env.RESOURCES_PATH, "terminal")];
+                if (util.isNative()) {
                     terminal.push(cmd);
                     util.execFile(terminal).then(() => { });
-                });
+                }
+                else {
+                    this.url(machineName).then((machineUrl) => {
+                        terminal.push(`DOCKER_HOST=${machineUrl} DOCKER_CERT_PATH=${process.env.DOCKER_CERT_PATH || path.join(util.home(), ".docker/machine/machines/" + machineName)} DOCKER_TLS_VERIFY=1`);
+                        terminal.push(cmd);
+                        util.execFile(terminal).then(() => { });
+                    });
+                }
             }
-        }
+        });
     },
     virtualBoxLogs(machineName = this.name()) {
         let logsPath = null;
