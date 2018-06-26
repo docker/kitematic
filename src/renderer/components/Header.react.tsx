@@ -6,6 +6,7 @@ import React from "react/addons";
 import accountActions from "../../actions/AccountActions";
 import metrics from "../../utils/MetricsUtil";
 import util from "../../utils/Util";
+import {ImageResources} from "../resources/ImageResources";
 import accountStore from "../stores/AccountStore";
 
 export default class Header extends Component<HeaderProps, HeaderState> {
@@ -113,7 +114,7 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 	public renderLogo() {
 		return (
 			<div className="logo">
-				<img src="logo.png"/>
+				<img src={ImageResources.LOGO} width={40} height={32}/>
 			</div>
 		);
 	}
@@ -162,7 +163,7 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 				{(this as any).state.username}
 							{(this as any).state.verified ? null : "(Unverified)"}
 				</span>
-						<img src="userdropdown.png"/>
+						<img src={ImageResources.USER_DROP_DOWN}/>
 					</div>
 				</div>
 			);
