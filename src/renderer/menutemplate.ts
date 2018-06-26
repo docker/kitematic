@@ -1,15 +1,15 @@
 import {remote, shell} from "electron";
-import router from "./renderer/router";
-import machine from "./utils/DockerMachineUtil";
-import docker from "./utils/DockerUtil";
-import metrics from "./utils/MetricsUtil";
-import util from "./utils/Util";
+import machine from "../utils/DockerMachineUtil";
+import docker from "../utils/DockerUtil";
+import metrics from "../utils/MetricsUtil";
+import util from "../utils/Util";
+import router from "./router";
 
 const app = remote.app;
 const window = remote.getCurrentWindow();
 
 // main.js
-const MenuTemplate = function() {
+export default function() {
 	return [
 		{
 			label: "Kitematic",
@@ -205,7 +205,4 @@ const MenuTemplate = function() {
 			],
 		},
 	];
-};
-
-export default MenuTemplate;
-module.exports = MenuTemplate;
+}

@@ -2,7 +2,7 @@ import {ipcRenderer, remote} from "electron";
 import * as React from "react";
 import Router from "react-router";
 import repositoryActions from "./actions/RepositoryActions";
-import template from "./menutemplate";
+import template from "./renderer/menutemplate";
 import routerContainer from "./renderer/router";
 import routes from "./renderer/routes.jsx";
 import machine from "./utils/DockerMachineUtil";
