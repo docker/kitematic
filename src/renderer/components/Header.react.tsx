@@ -2,7 +2,6 @@ import classNames from "classnames";
 import {remote} from "electron";
 import {Component} from "react";
 import Router from "react-router";
-import React from "react/addons";
 import accountActions from "../../actions/AccountActions";
 import metrics from "../../utils/MetricsUtil";
 import util from "../../utils/Util";
@@ -16,6 +15,7 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 	public constructor(props) {
 		super(props);
 		this.state = new HeaderState();
+		this.update = this.update.bind(this);
 	}
 
 	public componentDidMount() {
@@ -94,7 +94,7 @@ export default class Header extends Component<HeaderProps, HeaderState> {
 		});
 	}
 
-	public handleLoginClick() {
+	public handleLoginClick(event) {
 		(this as any).transitionTo("login");
 		metrics.track("Opened Log In Screen");
 	}
