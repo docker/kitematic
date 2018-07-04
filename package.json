@@ -23,7 +23,7 @@
     "start": "grunt",
     "start-dev": "npm run build && NODE_ENV=development grunt",
     "test": "jest -c jest-unit.json",
-    "tslint": "tslint --fix --project ./tsconfig.json"
+    "tslint": "tslint -c tslint.json -p tsconfig.json --project . -t stylish || echo"
   },
   "electron-version": "1.8.2",
   "dependencies": {
