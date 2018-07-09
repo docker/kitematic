@@ -39,7 +39,7 @@
 	"devDependencies": {
 		"@types/alt": "0.16.35",
 		"@types/bluebird": "^3.5.20",
-		"@types/dockerode": "^2.5.4",
+		"@types/dockerode": "^2.5.5",
 		"@types/jquery": "^3.3.4",
 		"@types/node": "^10.3.5",
 		"@types/react": "^16.4.2",
