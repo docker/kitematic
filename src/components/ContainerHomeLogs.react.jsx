@@ -36,7 +36,7 @@ var FontSelect = React.createClass({
 let convert = new Convert();
 let prevBottom = 0;
 
-module.exports = React.createClass({
+export default React.createClass({
   getInitialState: function(){
     return {
       fontSize: 10,

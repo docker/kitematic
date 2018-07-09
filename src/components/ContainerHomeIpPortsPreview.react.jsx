@@ -1,7 +1,7 @@
 import _ from 'underscore';
 import React from 'react/addons';
 
-var ContainerHomeIpPortsPreview = React.createClass({
+export default React.createClass({
   handleClickPortSettings: function () {
     this.props.handleClickPortSettings();
   },
@@ -44,5 +44,3 @@ var ContainerHomeIpPortsPreview = React.createClass({
     );
   }
 });
-
-module.exports = ContainerHomeIpPortsPreview;

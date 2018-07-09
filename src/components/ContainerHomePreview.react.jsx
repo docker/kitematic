@@ -4,7 +4,7 @@ import metrics from '../utils/MetricsUtil';
 import ContainerHomeWebPreview from './ContainerHomeWebPreview.react.jsx';
 import ContainerHomeIpPortsPreview from './ContainerHomeIpPortsPreview.react.jsx';
 
-var ContainerHomePreview = React.createClass({
+export default React.createClass({
   contextTypes: {
     router: React.PropTypes.func
   },
@@ -46,5 +46,3 @@ var ContainerHomePreview = React.createClass({
     return preview;
   }
 });
-
-module.exports = ContainerHomePreview;

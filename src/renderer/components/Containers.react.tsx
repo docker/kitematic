@@ -3,10 +3,10 @@ import * as $ from "jquery";
 import Router from "react-router";
 import React from "react/addons";
 import _ from "underscore";
-import ContainerList from "../../components/ContainerList.react.jsx";
 import machine from "../../utils/DockerMachineUtil";
 import metrics from "../../utils/MetricsUtil";
 import containerStore from "../stores/ContainerStore";
+import ContainerList from "./ContainerList.react.jsx";
 import Header from "./Header.react.jsx";
 
 export default React.createClass({

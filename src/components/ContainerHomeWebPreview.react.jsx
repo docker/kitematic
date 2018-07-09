@@ -2,7 +2,7 @@ import React from 'react/addons';
 import metrics from '../utils/MetricsUtil';
 import {shell} from 'electron';
 
-var ContainerHomeWebPreview = React.createClass({
+export default React.createClass({
   handleClickPreview: function () {
     metrics.track('Opened In Browser', {
       from: 'preview'
@@ -35,5 +35,3 @@ var ContainerHomeWebPreview = React.createClass({
     );
   }
 });
-
-module.exports = ContainerHomeWebPreview;

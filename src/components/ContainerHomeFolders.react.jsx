@@ -6,12 +6,11 @@ import {shell} from 'electron';
 import util from '../utils/Util';
 import metrics from '../utils/MetricsUtil';
 import containerActions from '../actions/ContainerActions';
-import electron from 'electron';
-const remote = electron.remote;
-const dialog = remote.dialog;
+import {remote} from 'electron';
 import mkdirp from 'mkdirp';
+const dialog = remote.dialog;
 
-var ContainerHomeFolder = React.createClass({
+export default React.createClass({
   contextTypes: {
     router: React.PropTypes.func
   },
@@ -96,5 +95,3 @@ var ContainerHomeFolder = React.createClass({
     );
   }
 });
-
-module.exports = ContainerHomeFolder;
