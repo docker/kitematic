@@ -1,13 +1,12 @@
 import React from 'react/addons';
 import Router from 'react-router';
-import electron from 'electron';
-const remote = electron.remote;
-const dialog = remote.dialog;
+import {remote} from 'electron';
 import metrics from '../utils/MetricsUtil';
 import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import containerActions from '../actions/ContainerActions';
+const dialog = remote.dialog;
 
-var ContainerListItem = React.createClass({
+export default React.createClass({
   toggleFavoriteContainer: function (e) {
     e.preventDefault();
     e.stopPropagation();
@@ -112,5 +111,3 @@ var ContainerListItem = React.createClass({
     );
   }
 });
-
-module.exports = ContainerListItem;
