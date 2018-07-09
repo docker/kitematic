@@ -15,8 +15,13 @@ export default React.createClass({
   },
 
  render: function () {
-    var frame = React.createElement('webview', {className: 'frame', id: 'webview', src: 'http://' + this.props.ports[this.props.defaultPort].url, autosize: 'on'});
-    return (
+	 const frame = React.createElement('webview', {
+		 className: 'frame',
+		 id: 'webview',
+		 src: 'http://' + this.props.ports[this.props.defaultPort].url,
+		 autosize: 'on'
+	 });
+	 return (
       <div className="web-preview wrapper">
         <div className="widget">
           <div className="top-bar">
