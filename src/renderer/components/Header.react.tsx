@@ -102,7 +102,7 @@ export default React.createClass({
 	renderLogo() {
 		return (
 			<div className="logo">
-				<img src="logo.svg"/>
+				<img width="40" height="32" src="logo.svg"/>
 			</div>
 		);
 	},
