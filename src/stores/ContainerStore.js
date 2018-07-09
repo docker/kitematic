@@ -1,220 +1,178 @@
-import _ from 'underscore';
-import alt from '../renderer/alt';
-import containerServerActions from '../actions/ContainerServerActions';
-import containerActions from '../actions/ContainerActions';
-
+import _ from "underscore";
+import containerActions from "../actions/ContainerActions";
+import containerServerActions from "../actions/ContainerServerActions";
+import alt from "../renderer/alt";
 let MAX_LOG_SIZE = 3000;
-
 class ContainerStore {
-  constructor () {
-    this.bindActions(containerActions);
-    this.bindActions(containerServerActions);
-    this.containers = {};
-
-    // Pending container to create
-    this.pending = null;
-  }
-
-  error ({name, error}) {
-    let containers = this.containers;
-    if (containers[name]) {
-      containers[name].Error = error;
+    static generateName(repo) {
+        const base = _.last(repo.split("/"));
+        const names = _.keys(this.getState().containers);
+        let count = 1;
+        let name = base;
+        while (true) {
+            if (names.indexOf(name) === -1) {
+                return name;
+            }
+            else {
+                count++;
+                name = base + "-" + count;
+            }
+        }
     }
-    this.setState({containers});
-  }
-
-  start ({name}) {
-    let containers = this.containers;
-    if (containers[name]) {
-      containers[name].State.Starting = true;
-      this.setState({containers});
+    constructor() {
+        this.bindActions(containerActions);
+        this.bindActions(containerServerActions);
+        this.containers = {};
+        // Pending container to create
+        this.pending = null;
     }
-  }
-
-  started ({name}) {
-    let containers = this.containers;
-    if (containers[name]) {
-      containers[name].State.Starting = false;
-      containers[name].State.Updating = false;
-      this.setState({containers});
+    error({ name, error }) {
+        let containers = this.containers;
+        if (containers[name]) {
+            containers[name].Error = error;
+        }
+        this.setState({ containers });
     }
-  }
-
-  stopped ({id}) {
-    let containers = this.containers;
-    let container = _.find(_.values(containers), c => c.Id === id || c.Name === id);
-
-    if (containers[container.Name]) {
-      containers[container.Name].State.Stopping = false;
-      this.setState({containers});
+    start({ name }) {
+        let containers = this.containers;
+        if (containers[name]) {
+            containers[name].State.Starting = true;
+            this.setState({ containers });
+        }
     }
-  }
-
-  kill ({id}) {
-    let containers = this.containers;
-    let container = _.find(_.values(containers), c => c.Id === id || c.Name === id);
-
-    if (containers[container.Name]) {
-      containers[container.Name].State.Stopping = true;
-      this.setState({containers});
+    started({ name }) {
+        let containers = this.containers;
+        if (containers[name]) {
+            containers[name].State.Starting = false;
+            containers[name].State.Updating = false;
+            this.setState({ containers });
+        }
     }
-  }
-
-  rename ({name, newName}) {
-    let containers = this.containers;
-    let data = containers[name];
-    data.Name = newName;
-
-    if (data.State) {
-      data.State.Updating = true;
+    stopped({ id }) {
+        let containers = this.containers;
+        let container = _.find(_.values(containers), (c) => c.Id === id || c.Name === id);
+        if (containers[container.Name]) {
+            containers[container.Name].State.Stopping = false;
+            this.setState({ containers });
+        }
     }
-
-    containers[newName] = data;
-    delete containers[name];
-    this.setState({containers});
-  }
-
-  added ({container}) {
-    let containers = this.containers;
-    containers[container.Name] = container;
-    this.setState({containers});
-  }
-
-  update ({name, container}) {
-    let containers = this.containers;
-    if (containers[name] && containers[name].State && containers[name].State.Updating) {
-      return;
+    kill({ id }) {
+        let containers = this.containers;
+        let container = _.find(_.values(containers), (c) => c.Id === id || c.Name === id);
+        if (containers[container.Name]) {
+            containers[container.Name].State.Stopping = true;
+            this.setState({ containers });
+        }
     }
-
-    if (containers[name].State.Stopping) {
-      return;
+    rename({ name, newName }) {
+        let containers = this.containers;
+        let data = containers[name];
+        data.Name = newName;
+        if (data.State) {
+            data.State.Updating = true;
+        }
+        containers[newName] = data;
+        delete containers[name];
+        this.setState({ containers });
     }
-
-    _.extend(containers[name], container);
-
-    if (containers[name].State) {
-      containers[name].State.Updating = true;
+    added({ container }) {
+        let containers = this.containers;
+        containers[container.Name] = container;
+        this.setState({ containers });
     }
-
-    this.setState({containers});
-  }
-
-  updated ({container}) {
-    if (!container || !container.Name) {
-      return;
+    update({ name, container }) {
+        let containers = this.containers;
+        if (containers[name] && containers[name].State && containers[name].State.Updating) {
+            return;
+        }
+        if (containers[name].State.Stopping) {
+            return;
+        }
+        _.extend(containers[name], container);
+        if (containers[name].State) {
+            containers[name].State.Updating = true;
+        }
+        this.setState({ containers });
     }
-
-    let containers = this.containers;
-    if (containers[container.Name] && containers[container.Name].State.Updating) {
-      return;
+    updated({ container }) {
+        if (!container || !container.Name) {
+            return;
+        }
+        let containers = this.containers;
+        if (containers[container.Name] && containers[container.Name].State.Updating) {
+            return;
+        }
+        if (containers[container.Name] && containers[container.Name].Logs) {
+            container.Logs = containers[container.Name].Logs;
+        }
+        containers[container.Name] = container;
+        this.setState({ containers });
     }
-
-    if (containers[container.Name] && containers[container.Name].Logs) {
-      container.Logs = containers[container.Name].Logs;
+    allUpdated({ containers }) {
+        this.setState({ containers });
     }
-
-    containers[container.Name] = container;
-    this.setState({containers});
-  }
-
-  allUpdated ({containers}) {
-    this.setState({containers});
-  }
-
-  // Receives the name of the container and columns of progression
-  // A column represents progression for one or more layers
-  progress ({name, progress}) {
-    let containers = this.containers;
-
-    if (containers[name]) {
-      containers[name].Progress = progress;
+    // Receives the name of the container and columns of progression
+    // A column represents progression for one or more layers
+    progress({ name, progress }) {
+        let containers = this.containers;
+        if (containers[name]) {
+            containers[name].Progress = progress;
+        }
+        this.setState({ containers });
     }
-
-    this.setState({containers});
-  }
-
-  destroyed ({id}) {
-    let containers = this.containers;
-    let container = _.find(_.values(containers), c => c.Id === id || c.Name === id);
-
-    if (container && container.State && container.State.Updating) {
-      return;
+    destroyed({ id }) {
+        let containers = this.containers;
+        let container = _.find(_.values(containers), (c) => c.Id === id || c.Name === id);
+        if (container && container.State && container.State.Updating) {
+            return;
+        }
+        if (container) {
+            delete containers[container.Name];
+            this.setState({ containers });
+        }
     }
-
-    if (container) {
-      delete containers[container.Name];
-      this.setState({containers});
+    waiting({ name, waiting }) {
+        let containers = this.containers;
+        if (containers[name]) {
+            containers[name].State.Waiting = waiting;
+        }
+        this.setState({ containers });
     }
-  }
-
-  waiting ({name, waiting}) {
-    let containers = this.containers;
-    if (containers[name]) {
-      containers[name].State.Waiting = waiting;
+    pending({ repo, tag }) {
+        let pending = { repo, tag };
+        this.setState({ pending });
     }
-    this.setState({containers});
-  }
-
-  pending ({repo, tag}) {
-    let pending = {repo, tag};
-    this.setState({pending});
-  }
-
-  clearPending () {
-    this.setState({pending: null});
-  }
-
-  log ({name, entry}) {
-    let container = this.containers[name];
-    if (!container) {
-      return;
+    clearPending() {
+        this.setState({ pending: null });
     }
-
-    if (!container.Logs) {
-      container.Logs = [];
+    log({ name, entry }) {
+        let container = this.containers[name];
+        if (!container) {
+            return;
+        }
+        if (!container.Logs) {
+            container.Logs = [];
+        }
+        container.Logs.push.apply(container.Logs, entry.split("\n").filter((e) => e.length));
+        container.Logs = container.Logs.slice(container.Logs.length - MAX_LOG_SIZE, MAX_LOG_SIZE);
+        this.emitChange();
     }
-
-    container.Logs.push.apply(container.Logs, entry.split('\n').filter(e => e.length));
-    container.Logs = container.Logs.slice(container.Logs.length - MAX_LOG_SIZE, MAX_LOG_SIZE);
-    this.emitChange();
-  }
-
-  logs ({name, logs}) {
-    let container = this.containers[name];
-
-    if (!container) {
-      return;
+    logs({ name, logs }) {
+        let container = this.containers[name];
+        if (!container) {
+            return;
+        }
+        container.Logs = logs.split("\n");
+        container.Logs = container.Logs.slice(container.Logs.length - MAX_LOG_SIZE, MAX_LOG_SIZE);
+        this.emitChange();
     }
-
-    container.Logs = logs.split('\n');
-    container.Logs = container.Logs.slice(container.Logs.length - MAX_LOG_SIZE, MAX_LOG_SIZE);
-    this.emitChange();
-  }
-
-  toggleFavorite ({name}) {
-    let containers = this.containers;
-
-    if (containers[name]) {
-      containers[name].Favorite = !containers[name].Favorite;
+    toggleFavorite({ name }) {
+        let containers = this.containers;
+        if (containers[name]) {
+            containers[name].Favorite = !containers[name].Favorite;
+        }
+        this.setState({ containers });
     }
-
-    this.setState({containers});
-  }
-
-  static generateName (repo) {
-    const base = _.last(repo.split('/'));
-    const names = _.keys(this.getState().containers);
-    var count = 1;
-    var name = base;
-    while (true) {
-      if (names.indexOf(name) === -1) {
-        return name;
-      } else {
-        count++;
-        name = base + '-' + count;
-      }
-    }
-  }
 }
-
 export default alt.createStore(ContainerStore);
+//# sourceMappingURL=ContainerStore.js.map

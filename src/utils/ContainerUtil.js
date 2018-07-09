@@ -1,5 +1,5 @@
 import _ from 'underscore';
-import docker from '../utils/DockerUtil';
+import docker from './DockerUtil';
 
 export default {
   env: function (container) {
