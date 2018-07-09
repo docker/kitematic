@@ -75,6 +75,10 @@ export default React.createClass({
 		this.setState({password:event.target.value});
 	},
 
+	onSubscribeChange:function(event){
+		this.setState({subscribe:event.target.checked});
+	},
+
 	render: function () {
 		let loading = this.props.loading ? <div className="spinner la-ball-clip-rotate la-dark"><div></div></div> : null;
 		return (
@@ -87,7 +91,7 @@ export default React.createClass({
 				<p className="error-message">{this.state.errors.password}</p>
 				<div className="checkbox">
 					<label>
-						<input type="checkbox" disabled={this.props.loading} checkedLink={this.linkState('subscribe')}/> Subscribe to the Docker newsletter.
+						<input type="checkbox" disabled={this.props.loading} value={this.state.subscribe} onChange={this.onSubscribeChange}/> Subscribe to the Docker newsletter.
 					</label>
 				</div>
 				<p className="error-message">{this.state.errors.detail}</p>
