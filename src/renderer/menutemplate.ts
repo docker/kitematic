@@ -1,8 +1,8 @@
 import {remote, shell} from "electron";
-import docker from "../utils/DockerUtil";
 import util from "../utils/Util";
 import router from "./router";
 import machine from "./utils/DockerMachineUtil";
+import docker from "./utils/DockerUtil";
 import metrics from "./utils/MetricsUtil";
 
 const app = remote.app;

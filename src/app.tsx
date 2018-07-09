@@ -8,7 +8,7 @@ import routes from "./renderer/routes.jsx";
 import machine from "./renderer/utils/DockerMachineUtil";
 import metrics from "./renderer/utils/MetricsUtil";
 import setupUtil from "./renderer/utils/SetupUtil";
-import docker from "./utils/DockerUtil";
+import docker from "./renderer/utils/DockerUtil";
 import hub from "./utils/HubUtil";
 import hubUtil from "./utils/HubUtil";
 import webUtil from "./utils/WebUtil";

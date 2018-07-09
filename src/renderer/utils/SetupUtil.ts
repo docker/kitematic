@@ -3,12 +3,12 @@ import bugsnag from "bugsnag-js";
 import * as fs from "fs";
 import * as path from "path";
 import _ from "underscore";
-import docker from "../../utils/DockerUtil";
 import util from "../../utils/Util";
 import virtualBox from "../../utils/VirtualBoxUtil";
 import setupServerActions from "../actions/SetupServerActions";
 import router from "../router";
 import machine from "./DockerMachineUtil";
+import docker from "./DockerUtil";
 import metrics from "./MetricsUtil";
 
 // Docker Machine exits with 3 to differentiate pre-create check failures (e.g.

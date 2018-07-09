@@ -1,5 +1,5 @@
-import dockerUtil from "../../utils/DockerUtil";
 import alt from "../alt";
+import dockerUtil from "../utils/DockerUtil";
 
 class ContainerActions {
 
