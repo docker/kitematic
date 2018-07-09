@@ -1,7 +1,7 @@
 import Router from "react-router";
 import React from "react/addons";
-import utils from "../../utils/Util";
 import metrics from "../utils/MetricsUtil";
+import utils from "../utils/Util";
 
 let packages;
 

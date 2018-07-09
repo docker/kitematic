@@ -116,12 +116,12 @@ export default {
 		.replace(/\\Users\\[^\/]*\\/mg, "\\Users\\<redacted>\\");
   },
   packagejson() {
-	return JSON.parse(fs.readFileSync(path.join(__dirname, "..", "package.json"), "utf8"));
+	return JSON.parse(fs.readFileSync(path.join(__dirname, "../../", "package.json"), "utf8"));
   },
   settingsjson() {
 	let settingsjson = {};
 	try {
-		settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, "..", "settings.json"), "utf8"));
+		settingsjson = JSON.parse(fs.readFileSync(path.join(__dirname, "../../", "settings.json"), "utf8"));
 	} catch (err) {
 		// log errors
 	}

@@ -1,10 +1,10 @@
 import { clipboard, remote } from "electron";
 import React from "react/addons";
 import _ from "underscore";
-import util from "../../utils/Util";
 import containerActions from "../actions/ContainerActions";
 import ContainerUtil from "../utils/ContainerUtil";
 import metrics from "../utils/MetricsUtil";
+import util from "../utils/Util";
 const dialog = remote.dialog;
 
 export default React.createClass({

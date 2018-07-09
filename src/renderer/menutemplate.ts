@@ -1,9 +1,9 @@
 import {remote, shell} from "electron";
-import util from "../utils/Util";
 import router from "./router";
 import machine from "./utils/DockerMachineUtil";
 import docker from "./utils/DockerUtil";
 import metrics from "./utils/MetricsUtil";
+import util from "./utils/Util";
 
 const app = remote.app;
 const window = remote.getCurrentWindow();

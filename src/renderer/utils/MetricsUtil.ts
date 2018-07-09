@@ -5,7 +5,7 @@ import assign from "object-assign";
 import * as os from "os";
 import osxRelease from "osx-release";
 import * as path from "path";
-import util from "../../utils/Util";
+import util from "./Util";
 let settings;
 
 try {

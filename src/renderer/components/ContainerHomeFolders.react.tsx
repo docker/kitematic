@@ -4,9 +4,9 @@ import mkdirp from "mkdirp";
 import * as path from "path";
 import React from "react/addons";
 import _ from "underscore";
-import util from "../../utils/Util";
 import containerActions from "../actions/ContainerActions";
 import metrics from "../utils/MetricsUtil";
+import util from "../utils/Util";
 const dialog = remote.dialog;
 
 export default React.createClass({

@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import util from "../../utils/Util";
+import util from "./Util";
 
 export default {
   command() {

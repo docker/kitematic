@@ -6,13 +6,13 @@ import JSONStream from "JSONStream";
 import * as path from "path";
 import rimraf from "rimraf";
 import _ from "underscore";
-import util from "../../utils/Util";
 import containerServerActions from "../actions/ContainerServerActions";
 import imageServerActions from "../actions/ImageServerActions";
 import networkActions from "../actions/NetworkActions";
 import networkStore from "../stores/NetworkStore";
 import hubUtil from "./HubUtil";
 import metrics from "./MetricsUtil";
+import util from "./Util";
 const Docker = require("dockerode");
 
 export default {
