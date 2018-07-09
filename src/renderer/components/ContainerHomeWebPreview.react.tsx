@@ -1,6 +1,6 @@
 import {shell} from "electron";
 import React from "react/addons";
-import metrics from "../utils/MetricsUtil";
+import metrics from "../../utils/MetricsUtil";
 
 export default React.createClass({
   handleClickPreview() {
