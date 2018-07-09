@@ -2,7 +2,7 @@ import _ from 'underscore';
 import React from 'react/addons';
 import Router from 'react-router';
 import validator from 'validator';
-import accountActions from '../actions/AccountActions';
+import accountActions from '../renderer/actions/AccountActions';
 import metrics from '../utils/MetricsUtil';
 
 export default React.createClass({
