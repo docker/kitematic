@@ -1,80 +1,80 @@
-import _ from 'underscore';
-import React from 'react/addons';
-import Router from 'react-router';
-import validator from 'validator';
-import accountActions from '../renderer/actions/AccountActions';
-import metrics from '../renderer/utils/MetricsUtil';
-import {shell} from 'electron';
+import {shell} from "electron";
+import Router from "react-router";
+import React from "react/addons";
+import _ from "underscore";
+import validator from "validator";
+import accountActions from "../actions/AccountActions";
+import metrics from "../utils/MetricsUtil";
 
 export default React.createClass({
 	mixins: [Router.Navigation, React.addons.LinkedStateMixin],
 
-	getInitialState: function () {
+	getInitialState() {
 		return {
-			username: '',
-			password: '',
-			errors: {}
+			username: "",
+			password: "",
+			errors: {},
 		};
 	},
 
-	componentDidMount: function () {
+	componentDidMount() {
 		React.findDOMNode(this.refs.usernameInput).focus();
 	},
 
-	componentWillReceiveProps: function (nextProps) {
+	componentWillReceiveProps(nextProps) {
 		this.setState({errors: nextProps.errors});
 	},
 
-	validate: function () {
-		let errors = {};
+	validate() {
+		let errors = {} as any;
 
 		if (validator.isEmail(this.state.username)) {
-			errors.username = 'Must be a valid username (not an email)';
+			errors.username = "Must be a valid username (not an email)";
 		} else if (!validator.isLowercase(this.state.username) || !validator.isAlphanumeric(this.state.username) || !validator.isLength(this.state.username, 4, 30)) {
-			errors.username = 'Must be 4-30 lower case letters or numbers';
+			errors.username = "Must be 4-30 lower case letters or numbers";
 		}
 
 		if (!validator.isLength(this.state.password, 5)) {
-			errors.password = 'Must be at least 5 characters long';
+			errors.password = "Must be at least 5 characters long";
 		}
 
 		return errors;
 	},
 
-	handleBlur: function () {
+	handleBlur() {
 		this.setState({errors: _.omit(this.validate(), (val, key) => !this.state[key].length)});
 	},
 
-	handleLogin: function () {
+	handleLogin() {
 		let errors = this.validate();
 		this.setState({errors});
 
 		if (_.isEmpty(errors)) {
 			accountActions.login(this.state.username, this.state.password);
-			metrics.track('Clicked Log In');
+			metrics.track("Clicked Log In");
 		}
 	},
 
-	handleClickSignup: function () {
+	handleClickSignup() {
 		if (!this.props.loading) {
-			this.replaceWith('signup');
-			metrics.track('Switched to Sign Up');
+			this.replaceWith("signup");
+			metrics.track("Switched to Sign Up");
 		}
 	},
 
-	handleClickForgotPassword: function () {
-		shell.openExternal('https://hub.docker.com/reset-password/');
+	handleClickForgotPassword() {
+		shell.openExternal("https://hub.docker.com/reset-password/");
 	},
 
-	onUsernameChange:function(event){
-		this.setState({username:event.target.value});
+	onUsernameChange(event) {
+		this.setState({username: event.target.value});
 	},
 
-	onPasswordChange:function(event){
-		this.setState({password:event.target.value});
+	onPasswordChange(event) {
+		this.setState({password: event.target.value});
 	},
 
-	render: function () {
+	render() {
 		let loading = this.props.loading ? <div className="spinner la-ball-clip-rotate la-dark"><div></div></div> : null;
 		return (
 			<form className="form-connect">
@@ -92,5 +92,5 @@ export default React.createClass({
 				<div className="extra">Don&#39;t have an account yet? <a onClick={this.handleClickSignup}>Sign Up</a></div>
 			</form>
 		);
-	}
+	},
 });
