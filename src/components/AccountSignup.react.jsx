@@ -96,7 +96,7 @@ export default React.createClass({
 					<button className="btn btn-action" disabled={this.props.loading} type="submit">Sign Up</button>
 				</div>
 				<br/>
-				<div className="extra">Already have an account? <a disabled={this.state.loading} onClick={this.handleClickLogin}>Log In</a></div>
+				<div className="extra">Already have an account? <a onClick={this.handleClickLogin}>Log In</a></div>
 			</form>
 		);
 	}
