@@ -1,7 +1,6 @@
 import {shell} from "electron";
 import * as $ from "jquery";
 import numeral from "numeral";
-import RetinaImage from "react-retina-image";
 import Router from "react-router";
 import React from "react/addons";
 import containerActions from "../actions/ContainerActions";
@@ -172,7 +171,7 @@ export default React.createClass({
 		}
 		let tags;
 		if (this.state.loading) {
-			tags = <RetinaImage className="items-loading" src="loading.png"/>;
+			tags = <img className="items-loading" src="loading.png"/>;
 		} else if (this.state.tags.length === 0) {
 			tags = <div className="no-items">No Tags</div>;
 		} else {
@@ -321,7 +320,7 @@ export default React.createClass({
 					</div>
 				</div>
 				<div className="logo" style={logoStyle}>
-					<RetinaImage src={imgsrc}/>
+					<img src={imgsrc}/>
 				</div>
 				<div className="card">
 					<div className="info">

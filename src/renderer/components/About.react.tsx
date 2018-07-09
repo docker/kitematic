@@ -1,4 +1,3 @@
-import RetinaImage from "react-retina-image";
 import Router from "react-router";
 import React from "react/addons";
 import utils from "../../utils/Util";
@@ -30,7 +29,7 @@ export default React.createClass({
 					<a onClick={this.handleGoBackClick}>Go Back</a>
 					<div className="items">
 						<div className="item">
-							<RetinaImage src="cartoon-kitematic.png"/>
+							<img src="cartoon-kitematic.png"/>
 							<h4>Docker {packages.name}</h4>
 							<p>{packages.version}</p>
 						</div>
@@ -38,11 +37,11 @@ export default React.createClass({
 					<h3>Kitematic is built with:</h3>
 					<div className="items">
 						<div className="item">
-							<RetinaImage src="cartoon-docker.png"/>
+							<img src="cartoon-docker.png"/>
 							<h4>Docker Engine</h4>
 						</div>
 						<div className="item">
-							<RetinaImage src="cartoon-docker-machine.png"/>
+							<img src="cartoon-docker-machine.png"/>
 							<h4>Docker Machine</h4>
 							<p>{packages["docker-machine-version"]}</p>
 						</div>

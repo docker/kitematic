@@ -1,6 +1,5 @@
 import * as BPromise from "bluebird";
 import classNames from "classnames";
-import RetinaImage from "react-retina-image";
 import Router from "react-router";
 import React from "react/addons";
 import _ from "underscore";
@@ -223,7 +222,7 @@ export default React.createClass({
 			results = (
 				<div className="no-results">
 					<h2><Router.Link to="login">Log In</Router.Link> or <Router.Link to="signup">Sign Up</Router.Link> to access your Docker Hub repositories.</h2>
-					<RetinaImage src="connect-art.png" checkIfRetinaImgExists={false}/>
+					<img src="connect-art.png"/>
 				</div>
 			);
 			paginateResults = null;
@@ -235,7 +234,7 @@ export default React.createClass({
 					<div className="verify">
 						<button className="btn btn-action" onClick={this.handleCheckVerification}>{"I've Verified My Email Address"}</button> {spinner}
 					</div>
-					<RetinaImage src="inspection.png" checkIfRetinaImgExists={false}/>
+					<img src="inspection.png" />
 				</div>
 			);
 			paginateResults = null;

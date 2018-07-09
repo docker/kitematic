@@ -1,5 +1,4 @@
 import {shell} from "electron";
-import RetinaImage from "react-retina-image";
 import Router from "react-router";
 import React from "react/addons";
 import util from "../../utils/Util";
@@ -66,7 +65,7 @@ export default React.createClass({
 	renderContents() {
 		return (
 			<div className="contents">
-				<RetinaImage src="boot2docker.png" checkIfRetinaImgExists={false}/>
+				<img src="boot2docker.png" />
 				<div className="detail">
 					<Radial progress={Math.round(this.state.progress)} thick={true} gray={true}/>
 				</div>
@@ -163,7 +162,7 @@ export default React.createClass({
 				<div className="setup-content">
 					<div className="image">
 						<div className="contents">
-							<RetinaImage src="install-error.png" checkIfRetinaImgExists={false}/>
+							<img src="install-error.png"/>
 							<div className="detail">
 								<a className="btn btn-danger small" onClick={this.handleResetSettings}>reset</a>
 							</div>
