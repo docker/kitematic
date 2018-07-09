@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import _ from "underscore";
 import which from "which";
-import util from "./Util";
+import util from "../../utils/Util";
 
 export default {
 	command() {

@@ -1,5 +1,5 @@
-import setupUtil from "../../utils/SetupUtil";
 import alt from "../alt";
+import setupUtil from "../utils/SetupUtil";
 
 class SetupActions {
 

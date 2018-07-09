@@ -1,8 +1,8 @@
 import Router from "react-router";
 import React from "react/addons";
 import _ from "underscore";
-import containerUtil from "../../utils/ContainerUtil";
 import util from "../../utils/Util";
+import containerUtil from "../utils/ContainerUtil";
 import ContainerDetailsHeader from "./ContainerDetailsHeader.react.jsx";
 import ContainerDetailsSubheader from "./ContainerDetailsSubheader.react.jsx";
 

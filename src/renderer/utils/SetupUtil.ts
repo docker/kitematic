@@ -3,13 +3,13 @@ import bugsnag from "bugsnag-js";
 import * as fs from "fs";
 import * as path from "path";
 import _ from "underscore";
-import setupServerActions from "../renderer/actions/SetupServerActions";
-import router from "../renderer/router";
-import metrics from "../renderer/utils/MetricsUtil";
+import docker from "../../utils/DockerUtil";
+import util from "../../utils/Util";
+import virtualBox from "../../utils/VirtualBoxUtil";
+import setupServerActions from "../actions/SetupServerActions";
+import router from "../router";
 import machine from "./DockerMachineUtil";
-import docker from "./DockerUtil";
-import util from "./Util";
-import virtualBox from "./VirtualBoxUtil";
+import metrics from "./MetricsUtil";
 
 // Docker Machine exits with 3 to differentiate pre-create check failures (e.g.
 // virtualization isn't enabled) from normal errors during create (exit code
