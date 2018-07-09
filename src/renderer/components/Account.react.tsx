@@ -1,9 +1,9 @@
 import Router from "react-router";
 import React from "react/addons";
-import accountActions from "../actions/AccountActions";
-import Header from "../renderer/components/Header.react.jsx";
-import accountStore from "../renderer/stores/AccountStore";
-import metrics from "../utils/MetricsUtil";
+import accountActions from "../../actions/AccountActions";
+import metrics from "../../utils/MetricsUtil";
+import accountStore from "../stores/AccountStore";
+import Header from "./Header.react.jsx";
 
 export default React.createClass({
   mixins: [Router.Navigation],

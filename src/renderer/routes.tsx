@@ -1,6 +1,5 @@
 import {Component} from "react";
 import Router from "react-router";
-import Account from "../components/Account.react.jsx";
 import AccountLogin from "../components/AccountLogin.react.jsx";
 import AccountSignup from "../components/AccountSignup.react.jsx";
 import ContainerHome from "../components/ContainerHome.react.jsx";
@@ -14,6 +13,7 @@ import ContainerSettingsVolumes from "../components/ContainerSettingsVolumes.rea
 import NewContainerSearch from "../components/NewContainerSearch.react.jsx";
 import Preferences from "../components/Preferences.react.jsx";
 import About from "./components/About.react.jsx";
+import Account from "./components/Account.react.jsx";
 import ContainerDetails from "./components/ContainerDetails.react.jsx";
 import Loading from "./components/Loading.react.jsx";
 import Setup from "./components/Setup.react.jsx";
