@@ -6,7 +6,7 @@ import accountActions from '../actions/AccountActions';
 import metrics from '../utils/MetricsUtil';
 import {shell} from 'electron';
 
-module.exports = React.createClass({
+export default React.createClass({
   mixins: [Router.Navigation, React.addons.LinkedStateMixin],
 
   getInitialState: function () {

@@ -1,9 +1,9 @@
 import React from 'react/addons';
 
-var ContainerDetailsHeader = React.createClass({
+export default React.createClass({
   render: function () {
-    var state;
-    if (!this.props.container) {
+	  let state;
+	  if (!this.props.container) {
       return false;
     }
 
@@ -33,5 +33,3 @@ var ContainerDetailsHeader = React.createClass({
     );
   }
 });
-
-module.exports = ContainerDetailsHeader;

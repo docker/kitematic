@@ -5,7 +5,7 @@ import validator from 'validator';
 import accountActions from '../actions/AccountActions';
 import metrics from '../utils/MetricsUtil';
 
-module.exports = React.createClass({
+export default React.createClass({
   mixins: [Router.Navigation, React.addons.LinkedStateMixin],
 
   getInitialState: function () {

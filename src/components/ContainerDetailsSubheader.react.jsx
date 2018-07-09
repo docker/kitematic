@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import containerActions from '../actions/ContainerActions';
 import dockerMachineUtil from '../utils/DockerMachineUtil';
 
-var ContainerDetailsSubheader = React.createClass({
+export default React.createClass({
   contextTypes: {
     router: React.PropTypes.func
   },
@@ -189,5 +189,3 @@ var ContainerDetailsSubheader = React.createClass({
     );
   }
 });
-
-module.exports = ContainerDetailsSubheader;

@@ -6,7 +6,7 @@ import containerUtil from '../utils/ContainerUtil';
 import util from '../utils/Util';
 import _ from 'underscore';
 
-var ContainerDetails = React.createClass({
+export default React.createClass({
   contextTypes: {
     router: React.PropTypes.func
   },
@@ -30,5 +30,3 @@ var ContainerDetails = React.createClass({
     );
   }
 });
-
-module.exports = ContainerDetails;
