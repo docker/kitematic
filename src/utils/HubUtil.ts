@@ -106,7 +106,7 @@ export default {
 	}, (error, response, body) => {});
   },
 
-  login(username, password, callback) {
+  login(username, password, callback?) {
 	this.auth(username, password, (error, response, body) => {
 		if (error) {
 		accountServerActions.errors({errors: {detail: error.message}});
