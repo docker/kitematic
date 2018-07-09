@@ -11,11 +11,11 @@ import ContainerSettingsNetwork from "../components/ContainerSettingsNetwork.rea
 import ContainerSettingsPorts from "../components/ContainerSettingsPorts.react.jsx";
 import ContainerSettingsVolumes from "../components/ContainerSettingsVolumes.react.jsx";
 import NewContainerSearch from "../components/NewContainerSearch.react.jsx";
-import Preferences from "./components/Preferences.react.jsx";
 import About from "./components/About.react.jsx";
 import Account from "./components/Account.react.jsx";
 import ContainerDetails from "./components/ContainerDetails.react.jsx";
 import Loading from "./components/Loading.react.jsx";
+import Preferences from "./components/Preferences.react.jsx";
 import Setup from "./components/Setup.react.jsx";
 
 export class App extends Component {
