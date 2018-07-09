@@ -7,7 +7,7 @@ import Containers from "../components/Containers.react.jsx";
 import ContainerSettings from "../components/ContainerSettings.react.jsx";
 import ContainerSettingsAdvanced from "../components/ContainerSettingsAdvanced.react.jsx";
 import ContainerSettingsGeneral from "../components/ContainerSettingsGeneral.react.jsx";
-import ContainerSettingsNetwork from "../components/ContainerSettingsNetwork.react.jsx";
+import ContainerSettingsNetwork from "./components/ContainerSettingsNetwork.react.jsx";
 import About from "./components/About.react.jsx";
 import Account from "./components/Account.react.jsx";
 import ContainerDetails from "./components/ContainerDetails.react.jsx";
