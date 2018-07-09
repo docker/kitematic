@@ -3,7 +3,6 @@ import Router from "react-router";
 import Account from "../components/Account.react.jsx";
 import AccountLogin from "../components/AccountLogin.react.jsx";
 import AccountSignup from "../components/AccountSignup.react.jsx";
-import ContainerDetails from "../components/ContainerDetails.react.jsx";
 import ContainerHome from "../components/ContainerHome.react.jsx";
 import Containers from "../components/Containers.react.jsx";
 import ContainerSettings from "../components/ContainerSettings.react.jsx";
@@ -16,6 +15,7 @@ import NewContainerSearch from "../components/NewContainerSearch.react.jsx";
 import Preferences from "../components/Preferences.react.jsx";
 import Setup from "../components/Setup.react.jsx";
 import About from "./components/About.react.jsx";
+import ContainerDetails from "./components/ContainerDetails.react.jsx";
 import Loading from "./components/Loading.react.jsx";
 
 export class App extends Component {
