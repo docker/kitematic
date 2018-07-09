@@ -111,7 +111,7 @@ export default {
 	});
   },
 
-  tags(repo, callback) {
+  tags(repo, callback?) {
 	hubUtil.request({
 		url: `${REGHUB2_ENDPOINT}/repositories/${repo}/tags`,
 		qs: {page: 1, page_size: 100},

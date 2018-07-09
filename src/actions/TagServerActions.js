@@ -1,12 +1,8 @@
-import alt from '../renderer/alt';
-
+import alt from "../renderer/alt";
 class TagServerActions {
-  constructor () {
-    this.generateActions(
-      'tagsUpdated',
-      'error'
-    );
-  }
+    constructor() {
+        this.generateActions("tagsUpdated", "error");
+    }
 }
-
 export default alt.createActions(TagServerActions);
+//# sourceMappingURL=TagServerActions.js.map
