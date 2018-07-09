@@ -4,7 +4,7 @@ import request from "request";
 import _ from "underscore";
 import repositoryServerActions from "../renderer/actions/RepositoryServerActions";
 import tagServerActions from "../renderer/actions/TagServerActions";
-import hubUtil from "./HubUtil";
+import hubUtil from "../renderer/utils/HubUtil";
 import util from "./Util";
 let cachedRequest = require("cached-request")(request);
 let cacheDirectory = os.tmpdir() + "/cachekitematic";

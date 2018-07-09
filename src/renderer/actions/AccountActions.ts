@@ -1,5 +1,5 @@
-import hub from "../../utils/HubUtil";
 import alt from "../alt";
+import hub from "../utils/HubUtil";
 
 class AccountActions {
 

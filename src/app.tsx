@@ -7,10 +7,10 @@ import routerContainer from "./renderer/router";
 import routes from "./renderer/routes.jsx";
 import machine from "./renderer/utils/DockerMachineUtil";
 import docker from "./renderer/utils/DockerUtil";
+import hub from "./renderer/utils/HubUtil";
+import hubUtil from "./renderer/utils/HubUtil";
 import metrics from "./renderer/utils/MetricsUtil";
 import setupUtil from "./renderer/utils/SetupUtil";
-import hub from "./utils/HubUtil";
-import hubUtil from "./utils/HubUtil";
 import webUtil from "./utils/WebUtil";
 
 require.main.paths.splice(0, 0, process.env.NODE_PATH);

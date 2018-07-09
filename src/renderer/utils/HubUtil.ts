@@ -1,7 +1,7 @@
 import request from "request";
 import _ from "underscore";
-import accountServerActions from "../renderer/actions/AccountServerActions";
-import metrics from "../renderer/utils/MetricsUtil";
+import accountServerActions from "../actions/AccountServerActions";
+import metrics from "./MetricsUtil";
 
 const HUB2_ENDPOINT = process.env.HUB2_ENDPOINT || "https://hub.docker.com/v2";
 
@@ -126,7 +126,7 @@ export default {
 			accountServerActions.prompted({prompted: true});
 			metrics.track("Successfully Logged In");
 			if (callback) { callback(); }
-			require("./RegHubUtil").repos();
+			require("../../utils/RegHubUtil").repos();
 		} else {
 			accountServerActions.errors({errors: {detail: "Did not receive login token."}});
 			if (callback) { callback(new Error("Did not receive login token.")); }
