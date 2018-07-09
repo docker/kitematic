@@ -3,7 +3,7 @@ jest.autoMockOff();
 jasmine.getEnv().defaultTimeoutInterval = 60000;
 
 let _ = require('underscore');
-let regHubUtil = require('../src/utils/RegHubUtil');
+let regHubUtil = require('../src/renderer/utils/RegHubUtil');
 let hubUtil = require('../src/renderer/utils/HubUtil');
 let Promise = require('bluebird');
 

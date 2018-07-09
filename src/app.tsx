@@ -11,7 +11,7 @@ import hub from "./renderer/utils/HubUtil";
 import hubUtil from "./renderer/utils/HubUtil";
 import metrics from "./renderer/utils/MetricsUtil";
 import setupUtil from "./renderer/utils/SetupUtil";
-import webUtil from "./utils/WebUtil";
+import webUtil from "./renderer/utils/WebUtil";
 
 require.main.paths.splice(0, 0, process.env.NODE_PATH);
 

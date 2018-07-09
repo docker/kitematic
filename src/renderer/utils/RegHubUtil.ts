@@ -2,10 +2,10 @@ import async from "async";
 import * as os from "os";
 import request from "request";
 import _ from "underscore";
-import repositoryServerActions from "../renderer/actions/RepositoryServerActions";
-import tagServerActions from "../renderer/actions/TagServerActions";
-import hubUtil from "../renderer/utils/HubUtil";
-import util from "./Util";
+import util from "../../utils/Util";
+import repositoryServerActions from "../actions/RepositoryServerActions";
+import tagServerActions from "../actions/TagServerActions";
+import hubUtil from "./HubUtil";
 
 let cachedRequest = require("cached-request")(request);
 let cacheDirectory = os.tmpdir() + "/cachekitematic";

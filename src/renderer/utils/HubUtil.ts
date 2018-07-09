@@ -126,7 +126,7 @@ export default {
 			accountServerActions.prompted({prompted: true});
 			metrics.track("Successfully Logged In");
 			if (callback) { callback(); }
-			require("../../utils/RegHubUtil").repos();
+			require("./RegHubUtil").repos();
 		} else {
 			accountServerActions.errors({errors: {detail: "Did not receive login token."}});
 			if (callback) { callback(new Error("Did not receive login token.")); }
