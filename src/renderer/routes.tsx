@@ -1,5 +1,6 @@
 import {Component} from "react";
 import Router from "react-router";
+import React from "react/addons";
 import AccountLogin from "../components/AccountLogin.react.jsx";
 import AccountSignup from "../components/AccountSignup.react.jsx";
 import About from "./components/About.react.jsx";

@@ -1,0 +1,1 @@
+import "./renderer/app.jsx";

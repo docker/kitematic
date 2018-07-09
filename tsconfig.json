@@ -21,6 +21,6 @@
 	},
 	"files": [
 		"./src/main/index.ts",
-		"./src/renderer/index.ts"
+		"./src/index.ts"
 	]
 }

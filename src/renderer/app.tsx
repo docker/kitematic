@@ -1,17 +1,17 @@
 import {ipcRenderer, remote} from "electron";
 import * as React from "react";
 import Router from "react-router";
-import repositoryActions from "./renderer/actions/RepositoryActions";
-import template from "./renderer/menutemplate";
-import routerContainer from "./renderer/router";
-import routes from "./renderer/routes.jsx";
-import machine from "./renderer/utils/DockerMachineUtil";
-import docker from "./renderer/utils/DockerUtil";
-import hub from "./renderer/utils/HubUtil";
-import hubUtil from "./renderer/utils/HubUtil";
-import metrics from "./renderer/utils/MetricsUtil";
-import setupUtil from "./renderer/utils/SetupUtil";
-import webUtil from "./renderer/utils/WebUtil";
+import repositoryActions from "./actions/RepositoryActions";
+import template from "./menutemplate";
+import routerContainer from "./router";
+import routes from "./routes.jsx";
+import machine from "./utils/DockerMachineUtil";
+import docker from "./utils/DockerUtil";
+import hub from "./utils/HubUtil";
+import hubUtil from "./utils/HubUtil";
+import metrics from "./utils/MetricsUtil";
+import setupUtil from "./utils/SetupUtil";
+import webUtil from "./utils/WebUtil";
 
 require.main.paths.splice(0, 0, process.env.NODE_PATH);
 
