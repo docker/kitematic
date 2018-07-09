@@ -13,10 +13,10 @@ import ContainerSettingsPorts from "../components/ContainerSettingsPorts.react.j
 import ContainerSettingsVolumes from "../components/ContainerSettingsVolumes.react.jsx";
 import NewContainerSearch from "../components/NewContainerSearch.react.jsx";
 import Preferences from "../components/Preferences.react.jsx";
-import Setup from "../components/Setup.react.jsx";
 import About from "./components/About.react.jsx";
 import ContainerDetails from "./components/ContainerDetails.react.jsx";
 import Loading from "./components/Loading.react.jsx";
+import Setup from "./components/Setup.react.jsx";
 
 export class App extends Component {
 
