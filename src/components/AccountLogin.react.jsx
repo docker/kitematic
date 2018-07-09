@@ -66,13 +66,21 @@ export default React.createClass({
 		shell.openExternal('https://hub.docker.com/reset-password/');
 	},
 
+	onUsernameChange:function(event){
+		this.setState({username:event.target.value});
+	},
+
+	onPasswordChange:function(event){
+		this.setState({password:event.target.value});
+	},
+
 	render: function () {
 		let loading = this.props.loading ? <div className="spinner la-ball-clip-rotate la-dark"><div></div></div> : null;
 		return (
 			<form className="form-connect">
-				<input ref="usernameInput"maxLength="30" name="username" placeholder="Username" type="text" disabled={this.props.loading} valueLink={this.linkState('username')} onBlur={this.handleBlur}/>
+				<input ref="usernameInput" maxLength={30} name="username" placeholder="Username" type="text" disabled={this.props.loading} value={this.state.username} onChange={this.onUsernameChange} onBlur={this.handleBlur}/>
 				<p className="error-message">{this.state.errors.username}</p>
-				<input ref="passwordInput" name="password" placeholder="Password" type="password" disabled={this.props.loading} valueLink={this.linkState('password')} onBlur={this.handleBlur}/>
+				<input ref="passwordInput" name="password" placeholder="Password" type="password" disabled={this.props.loading} value={this.state.password} onChange={this.onPasswordChange} onBlur={this.handleBlur}/>
 				<p className="error-message">{this.state.errors.password}</p>
 				<a className="link" onClick={this.handleClickForgotPassword}>Forgot your password?</a>
 				<p className="error-message">{this.state.errors.detail}</p>
