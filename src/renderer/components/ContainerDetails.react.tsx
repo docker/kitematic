@@ -1,10 +1,10 @@
 import Router from "react-router";
 import React from "react/addons";
 import _ from "underscore";
-import ContainerDetailsHeader from "../../components/ContainerDetailsHeader.react.jsx";
 import ContainerDetailsSubheader from "../../components/ContainerDetailsSubheader.react.jsx";
 import containerUtil from "../../utils/ContainerUtil";
 import util from "../../utils/Util";
+import ContainerDetailsHeader from "./ContainerDetailsHeader.react.jsx";
 
 export default React.createClass({
   contextTypes: {

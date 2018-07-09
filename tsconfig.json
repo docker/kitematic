@@ -21,8 +21,6 @@
 	},
 	"files": [
 		"./src/main/index.ts",
-		"./src/renderer/index.ts",
-		"./src/renderer/components/Header.react.tsx",
-		"./src/renderer/components/ImageCard.react.tsx"
+		"./src/renderer/index.ts"
 	]
 }
