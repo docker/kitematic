@@ -3,7 +3,7 @@ import React from 'react/addons';
 import Router from 'react-router';
 import validator from 'validator';
 import accountActions from '../renderer/actions/AccountActions';
-import metrics from '../utils/MetricsUtil';
+import metrics from '../renderer/utils/MetricsUtil';
 import {shell} from 'electron';
 
 export default React.createClass({
