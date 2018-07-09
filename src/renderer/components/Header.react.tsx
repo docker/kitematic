@@ -1,5 +1,4 @@
 import {remote} from "electron";
-import RetinaImage from "react-retina-image";
 import React from "react/addons";
 const Menu = remote.Menu;
 const MenuItem = remote.MenuItem;
@@ -103,7 +102,7 @@ export default React.createClass({
 	renderLogo() {
 		return (
 			<div className="logo">
-				<RetinaImage src="logo.png"/>
+				<img src="logo.svg"/>
 			</div>
 		);
 	},
@@ -146,7 +145,7 @@ export default React.createClass({
 				{this.state.username}
 							{this.state.verified ? null : "(Unverified)"}
 				</span>
-						<RetinaImage src="userdropdown.png"/>
+						<img src="userdropdown.png"/>
 					</div>
 				</div>
 			);
