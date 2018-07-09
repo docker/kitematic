@@ -1,18 +1,18 @@
-import React from 'react/addons';
+import React from "react/addons";
 
 export default React.createClass({
-	render: function () {
+	render() {
 		const pBar1Style = {
-			height: this.props.pBar1 + '%'
+			height: this.props.pBar1 + "%",
 		};
 		const pBar2Style = {
-			height: this.props.pBar2 + '%'
+			height: this.props.pBar2 + "%",
 		};
 		const pBar3Style = {
-			height: this.props.pBar3 + '%'
+			height: this.props.pBar3 + "%",
 		};
 		const pBar4Style = {
-			height: this.props.pBar4 + '%'
+			height: this.props.pBar4 + "%",
 		};
 		return (
 			<div className="container-progress">
@@ -30,5 +30,5 @@ export default React.createClass({
 				</div>
 			</div>
 		);
-	}
+	},
 });

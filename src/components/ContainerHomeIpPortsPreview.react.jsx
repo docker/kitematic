@@ -1,25 +1,19 @@
 import _ from 'underscore';
 import React from 'react/addons';
-
 export default React.createClass({
-  handleClickPortSettings: function () {
-    this.props.handleClickPortSettings();
-  },
-
-  render: function () {
-    var ports = _.map(_.pairs(this.props.ports), pair => {
-      var key = pair[0];
-      var val = pair[1];
-      return (
-          <tr key={key}>
+    handleClickPortSettings: function () {
+        this.props.handleClickPortSettings();
+    },
+    render: function () {
+        var ports = _.map(_.pairs(this.props.ports), pair => {
+            var key = pair[0];
+            var val = pair[1];
+            return (<tr key={key}>
             <td>{key + '/' + val.portType}</td>
             <td>{val.url}</td>
-          </tr>
-      );
-    });
-
-    return (
-      <div className="web-preview wrapper">
+          </tr>);
+        });
+        return (<div className="web-preview wrapper">
         <div className="widget">
           <div className="top-bar">
             <div className="text">IP & PORTS</div>
@@ -40,7 +34,7 @@ export default React.createClass({
             </tbody>
           </table>
         </div>
-      </div>
-    );
-  }
+      </div>);
+    }
 });
+//# sourceMappingURL=ContainerHomeIpPortsPreview.react.jsx.map
