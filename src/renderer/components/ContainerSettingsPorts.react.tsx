@@ -2,10 +2,10 @@ import {shell} from "electron";
 import {DropdownButton, MenuItem} from "react-bootstrap";
 import React from "react/addons";
 import _ from "underscore";
-import containerActions from "../../actions/ContainerActions";
 import ContainerUtil from "../../utils/ContainerUtil";
 import docker from "../../utils/DockerUtil";
 import metrics from "../../utils/MetricsUtil";
+import containerActions from "../actions/ContainerActions";
 import containerStore from "../stores/ContainerStore";
 
 export default React.createClass({

@@ -1,5 +1,5 @@
-import imageActions from "../../actions/ImageActions";
-import imageServerActions from "../../actions/ImageServerActions";
+import imageActions from "../actions/ImageActions";
+import imageServerActions from "../actions/ImageServerActions";
 import alt from "../alt";
 
 class ImageStore {

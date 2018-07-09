@@ -1,6 +1,6 @@
 import request from "request";
 import _ from "underscore";
-import accountServerActions from "../actions/AccountServerActions";
+import accountServerActions from "../renderer/actions/AccountServerActions";
 import metrics from "./MetricsUtil";
 
 const HUB2_ENDPOINT = process.env.HUB2_ENDPOINT || "https://hub.docker.com/v2";

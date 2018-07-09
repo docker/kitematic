@@ -2,10 +2,10 @@ import classNames from "classnames";
 import {shell} from "electron";
 import React from "react/addons";
 import _ from "underscore";
-import containerActions from "../../actions/ContainerActions";
 import ContainerUtil from "../../utils/ContainerUtil";
 import dockerMachineUtil from "../../utils/DockerMachineUtil";
 import metrics from "../../utils/MetricsUtil";
+import containerActions from "../actions/ContainerActions";
 
 export default React.createClass({
 	contextTypes: {

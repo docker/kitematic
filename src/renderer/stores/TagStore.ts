@@ -1,6 +1,6 @@
-import accountServerActions from "../../actions/AccountServerActions";
-import tagActions from "../../actions/TagActions";
-import tagServerActions from "../../actions/TagServerActions";
+import accountServerActions from "../actions/AccountServerActions";
+import tagActions from "../actions/TagActions";
+import tagServerActions from "../actions/TagServerActions";
 import alt from "../alt";
 
 class TagStore {

@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { ipcRenderer, remote } from "electron";
 import * as React from "react";
 import Router from "react-router";
-import repositoryActions from "./actions/RepositoryActions";
+import repositoryActions from "./renderer/actions/RepositoryActions";
 import template from "./renderer/menutemplate";
 import routerContainer from "./renderer/router";
 import routes from "./renderer/routes.jsx";

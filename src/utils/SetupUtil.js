@@ -11,7 +11,7 @@ import bugsnag from "bugsnag-js";
 import * as fs from "fs";
 import * as path from "path";
 import _ from "underscore";
-import setupServerActions from "../actions/SetupServerActions";
+import setupServerActions from "../renderer/actions/SetupServerActions";
 import router from "../renderer/router";
 import machine from "./DockerMachineUtil";
 import docker from "./DockerUtil";

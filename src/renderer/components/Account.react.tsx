@@ -1,7 +1,7 @@
 import Router from "react-router";
 import React from "react/addons";
-import accountActions from "../../actions/AccountActions";
 import metrics from "../../utils/MetricsUtil";
+import accountActions from "../actions/AccountActions";
 import accountStore from "../stores/AccountStore";
 import Header from "./Header.react.jsx";
 

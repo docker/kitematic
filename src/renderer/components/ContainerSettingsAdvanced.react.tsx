@@ -1,8 +1,8 @@
 import React from "react/addons";
 import _ from "underscore";
-import containerActions from "../../actions/ContainerActions";
 import ContainerUtil from "../../utils/ContainerUtil";
 import metrics from "../../utils/MetricsUtil";
+import containerActions from "../actions/ContainerActions";
 
 export default React.createClass({
   mixins: [React.addons.LinkedStateMixin],

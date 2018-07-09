@@ -3,7 +3,7 @@ import { clipboard, remote, shell } from "electron";
 import * as fs from "fs";
 import * as $ from "jquery";
 import React from "react/addons";
-import containerActions from "../../actions/ContainerActions";
+import containerActions from "../actions/ContainerActions";
 const dialog = remote.dialog;
 
 let escape = function(html) {

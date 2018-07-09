@@ -1,5 +1,5 @@
-import alt from "../renderer/alt";
-import regHubUtil from "../utils/RegHubUtil";
+import regHubUtil from "../../utils/RegHubUtil";
+import alt from "../alt";
 
 class TagActions {
 	public tags(repo) {

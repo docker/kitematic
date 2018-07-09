@@ -1,5 +1,5 @@
-import alt from "../renderer/alt";
-import hub from "../utils/HubUtil";
+import hub from "../../utils/HubUtil";
+import alt from "../alt";
 
 class AccountActions {
 

@@ -2,9 +2,9 @@ import classNames from "classnames";
 import {remote} from "electron";
 import Router from "react-router";
 import React from "react/addons";
-import accountActions from "../../actions/AccountActions";
 import metrics from "../../utils/MetricsUtil";
 import util from "../../utils/Util";
+import accountActions from "../actions/AccountActions";
 import accountStore from "../stores/AccountStore";
 
 const Menu = remote.Menu;

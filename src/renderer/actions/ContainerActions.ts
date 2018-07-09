@@ -1,5 +1,5 @@
-import alt from "../renderer/alt";
-import dockerUtil from "../utils/DockerUtil";
+import dockerUtil from "../../utils/DockerUtil";
+import alt from "../alt";
 
 class ContainerActions {
 

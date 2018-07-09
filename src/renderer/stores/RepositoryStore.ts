@@ -1,7 +1,7 @@
 import _ from "underscore";
-import accountServerActions from "../../actions/AccountServerActions";
-import repositoryActions from "../../actions/RepositoryActions";
-import repositoryServerActions from "../../actions/RepositoryServerActions";
+import accountServerActions from "../actions/AccountServerActions";
+import repositoryActions from "../actions/RepositoryActions";
+import repositoryServerActions from "../actions/RepositoryServerActions";
 import alt from "../alt";
 import accountStore from "./AccountStore";
 

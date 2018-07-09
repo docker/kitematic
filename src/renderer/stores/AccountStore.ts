@@ -1,5 +1,5 @@
-import accountActions from "../../actions/AccountActions";
-import accountServerActions from "../../actions/AccountServerActions";
+import accountActions from "../actions/AccountActions";
+import accountServerActions from "../actions/AccountServerActions";
 import alt from "../alt";
 
 class AccountStore {

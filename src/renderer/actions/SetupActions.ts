@@ -1,5 +1,5 @@
-import alt from "../renderer/alt";
-import setupUtil from "../utils/SetupUtil";
+import setupUtil from "../../utils/SetupUtil";
+import alt from "../alt";
 
 class SetupActions {
 

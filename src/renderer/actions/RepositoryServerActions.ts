@@ -1,4 +1,4 @@
-import alt from "../renderer/alt";
+import alt from "../alt";
 
 class RepositoryServerActions {
   constructor() {
