@@ -1,9 +1,9 @@
-import React from 'react';
-import classNames from 'classnames';
+import classNames from "classnames";
+import React from "react/addons";
 
-const Radial = React.createClass({
-	render: function () {
-		var percentage;
+export default React.createClass({
+	render() {
+		let percentage;
 		if ((this.props.progress !== null && this.props.progress !== undefined) && !this.props.spin && !this.props.error) {
 			percentage = (
 				<div className="percentage"></div>
@@ -11,13 +11,13 @@ const Radial = React.createClass({
 		} else {
 			percentage = <div></div>;
 		}
-		var classes = classNames({
-			'radial-progress': true,
-			'radial-spinner': this.props.spin,
-			'radial-negative': this.props.error,
-			'radial-thick': this.props.thick || false,
-			'radial-gray': this.props.gray || false,
-			'radial-transparent': this.props.transparent || false
+		let classes = classNames({
+			"radial-progress": true,
+			"radial-spinner": this.props.spin,
+			"radial-negative": this.props.error,
+			"radial-thick": this.props.thick || false,
+			"radial-gray": this.props.gray || false,
+			"radial-transparent": this.props.transparent || false,
 		});
 		return (
 			<div className={classes} data-progress={this.props.progress}>
@@ -36,7 +36,5 @@ const Radial = React.createClass({
 				</div>
 			</div>
 		);
-	}
+	},
 });
-
-module.exports = Radial;

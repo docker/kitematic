@@ -3,11 +3,11 @@ import RetinaImage from "react-retina-image";
 import Router from "react-router";
 import React from "react/addons";
 import setupActions from "../../actions/SetupActions";
-import Radial from "../../components/Radial.react.jsx";
 import setupStore from "../../stores/SetupStore";
 import metrics from "../../utils/MetricsUtil";
 import util from "../../utils/Util";
 import Header from "./Header.react.jsx";
+import Radial from "./Radial.react.jsx";
 
 export default React.createClass({
 	mixins: [Router.Navigation],
