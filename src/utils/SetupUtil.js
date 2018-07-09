@@ -15,7 +15,7 @@ import setupServerActions from "../renderer/actions/SetupServerActions";
 import router from "../renderer/router";
 import machine from "./DockerMachineUtil";
 import docker from "./DockerUtil";
-import metrics from "./MetricsUtil";
+import metrics from "../renderer/utils/MetricsUtil";
 import util from "./Util";
 import virtualBox from "./VirtualBoxUtil";
 // Docker Machine exits with 3 to differentiate pre-create check failures (e.g.

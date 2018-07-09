@@ -1,8 +1,8 @@
 import RetinaImage from "react-retina-image";
 import Router from "react-router";
 import React from "react/addons";
-import metrics from "../../utils/MetricsUtil";
 import utils from "../../utils/Util";
+import metrics from "../utils/MetricsUtil";
 
 let packages;
 

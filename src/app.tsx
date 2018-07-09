@@ -5,11 +5,11 @@ import repositoryActions from "./renderer/actions/RepositoryActions";
 import template from "./renderer/menutemplate";
 import routerContainer from "./renderer/router";
 import routes from "./renderer/routes.jsx";
+import metrics from "./renderer/utils/MetricsUtil";
 import machine from "./utils/DockerMachineUtil";
 import docker from "./utils/DockerUtil";
 import hub from "./utils/HubUtil";
 import hubUtil from "./utils/HubUtil";
-import metrics from "./utils/MetricsUtil";
 import setupUtil from "./utils/SetupUtil";
 import webUtil from "./utils/WebUtil";
 

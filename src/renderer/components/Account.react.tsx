@@ -1,8 +1,8 @@
 import Router from "react-router";
 import React from "react/addons";
-import metrics from "../../utils/MetricsUtil";
 import accountActions from "../actions/AccountActions";
 import accountStore from "../stores/AccountStore";
+import metrics from "../utils/MetricsUtil";
 import Header from "./Header.react.jsx";
 
 export default React.createClass({

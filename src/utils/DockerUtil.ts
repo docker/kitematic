@@ -10,7 +10,7 @@ import containerServerActions from "../renderer/actions/ContainerServerActions";
 import imageServerActions from "../renderer/actions/ImageServerActions";
 import networkActions from "../renderer/actions/NetworkActions";
 import networkStore from "../renderer/stores/NetworkStore";
-import metrics from "../utils/MetricsUtil";
+import metrics from "../renderer/utils/MetricsUtil";
 import hubUtil from "./HubUtil";
 import util from "./Util";
 const Docker = require("dockerode");

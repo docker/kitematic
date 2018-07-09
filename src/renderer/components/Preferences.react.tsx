@@ -1,7 +1,7 @@
 import Router from "react-router";
 import React from "react/addons";
-import metrics from "../../utils/MetricsUtil";
 import util from "../../utils/Util";
+import metrics from "../utils/MetricsUtil";
 
 export default React.createClass({
 	mixins: [Router.Navigation],

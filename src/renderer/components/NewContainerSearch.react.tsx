@@ -4,13 +4,13 @@ import RetinaImage from "react-retina-image";
 import Router from "react-router";
 import React from "react/addons";
 import _ from "underscore";
-import metrics from "../../utils/MetricsUtil";
 import accountActions from "../actions/AccountActions";
 import imageActions from "../actions/ImageActions";
 import repositoryActions from "../actions/RepositoryActions";
 import accountStore from "../stores/AccountStore";
 import imageStore from "../stores/ImageStore";
 import repositoryStore from "../stores/RepositoryStore";
+import metrics from "../utils/MetricsUtil";
 import ImageCard from "./ImageCard.react.jsx";
 
 let _searchPromise = null;

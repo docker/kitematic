@@ -1,6 +1,6 @@
 import React from "react/addons";
 import request from "request";
-import metrics from "../../utils/MetricsUtil";
+import metrics from "../utils/MetricsUtil";
 import ContainerHomeIpPortsPreview from "./ContainerHomeIpPortsPreview.react.jsx";
 import ContainerHomeWebPreview from "./ContainerHomeWebPreview.react.jsx";
 

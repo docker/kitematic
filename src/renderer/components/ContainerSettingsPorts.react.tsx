@@ -4,9 +4,9 @@ import React from "react/addons";
 import _ from "underscore";
 import ContainerUtil from "../../utils/ContainerUtil";
 import docker from "../../utils/DockerUtil";
-import metrics from "../../utils/MetricsUtil";
 import containerActions from "../actions/ContainerActions";
 import containerStore from "../stores/ContainerStore";
+import metrics from "../utils/MetricsUtil";
 
 export default React.createClass({
 	contextTypes: {

@@ -5,9 +5,9 @@ import * as path from "path";
 import _ from "underscore";
 import setupServerActions from "../renderer/actions/SetupServerActions";
 import router from "../renderer/router";
+import metrics from "../renderer/utils/MetricsUtil";
 import machine from "./DockerMachineUtil";
 import docker from "./DockerUtil";
-import metrics from "./MetricsUtil";
 import util from "./Util";
 import virtualBox from "./VirtualBoxUtil";
 

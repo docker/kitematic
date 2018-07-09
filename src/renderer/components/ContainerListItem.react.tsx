@@ -2,8 +2,8 @@ import {remote} from "electron";
 import {OverlayTrigger, Tooltip} from "react-bootstrap";
 import Router from "react-router";
 import React from "react/addons";
-import metrics from "../../utils/MetricsUtil";
 import containerActions from "../actions/ContainerActions";
+import metrics from "../utils/MetricsUtil";
 const dialog = remote.dialog;
 
 export default React.createClass({

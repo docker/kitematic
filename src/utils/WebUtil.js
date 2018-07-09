@@ -3,7 +3,7 @@ const app = remote.app;
 import bugsnag from "bugsnag-js";
 import * as fs from "fs";
 import * as path from "path";
-import metrics from "./MetricsUtil";
+import metrics from "../renderer/utils/MetricsUtil";
 import util from "./Util";
 export default {
     addWindowSizeSaving() {

@@ -2,10 +2,10 @@ import {shell} from "electron";
 import RetinaImage from "react-retina-image";
 import Router from "react-router";
 import React from "react/addons";
-import metrics from "../../utils/MetricsUtil";
 import util from "../../utils/Util";
 import setupActions from "../actions/SetupActions";
 import setupStore from "../stores/SetupStore";
+import metrics from "../utils/MetricsUtil";
 import Header from "./Header.react.jsx";
 import Radial from "./Radial.react.jsx";
 

@@ -4,13 +4,13 @@ import numeral from "numeral";
 import RetinaImage from "react-retina-image";
 import Router from "react-router";
 import React from "react/addons";
-import metrics from "../../utils/MetricsUtil";
 import containerActions from "../actions/ContainerActions";
 import imageActions from "../actions/ImageActions";
 import tagActions from "../actions/TagActions";
 import containerStore from "../stores/ContainerStore";
 import networkStore from "../stores/NetworkStore";
 import tagStore from "../stores/TagStore";
+import metrics from "../utils/MetricsUtil";
 
 export default React.createClass({
 	mixins: [Router.Navigation],
