@@ -1,9 +1,9 @@
 import async from 'async';
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 import dockerode from 'dockerode';
 import _ from 'underscore';
-import child_process from 'child_process';
+import * as child_process from 'child_process';
 import util from './Util';
 import hubUtil from './HubUtil';
 import metrics from '../utils/MetricsUtil';
@@ -14,8 +14,6 @@ import networkStore from '../renderer/stores/NetworkStore';
 import Promise from 'bluebird';
 import rimraf from 'rimraf';
 import JSONStream from 'JSONStream';
-
-
 
 export default {
 	host: null,
@@ -192,7 +190,7 @@ export default {
 				existing.remove(() => {
 					this.client.createContainer(containerData, (error) => {
 						if (error) {
-							console.error(err);
+							console.error(error);
 							containerServerActions.error({name, error});
 							return;
 						}
