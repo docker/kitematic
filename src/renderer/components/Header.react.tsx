@@ -1,13 +1,14 @@
-import {remote} from "electron";
-import React from "react/addons";
-const Menu = remote.Menu;
-const MenuItem = remote.MenuItem;
 import classNames from "classnames";
+import {remote} from "electron";
 import Router from "react-router";
+import React from "react/addons";
 import accountActions from "../../actions/AccountActions";
 import metrics from "../../utils/MetricsUtil";
 import util from "../../utils/Util";
 import accountStore from "../stores/AccountStore";
+
+const Menu = remote.Menu;
+const MenuItem = remote.MenuItem;
 
 export default React.createClass({
 	mixins: [Router.Navigation],

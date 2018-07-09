@@ -2,7 +2,7 @@ import _ from 'underscore';
 import React from 'react/addons';
 import Router from 'react-router';
 import RetinaImage from 'react-retina-image';
-import ImageCard from './ImageCard.react.jsx';
+import ImageCard from '../renderer/components/ImageCard.react.jsx';
 import Promise from 'bluebird';
 import metrics from '../utils/MetricsUtil';
 import classNames from 'classnames';
