@@ -1,7 +1,7 @@
 import _ from "underscore";
-import containerActions from "../actions/ContainerActions";
-import containerServerActions from "../actions/ContainerServerActions";
-import alt from "../renderer/alt";
+import containerActions from "../../actions/ContainerActions";
+import containerServerActions from "../../actions/ContainerServerActions";
+import alt from "../alt";
 
 let MAX_LOG_SIZE = 3000;
 

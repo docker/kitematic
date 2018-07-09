@@ -1,6 +1,6 @@
-import setupActions from "../actions/SetupActions";
-import setupServerActions from "../actions/SetupServerActions";
-import alt from "../renderer/alt";
+import setupActions from "../../actions/SetupActions";
+import setupServerActions from "../../actions/SetupServerActions";
+import alt from "../alt";
 
 class SetupStore {
 

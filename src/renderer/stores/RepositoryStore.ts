@@ -1,9 +1,9 @@
 import _ from "underscore";
-import accountServerActions from "../actions/AccountServerActions";
-import repositoryActions from "../actions/RepositoryActions";
-import repositoryServerActions from "../actions/RepositoryServerActions";
-import alt from "../renderer/alt";
-import accountStore from "../renderer/stores/AccountStore";
+import accountServerActions from "../../actions/AccountServerActions";
+import repositoryActions from "../../actions/RepositoryActions";
+import repositoryServerActions from "../../actions/RepositoryServerActions";
+import alt from "../alt";
+import accountStore from "./AccountStore";
 
 class RepositoryStore {
 

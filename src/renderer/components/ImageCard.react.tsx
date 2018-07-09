@@ -7,10 +7,10 @@ import React from "react/addons";
 import containerActions from "../../actions/ContainerActions";
 import imageActions from "../../actions/ImageActions";
 import tagActions from "../../actions/TagActions";
-import containerStore from "../../stores/ContainerStore";
-import networkStore from "../../stores/NetworkStore";
-import tagStore from "../../stores/TagStore";
 import metrics from "../../utils/MetricsUtil";
+import containerStore from "../stores/ContainerStore";
+import networkStore from "../stores/NetworkStore";
+import tagStore from "../stores/TagStore";
 
 export default React.createClass({
 	mixins: [Router.Navigation],

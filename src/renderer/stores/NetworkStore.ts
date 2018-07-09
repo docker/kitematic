@@ -1,5 +1,5 @@
-import networkActions from "../actions/NetworkActions";
-import alt from "../renderer/alt";
+import networkActions from "../../actions/NetworkActions";
+import alt from "../alt";
 
 class NetworkStore {
 

@@ -10,7 +10,7 @@ import metrics from '../utils/MetricsUtil';
 import containerServerActions from '../actions/ContainerServerActions';
 import imageServerActions from '../actions/ImageServerActions';
 import networkActions from '../actions/NetworkActions';
-import networkStore from '../stores/NetworkStore';
+import networkStore from '../renderer/stores/NetworkStore';
 import Promise from 'bluebird';
 import rimraf from 'rimraf';
 import stream from 'stream';

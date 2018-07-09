@@ -7,10 +7,10 @@ import _ from "underscore";
 import accountActions from "../../actions/AccountActions";
 import imageActions from "../../actions/ImageActions";
 import repositoryActions from "../../actions/RepositoryActions";
-import imageStore from "../../stores/ImageStore";
-import repositoryStore from "../../stores/RepositoryStore";
 import metrics from "../../utils/MetricsUtil";
 import accountStore from "../stores/AccountStore";
+import imageStore from "../stores/ImageStore";
+import repositoryStore from "../stores/RepositoryStore";
 import ImageCard from "./ImageCard.react.jsx";
 
 let _searchPromise = null;

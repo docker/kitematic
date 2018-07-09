@@ -3,10 +3,10 @@ import React from 'react/addons';
 import metrics from '../utils/MetricsUtil';
 import docker from '../utils/DockerUtil';
 import containerActions from '../actions/ContainerActions';
-import networkStore from '../stores/NetworkStore';
+import networkStore from '../renderer/stores/NetworkStore';
 import Router from 'react-router';
 import ContainerUtil from '../utils/ContainerUtil';
-import containerStore from '../stores/ContainerStore';
+import containerStore from '../renderer/stores/ContainerStore';
 
 var ContainerSettingsNetwork = React.createClass({
   mixins: [React.addons.LinkedStateMixin],

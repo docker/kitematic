@@ -3,9 +3,9 @@ import RetinaImage from "react-retina-image";
 import Router from "react-router";
 import React from "react/addons";
 import setupActions from "../../actions/SetupActions";
-import setupStore from "../../stores/SetupStore";
 import metrics from "../../utils/MetricsUtil";
 import util from "../../utils/Util";
+import setupStore from "../stores/SetupStore";
 import Header from "./Header.react.jsx";
 import Radial from "./Radial.react.jsx";
 
