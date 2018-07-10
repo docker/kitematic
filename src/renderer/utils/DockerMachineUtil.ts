@@ -1,4 +1,3 @@
-import {Promise as BPromise} from "bluebird";
 import * as child_process from "child_process";
 import * as fs from "fs";
 import * as path from "path";
@@ -46,7 +45,7 @@ export default {
 			return Promise.resolve(null);
 		});
 	},
-	isoversion(machineName = this.name()) {
+	isoversion(machineName: string = this.name()) {
 		try {
 			let data = fs.readFileSync(path.join(util.home(), ".docker", "machine", "machines", machineName, "boot2docker.iso"), "utf8");
 			let match = data.match(/Boot2Docker-v(\d+\.\d+\.\d+)/);
@@ -59,42 +58,38 @@ export default {
 			return null;
 		}
 	},
-	exists(machineName = this.name()) {
-		return this.status(machineName).then(() => {
-			return true;
-		}).catch(() => {
-			return false;
-		});
+	async exists(machineName: string = this.name()) {
+		return await this.status(machineName);
 	},
-	async create(machineName = this.name()) {
+	async create(machineName: string = this.name()) {
 		return await util.execFile([this.command(), "-D", "create", "-d", "virtualbox", "--virtualbox-memory", "2048", machineName]);
 	},
-	async start(machineName = this.name()) {
+	async start(machineName: string = this.name()) {
 		return await util.execFile([this.command(), "-D", "start", machineName]);
 	},
-	async stop(machineName = this.name()) {
+	async stop(machineName: string = this.name()) {
 		return await util.execFile([this.command(), "stop", machineName]);
 	},
-	async upgrade(machineName = this.name()) {
+	async upgrade(machineName: string = this.name()) {
 		return await util.execFile([this.command(), "upgrade", machineName]);
 	},
-	async rm(machineName = this.name()) {
+	async rm(machineName: string = this.name()) {
 		return await util.execFile([this.command(), "rm", "-f", machineName]);
 	},
-	async ip(machineName = this.name()) {
+	async ip(machineName: string = this.name()) {
 		return await util.execFile([this.command(), "ip", machineName]).then((stdout: any) => {
 			return Promise.resolve(stdout.trim().replace("\n", ""));
 		});
 	},
-	async url(machineName = this.name()) {
+	async url(machineName: string = this.name()) {
 		return await util.execFile([this.command(), "url", machineName]).then((stdout: any) => {
 			return Promise.resolve(stdout.trim().replace("\n", ""));
 		});
 	},
-	async regenerateCerts(machineName = this.name()) {
+	async regenerateCerts(machineName: string = this.name()) {
 		return await util.execFile([this.command(), "tls-regenerate-certs", "-f", machineName]);
 	},
-	async status(machineName = this.name()) {
+	async status(machineName: string = this.name()) {
 		return await new Promise((resolve, reject) => {
 			child_process.execFile(this.command(), ["status", machineName], (error, stdout, stderr) => {
 				if (error) {
@@ -105,7 +100,7 @@ export default {
 			});
 		});
 	},
-	async disk(machineName = this.name()) {
+	async disk(machineName: string = this.name()) {
 		return await util.execFile([this.command(), "ssh", machineName, "df"]).then((stdout: any) => {
 			try {
 				let lines = stdout.split("\n");
@@ -129,7 +124,7 @@ export default {
 			}
 		});
 	},
-	async memory(machineName = this.name()) {
+	async memory(machineName: string = this.name()) {
 		return await util.execFile([this.command(), "ssh", machineName, "free -m"]).then((stdout: any) => {
 			try {
 				let lines = stdout.split("\n");
@@ -155,7 +150,7 @@ export default {
 			}
 		});
 	},
-	async dockerTerminal(cmd?, machineName = this.name()) {
+	async dockerTerminal(cmd?: string, machineName: string = this.name()) {
 		cmd = cmd || process.env.SHELL || "";
 		if (util.isWindows()) {
 			if (util.isNative()) {
@@ -185,7 +180,7 @@ export default {
 			}
 		}
 	},
-	virtualBoxLogs(machineName = this.name()): string {
+	virtualBoxLogs(machineName: string = this.name()): string {
 		let logsPath = null;
 		if (process.env.MACHINE_STORAGE_PATH) {
 			logsPath = path.join(process.env.MACHINE_STORAGE_PATH, "machines", machineName, machineName, "Logs", "VBox.log");

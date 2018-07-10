@@ -25,7 +25,7 @@ export default {
 	localImages: null,
 	imagesUsed: [],
 
-	setup(ip, name?) {
+	setup(ip: string, name?: string) {
 		if (!ip && !name) {
 			throw new Error("Falsy ip or name passed to docker client setup");
 		}
@@ -119,7 +119,7 @@ export default {
 		}
 	},
 
-	startContainer(name) {
+	startContainer(name: string) {
 		let container = this.client.getContainer(name);
 
 		container.start((error) => {
@@ -133,7 +133,7 @@ export default {
 		});
 	},
 
-	createContainer(name, containerData) {
+	createContainer(name: string, containerData) {
 		containerData.name = containerData.Name || name;
 
 		if (containerData.Config && containerData.Config.Image) {
@@ -207,7 +207,7 @@ export default {
 		});
 	},
 
-	fetchContainer(id) {
+	async fetchContainer(id: string) {
 		this.client.getContainer(id).inspect((error, container) => {
 			if (error) {
 				containerServerActions.error({name: id, error});
@@ -227,7 +227,7 @@ export default {
 		});
 	},
 
-	fetchAllContainers() {
+	async fetchAllContainers() {
 		this.client.listContainers({all: true}, (err, containers) => {
 			if (err) {
 				console.error(err);
@@ -270,7 +270,7 @@ export default {
 		});
 	},
 
-	fetchAllImages() {
+	async fetchAllImages() {
 		this.client.listImages((err, list) => {
 			if (err) {
 				imageServerActions.error(err);
@@ -299,7 +299,7 @@ export default {
 		});
 	},
 
-	fetchAllNetworks() {
+	async fetchAllNetworks() {
 		this.client.listNetworks((err, networks) => {
 			if (err) {
 				networkActions.error(err);
@@ -318,7 +318,7 @@ export default {
 		});
 	},
 
-	updateContainerNetworks(name, connectedNetworks, disconnectedNetworks) {
+	async updateContainerNetworks(name: string, connectedNetworks: string[], disconnectedNetworks: string[]) {
 		networkActions.pending();
 		let disconnectedPromise = this.addOrRemoveNetworks(name, disconnectedNetworks, false);
 
@@ -332,7 +332,7 @@ export default {
 		});
 	},
 
-	addOrRemoveNetworks(name, networks, connect) {
+	async addOrRemoveNetworks(name: string, networks: string[], connect: boolean) {
 		let promises = _.map(networks, (networkName) => {
 			let network = this.client.getNetwork(networkName);
 			let operation = (connect === true ? network.connect : network.disconnect).bind(network);
@@ -354,7 +354,7 @@ export default {
 		return Promise.all(promises);
 	},
 
-	removeImage(selectedRepoTag) {
+	async removeImage(selectedRepoTag: string) {
 		// Prune all dangling image first
 		this.localImages.some((image) => {
 			if (image.namespace === "<none>" && image.name === "<none>") {
@@ -379,7 +379,7 @@ export default {
 		});
 	},
 
-	run(name, repository, tag, network, local = false) {
+	async run(name: string, repository: string, tag: string, network: string, local: boolean = false) {
 		tag = tag || "latest";
 		let imageName = repository + ":" + tag;
 
@@ -439,7 +439,7 @@ export default {
 		}
 	},
 
-	updateContainer(name, data) {
+	async updateContainer(name: string, data) {
 		let existing = this.client.getContainer(name);
 		existing.inspect((error, existingData) => {
 			if (error) {
@@ -468,7 +468,7 @@ export default {
 		});
 	},
 
-	rename(name, newName) {
+	async rename(name: string, newName: string) {
 		this.client.getContainer(name).rename({name: newName}, (error) => {
 			if (error && error.statusCode !== 204) {
 				containerServerActions.error({name, error});
@@ -499,7 +499,7 @@ export default {
 		});
 	},
 
-	restart(name) {
+	async restart(name: string) {
 		this.client.getContainer(name).stop({t: 5}, (stopError) => {
 			if (stopError && stopError.statusCode !== 304) {
 				containerServerActions.error({name, stopError});
@@ -517,7 +517,7 @@ export default {
 		});
 	},
 
-	stop(name) {
+	async stop(name: string) {
 		this.client.getContainer(name).stop({t: 5}, (error) => {
 			if (error && error.statusCode !== 304) {
 				containerServerActions.error({name, error});
@@ -528,7 +528,7 @@ export default {
 		});
 	},
 
-	start(name, callback?) {
+	async start(name: string, callback?) {
 		const self = this;
 		this.client.getContainer(name).inspect((error, container) => {
 			if (error) {
@@ -571,7 +571,7 @@ export default {
 		});
 	},
 
-	startLinkedContainers(name, callback) {
+	async startLinkedContainers(name: string, callback) {
 		const self = this;
 		this.client.getContainer(name).inspect((error, container) => {
 			if (error) {
@@ -625,7 +625,7 @@ export default {
 		});
 	},
 
-	destroy(name) {
+	async destroy(name: string) {
 		if (this.placeholders[name]) {
 			containerServerActions.destroyed({id: name});
 			delete this.placeholders[name];
@@ -654,7 +654,7 @@ export default {
 		});
 	},
 
-	active(name) {
+	active(name: string) {
 		this.detachLog();
 		this.activeContainerName = name;
 
@@ -663,7 +663,7 @@ export default {
 		}
 	},
 
-	logs() {
+	async logs() {
 		if (!this.activeContainerName) {
 			return;
 		}
@@ -692,7 +692,7 @@ export default {
 		});
 	},
 
-	attach() {
+	async attach() {
 		if (!this.activeContainerName) {
 			return;
 		}
@@ -742,7 +742,7 @@ export default {
 		}
 	},
 
-	listen() {
+	async listen() {
 		this.detachEvent();
 		this.client.getEvents((error, stream) => {
 			if (error || !stream) {
@@ -794,7 +794,7 @@ export default {
 		});
 	},
 
-	pullImage(repository, tag, callback, progressCallback, blockedCallback) {
+	async pullImage(repository: string, tag: string, callback, progressCallback, blockedCallback) {
 		let opts = {}, config = hubUtil.config();
 		if (!hubUtil.config()) {
 			opts = {};
@@ -910,7 +910,7 @@ export default {
 		});
 	},
 
-	refresh() {
+	async refresh() {
 		this.fetchAllContainers();
 	},
 };
