@@ -17,6 +17,7 @@
 		"install": "^0.1.8",
 		"jquery": "^3.3.1",
 		"JSONStream": "^1.0.7",
+		"mixpanel": "kitematic/mixpanel-node",
 		"mkdirp": "^0.5.0",
 		"node-uuid": "^1.4.3",
 		"numeral": "^1.5.3",
@@ -69,6 +70,7 @@
 		"grunt-shell-spawn": "^0.3.8",
 		"jest-cli": "^0.8.2",
 		"jsxhint": "^0.15.1",
+		"less": "^3.5.3",
 		"load-grunt-tasks": "^3.2.0",
 		"minimist": "^1.1.1",
 		"run-sequence": "^1.0.2",
@@ -90,8 +92,9 @@
 		"url": "git@github.com:kitematic/kitematic.git"
 	},
 	"scripts": {
-		"build": "tsc && npm run tslint",
+		"build": "npm run tsc && npm run tslint",
 		"integration": "jest -c jest-integration.json",
+		"lessc": "lessc ./static/styles/main.less ./build/main.css",
 		"postinstall": "npm run build",
 		"prestart": "npm run build",
 		"release": "npm run build && grunt release",
@@ -101,6 +104,7 @@
 		"start": "grunt",
 		"start:electron-builder": "npm run build && electron-builder start",
 		"test": "jest -c jest-unit.json",
+		"tsc":"tsc",
 		"tslint": "tslint --fix --project ./tsconfig.json"
 	},
 	"version": "0.17.3"
