@@ -8,4 +8,4 @@ if (process.platform !== "win32") {
 	process.env.PATH = "/usr/local/bin:" + process.env.PATH;
 }
 
-app.on("ready", App.onReady);
+app.on("ready", App.onAppReady);

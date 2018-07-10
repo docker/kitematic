@@ -7,13 +7,15 @@ import {Settings} from "./Settings";
 
 export class App {
 
-	public static onReady() {
-		let size: {height, width} = new Settings();
+	private static mainWindow: BrowserWindow;
+
+	public static onAppReady() {
+		let size = new Settings();
 		try {
 			size = JSON.parse(readFileSync(join(app.getPath("userData"), "size.json"), "utf8"));
 		} catch (err) {}
 
-		const mainWindow = new BrowserWindow({
+		App.mainWindow = new BrowserWindow({
 			frame: false,
 			height: size.height,
 			minHeight: platform() === "win32" ? 260 : 500,
@@ -24,36 +26,41 @@ export class App {
 		});
 
 		if (process.env.NODE_ENV === "development") {
-			mainWindow.webContents.openDevTools({
+			App.mainWindow.webContents.openDevTools({
 				mode: "detach",
 			});
 		}
 
-		mainWindow.loadFile(FileResources.INDEX_HTML);
+		app.on("activate", App.onAppActivate);
+		App.mainWindow.on("close", App.onMainWindowClose);
+		App.mainWindow.webContents.on("new-window", App.onWebContentsNewWindow);
+		App.mainWindow.webContents.on("will-navigate", App.onWebContentsWillNavigate);
+		App.mainWindow.webContents.on("did-finish-load", App.onWebContentsDidFinishLoad);
+		App.mainWindow.loadFile(FileResources.INDEX_HTML);
+	}
 
-		app.on("activate", () => {
-			mainWindow.show();
-		});
+	private static onAppActivate() {
+		App.mainWindow.show();
+	}
 
-		mainWindow.on("close", (event: Event) => {
-			mainWindow.webContents.send("application:quitting");
-		});
+	private static onMainWindowClose(event: Event) {
+		App.mainWindow.webContents.send("application:quitting");
+	}
 
-		mainWindow.webContents.on("new-window", (event: Event) => {
+	private static onWebContentsDidFinishLoad() {
+		App.mainWindow.setTitle("Kitematic");
+		App.mainWindow.show();
+		App.mainWindow.focus();
+	}
+
+	private static onWebContentsNewWindow(event: Event) {
+		event.preventDefault();
+	}
+
+	private static onWebContentsWillNavigate(event: Event, url: string) {
+		if (url.indexOf("build/index.html#") < 0) {
 			event.preventDefault();
-		});
-
-		mainWindow.webContents.on("will-navigate", (event: Event, url: string) => {
-			if (url.indexOf("build/index.html#") < 0) {
-				event.preventDefault();
-			}
-		});
-
-		mainWindow.webContents.on("did-finish-load", () => {
-			mainWindow.setTitle("Kitematic");
-			mainWindow.show();
-			mainWindow.focus();
-		});
+		}
 	}
 
 }
