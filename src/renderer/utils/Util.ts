@@ -1,4 +1,4 @@
-import * as child_process from "child_process";
+import {exec, execFile, ExecFileOptions, ExecOptions} from "child_process";
 import * as crypto from "crypto";
 import {remote} from "electron";
 import * as fs from "fs";
@@ -9,30 +9,31 @@ import {FileResources} from "../../common/FileResources";
 const dialog = remote.dialog;
 const app = remote.app;
 
+export class Util {
+
+	public static PackageJson = JSON.parse(fs.readFileSync(FileResources.PACKAGE, "utf8"));
+
+	public static async execFileAsync(args: string[], options?: ExecFileOptions) {
+		return await execFile(args[0], args.slice(1), options);
+	}
+
+	public static async execAsync(args: string, options?: ExecOptions) {
+		return await exec(args, options);
+	}
+
+}
+
 export default {
   native: null,
-  execFile(args, options?) {
-	return new Promise((resolve, reject) => {
-		child_process.execFile(args[0], args.slice(1), options, (error, stdout) => {
-		if (error) {
-			reject(error);
-		} else {
-			resolve(stdout);
-		}
-		});
-	});
+
+  async execFile(args, options?) {
+	return await Util.execFileAsync(args, options);
   },
-  exec(args, options?) {
-	return new Promise((resolve, reject) => {
-		child_process.exec(args, options, (error, stdout) => {
-		if (error) {
-			reject(new Error("Encountered an error: " + error));
-		} else {
-			resolve(stdout);
-		}
-		});
-	});
+
+  async exec(args, options?) {
+	return await Util.execAsync(args, options);
   },
+
   isWindows() {
 	return process.platform === "win32";
   },
@@ -115,9 +116,6 @@ export default {
 		.replace(/-----BEGIN RSA PRIVATE KEY-----.*-----END RSA PRIVATE KEY-----/mg, "<redacted>")
 		.replace(/\/Users\/[^\/]*\//mg, "/Users/<redacted>/")
 		.replace(/\\Users\\[^\/]*\\/mg, "\\Users\\<redacted>\\");
-  },
-  packagejson() {
-	return JSON.parse(fs.readFileSync(FileResources.PACKAGE, "utf8"));
   },
   settingsjson() {
 	let settingsjson = {};

@@ -5,7 +5,7 @@ import assign from "object-assign";
 import * as os from "os";
 import osxRelease from "osx-release";
 import * as path from "path";
-import util from "./Util";
+import util, {Util} from "./Util";
 let settings;
 
 try {
@@ -53,7 +53,7 @@ export default {
 
 	mixpanel.track(name, assign({
 		"distinct_id": id,
-		"version": util.packagejson().version,
+		"version": Util.PackageJson.version,
 		"Operating System": osName,
 		"Operating System Version": osVersion,
 		"Operating System Architecture": os.arch(),

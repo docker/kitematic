@@ -2,15 +2,9 @@ import Router from "react-router";
 import React from "react/addons";
 import {ImageResources} from "../resources/ImageResources";
 import metrics from "../utils/MetricsUtil";
-import utils from "../utils/Util";
+import utils, {Util} from "../utils/Util";
 
-let packages;
-
-try {
-	packages = utils.packagejson();
-} catch (err) {
-	packages = {};
-}
+const packages = Util.PackageJson;
 
 export default React.createClass({
 	mixins: [Router.Navigation],
