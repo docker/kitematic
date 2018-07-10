@@ -5,8 +5,6 @@
 	"dependencies": {
 		"alt": "^0.16.2",
 		"ansi-to-html": "0.3.0",
-		"any-promise": "^0.1.0",
-		"async": "^1.4.2",
 		"bluebird": "^3.5.1",
 		"bugsnag-js": "^2.4.7",
 		"cached-request": "^1.1.0",
@@ -103,7 +101,7 @@
 		"start": "grunt",
 		"start:electron-builder": "npm run build && electron-builder start",
 		"test": "jest -c jest-unit.json",
-		"tsc":"tsc",
+		"tsc": "tsc",
 		"tslint": "tslint --fix --project ./tsconfig.json"
 	},
 	"version": "0.17.3"
