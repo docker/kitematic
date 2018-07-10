@@ -10,7 +10,7 @@ import accountStore from "../stores/AccountStore";
 import imageStore from "../stores/ImageStore";
 import repositoryStore from "../stores/RepositoryStore";
 import metrics from "../utils/MetricsUtil";
-import ImageCard from "./ImageCard.react.jsx";
+import ImageCard from "./ImageCard.react";
 
 let _searchPromise = null;
 

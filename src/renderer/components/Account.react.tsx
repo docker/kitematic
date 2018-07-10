@@ -4,7 +4,7 @@ import accountActions from "../actions/AccountActions";
 import {ImageResources} from "../resources/ImageResources";
 import accountStore from "../stores/AccountStore";
 import metrics from "../utils/MetricsUtil";
-import Header from "./Header.react.jsx";
+import Header from "./Header.react";
 
 export default React.createClass({
   mixins: [Router.Navigation],

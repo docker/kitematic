@@ -2,10 +2,10 @@ import {shell} from "electron";
 import jQuery from "jquery";
 import React from "react/addons";
 import _ from "underscore";
-import ContainerHomeFolders from "./ContainerHomeFolders.react.jsx";
-import ContainerHomeLogs from "./ContainerHomeLogs.react.jsx";
-import ContainerHomePreview from "./ContainerHomePreview.react.jsx";
-import ContainerProgress from "./ContainerProgress.react.jsx";
+import ContainerHomeFolders from "./ContainerHomeFolders.react";
+import ContainerHomeLogs from "./ContainerHomeLogs.react";
+import ContainerHomePreview from "./ContainerHomePreview.react";
+import ContainerProgress from "./ContainerProgress.react";
 
 export default React.createClass({
 	contextTypes: {

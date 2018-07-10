@@ -4,7 +4,7 @@ import Router from "react-router";
 import repositoryActions from "./actions/RepositoryActions";
 import template from "./menutemplate";
 import routerContainer from "./router";
-import routes from "./routes.jsx";
+import routes from "./routes";
 import machine from "./utils/DockerMachineUtil";
 import docker from "./utils/DockerUtil";
 import hub from "./utils/HubUtil";

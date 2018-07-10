@@ -1,5 +1,5 @@
 import React from "react/addons";
-import ContainerListItem from "./ContainerListItem.react.jsx";
+import ContainerListItem from "./ContainerListItem.react";
 
 export default React.createClass({
 	componentWillMount() {

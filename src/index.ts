@@ -1,1 +1,1 @@
-import "./renderer/app.jsx";
+import "./renderer/app";

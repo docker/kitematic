@@ -3,8 +3,8 @@ import React from "react/addons";
 import _ from "underscore";
 import containerUtil from "../utils/ContainerUtil";
 import util from "../utils/Util";
-import ContainerDetailsHeader from "./ContainerDetailsHeader.react.jsx";
-import ContainerDetailsSubheader from "./ContainerDetailsSubheader.react.jsx";
+import ContainerDetailsHeader from "./ContainerDetailsHeader.react";
+import ContainerDetailsSubheader from "./ContainerDetailsSubheader.react";
 
 export default React.createClass({
 	contextTypes: {

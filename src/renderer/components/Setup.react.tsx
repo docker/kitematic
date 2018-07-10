@@ -6,8 +6,8 @@ import {ImageResources} from "../resources/ImageResources";
 import setupStore from "../stores/SetupStore";
 import metrics from "../utils/MetricsUtil";
 import util from "../utils/Util";
-import Header from "./Header.react.jsx";
-import Radial from "./Radial.react.jsx";
+import Header from "./Header.react";
+import Radial from "./Radial.react";
 
 export default React.createClass({
 	mixins: [Router.Navigation],

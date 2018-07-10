@@ -4,7 +4,7 @@
 		"allowSyntheticDefaultImports": true,
 		"charset": "utf-8",
 		"checkJs": false,
-		"jsx": "preserve",
+		"jsx": "react-native",
 		"module": "es2015",
 		"moduleResolution": "node",
 		"noFallthroughCasesInSwitch": false,
