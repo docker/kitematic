@@ -1,8 +1,14 @@
 import classNames from "classnames";
+import {Component} from "react";
 import React from "react/addons";
 
-export default React.createClass({
-	render() {
+export default class Radial extends Component<RadialProps, RadialState> {
+
+	public constructor(props) {
+		super(props);
+	}
+
+	public render() {
 		let percentage;
 		if ((this.props.progress !== null && this.props.progress !== undefined) && !this.props.spin && !this.props.error) {
 			percentage = (
@@ -36,5 +42,19 @@ export default React.createClass({
 				</div>
 			</div>
 		);
-	},
-});
+	}
+
+}
+
+export class RadialProps {
+	public error?: boolean;
+	public gray?: boolean;
+	public progress?: number;
+	public spin?: boolean;
+	public thick?: boolean;
+	public transparent?: boolean;
+}
+
+export class RadialState {
+
+}
