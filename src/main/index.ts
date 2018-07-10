@@ -1,4 +1,4 @@
-import {Promise} from "bluebird";
+import {Promise as BlueBirdPromise} from "bluebird";
 import {app, BrowserWindow} from "electron";
 import {readFileSync} from "fs";
 import {platform} from "os";
@@ -43,7 +43,7 @@ app.on("ready", () => {
 		mainWindow.on("close", (event: Event) => {
 			mainWindow.webContents.send("application:quitting");
 			if (!exiting) {
-				Promise.delay(1000).then(() => {
+				BlueBirdPromise.delay(1000).then(() => {
 					mainWindow.close();
 				});
 				exiting = true;
