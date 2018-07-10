@@ -33,7 +33,8 @@ app.on("ready", () => {
 		});
 	}
 
-	mainWindow.loadURL(normalize(`file://${FileResources.INDEX}`));
+	mainWindow.loadFile(FileResources.INDEX_HTML);
+	// mainWindow.loadURL(normalize(`file://${FileResources.INDEX}`));
 
 	app.on("activate", () => {
 		mainWindow.show();
