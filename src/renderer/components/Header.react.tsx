@@ -3,6 +3,7 @@ import {remote} from "electron";
 import Router from "react-router";
 import React from "react/addons";
 import accountActions from "../actions/AccountActions";
+import {ImageResources} from "../resources/ImageResources";
 import accountStore from "../stores/AccountStore";
 import metrics from "../utils/MetricsUtil";
 import util from "../utils/Util";
@@ -103,7 +104,7 @@ export default React.createClass({
 	renderLogo() {
 		return (
 			<div className="logo">
-				<img width="40" height="32" src="logo.svg"/>
+				<img width="40" height="32" src={ImageResources.LOGO}/>
 			</div>
 		);
 	},
@@ -146,7 +147,7 @@ export default React.createClass({
 				{this.state.username}
 							{this.state.verified ? null : "(Unverified)"}
 				</span>
-						<img src="userdropdown.png"/>
+						<img src={ImageResources.USER_DROP_DOWN}/>
 					</div>
 				</div>
 			);

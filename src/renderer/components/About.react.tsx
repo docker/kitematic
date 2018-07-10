@@ -1,14 +1,15 @@
 import Router from "react-router";
 import React from "react/addons";
+import {ImageResources} from "../resources/ImageResources";
 import metrics from "../utils/MetricsUtil";
 import utils from "../utils/Util";
 
 let packages;
 
 try {
-  packages = utils.packagejson();
+	packages = utils.packagejson();
 } catch (err) {
-  packages = {};
+	packages = {};
 }
 
 export default React.createClass({
@@ -29,7 +30,7 @@ export default React.createClass({
 					<a onClick={this.handleGoBackClick}>Go Back</a>
 					<div className="items">
 						<div className="item">
-							<img src="cartoon-kitematic.png"/>
+							<img src={ImageResources.CARTOON_KITEMATIC}/>
 							<h4>Docker {packages.name}</h4>
 							<p>{packages.version}</p>
 						</div>
@@ -37,11 +38,11 @@ export default React.createClass({
 					<h3>Kitematic is built with:</h3>
 					<div className="items">
 						<div className="item">
-							<img src="cartoon-docker.png"/>
+							<img src={ImageResources.CARTOON_DOCKER}/>
 							<h4>Docker Engine</h4>
 						</div>
 						<div className="item">
-							<img src="cartoon-docker-machine.png"/>
+							<img src={ImageResources.CARTOON_DOCKER_MACHINE}/>
 							<h4>Docker Machine</h4>
 							<p>{packages["docker-machine-version"]}</p>
 						</div>

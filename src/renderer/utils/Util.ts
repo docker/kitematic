@@ -4,6 +4,7 @@ import {remote} from "electron";
 import * as fs from "fs";
 import * as http from "http";
 import * as path from "path";
+import {FileResources} from "../resources/FileResources";
 
 const dialog = remote.dialog;
 const app = remote.app;
@@ -116,7 +117,7 @@ export default {
 		.replace(/\\Users\\[^\/]*\\/mg, "\\Users\\<redacted>\\");
   },
   packagejson() {
-	return JSON.parse(fs.readFileSync(path.join(__dirname, "../../", "package.json"), "utf8"));
+	return JSON.parse(fs.readFileSync(FileResources.PACKAGE, "utf8"));
   },
   settingsjson() {
 	let settingsjson = {};
