@@ -3,7 +3,7 @@ import {app, BrowserWindow} from "electron";
 import {readFileSync} from "fs";
 import {platform} from "os";
 import {join, normalize} from "path";
-import {FileResources} from "../common/FileResources";
+import {FileResources} from "../common/resources/FileResources";
 
 process.env.NODE_PATH = FileResources.NODE_MODULES_PATH;
 process.env.RESOURCES_PATH = FileResources.RESOURCES_PATH;

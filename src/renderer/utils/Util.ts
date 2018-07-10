@@ -4,7 +4,7 @@ import {remote} from "electron";
 import * as fs from "fs";
 import * as http from "http";
 import * as path from "path";
-import {FileResources} from "../../common/FileResources";
+import {FileResources} from "../../common/resources/FileResources";
 
 const dialog = remote.dialog;
 const app = remote.app;
