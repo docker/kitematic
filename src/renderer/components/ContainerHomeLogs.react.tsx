@@ -1,7 +1,7 @@
 import Convert from "ansi-to-html";
 import { clipboard, remote, shell } from "electron";
 import * as fs from "fs";
-import * as $ from "jquery";
+import jQuery from "jquery";
 import React from "react/addons";
 import containerActions from "../actions/ContainerActions";
 const dialog = remote.dialog;
@@ -51,7 +51,7 @@ export default React.createClass({
 		}));
 	},
 	componentDidUpdate() {
-		const node = $(".logs").get()[0];
+		const node = jQuery(".logs").get()[0];
 		if (this.state.follow) {
 			node.scrollTop = node.scrollHeight;
 		}

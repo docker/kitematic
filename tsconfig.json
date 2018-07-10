@@ -1,6 +1,7 @@
 {
 	"$schema": "http://json.schemastore.org/tsconfig",
 	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
 		"charset": "utf-8",
 		"checkJs": false,
 		"jsx": "preserve",

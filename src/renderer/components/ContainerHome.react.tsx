@@ -1,5 +1,5 @@
 import {shell} from "electron";
-import * as $ from "jquery";
+import jQuery from "jquery";
 import React from "react/addons";
 import _ from "underscore";
 import ContainerHomeFolders from "./ContainerHomeFolders.react.jsx";
@@ -26,9 +26,9 @@ export default React.createClass({
 	},
 
 	handleResize() {
-		$(".full .wrapper").height(window.innerHeight - 132);
-		$(".left .wrapper").height(window.innerHeight - 132);
-		$(".right .wrapper").height(window.innerHeight / 2 - 55);
+		jQuery(".full .wrapper").height(window.innerHeight - 132);
+		jQuery(".left .wrapper").height(window.innerHeight - 132);
+		jQuery(".right .wrapper").height(window.innerHeight / 2 - 55);
 	},
 
 	handleErrorClick() {
