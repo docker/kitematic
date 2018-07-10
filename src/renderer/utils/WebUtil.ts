@@ -1,15 +1,15 @@
-import {remote} from "electron";
-const app = remote.app;
 import bugsnag from "bugsnag-js";
-import * as fs from "fs";
-import * as path from "path";
+import {remote} from "electron";
+import {writeFileSync} from "fs";
+import {join} from "path";
 import metrics from "./MetricsUtil";
 import util from "./Util";
+const app = remote.app;
 
 export default {
   addWindowSizeSaving() {
 	window.addEventListener("resize", function() {
-		fs.writeFileSync(path.join(app.getPath("userData"), "size"), JSON.stringify({
+		writeFileSync(join(app.getPath("userData"), "size.json"), JSON.stringify({
 		width: window.outerWidth,
 		height: window.outerHeight,
 		}));

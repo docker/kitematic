@@ -100,7 +100,6 @@
 		"release:mac": "npm run build && grunt release && npm run build && electron-builder build --mac",
 		"release:windows": "npm run build && grunt release &&npm run build && electron-builder build --windows",
 		"start": "grunt",
-		"start:electron-builder": "npm run build && electron-builder start",
 		"test": "jest -c jest-unit.json",
 		"tsc": "tsc",
 		"tslint": "tslint --fix --project ./tsconfig.json"
