@@ -14,6 +14,7 @@
 		"noImplicitUseStrict": false,
 		"noUnusedLocals": false,
 		"noUnusedParameters": false,
+		"outDir": "./build/",
 		"sourceMap": true,
 		"strict": false,
 		"strictNullChecks": false,
