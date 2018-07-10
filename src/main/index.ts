@@ -34,7 +34,6 @@ app.on("ready", () => {
 	}
 
 	mainWindow.loadFile(FileResources.INDEX_HTML);
-	// mainWindow.loadURL(normalize(`file://${FileResources.INDEX}`));
 
 	app.on("activate", () => {
 		mainWindow.show();
