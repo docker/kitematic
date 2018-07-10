@@ -186,18 +186,6 @@ module.exports = function (grunt) {
             }
         },
 
-        // styles
-        less: {
-            options: {
-                sourceMapFileInline: true
-            },
-            dist: {
-                files: {
-                    'build/main.css': './static/styles/main.less'
-                }
-            }
-        },
-
         // javascript
         babel: {
             options: {
@@ -400,18 +388,18 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-electron-installer-debian');
     grunt.loadNpmTasks('grunt-electron-installer-redhat');
 
-    grunt.registerTask('default', ['newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+    grunt.registerTask('default', ['newer:babel', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
     if (!IS_WINDOWS && !IS_LINUX) {
-        grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress', 'shell:linux_npm', 'electron-packager:osxlnx', 'electron-installer-debian:linux64', 'shell:linux_zip']);
+        grunt.registerTask('release', ['clean:release', 'babel', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress', 'shell:linux_npm', 'electron-packager:osxlnx', 'electron-installer-debian:linux64', 'shell:linux_zip']);
     }else if (IS_LINUX) {
         if (linuxpackage) {
-            grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'shell:linux_npm', 'electron-packager:build', linuxpackage]);
+            grunt.registerTask('release', ['clean:release', 'babel', 'copy:dev', 'shell:linux_npm', 'electron-packager:build', linuxpackage]);
         }else {
             grunt.log.errorlns('Your Linux distribution is not yet supported - arch:' + process.arch + ' platform:' + process.platform);
         }
     }else {
-        grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'compress']);
+        grunt.registerTask('release', ['clean:release', 'babel', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'compress']);
     }
 
     process.on('SIGINT', function () {
