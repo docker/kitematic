@@ -234,7 +234,7 @@ export default {
 				return;
 			}
 			this.imagesUsed = [];
-			async.map(containers, (container, callback) => {
+			async.map(containers, (container: any, callback) => {
 				this.client.getContainer(container.Id).inspect((error, container) => {
 					if (error) {
 						callback(null, null);
