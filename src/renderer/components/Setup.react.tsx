@@ -2,6 +2,7 @@ import {shell} from "electron";
 import Router from "react-router";
 import React from "react/addons";
 import setupActions from "../actions/SetupActions";
+import {ImageResources} from "../resources/ImageResources";
 import setupStore from "../stores/SetupStore";
 import metrics from "../utils/MetricsUtil";
 import util from "../utils/Util";
@@ -65,7 +66,7 @@ export default React.createClass({
 	renderContents() {
 		return (
 			<div className="contents">
-				<img src="boot2docker.png" />
+				<img src={ImageResources.BOOT_TO_DOCKER} />
 				<div className="detail">
 					<Radial progress={Math.round(this.state.progress)} thick={true} gray={true}/>
 				</div>

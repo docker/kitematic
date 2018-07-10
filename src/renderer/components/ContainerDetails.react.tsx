@@ -7,26 +7,26 @@ import ContainerDetailsHeader from "./ContainerDetailsHeader.react.jsx";
 import ContainerDetailsSubheader from "./ContainerDetailsSubheader.react.jsx";
 
 export default React.createClass({
-  contextTypes: {
-	router: React.PropTypes.func,
-  },
+	contextTypes: {
+		router: React.PropTypes.func,
+	},
 
-  render() {
-	if (!this.props.container) {
-		return false;
-	}
+	render() {
+		if (!this.props.container) {
+			return false;
+		}
 
-	let ports = containerUtil.ports(this.props.container);
-	let defaultPort = _.find(_.keys(ports), (port) => {
-		return util.webPorts.indexOf(port) !== -1;
-	});
+		let ports = containerUtil.ports(this.props.container);
+		let defaultPort = _.find(_.keys(ports), (port) => {
+			return util.webPorts.indexOf(port) !== -1;
+		});
 
-	return (
-		<div className="details">
-		<ContainerDetailsHeader {...this.props} defaultPort={defaultPort} ports={ports}/>
-		<ContainerDetailsSubheader {...this.props} defaultPort={defaultPort} ports={ports}/>
-		<Router.RouteHandler {...this.props} defaultPort={defaultPort} ports={ports}/>
-		</div>
-	);
-  },
+		return (
+			<div className="details">
+				<ContainerDetailsHeader {...this.props} defaultPort={defaultPort} ports={ports}/>
+				<ContainerDetailsSubheader {...this.props} defaultPort={defaultPort} ports={ports}/>
+				<Router.RouteHandler {...this.props} defaultPort={defaultPort} ports={ports}/>
+			</div>
+		);
+	},
 });
