@@ -163,7 +163,7 @@ export default React.createClass({
 				<div className="setup-content">
 					<div className="image">
 						<div className="contents">
-							<img src="install-error.png"/>
+							<img src={ImageResources.INSTALL_ERROR}/>
 							<div className="detail">
 								<a className="btn btn-danger small" onClick={this.handleResetSettings}>reset</a>
 							</div>
