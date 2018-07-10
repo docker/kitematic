@@ -1,5 +1,5 @@
 import {Component} from "react";
-import React from "react/addons";
+import React from "react";
 import Header from "./Header.react";
 
 export default class Loading extends Component<LoadingProps, LoadingState> {
