@@ -3,21 +3,17 @@ import {app, BrowserWindow} from "electron";
 import {readFileSync} from "fs";
 import {platform} from "os";
 import {join, normalize} from "path";
+import {FileResources} from "../common/FileResources";
 
-process.env.NODE_PATH = join(__dirname, "../node_modules");
-process.env.RESOURCES_PATH = join(__dirname, "/../resources");
+process.env.NODE_PATH = FileResources.NODE_MODULES_PATH;
+process.env.RESOURCES_PATH = FileResources.RESOURCES_PATH;
 if (process.platform !== "win32") {
 	process.env.PATH = "/usr/local/bin:" + process.env.PATH;
 }
 let exiting = false;
 let size: {height, width} = {} as any;
-let settingsjson: {} = {} as any;
 try {
 	size = JSON.parse(readFileSync(join(app.getPath("userData"), "size"), "utf8"));
-} catch (err) {}
-
-try {
-	settingsjson = JSON.parse(readFileSync(join(__dirname, "settings.json"), "utf8"));
 } catch (err) {}
 
 app.on("ready", () => {
@@ -32,27 +28,26 @@ app.on("ready", () => {
 	});
 
 	if (process.env.NODE_ENV === "development") {
-		mainWindow.webContents.openDevTools({mode: "detach"});
+		mainWindow.webContents.openDevTools({
+			mode: "detach",
+		});
 	}
 
-	mainWindow.loadURL(normalize(`file://${join(__dirname, "../index.html")}`));
+	mainWindow.loadURL(normalize(`file://${FileResources.INDEX}`));
 
 	app.on("activate", () => {
-		if (mainWindow) {
-			mainWindow.show();
-		}
-		return false;
+		mainWindow.show();
 	});
 
 	if (platform() === "win32" || platform() === "linux") {
-		mainWindow.on("close", (e) => {
+		mainWindow.on("close", (event: Event) => {
 			mainWindow.webContents.send("application:quitting");
 			if (!exiting) {
-				Promise.delay(1000).then(function() {
+				Promise.delay(1000).then(() => {
 					mainWindow.close();
 				});
 				exiting = true;
-				e.preventDefault();
+				event.preventDefault();
 			}
 		});
 
@@ -65,13 +60,13 @@ app.on("ready", () => {
 		});
 	}
 
-	mainWindow.webContents.on("new-window", (e) => {
-		e.preventDefault();
+	mainWindow.webContents.on("new-window", (event: Event) => {
+		event.preventDefault();
 	});
 
-	mainWindow.webContents.on("will-navigate", (e, url) => {
+	mainWindow.webContents.on("will-navigate", (event: Event, url: string) => {
 		if (url.indexOf("build/index.html#") < 0) {
-			e.preventDefault();
+			event.preventDefault();
 		}
 	});
 
