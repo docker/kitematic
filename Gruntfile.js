@@ -135,12 +135,12 @@ module.exports = function (grunt) {
                     dest: 'build/'
                 }, {
                     expand: true,
-                    cwd: 'images/',
+                    cwd: './static/images/',
                     src: ['**/*'],
-                    dest: 'build/'
+                    dest: './build/'
                 }, {
                     expand: true,
-                    cwd: 'fonts/',
+                    cwd: './static/fonts/',
                     src: ['**/*'],
                     dest: 'build/'
                 }, {
@@ -155,7 +155,7 @@ module.exports = function (grunt) {
             windows: {
                 files: [{
                     expand: true,
-                    cwd: 'resources',
+                    cwd: './static/resources',
                     src: ['ssh.exe', 'OPENSSH_LICENSE', 'msys-*'],
                     dest: 'dist/' + BASENAME + '-win32-x64/resources/resources'
                 }],
@@ -166,7 +166,7 @@ module.exports = function (grunt) {
             osx: {
                 files: [{
                     expand: true,
-                    cwd: 'resources',
+                    cwd: './static/resources',
                     src: ['terminal'],
                     dest: '<%= OSX_FILENAME %>/Contents/Resources/resources/'
                 }, {
