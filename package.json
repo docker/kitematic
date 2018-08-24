@@ -2,6 +2,7 @@
   "name": "Kitematic",
   "version": "0.17.4",
   "author": "Kitematic",
+  "license": "Apache-2.0",
   "description": "Simple Docker Container management for Mac OS X, Windows and Ubuntu.",
   "homepage": "https://kitematic.com/",
   "main": "browser.js",
