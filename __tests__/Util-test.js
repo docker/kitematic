@@ -1,5 +1,5 @@
 jest.dontMock('../src/utils/Util').dontMock('console');
-const util = require('../src/utils/Util');
+const util = require('../src/renderer/utils/Util');
 
 describe('Util', () => {
   describe('when removing sensitive data', () => {
