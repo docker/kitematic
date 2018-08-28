@@ -8,7 +8,7 @@ describe('Util', () => {
   time="2015-04-17T21:43:47-04:00" level="debug" msg="executing: /usr/bin/VBoxManage showvminfo dev2 --machinereadable"`;
       expect(util.removeSensitiveData(testdata).indexOf('CERTIFICATE')).toEqual(-1);
       expect(util.removeSensitiveData(testdata).indexOf('nX5Vh1bslYJzsSdBNZFWSKShZ+gtRpjtV7NynANDJPQNIRhDxAf4uDY9hA2c')).toEqual(-1);
-      expect(util.removeSensitiveData(testdata).indexOf('<redacted>')).toNotEqual(-1);
+      expect(util.removeSensitiveData(testdata).indexOf('<redacted>')).not.toEqual(-1);
     });
 
     it('filters ssh private key data', () => {
@@ -17,23 +17,23 @@ describe('Util', () => {
   time="2015-04-17T21:43:47-04:00" level="debug" msg="executing: ssh -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectionAttempts=30 -o LogLevel=quiet -p 50483 -i /Users/johnappleseed/.docker/machine/machines/dev2/id_rsa docker@localhost echo \"-----BEGIN CERTIFICATE-----\nMIIC+DCCAeKgAwIBAgIRANfIbsa2M94gDY+fBiBiQBkwCwYJKoZIhvcNAQELMBIx\nEDAOBg`;
       expect(util.removeSensitiveData(testdata).indexOf('PRIVATE')).toEqual(-1);
       expect(util.removeSensitiveData(testdata).indexOf('94fYH4W1Fq0uDJ9kZ7oItLyF5EPaLlY9E8+YuJBl0OSTtdicROUv')).toEqual(-1);
-      expect(util.removeSensitiveData(testdata).indexOf('<redacted>')).toNotEqual(-1);
+      expect(util.removeSensitiveData(testdata).indexOf('<redacted>')).not.toEqual(-1);
     });
 
     it('filters username data', () => {
       var testdata = String.raw`/Users/johnappleseed/.docker/machine/machines/dev2/id_rsa docker@localhost echo`;
       expect(util.removeSensitiveData(testdata).indexOf('/Users/johnappleseed/')).toEqual(-1);
-      expect(util.removeSensitiveData(testdata).indexOf('/Users/<redacted>/')).toNotEqual(-1);
+      expect(util.removeSensitiveData(testdata).indexOf('/Users/<redacted>/')).not.toEqual(-1);
 
       testdata = String.raw`/Users/some.wei-rdUsername/.docker/machine/machines/dev2/id_rsa docker@localhost echo`;
       expect(util.removeSensitiveData(testdata).indexOf('/Users/some.wei-rdUsername/.docker')).toEqual(-1);
-      expect(util.removeSensitiveData(testdata).indexOf('/Users/<redacted>/.docker')).toNotEqual(-1);
+      expect(util.removeSensitiveData(testdata).indexOf('/Users/<redacted>/.docker')).not.toEqual(-1);
     });
 
     it('filters Windows username data', () => {
       var testdata = String.raw`C:\\Users\\johnappleseed\\.docker\\machine`;
       expect(util.removeSensitiveData(testdata).indexOf('johnappleseed')).toEqual(-1);
-      expect(util.removeSensitiveData(testdata).indexOf('<redacted>')).toNotEqual(-1);
+      expect(util.removeSensitiveData(testdata).indexOf('<redacted>')).not.toEqual(-1);
     });
 
     it ('returns input if empty or not a string', () => {

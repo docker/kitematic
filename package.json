@@ -89,7 +89,7 @@
     "grunt-rename": "^0.1.4",
     "grunt-shell": "^1.1.2",
     "grunt-shell-spawn": "^0.3.8",
-    "jest-cli": "^0.8.2",
+    "jest-cli": "^21.2.1",
     "jsxhint": "^0.15.1",
     "load-grunt-tasks": "^3.2.0",
     "minimist": "^1.1.1",
