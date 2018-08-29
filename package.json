@@ -36,7 +36,6 @@
     "bugsnag-js": "2.5.0",
     "cached-request": "1.1.2",
     "classnames": "2.2.5",
-    "coveralls": "2.13.3",
     "deep-extend": "0.4.2",
     "dockerode": "2.5.4",
     "electron-packager": "12.1.1",
