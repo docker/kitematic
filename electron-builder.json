@@ -15,9 +15,23 @@
     },
     "packages.json"
   ],
-  "linux": {},
+  "linux": {
+    "target":[
+      {
+        "target":"AppImage"
+      },
+      {
+        "target":"zip"
+      }
+    ]
+  },
   "mac": {
-    "category": "public.app-category.developer-tools"
+    "category": "public.app-category.developer-tools",
+    "target":[
+      {
+        "target":"zip"
+      }
+    ]
   },
   "msi": {
     "warningsAsErrors": false
@@ -32,6 +46,9 @@
       },
       {
         "target": "msi"
+      },
+      {
+        "target":"zip"
       }
     ]
   }

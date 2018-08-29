@@ -1,7 +1,12 @@
 {
+  "$schema": "http://json.schemastore.org/package",
   "name": "Kitematic",
   "version": "0.17.3",
-  "author": "Kitematic",
+  "author": {
+    "name": "Kitematic Team",
+    "email": "support@docker.com",
+    "url": "https://github.com/docker/kitematic"
+  },
   "description": "Simple Docker Container management for Mac OS X, Windows and Ubuntu.",
   "homepage": "https://kitematic.com/",
   "main": "browser.js",
@@ -17,9 +22,10 @@
     "prestart": "npm run build",
     "release": "npm run build && grunt release",
     "release-verbose": "npm run build && grunt --verbose release",
-    "release:linux": "npm run release && electron-builder --linux",
-    "release:mac": "npm run release && electron-builder --mac",
-    "release:windows": "npm run release && electron-builder --windows",
+    "release:all-zip":"npm run build && grunt electron-builder && electron-builder --linux zip && electron-builder --mac zip && electron-builder --windows zip",
+    "release:linux": "npm run build && grunt electron-builder && electron-builder --linux",
+    "release:mac": "npm run build && grunt electron-builder && electron-builder --mac",
+    "release:windows": "npm run build && grunt electron-builder && electron-builder --windows",
     "start": "grunt",
     "start-dev": "npm run build && NODE_ENV=development grunt",
     "test": "jest -c jest-unit.json",
@@ -41,7 +47,6 @@
     "dockerode": "^2.2.10",
     "install": "^0.1.8",
     "jquery": "^3.0.1",
-    "mixpanel": "kitematic/mixpanel-node",
     "mkdirp": "^0.5.0",
     "node-uuid": "^1.4.3",
     "numeral": "^1.5.3",
@@ -63,8 +68,8 @@
     "@types/react": "^16.0.31",
     "babel": "^5.8.23",
     "babel-jest": "^5.2.0",
-    "electron": "^1.8.2",
-    "electron-builder": "^20.2.0",
+    "electron": "^1.8.3",
+    "electron-builder": "^20.5.1",
     "eslint": "^4.1.1",
     "eslint-plugin-react": "^3.3.0",
     "grunt": "^0.4.5",
@@ -98,9 +103,5 @@
     "source-map-support": "^0.3.2",
     "tslint": "^5.9.1",
     "typescript": "^2.7.2"
-  },
-  "optionalDependencies": {
-    "grunt-electron-installer-debian": "^0.3.0",
-    "grunt-electron-installer-redhat": "^0.3.0"
   }
 }

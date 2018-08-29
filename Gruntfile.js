@@ -402,6 +402,8 @@ module.exports = function (grunt) {
 
   grunt.registerTask('default', ['newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
 
+  grunt.registerTask('electron-builder', ['clean:release', 'babel', 'less', 'copy:dev']);
+
   if (!IS_WINDOWS && !IS_LINUX) {
     grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress', 'shell:linux_npm', 'electron-packager:osxlnx', 'electron-installer-debian:linux64', 'shell:linux_zip']);
   }else if (IS_LINUX) {
