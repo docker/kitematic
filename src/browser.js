@@ -32,6 +32,7 @@ app.on('ready', function () {
     'standard-window': false,
     resizable: true,
     frame: false,
+    backgroundColor: '#fff',
     show: false
   });
 

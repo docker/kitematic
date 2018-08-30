@@ -20,7 +20,7 @@ Before you file an issue or a pull request, read the following tips on how to ke
 ### Prerequisites for developing Kitematic on Mac
 You will need to install:
 - The [Docker Toolbox](https://docker.com/toolbox)
-- [Node.js](https://nodejs.org/)
+- [Node.js](https://nodejs.org/) node version 10 is not supported
 - Wine `brew install wine` (only if you want to generate a Windows release on OS X)
 - The latest Xcode from the Apple App Store.
 
