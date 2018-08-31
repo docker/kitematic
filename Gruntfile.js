@@ -380,14 +380,22 @@ module.exports = function (grunt) {
       },
       linux64: {
         options: {
-          arch: 'x86_64'
+          arch: 'x86_64',
+          requires: [
+            'lsb-core-noarch',
+            'libXss.so.1()(64bit)'
+          ]
         },
         src: './dist/Kitematic-linux-x64/',
         dest: './dist/'
       },
       linux32: {
         options: {
-          arch: 'x86'
+          arch: 'x86',
+          requires: [
+            'lsb-core-noarch',
+            'libXss.so.1'
+          ]
         },
         src: './dist/Kitematic-linux-ia32/',
         dest: './dist/'
