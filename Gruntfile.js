@@ -106,7 +106,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: 'dist/' + BASENAME + '-win32-x64',
-          src: [BASENAME + '.exe']
+          src: [BASENAME + '.exe'],
         }],
         options: {
           icon: 'util/kitematic.ico',
@@ -139,6 +139,15 @@ module.exports = function (grunt) {
           src: ['**/*'],
           dest: 'build/'
         }, {
+          src: 'util/kitematic.icns',
+          dest: 'build/icon.icns',
+        }, {
+          src: 'util/kitematic.ico',
+          dest: 'build/icon.ico',
+        }, {
+          src: 'util/kitematic.png',
+          dest: 'build/icon.png',
+        }, {
           expand: true,
           cwd: 'fonts/',
           src: ['**/*'],
@@ -169,14 +178,11 @@ module.exports = function (grunt) {
           cwd: 'resources',
           src: ['terminal'],
           dest: '<%= OSX_FILENAME %>/Contents/Resources/resources/'
-        }, {
-          src: 'util/kitematic.icns',
-          dest: '<%= OSX_FILENAME %>/Contents/Resources/atom.icns'
         }],
         options: {
-          mode: true
-        }
-      }
+          mode: true,
+        },
+      },
     },
 
     rename: {
@@ -300,7 +306,7 @@ module.exports = function (grunt) {
           name: 'Kitematic',
           ignore: 'bower.json',
           version: packagejson['electron-version'], // set version of electron
-          overwrite: true
+          overwrite: true,
         }
       },
       osxlnx: {
@@ -312,9 +318,9 @@ module.exports = function (grunt) {
           name: 'Kitematic',
           ignore: 'bower.json',
           version: packagejson['electron-version'], // set version of electron
-          overwrite: true
+          overwrite: true,
         }
-      }
+      },
     },
     'electron-installer-debian': {
       options: {
@@ -373,27 +379,27 @@ module.exports = function (grunt) {
         priority: 'optional',
         icon: './util/kitematic.png',
         categories: [
-          'Utilities'
+          'Utilities',
         ],
         rename: function (dest, src) {
           return LINUX_FILENAME;
-        }
+        },
       },
       linux64: {
         options: {
-          arch: 'x86_64'
+          arch: 'x86_64',
         },
         src: './dist/Kitematic-linux-x64/',
-        dest: './dist/'
+        dest: './dist/',
       },
       linux32: {
         options: {
-          arch: 'x86'
+          arch: 'x86',
         },
         src: './dist/Kitematic-linux-ia32/',
-        dest: './dist/'
-      }
-    }
+        dest: './dist/',
+      },
+    },
   });
 
   // Load the plugins for linux packaging
@@ -404,23 +410,19 @@ module.exports = function (grunt) {
   grunt.registerTask('build', ['newer:babel', 'less', 'newer:copy:dev']);
   grunt.registerTask('default', ['build', 'shell:electron', 'watchChokidar']);
 
-  if (!IS_WINDOWS && !IS_LINUX) {
-    grunt.registerTask('release', [
-      'clean:release', 'build', 'shell:linux_npm',
-      'electron:osx',
-      'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress',
-      'shell:linux_npm', 'electron-packager:osxlnx',
-      // 'electron-installer-debian:linux64', 'shell:linux_zip',
-    ]);
-  } else if (IS_LINUX) {
-    if (linuxpackage) {
-      grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'shell:linux_npm', 'electron-packager:build', linuxpackage]);
-    }else {
-      grunt.log.errorlns('Your Linux distribution is not yet supported - arch:' + process.arch + ' platform:' + process.platform);
-    }
-  } else {
-    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'compress']);
-  }
+  grunt.registerTask('release:mac', [
+    'clean:release', 'build', 'shell:linux_npm',
+    'electron:osx',
+    'copy:osx', 'shell:sign', 'shell:zip', 'compress',
+    'shell:linux_npm', 'electron-packager:osxlnx',
+  ]);
+
+  grunt.registerTask('release:windows', [
+    'clean:release',
+    'build', 'shell:linux_npm',
+    'electron:windows',
+    'copy:windows', 'rcedit:exes', 'compress',
+  ]);
 
   process.on('SIGINT', function () {
     grunt.task.run(['shell:electron:kill']);
