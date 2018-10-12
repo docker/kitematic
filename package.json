@@ -95,6 +95,7 @@
     "jest-cli": "^23.6.0",
     "jsxhint": "0.15.1",
     "load-grunt-tasks": "3.5.2",
+    "minimatch": ">=3.0.4",
     "minimist": "1.2.0",
     "run-sequence": "1.2.2",
     "shell-escape": "0.2.0",
