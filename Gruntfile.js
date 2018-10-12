@@ -71,7 +71,7 @@ module.exports = function (grunt) {
           platform: 'win32',
           arch: 'x64',
           asar: true,
-          icon: 'util/kitematic.ico'
+          icon: 'util/kitematic.ico',
         }
       },
       osx: {
@@ -83,8 +83,8 @@ module.exports = function (grunt) {
           platform: 'darwin',
           arch: 'x64',
           asar: true,
-          'app-version': packagejson.version
-        }
+          'app-version': packagejson.version,
+        },
       },
       linux: {
         options: {
@@ -401,17 +401,24 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-electron-installer-debian');
   grunt.loadNpmTasks('grunt-electron-installer-redhat');
 
-  grunt.registerTask('default', ['newer:babel', 'less', 'newer:copy:dev', 'shell:electron', 'watchChokidar']);
+  grunt.registerTask('build', ['newer:babel', 'less', 'newer:copy:dev']);
+  grunt.registerTask('default', ['build', 'shell:electron', 'watchChokidar']);
 
   if (!IS_WINDOWS && !IS_LINUX) {
-    grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron', 'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress', 'shell:linux_npm', 'electron-packager:osxlnx', 'electron-installer-debian:linux64', 'shell:linux_zip']);
-  }else if (IS_LINUX) {
+    grunt.registerTask('release', [
+      'clean:release', 'build', 'shell:linux_npm',
+      'electron:osx',
+      'copy:osx', 'shell:sign', 'shell:zip', 'copy:windows', 'rcedit:exes', 'compress',
+      'shell:linux_npm', 'electron-packager:osxlnx',
+      // 'electron-installer-debian:linux64', 'shell:linux_zip',
+    ]);
+  } else if (IS_LINUX) {
     if (linuxpackage) {
       grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'shell:linux_npm', 'electron-packager:build', linuxpackage]);
     }else {
       grunt.log.errorlns('Your Linux distribution is not yet supported - arch:' + process.arch + ' platform:' + process.platform);
     }
-  }else {
+  } else {
     grunt.registerTask('release', ['clean:release', 'babel', 'less', 'copy:dev', 'electron:windows', 'copy:windows', 'rcedit:exes', 'compress']);
   }
 

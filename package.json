@@ -17,7 +17,6 @@
   "scripts": {
     "build": "tsc && npm run tslint",
     "integration": "jest -c jest-integration.json",
-    "postinstall": "npm run build",
     "prestart": "npm run build",
     "release": "npm run build && grunt release",
     "release-verbose": "npm run build && grunt --verbose release",
