@@ -189,7 +189,8 @@ module.exports = function (grunt) {
     // styles
     less: {
       options: {
-        sourceMapFileInline: true
+        sourceMapFileInline: true,
+        javascriptEnabled: true,
       },
       dist: {
         files: {
