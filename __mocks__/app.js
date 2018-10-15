@@ -1,5 +1,5 @@
 module.exports = {
-  require: jest.genMockFunction(),
-  match: jest.genMockFunction(),
-  on: jest.genMockFunction()
+  require: jest.fn(),
+  match: jest.fn(),
+  on: jest.fn()
 };

@@ -18,6 +18,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npm test
+      - run: npm run release:mac:build
 
 workflows:
   version: 2
