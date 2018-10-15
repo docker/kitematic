@@ -250,9 +250,6 @@ module.exports = function (grunt) {
       linux_npm: {
         command: 'cd build && npm install --production'
       },
-      linux_zip: {
-        command: 'ditto -c -k --sequesterRsrc --keepParent <%= LINUX_FILENAME %> release/' + BASENAME + '-Ubuntu.zip'
-      }
     },
 
     clean: {
@@ -263,15 +260,27 @@ module.exports = function (grunt) {
       windows: {
         options: {
           archive: './release/' + BASENAME + '-Windows.zip',
-          mode: 'zip'
+          mode: 'zip',
         },
         files: [{
           expand: true,
           dot: true,
           cwd: './dist/Kitematic-win32-x64',
-          src: '**/*'
-        }]
-      }
+          src: '**/*',
+        }],
+      },
+      debian: {
+        options: {
+          archive: './release/' + BASENAME + '-Ubuntu.zip',
+          mode: 'zip',
+        },
+        files: [{
+          expand: true,
+          dot: true,
+          cwd: './dist',
+          src: '*.deb',
+        }],
+      },
     },
 
     // livereload
@@ -353,23 +362,26 @@ module.exports = function (grunt) {
         categories: [
           'Utility'
         ],
-        rename: function (dest, src) {
-          return LINUX_FILENAME;
-        }
       },
       linux64: {
         options: {
           arch: 'amd64'
         },
         src: './dist/Kitematic-linux-x64/',
-        dest: './dist/'
+        dest: './dist/',
+        rename: function (dest, src) {
+          return OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_amd64.deb';
+        },
       },
       linux32: {
         options: {
           arch: 'i386'
         },
         src: './dist/Kitematic-linux-ia32/',
-        dest: './dist/'
+        dest: './dist/',
+        rename: function (dest, src) {
+          return OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_i386.deb';
+        },
       }
     },
     'electron-installer-redhat': {
@@ -381,9 +393,6 @@ module.exports = function (grunt) {
         categories: [
           'Utilities',
         ],
-        rename: function (dest, src) {
-          return LINUX_FILENAME;
-        },
       },
       linux64: {
         options: {
@@ -391,6 +400,9 @@ module.exports = function (grunt) {
         },
         src: './dist/Kitematic-linux-x64/',
         dest: './dist/',
+        rename: function (dest, src) {
+          return OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_amd64.rpm';
+        },
       },
       linux32: {
         options: {
@@ -398,6 +410,9 @@ module.exports = function (grunt) {
         },
         src: './dist/Kitematic-linux-ia32/',
         dest: './dist/',
+        rename: function (dest, src) {
+          return OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_i386.rpm';
+        },
       },
     },
   });
@@ -410,10 +425,21 @@ module.exports = function (grunt) {
   grunt.registerTask('build', ['newer:babel', 'less', 'newer:copy:dev']);
   grunt.registerTask('default', ['build', 'shell:electron', 'watchChokidar']);
 
+  grunt.registerTask('release:linux', [
+    'clean:release', 'build', 'shell:linux_npm',
+    'shell:linux_npm', 'electron-packager:build',
+  ]);
+
+  grunt.registerTask('release:debian:x32', ['release:linux', 'electron-installer-debian:linux32', 'compress:debian']);
+  grunt.registerTask('release:debian:x64', ['release:linux', 'electron-installer-debian:linux64', 'compress:debian']);
+
+  grunt.registerTask('release:redhat:x32', ['release:linux', 'electron-installer-redhat:linux32']);
+  grunt.registerTask('release:redhat:x64', ['release:linux', 'electron-installer-redhat:linux64']);
+
   grunt.registerTask('release:mac', [
     'clean:release', 'build', 'shell:linux_npm',
     'electron:osx',
-    'copy:osx', 'shell:sign', 'shell:zip', 'compress',
+    'copy:osx', 'shell:sign', 'shell:zip',
     'shell:linux_npm', 'electron-packager:osxlnx',
   ]);
 
@@ -421,7 +447,7 @@ module.exports = function (grunt) {
     'clean:release',
     'build', 'shell:linux_npm',
     'electron:windows',
-    'copy:windows', 'rcedit:exes', 'compress',
+    'copy:windows', 'rcedit:exes', 'compress:windows',
   ]);
 
   process.on('SIGINT', function () {
