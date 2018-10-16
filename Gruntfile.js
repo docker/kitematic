@@ -185,13 +185,6 @@ module.exports = function (grunt) {
       },
     },
 
-    rename: {
-      installer: {
-        src: 'dist/Setup.exe',
-        dest: 'dist/' + BASENAME + 'Setup-' + packagejson.version + '-Windows-Alpha.exe'
-      }
-    },
-
     // styles
     less: {
       options: {
@@ -207,12 +200,6 @@ module.exports = function (grunt) {
 
     // javascript
     babel: {
-      options: {
-        sourceMap: 'inline',
-        blacklist: 'regenerator',
-        stage: 1,
-        optional: ['asyncToGenerator']
-      },
       dist: {
         files: [{
           expand: true,
@@ -284,7 +271,7 @@ module.exports = function (grunt) {
     },
 
     // livereload
-    watchChokidar: {
+    watch: {
       options: {
         spawn: true
       },
@@ -423,7 +410,7 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-electron-installer-redhat');
 
   grunt.registerTask('build', ['newer:babel', 'less', 'newer:copy:dev']);
-  grunt.registerTask('default', ['build', 'shell:electron', 'watchChokidar']);
+  grunt.registerTask('default', ['build', 'shell:electron', 'watch']);
 
   grunt.registerTask('release:linux', [
     'clean:release', 'build', 'shell:linux_npm',

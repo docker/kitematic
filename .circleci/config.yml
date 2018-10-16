@@ -1,0 +1,31 @@
+version: 2
+jobs:
+  test:
+    macos:
+      xcode: "9.0"
+    
+    steps:
+      - run:
+          name: Install node@9
+          command: |
+            set +e
+            touch $BASH_ENV
+            curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+            echo 'export NVM_DIR="$HOME/.nvm"' >> $BASH_ENV
+            echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+            echo 'nvm install 9' >> $BASH_ENV
+            echo 'nvm alias default 9' >> $BASH_ENV
+      - run:
+          name: Install wine
+          command: brew install wine
+      - checkout
+      - run: npm install
+      - run: npm test
+      - run: npm run release:mac:build
+      - run: npm run release:windows
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - test
