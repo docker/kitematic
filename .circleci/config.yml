@@ -21,7 +21,7 @@ jobs:
       - checkout
       - run: npm install
       - run: npm test
-      - run: npm run release:mac:build
+      - run: npm run release:mac
       - run: npm run release:windows
 
 workflows:

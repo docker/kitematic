@@ -1,58 +1,18 @@
-var fs = require('fs');
-var path = require('path');
-var execFile = require('child_process').execFile;
 var packagejson = require('./package.json');
 var electron = require('electron');
 
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
   var target = grunt.option('target') || 'development';
-  var beta = grunt.option('beta') || false;
-  var alpha = grunt.option('alpha') || false;
   var env = process.env;
   env.NODE_PATH = '..:' + env.NODE_PATH;
   env.NODE_ENV = target;
 
-  var certificateFile = grunt.option('certificateFile');
-
-  var version = function (str) {
-    var match = str.match(/(\d+\.\d+\.\d+)/);
-    return match ? match[1] : null;
-  };
-
   var BASENAME = 'Kitematic';
-  var OSX_APPNAME = BASENAME + ' (Beta)';
-  var WINDOWS_APPNAME = BASENAME + ' (Alpha)';
-  var LINUX_APPNAME = BASENAME + ' (Alpha)';
   var OSX_OUT = './dist';
-  var OSX_OUT_X64 = OSX_OUT + '/' + OSX_APPNAME + '-darwin-x64';
-  var OSX_FILENAME = OSX_OUT_X64 + '/' + OSX_APPNAME + '.app';
+  var OSX_OUT_X64 = OSX_OUT + '/' + BASENAME + '-darwin-x64';
+  var OSX_FILENAME = OSX_OUT_X64 + '/' + BASENAME + '.app';
   var LINUX_FILENAME = OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_amd64.deb';
-
-
-  var IS_WINDOWS = process.platform === 'win32';
-  var IS_LINUX = process.platform === 'linux';
-
-  var IS_I386 = process.arch === 'ia32';
-  var IS_X64 = process.arch === 'x64';
-
-  var IS_DEB = fs.existsSync('/etc/lsb-release') || fs.existsSync('/etc/debian_version');
-  var IS_RPM = fs.existsSync('/etc/redhat-release');
-
-  var linuxpackage = null;
-  // linux package detection
-  if (IS_DEB && IS_X64) {
-    linuxpackage = 'electron-installer-debian:linux64';
-  } else if (IS_DEB && IS_I386) {
-    linuxpackage = 'electron-installer-debian:linux32';
-    LINUX_FILENAME = OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_i386.deb';
-  } else if (IS_RPM && IS_X64) {
-    linuxpackage = 'electron-installer-redhat:linux64';
-    LINUX_FILENAME = OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_x86_64.rpm';
-  } else if (IS_RPM && IS_I386) {
-    linuxpackage = 'electron-installer-redhat:linux32';
-    LINUX_FILENAME = OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_x86.rpm';
-  }
 
   grunt.initConfig({
     IDENTITY: 'Developer ID Application: Docker Inc',
@@ -76,7 +36,7 @@ module.exports = function (grunt) {
       },
       osx: {
         options: {
-          name: OSX_APPNAME,
+          name: BASENAME,
           dir: 'build/',
           out: 'dist',
           version: packagejson['electron-version'],
@@ -84,11 +44,12 @@ module.exports = function (grunt) {
           arch: 'x64',
           asar: true,
           'app-version': packagejson.version,
+          icon: 'util/kitematic.icns',
         },
       },
       linux: {
         options: {
-          name: LINUX_APPNAME,
+          name: BASENAME,
           dir: 'build/',
           out: 'dist',
           version: packagejson['electron-version'],
@@ -96,7 +57,8 @@ module.exports = function (grunt) {
           arch: 'x64',
           asar: true,
           'app-bundle-id': 'com.kitematic.kitematic',
-          'app-version': packagejson.version
+          'app-version': packagejson.version,
+          icon: 'util/kitematic.png',
         }
       }
     },
@@ -115,8 +77,8 @@ module.exports = function (grunt) {
           'version-string': {
             'CompanyName': 'Docker',
             'ProductVersion': packagejson.version,
-            'ProductName': WINDOWS_APPNAME,
-            'FileDescription': WINDOWS_APPNAME,
+            'ProductName': BASENAME,
+            'FileDescription': BASENAME,
             'InternalName': BASENAME + '.exe',
             'OriginalFilename': BASENAME + '.exe',
             'LegalCopyright': 'Copyright 2015-2016 Docker Inc. All rights reserved.'
@@ -256,6 +218,18 @@ module.exports = function (grunt) {
           src: '**/*',
         }],
       },
+      osx: {
+        options: {
+          archive: './release/' + BASENAME + '-Mac.zip',
+          mode: 'zip',
+        },
+        files: [{
+          expand: true,
+          dot: true,
+          cwd: './dist/Kitematic-darwin-x64',
+          src: '**/*',
+        }],
+      },
       debian: {
         options: {
           archive: './release/' + BASENAME + '-Ubuntu.zip',
@@ -300,7 +274,7 @@ module.exports = function (grunt) {
           dir: './build',
           out: './dist/',
           name: 'Kitematic',
-          ignore: 'bower.json',
+          icon: './util/kitematic.png',
           version: packagejson['electron-version'], // set version of electron
           overwrite: true,
         }
@@ -312,7 +286,6 @@ module.exports = function (grunt) {
           dir: './build',
           out: './dist/',
           name: 'Kitematic',
-          ignore: 'bower.json',
           version: packagejson['electron-version'], // set version of electron
           overwrite: true,
         }
@@ -321,7 +294,7 @@ module.exports = function (grunt) {
     'electron-installer-debian': {
       options: {
         name: BASENAME.toLowerCase(), // spaces and brackets cause linting errors
-        productName: LINUX_APPNAME.toLowerCase(),
+        productName: BASENAME.toLowerCase(),
         productDescription: 'Run containers through a simple, yet powerful graphical user interface.',
         maintainer: 'Ben French <frenchben@docker.com>',
         section: 'devel',
@@ -373,7 +346,7 @@ module.exports = function (grunt) {
     },
     'electron-installer-redhat': {
       options: {
-        productName: LINUX_APPNAME,
+        productName: BASENAME,
         productDescription: 'Run containers through a simple, yet powerful graphical user interface.',
         priority: 'optional',
         icon: './util/kitematic.png',
@@ -427,7 +400,8 @@ module.exports = function (grunt) {
     'clean:release', 'build', 'shell:linux_npm',
     'electron:osx',
     'copy:osx', 'shell:sign', 'shell:zip',
-    'shell:linux_npm', 'electron-packager:osxlnx',
+    'electron-packager:osxlnx',
+    'compress:osx',
   ]);
 
   grunt.registerTask('release:windows', [
