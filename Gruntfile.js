@@ -13,12 +13,14 @@ module.exports = function (grunt) {
   var OSX_OUT_X64 = OSX_OUT + '/' + BASENAME + '-darwin-x64';
   var OSX_FILENAME = OSX_OUT_X64 + '/' + BASENAME + '.app';
   var LINUX_FILENAME = OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_amd64.deb';
+  var VERSION_FILENAME = BASENAME + '-' + packagejson.version;
 
   grunt.initConfig({
     IDENTITY: 'Developer ID Application: Docker Inc',
-    OSX_FILENAME: OSX_FILENAME,
+    OSX_FILENAME,
     OSX_FILENAME_ESCAPED: OSX_FILENAME.replace(/ /g, '\\ ').replace(/\(/g, '\\(').replace(/\)/g, '\\)'),
-    LINUX_FILENAME: LINUX_FILENAME,
+    LINUX_FILENAME,
+    VERSION_FILENAME,
 
     // electron
     electron: {
@@ -167,9 +169,9 @@ module.exports = function (grunt) {
           expand: true,
           cwd: 'src/',
           src: ['**/*.js'],
-          dest: 'build/'
-        }]
-      }
+          dest: 'build/',
+        }],
+      },
     },
 
     shell: {
@@ -178,9 +180,9 @@ module.exports = function (grunt) {
         options: {
           async: true,
           execOptions: {
-            env: env
-          }
-        }
+            env: env,
+          },
+        },
       },
       sign: {
         options: {
@@ -194,7 +196,7 @@ module.exports = function (grunt) {
         ].join(' && ')
       },
       zip: {
-        command: 'ditto -c -k --sequesterRsrc --keepParent <%= OSX_FILENAME_ESCAPED %> release/' + BASENAME + '-Mac.zip'
+        command: 'ditto -c -k --sequesterRsrc --keepParent <%= OSX_FILENAME_ESCAPED %> release/' + VERSION_FILENAME + '-Mac.zip'
       },
       linux_npm: {
         command: 'cd build && npm install --production'
@@ -208,7 +210,7 @@ module.exports = function (grunt) {
     compress: {
       windows: {
         options: {
-          archive: './release/' + BASENAME + '-Windows.zip',
+          archive: './release/' + VERSION_FILENAME + '-Windows.zip',
           mode: 'zip',
         },
         files: [{
@@ -220,7 +222,7 @@ module.exports = function (grunt) {
       },
       osx: {
         options: {
-          archive: './release/' + BASENAME + '-Mac.zip',
+          archive: './release/' + VERSION_FILENAME + '-Mac.zip',
           mode: 'zip',
         },
         files: [{
@@ -232,7 +234,7 @@ module.exports = function (grunt) {
       },
       debian: {
         options: {
-          archive: './release/' + BASENAME + '-Ubuntu.zip',
+          archive: './release/' + VERSION_FILENAME + '-Ubuntu.zip',
           mode: 'zip',
         },
         files: [{
@@ -330,7 +332,7 @@ module.exports = function (grunt) {
         src: './dist/Kitematic-linux-x64/',
         dest: './dist/',
         rename: function (dest, src) {
-          return OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_amd64.deb';
+          return OSX_OUT + '/' + VERSION_FILENAME + '_amd64.deb';
         },
       },
       linux32: {
@@ -340,7 +342,7 @@ module.exports = function (grunt) {
         src: './dist/Kitematic-linux-ia32/',
         dest: './dist/',
         rename: function (dest, src) {
-          return OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_i386.deb';
+          return OSX_OUT + '/' + VERSION_FILENAME + '_i386.deb';
         },
       }
     },
@@ -361,7 +363,7 @@ module.exports = function (grunt) {
         src: './dist/Kitematic-linux-x64/',
         dest: './dist/',
         rename: function (dest, src) {
-          return OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_amd64.rpm';
+          return OSX_OUT + '/' + VERSION_FILENAME + '_amd64.rpm';
         },
       },
       linux32: {
@@ -371,7 +373,7 @@ module.exports = function (grunt) {
         src: './dist/Kitematic-linux-ia32/',
         dest: './dist/',
         rename: function (dest, src) {
-          return OSX_OUT + '/' + BASENAME + '_' + packagejson.version + '_i386.rpm';
+          return OSX_OUT + '/' + VERSION_FILENAME + '_i386.rpm';
         },
       },
     },
@@ -387,7 +389,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('release:linux', [
     'clean:release', 'build', 'shell:linux_npm',
-    'shell:linux_npm', 'electron-packager:build',
+    'electron:linux', 'electron-packager:build',
   ]);
 
   grunt.registerTask('release:debian:x32', ['release:linux', 'electron-installer-debian:linux32', 'compress:debian']);
@@ -398,10 +400,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('release:mac', [
     'clean:release', 'build', 'shell:linux_npm',
-    'electron:osx',
-    'copy:osx', 'shell:sign', 'shell:zip',
-    'electron-packager:osxlnx',
-    'compress:osx',
+    'electron:osx', 'copy:osx', 'shell:sign', 'shell:zip',
   ]);
 
   grunt.registerTask('release:windows', [
