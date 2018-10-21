@@ -269,6 +269,7 @@ module.exports = React.createClass({
       results = (
         {userImageResults}
       );
+      paginateResults = null;
     } else if (this.state.loading) {
       results = (
         <div className="no-results">
