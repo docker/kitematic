@@ -56,6 +56,7 @@
     "react-bootstrap": "0.20.3",
     "react-retina-image": "1.3.3",
     "react-router": "0.13.6",
+    "rekcod": "^2.1.1",
     "request": "^2.88.0",
     "request-progress": "0.3.1",
     "rimraf": "2.6.2",
