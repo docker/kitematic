@@ -95,7 +95,7 @@ module.exports = React.createClass({
       error: null
     });
 
-    _searchPromise = Promise.delay(200).cancellable().then(() => {
+    _searchPromise = Promise.delay(200).then(() => {
       metrics.track('Searched for Images');
       _searchPromise = null;
       repositoryActions.search(query, page);

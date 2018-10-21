@@ -1,3 +1,4 @@
+import {isNullOrUndefined} from 'util';
 import _ from 'underscore';
 import request from 'request';
 import async from 'async';
@@ -95,26 +96,40 @@ module.exports = {
         }
 
         cachedRequest({
-          url: `${REGHUB2_ENDPOINT}/repositories/${name}`
+          url: `${REGHUB2_ENDPOINT}/repositories/${name}`,
+          timeout: 5000
         }, (error, response, body) => {
           if (error) {
-            repositoryServerActions.error({error});
-            return;
+            return cb(null, {error, data: null});
           }
 
           if (response.statusCode === 200) {
             let data = JSON.parse(body);
             data.is_recommended = true;
             _.extend(data, repo);
-            cb(null, data);
+            return cb(null, {error: null, data});
           } else {
-            repositoryServerActions.error({error: new Error('Could not fetch repository information from Docker Hub.')});
-            return;
+            return cb(null, {error: new Error('Could not fetch repository information from Docker Hub.'), data: null});
           }
 
         });
       }, (error, repos) => {
-        repositoryServerActions.recommendedUpdated({repos});
+        const reposData = repos.map(repo => repo.data).filter(repo => !isNullOrUndefined(repo));
+
+        if (!reposData.length) {
+          const errorMessage =_.chain(repos)
+            .map(repo => repo.error)
+            .filter(err => !isNullOrUndefined(err))
+            .map(err => err.message)
+            .uniq()
+            .value()
+            .join('\n');
+
+          repositoryServerActions.error({error: new Error(errorMessage)});
+          return;
+        }
+
+        repositoryServerActions.recommendedUpdated({repos: reposData});
       });
     });
   },
