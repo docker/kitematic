@@ -7,6 +7,7 @@ const dialog = remote.dialog;
 import ContainerUtil from '../utils/ContainerUtil';
 import containerActions from '../actions/ContainerActions';
 import util from '../utils/Util';
+import rekcod from 'rekcod';
 
 var ContainerSettingsGeneral = React.createClass({
   mixins: [React.addons.LinkedStateMixin],
@@ -27,6 +28,7 @@ var ContainerSettingsGeneral = React.createClass({
       slugName: null,
       nameError: null,
       copiedId: false,
+      copiedRunCmd: false,
       env: env
     };
   },
@@ -63,16 +65,14 @@ var ContainerSettingsGeneral = React.createClass({
 
   handleCopyContainerId: function() {
     clipboard.writeText(this.props.container.Id);
-    this.setState({ 
-      copiedId: true
-    });
+ 	this.setState({copiedId: true});
+	setTimeout(() => this.setState({copiedId: false}), 5000);
+  },
 
-    var _this = this;
-    setTimeout(function() {
-      _this.setState({ 
-        copiedId: false
-      });
-    }, 5000);
+  handleCopyDockerRunCmd: function (cmd) {
+	clipboard.writeText(cmd);
+	this.setState({copiedRunCmd: true});
+	setTimeout(() => this.setState({copiedRunCmd: false}), 5000);
   },
 
   handleSaveContainerName: function () {
@@ -169,11 +169,15 @@ var ContainerSettingsGeneral = React.createClass({
       return false;
     }
 
-    var clipboardStatus;
-    var willBeRenamedAs;
-    var btnSaveName = (
+    const runCmd = rekcod.translate(this.props.container).command;
+
+    let idCopiedToClipboard;
+    let runCmdCopiedToClipboard;
+    let willBeRenamedAs;
+    let btnSaveName = (
       <a className="btn btn-action" onClick={this.handleSaveContainerName} disabled="disabled">Save</a>
     );
+
     if (this.state.slugName) {
       willBeRenamedAs = (
         <p>Will be renamed as: <strong>{this.state.slugName}</strong></p>
@@ -188,10 +192,16 @@ var ContainerSettingsGeneral = React.createClass({
     }
 
     if (this.state.copiedId) {
-      clipboardStatus = (
+      idCopiedToClipboard = (
         <p className="fadeOut"><strong>Copied to Clipboard</strong></p>
       );
     }
+
+	if (this.state.copiedRunCmd) {
+	  runCmdCopiedToClipboard = (
+		<p className="fadeOut"><strong>Copied to Clipboard</strong></p>
+	  );
+	}
 
     let containerInfo = (
       <div className="settings-section">
@@ -200,7 +210,7 @@ var ContainerSettingsGeneral = React.createClass({
           <div className="label-id">ID</div>
           <input type="text" className="line disabled" defaultValue={this.props.container.Id} disabled></input>
           <a className="btn btn-action btn-copy" onClick={this.handleCopyContainerId}>Copy</a>
-          {clipboardStatus}
+          {idCopiedToClipboard}
         </div>
         <div className="container-info-row">
           <div className="label-name">NAME</div>
@@ -208,6 +218,12 @@ var ContainerSettingsGeneral = React.createClass({
           {btnSaveName}
           {willBeRenamedAs}
         </div>
+		<div className="container-info-row">
+		  <div className="label-id">COMMAND</div>
+		  <textarea rows="4" className="line disabled" disabled>{runCmd}</textarea>
+		  <a className="btn btn-action btn-copy" onClick={() => this.handleCopyDockerRunCmd(runCmd)}>Copy</a>
+		  {runCmdCopiedToClipboard}
+		</div>
       </div>
     );
 
