@@ -13,3 +13,5 @@ cache:
 script:
   - npm install
   - npm test
+
+install: npm i
