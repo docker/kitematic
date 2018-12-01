@@ -1,4 +1,5 @@
 import $ from 'jquery';
+import _ from 'underscore';
 import React from 'react/addons';
 import Router from 'react-router';
 import {shell} from 'electron';
@@ -9,17 +10,16 @@ import imageActions from '../actions/ImageActions';
 import containerStore from '../stores/ContainerStore';
 import tagStore from '../stores/TagStore';
 import tagActions from '../actions/TagActions';
-import networkActions from '../actions/NetworkActions';
 import networkStore from '../stores/NetworkStore';
 import numeral from 'numeral';
-import classNames from 'classnames';
 
 var ImageCard = React.createClass({
   mixins: [Router.Navigation],
   getInitialState: function () {
+    const tags = this.props.tags || [];
     return {
-      tags: this.props.tags || [],
-      chosenTag: this.props.chosenTag || 'latest',
+      tags,
+      chosenTag: this.props.chosenTag || tags.find(tag => tag.display === 'latest ') || {},
       defaultNetwork: this.props.defaultNetwork || 'bridge',
       networks: networkStore.all(),
       searchTag: ''
@@ -78,7 +78,7 @@ var ImageCard = React.createClass({
     let localImage = this.props.image.is_local || false;
     let repo = (this.props.image.namespace === 'library' || this.props.image.namespace === 'local') ? this.props.image.name : this.props.image.namespace + '/' + this.props.image.name;
 
-    containerActions.run(name, repo, this.state.chosenTag, this.state.defaultNetwork, localImage);
+    containerActions.run(name, repo, this.state.chosenTag.display, this.state.defaultNetwork, localImage);
     this.transitionTo('containerHome', {name});
   },
   handleMenuOverlayClick: function () {
@@ -116,9 +116,9 @@ var ImageCard = React.createClass({
     var $networkOverlay = $(this.getDOMNode()).find('.network-overlay');
     $networkOverlay.fadeOut(300);
   },
-  handleDeleteImgClick: function (image) {
-    if (this.state.chosenTag && !this.props.image.inUse) {
-      imageActions.destroy(image.RepoTags[0].split(':')[0] + ':' + this.state.chosenTag);
+  handleDeleteImgClick: function (chosenTag) {
+    if (chosenTag && !this.props.image.inUse) {
+      imageActions.destroy(chosenTag.value);
     }
   },
   handleRepoClick: function () {
@@ -178,21 +178,16 @@ var ImageCard = React.createClass({
     } else if (this.state.tags.length === 0) {
       tags = <div className="no-items">No Tags</div>;
     } else {
-      var tagDisplay = this.state.tags.filter(tag => tag.name.includes(this.state.searchTag)).map((tag) => {
+      var tagDisplay = this.state.tags.filter(tag => tag.display.includes(this.state.searchTag)).map((tag) => {
         let t = '';
-        if (tag.name) {
-          t = tag.name;
-        } else {
-          t = tag;
+        if (tag.display) {
+          t = tag.display;
         }
-        let key = t;
-        if (typeof key === 'undefined') {
-          key = this.props.image.name;
-        }
+        let key = t || this.props.image.name;
         if (t === this.state.chosenTag) {
-          return <div className="item active" key={key} onClick={this.handleTagClick.bind(this, t)}>{t}</div>;
+          return <div className="item active" key={key} onClick={this.handleTagClick.bind(this, tag)}>{t}</div>;
         } else {
-          return <div className="item" key={key} onClick={this.handleTagClick.bind(this, t)}>{t}</div>;
+          return <div className="item" key={key} onClick={this.handleTagClick.bind(this, tag)}>{t}</div>;
         }
       });
       tags = (
@@ -232,7 +227,7 @@ var ImageCard = React.createClass({
       create = (
         <div className="actions">
           <div className="favorites">
-            <span className="icon icon-tag"> {this.state.chosenTag}</span>
+            <span className="icon icon-tag"> {this.state.chosenTag.display}</span>
             <span className="text"></span>
           </div>
           <div className="more-menu" onClick={this.handleMenuOverlayClick}>
@@ -246,9 +241,9 @@ var ImageCard = React.createClass({
       overlay = (
         <div className="overlay menu-overlay">
           <div className="menu-item" onClick={this.handleTagOverlayClick.bind(this, this.props.image.name)}>
-            <span className="icon icon-tag"></span><span className="text">SELECTED TAG: <span className="selected-item">{this.state.chosenTag}</span></span>
+            <span className="icon icon-tag"></span><span className="text">SELECTED TAG: <span className="selected-item">{this.state.chosenTag.display}</span></span>
           </div>
-          <div className="remove" onClick={this.handleDeleteImgClick.bind(this, this.props.image)}>
+          <div className="remove" onClick={this.handleDeleteImgClick.bind(this, this.state.chosenTag)}>
             <span className="btn btn-delete btn-action has-icon btn-hollow" disabled={this.props.image.inUse ? 'disabled' : null}><span className="icon icon-delete"></span>Delete Tag</span>
           </div>
           {this.props.image.inUse ? <p className="small">To delete, remove all containers<br/>using the above image</p> : null }
@@ -280,7 +275,7 @@ var ImageCard = React.createClass({
       overlay = (
           <div className="overlay menu-overlay">
             <div className="menu-item" onClick={this.handleTagOverlayClick.bind(this, this.props.image.name)}>
-              <span className="icon icon-tag"></span><span className="text">SELECTED TAG: <span className="selected-item">{this.state.chosenTag}</span></span>
+              <span className="icon icon-tag"></span><span className="text">SELECTED TAG: <span className="selected-item">{this.state.chosenTag.display}</span></span>
             </div>
             <div className="menu-item" onClick={this.handleNetworkOverlayClick.bind(this, this.props.image.name)}>
               <span className="icon icon-link"></span><span className="text">DEFAULT NETWORK: <span className="selected-item">{this.state.defaultNetwork}</span></span>

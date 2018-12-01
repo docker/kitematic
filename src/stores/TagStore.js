@@ -24,7 +24,7 @@ class TagStore {
   localTags ({repo, tags}) {
     let data = [];
     tags.map((value) => {
-      data.push({'name': value});
+      data.push(value);
     });
     this.loading[repo] = true;
     this.tagsUpdated({repo, tags: data || []});

@@ -1,3 +1,4 @@
+import _ from 'underscore';
 import alt from '../alt';
 import imageActions from '../actions/ImageActions';
 import imageServerActions from '../actions/ImageServerActions';
@@ -35,14 +36,17 @@ class ImageStore {
     images.map((image) => {
       if (image.RepoTags) {
         image.RepoTags.map(repoTags => {
-          let [name, tag] = repoTags.split(':');
+          const repoTagsSplit = repoTags.split(':');
+          let name = _.initial(repoTagsSplit).join('');
+          let tag = _.last(repoTagsSplit);
+
           if (typeof tags[name] !== 'undefined') {
-            finalImages[tags[name]].tags.push(tag);
+            finalImages[tags[name]].tags.push({ value: repoTags, display: tag });
             if (image.inUse) {
               finalImages[tags[name]].inUse = image.inUse;
             }
           } else {
-            image.tags = [tag];
+            image.tags = [{ value: repoTags, display: tag }];
             tags[name] = finalImages.length;
             finalImages.push(image);
           }
