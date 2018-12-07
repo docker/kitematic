@@ -7,6 +7,7 @@ const Menu = remote.Menu;
 const ipcRenderer = electron.ipcRenderer;
 
 import React from 'react';
+import Promise from 'bluebird';
 
 import metrics from './utils/MetricsUtil';
 import template from './menutemplate';
@@ -20,6 +21,8 @@ import routes from './routes';
 import routerContainer from './router';
 import repositoryActions from './actions/RepositoryActions';
 import machine from './utils/DockerMachineUtil';
+
+Promise.config({cancellation: true});
 
 hubUtil.init();
 

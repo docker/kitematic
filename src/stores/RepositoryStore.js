@@ -65,7 +65,7 @@ class RepositoryStore {
   }
 
   recommendedUpdated ({repos}) {
-    this.setState({recommended: repos, recommendedLoading: false});
+    this.setState({recommended: repos, recommendedLoading: false, error: null});
   }
 
   loggedout () {
