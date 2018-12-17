@@ -18,11 +18,11 @@ var ContainerSettingsVolumes = React.createClass({
     let mounts = _.clone(container.Mounts);
 
     mounts.push({
-      Destination: '',
+      Destination: undefined,
       Mode: 'rw',
       Propagation: 'rpirvate',
       RW: true,
-      Source: '',
+      Source: undefined,
       Type: 'bind'
     });
 
