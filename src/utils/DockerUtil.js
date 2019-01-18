@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import dockerode from 'dockerode';
 import _ from 'underscore';
+import http from 'http';
 import child_process from 'child_process';
 import util from './Util';
 import hubUtil from './HubUtil';
@@ -13,10 +14,20 @@ import networkActions from '../actions/NetworkActions';
 import networkStore from '../stores/NetworkStore';
 import Promise from 'bluebird';
 import rimraf from 'rimraf';
-import stream from 'stream';
-import JSONStream from 'JSONStream';
 
+const parseData = (item) => {
+  try {
+    return JSON.parse(item);
+  } catch (err) {
+    return null;
+  }
+};
 
+const getPullingData = (raw) =>
+  raw.split('\n')
+    .filter((item) => item.length > 0)
+    .map(parseData)
+    .filter((item) => !!item);
 
 var DockerUtil = {
   host: null,
@@ -27,6 +38,7 @@ var DockerUtil = {
   activeContainerName: null,
   localImages: null,
   imagesUsed: [],
+  socketPath: util.isWindows() ? '//./pipe/docker_engine' : '/var/run/docker.sock',
 
   setup (ip, name) {
     if (!ip && !name) {
@@ -36,11 +48,7 @@ var DockerUtil = {
 
     if (ip.indexOf('local') !== -1) {
       try {
-        if (util.isWindows()) {
-          this.client = new dockerode({socketPath: '//./pipe/docker_engine'});
-        } else {
-          this.client = new dockerode({socketPath: '/var/run/docker.sock'});
-        }
+        this.client = new dockerode({socketPath: this.socketPath});
       } catch (error) {
         throw new Error('Cannot connect to the Docker daemon. Is the daemon running?');
       }
@@ -811,32 +819,25 @@ var DockerUtil = {
   },
 
   pullImage (repository, tag, callback, progressCallback, blockedCallback) {
-    let opts = {}, config = hubUtil.config();
-    if (!hubUtil.config()) {
-      opts = {};
-    } else {
+    const options = {
+      socketPath: this.socketPath,
+      path: '/images/create?fromImage=' + encodeURIComponent(repository) + '&tag=' + tag,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+    let config = hubUtil.config();
+    if (hubUtil.config()) {
       let [username, password] = hubUtil.creds(config);
-      opts = {
-        authconfig: {
-          username,
-          password,
-          auth: ''
-        }
-      };
+      options.headers['X-Registry-Auth'] = new Buffer(JSON.stringify({username, password})).toString('base64');
     }
-
-    this.client.pull(repository + ':' + tag, opts, (err, stream) => {
-      if (err) {
-        console.log('Err: %o', err);
-        callback(err);
-        return;
-      }
-
-      stream.setEncoding('utf8');
+    const req = http.request(options, (res) => {
+      res.setEncoding('utf8');
 
       // scheduled to inform about progression at given interval
       let tick = null;
-      let layerProgress = {};
+      const layerProgress = {};
 
       // Split the loading in a few columns for more feedback
       let columns = {};
@@ -844,86 +845,92 @@ var DockerUtil = {
       columns.toFill = 0; // the current column index, waiting for layer IDs to be displayed
       let error = null;
 
-      // data is associated with one layer only (can be identified with id)
-      stream.pipe(JSONStream.parse()).on('data', data => {
-        if (data.error) {
-          error = data.error;
-          return;
-        }
-
-        if (data.status && (data.status === 'Pulling dependent layers' || data.status.indexOf('already being pulled by another client') !== -1)) {
-          blockedCallback();
-          return;
-        }
-
-        if (data.status === 'Pulling fs layer') {
-          layerProgress[data.id] = {
-            current: 0,
-            total: 1
-          };
-        } else if (data.status === 'Downloading') {
-          if (!columns.progress) {
-            columns.progress = []; // layerIDs, nbLayers, maxLayers, progress value
-            let layersToLoad = _.keys(layerProgress).length;
-            let layersPerColumn = Math.floor(layersToLoad / columns.amount);
-            let leftOverLayers = layersToLoad % columns.amount;
-            for (let i = 0; i < columns.amount; i++) {
-              let layerAmount = layersPerColumn;
-              if (i < leftOverLayers) {
-                layerAmount += 1;
-              }
-              columns.progress[i] = {layerIDs: [], nbLayers: 0, maxLayers: layerAmount, value: 0.0};
-            }
+      res.on('data', (rawData) => {
+        const items = getPullingData(rawData);
+        items.forEach((data) => {
+          if (data.error) {
+            error = data.error;
+            return;
+          }
+          
+          if (data.status && (data.status === 'Pulling dependent layers' || data.status.indexOf('already being pulled by another client') !== -1)) {
+            blockedCallback();
+            return;
           }
 
-          layerProgress[data.id].current = data.progressDetail.current;
-          layerProgress[data.id].total = data.progressDetail.total;
-
-          // Assign to a column if not done yet
-          if (!layerProgress[data.id].column) {
-            // test if we can still add layers to that column
-            if (columns.progress[columns.toFill].nbLayers === columns.progress[columns.toFill].maxLayers && columns.toFill < columns.amount - 1) {
-              columns.toFill++;
-            }
-
-            layerProgress[data.id].column = columns.toFill;
-            columns.progress[columns.toFill].layerIDs.push(data.id);
-            columns.progress[columns.toFill].nbLayers++;
+          if (data.id && !layerProgress[data.id]) {
+            layerProgress[data.id] = {
+              current: 0,
+              total: 1
+            };
           }
 
-          if (!tick) {
-            tick = setTimeout(() => {
-              clearInterval(tick);
-              tick = null;
+          if (data.status === 'Downloading') {
+            if (!columns.progress) {
+              columns.progress = []; // layerIDs, nbLayers, maxLayers, progress value
+              let layersToLoad = _.keys(layerProgress).length;
+              let layersPerColumn = Math.floor(layersToLoad / columns.amount);
+              let leftOverLayers = layersToLoad % columns.amount;
               for (let i = 0; i < columns.amount; i++) {
-                columns.progress[i].value = 0.0;
-                if (columns.progress[i].nbLayers > 0) {
-                  let layer;
-                  let totalSum = 0;
-                  let currentSum = 0;
+                let layerAmount = layersPerColumn;
+                if (i < leftOverLayers) {
+                  layerAmount += 1;
+                }
+                columns.progress[i] = {layerIDs: [], nbLayers: 0, maxLayers: layerAmount, value: 0.0};
+              }
+            }
 
-                  for (let j = 0; j < columns.progress[i].nbLayers; j++) {
-                    layer = layerProgress[columns.progress[i].layerIDs[j]];
-                    totalSum += layer.total;
-                    currentSum += layer.current;
-                  }
+            layerProgress[data.id].current = data.progressDetail.current;
+            layerProgress[data.id].total = data.progressDetail.total;
 
-                  if (totalSum > 0) {
-                    columns.progress[i].value = Math.min(100.0 * currentSum / totalSum, 100);
-                  } else {
-                    columns.progress[i].value = 0.0;
+            // Assign to a column if not done yet
+            if (!layerProgress[data.id].column) {
+              // test if we can still add layers to that column
+              if (columns.progress[columns.toFill].nbLayers === columns.progress[columns.toFill].maxLayers && columns.toFill < columns.amount - 1) {
+                columns.toFill++;
+              }
+
+              layerProgress[data.id].column = columns.toFill;
+              columns.progress[columns.toFill].layerIDs.push(data.id);
+              columns.progress[columns.toFill].nbLayers++;
+            }
+
+            if (!tick) {
+              tick = setTimeout(() => {
+                clearInterval(tick);
+                tick = null;
+                for (let i = 0; i < columns.amount; i++) {
+                  columns.progress[i].value = 0.0;
+                  if (columns.progress[i].nbLayers > 0) {
+                    let layer;
+                    let totalSum = 0;
+                    let currentSum = 0;
+
+                    for (let j = 0; j < columns.progress[i].nbLayers; j++) {
+                      layer = layerProgress[columns.progress[i].layerIDs[j]];
+                      totalSum += layer.total;
+                      currentSum += layer.current;
+                    }
+
+                    if (totalSum > 0) {
+                      columns.progress[i].value = Math.min(100.0 * currentSum / totalSum, 100);
+                    } else {
+                      columns.progress[i].value = 0.0;
+                    }
                   }
                 }
-              }
-              progressCallback(columns);
-            }, 16);
+                progressCallback(columns);
+              }, 16);
+            }
           }
-        }
+        });
       });
-      stream.on('end', function () {
-        callback(error);
-      });
+      res.on('end', () => callback(error));
     });
+    req.on('error', (err) => {
+      error = err;
+    });
+    req.end();
   },
 
   refresh () {
