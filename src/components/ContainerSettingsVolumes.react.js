@@ -28,7 +28,7 @@ var ContainerSettingsVolumes = React.createClass({
 
     return {
       containerName: container.Name,
-      mounts: mounts,
+      mounts
     }
   },
   handleChooseVolumeClick: function (dockerVol) {
@@ -59,7 +59,7 @@ var ContainerSettingsVolumes = React.createClass({
       });
 
       this.setState({
-        mounts: mounts
+        mounts
       });
 
     });
@@ -78,7 +78,7 @@ var ContainerSettingsVolumes = React.createClass({
     });
 
     this.setState({
-      mounts: mounts
+      mounts
     });
 
   },
@@ -93,8 +93,6 @@ var ContainerSettingsVolumes = React.createClass({
     }
   },
   handleAddVolume: function () {
-    console.log(this.props.container);
-    console.log(this.state);
     let mounts = _.clone(this.state.mounts);
 
     // undefined is clearer when reading the code
@@ -108,17 +106,16 @@ var ContainerSettingsVolumes = React.createClass({
     });
 
     this.setState({
-      mounts: mounts
+      mounts
     });
 
     metrics.track('Adding Pending Volume')
   },
   handleRemoveVolume: function (index) {
-    let mounts = _.clone(this.state.mounts);
-    mounts.splice(index, 1);
+    let mounts = this.state.mounts.filter((val, idx) => idx !== index);
 
     this.setState({
-      mounts: mounts
+      mounts
     });
 
     metrics.track('Removed Volume')
@@ -128,11 +125,11 @@ var ContainerSettingsVolumes = React.createClass({
     mounts[index].Destination = event.target.value;
 
     this.setState({
-      mounts: mounts
+      mounts
     });
   },
   handleSaveVolumes: function() {
-    let mounts = _.clone(this.state.mounts);
+    let mounts = this.state.mounts;
     let binds = mounts.filter(m => {
       // Filter out everything that is empty/null
       return !(!m.Destination || !m.Source || m.Destination === '' || m.Source === '');
