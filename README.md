@@ -9,7 +9,9 @@ Kitematic is a simple application for managing Docker containers on Mac, Linux a
 
 ## Installing Kitematic
 
-[Download the latest version](https://github.com/docker/kitematic/releases) of Kitematic via the github release page.
+[Download the latest version](https://github.com/docker/kitematic/releases) of Kitematic via the github release page.## Tips
+
+If you get **Context Cancelled** or **Access Denied** error message when pulling an image from Docker hub it maybe because of the Windows Defender. Please turn the virus Real-time Protection off to test if it is causing the issue then do the pull of an image through Kitematic. If it works add the Kitematic folder as exclusion under the **Virus and threat protection settings** in the Defender.
 
 ## Documentation
 
