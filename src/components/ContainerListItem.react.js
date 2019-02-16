@@ -18,7 +18,7 @@ var ContainerListItem = React.createClass({
     e.preventDefault();
     e.stopPropagation();
     dialog.showMessageBox({
-      message: 'Are you sure you want to stop & remove this container?',
+      message: `Are you sure you want to stop & remove the container '${this.props.container.Name}'?`,
       buttons: ['Remove', 'Cancel']
     }, function (index) {
       if (index === 0) {
