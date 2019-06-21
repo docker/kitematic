@@ -697,7 +697,7 @@ var DockerUtil = {
       tail: 1000,
       follow: false,
       timestamps: 1
-    }, (err, logStream) => {
+    }, (err, logBuffer) => {
       if (err) {
         // socket hang up can be captured
         console.error(err);
@@ -705,13 +705,9 @@ var DockerUtil = {
         return;
       }
 
-      let logs = '';
-      logStream.setEncoding('utf8');
-      logStream.on('data', chunk => logs += chunk);
-      logStream.on('end', () => {
-        containerServerActions.logs({name: this.activeContainerName, logs});
-        this.attach();
-      });
+      let logs = logBuffer.toString();
+      containerServerActions.logs({name: this.activeContainerName, logs});
+      this.attach();
     });
   },
 
