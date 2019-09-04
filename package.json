@@ -71,6 +71,7 @@
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
+    "braces": "^2.3.1",
     "electron": "1.8.8",
     "electron-builder": "^20.28.4",
     "electron-packager": "^12.1.1",
