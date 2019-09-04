@@ -74,7 +74,7 @@
     "electron": "1.8.8",
     "electron-builder": "^20.28.4",
     "electron-packager": "^12.1.1",
-    "eslint": "4.18.1",
+    "eslint": "^4.18.2",
     "eslint-plugin-react": "3.16.1",
     "grunt": "^1.0.3",
     "grunt-babel": "^7.0.0",
