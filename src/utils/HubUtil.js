@@ -114,7 +114,7 @@ module.exports = {
         return;
       }
 
-      let data = JSON.parse(body);
+      let data = body;
 
       if (response.statusCode === 200) {
         if (data.token) {
@@ -131,6 +131,9 @@ module.exports = {
           accountServerActions.errors({errors: {detail: 'Did not receive login token.'}});
           if (callback) { callback(new Error('Did not receive login token.')); }
         }
+      } else if (response.statusCode === 400) {
+        accountServerActions.errors({errors: data});
+        if (callback) { callback(new Error(data.detail)); }
       } else if (response.statusCode === 401) {
         if (data && data.detail && data.detail.indexOf('Account not active yet') !== -1) {
           accountServerActions.loggedin({username, verified: false});
@@ -143,12 +146,18 @@ module.exports = {
           accountServerActions.errors({errors: data});
           if (callback) { callback(new Error(data.detail)); }
         }
+      } else {
+        accountServerActions.errors({errors: {detail: 'Сan not parse the server response.'}});
+        if (callback) { callback(new Error('Сan not parse the server response.')); }
       }
     });
   },
 
   auth: function (username, password, callback) {
-    request.post(`${HUB2_ENDPOINT}/users/login/`, {form: {username, password}}, (error, response, body) => {
+    request.post(`${HUB2_ENDPOINT}/users/login/`, {
+      body: {username: username, password: password},
+      json: true
+    }, (error, response, body) => {
       callback(error, response, body);
     });
   },
@@ -171,12 +180,8 @@ module.exports = {
   // Signs up and places a token under ~/.dockercfg and saves a jwt to localstore
   signup: function (username, password, email, subscribe) {
     request.post(`${HUB2_ENDPOINT}/users/signup/`, {
-      form: {
-        username,
-        password,
-        email,
-        subscribe
-      }
+      body: {username: username, password: password, email: email, subscribe: subscribe},
+      json: true
     }, (err, response, body) => {
       if (response && response.statusCode === 204) {
         accountServerActions.signedup({username, verified: false});
