@@ -175,29 +175,5 @@ module.exports = {
 
   creds: function (config) {
     return new Buffer(config, 'base64').toString().split(/:(.+)?/).slice(0, 2);
-  },
-
-  // Signs up and places a token under ~/.dockercfg and saves a jwt to localstore
-  signup: function (username, password, email, subscribe) {
-    request.post(`${HUB2_ENDPOINT}/users/signup/`, {
-      body: {username: username, password: password, email: email, subscribe: subscribe},
-      json: true
-    }, (err, response, body) => {
-      if (response && response.statusCode === 204) {
-        accountServerActions.signedup({username, verified: false});
-        accountServerActions.prompted({prompted: true});
-        localStorage.setItem('auth.username', username);
-        localStorage.setItem('auth.verified', false);
-        localStorage.setItem('auth.config', new Buffer(username + ':' + password).toString('base64'));
-        metrics.track('Successfully Signed Up');
-      } else {
-        let data = JSON.parse(body);
-        let errors = {};
-        for (let key in data) {
-          errors[key] = data[key][0];
-        }
-        accountServerActions.errors({errors});
-      }
-    });
-  },
+  }
 };

@@ -222,7 +222,7 @@ module.exports = React.createClass({
     } else if (filter === 'userrepos' && !accountStore.getState().username) {
       results = (
         <div className="no-results">
-          <h2><Router.Link to="login">Log In</Router.Link> or <Router.Link to="signup">Sign Up</Router.Link> to access your Docker Hub repositories.</h2>
+          <h2><Router.Link to="login">Log In</Router.Link> to access your Docker Hub repositories.</h2>
           <RetinaImage src="connect-art.png" checkIfRetinaImgExists={false}/>
         </div>
       );

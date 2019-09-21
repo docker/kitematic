@@ -56,14 +56,11 @@ module.exports = React.createClass({
   },
 
   handleClickSignup: function () {
-    if (!this.props.loading) {
-      this.replaceWith('signup');
-      metrics.track('Switched to Sign Up');
-    }
+    shell.openExternal('https://hub.docker.com/signup/');
   },
 
   handleClickForgotPassword: function () {
-    shell.openExternal('https://hub.docker.com/reset-password/');
+    shell.openExternal('https://id.docker.com/reset-password/?service=43f17c5f-9ba4-4f13-853d-9d0074e349a7');
   },
 
   render: function () {

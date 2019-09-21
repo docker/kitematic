@@ -1,7 +1,6 @@
 import React from 'react/addons';
 import Setup from './components/Setup.react';
 import Account from './components/Account.react';
-import AccountSignup from './components/AccountSignup.react';
 import AccountLogin from './components/AccountLogin.react';
 import Containers from './components/Containers.react';
 import ContainerDetails from './components/ContainerDetails.react';
@@ -33,7 +32,6 @@ var App = React.createClass({
 var routes = (
   <Route name="app" path="/" handler={App}>
     <Route name="account" path="account" handler={Account}>
-      <Route name="signup" path="signup" handler={AccountSignup}/>
       <Route name="login" path="login" handler={AccountLogin}/>
     </Route>
     <Route name="containers" path="containers" handler={Containers}>

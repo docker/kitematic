@@ -7,11 +7,6 @@ class AccountActions {
     hub.login(username, password);
   }
 
-  signup (username, password, email, subscribe) {
-    this.dispatch({});
-    hub.signup(username, password, email, subscribe);
-  }
-
   logout () {
     this.dispatch({});
     hub.logout();

@@ -37,13 +37,6 @@ class AccountStore {
     });
   }
 
-  signup () {
-    this.setState({
-      loading: true,
-      errors: {}
-    });
-  }
-
   loggedin ({username, verified}) {
     this.setState({username, verified, errors: {}, loading: false});
   }
