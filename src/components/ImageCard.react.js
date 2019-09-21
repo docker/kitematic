@@ -178,7 +178,7 @@ var ImageCard = React.createClass({
     } else if (this.state.tags.length === 0) {
       tags = <div className="no-items">No Tags</div>;
     } else {
-      var tagDisplay = this.state.tags.filter(tag => tag.name.includes(this.state.searchTag)).map((tag) => {
+      var tagDisplay = this.state.tags.filter(tag => tag.includes(this.state.searchTag)).map((tag) => {
         let t = '';
         if (tag.name) {
           t = tag.name;
