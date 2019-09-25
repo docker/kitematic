@@ -2,7 +2,6 @@ import _ from 'underscore';
 import $ from 'jquery';
 import React from 'react/addons';
 import ContainerProgress from './ContainerProgress.react';
-import ContainerHomePreview from './ContainerHomePreview.react';
 import ContainerHomeLogs from './ContainerHomeLogs.react';
 import ContainerHomeFolders from './ContainerHomeFolders.react';
 import {shell} from 'electron';
@@ -34,10 +33,6 @@ var ContainerHome = React.createClass({
   handleErrorClick: function () {
     // Display wiki for proxy: https://github.com/docker/kitematic/wiki/Common-Proxy-Issues-&-Fixes
     shell.openExternal('https://github.com/kitematic/kitematic/issues/new');
-  },
-
-  showWeb: function () {
-    return _.keys(this.props.ports).length > 0;
   },
 
   showFolders: function () {
@@ -118,19 +113,13 @@ var ContainerHome = React.createClass({
       var logWidget = (
         <ContainerHomeLogs container={this.props.container}/>
       );
-      var webWidget;
-      if (this.showWeb()) {
-        webWidget = (
-          <ContainerHomePreview ports={this.props.ports} defaultPort={this.props.defaultPort} />
-        );
-      }
       var folderWidget;
       if (this.showFolders()) {
         folderWidget = (
           <ContainerHomeFolders container={this.props.container} />
         );
       }
-      if (logWidget && !webWidget && !folderWidget) {
+      if (logWidget && !folderWidget) {
         body = (
           <div className="details-panel home">
             <div className="content">
@@ -148,7 +137,6 @@ var ContainerHome = React.createClass({
                 {logWidget}
               </div>
               <div className="right">
-                {webWidget}
                 {folderWidget}
               </div>
             </div>
