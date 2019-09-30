@@ -42,7 +42,7 @@
     "cached-request": "1.1.2",
     "classnames": "2.2.5",
     "deep-extend": "^0.6.0",
-    "dockerode": "2.5.8",
+    "dockerode": "3.0.1",
     "install": "0.1.8",
     "jquery": "^3.4.1",
     "mixpanel": "kitematic/mixpanel-node",
