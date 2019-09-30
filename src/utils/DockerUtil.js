@@ -48,7 +48,7 @@ var DockerUtil = {
 
     if (ip.indexOf('local') !== -1) {
       try {
-        this.client = new dockerode({socketPath: this.socketPath});
+        this.client = new dockerode({socketPath: this.socketPath, headers: {'user-agent': 'kitematic'}});
       } catch (error) {
         throw new Error('Cannot connect to the Docker daemon. Is the daemon running?');
       }
@@ -64,7 +64,8 @@ var DockerUtil = {
         port: 2376,
         ca: fs.readFileSync(path.join(certDir, 'ca.pem')),
         cert: fs.readFileSync(path.join(certDir, 'cert.pem')),
-        key: fs.readFileSync(path.join(certDir, 'key.pem'))
+        key: fs.readFileSync(path.join(certDir, 'key.pem')),
+        headers: {'user-agent': 'kitematic'},
       });
     }
   },
