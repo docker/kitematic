@@ -25,15 +25,14 @@ Have a bug or a feature request? Please first read the [Issue Guidelines](https:
 
 ## Roadmap & Contributing
 
-We welcome all pull requests and contributions that anyone would like to make. The Kitematic team is super happy to support anyone who wants to get involved. Please checkout our [roadmap](ROADMAP.md) that we keep up to date for ideas to help you with contributing. We would love to talk to you about contributing.
+We welcome all pull requests and contributions that anyone would like to make. The Docker team is super happy to support anyone who wants to get involved. Please checkout our [roadmap](ROADMAP.md) that we keep up to date for ideas to help you with contributing. We would love to talk to you about contributing.
 
 Please read through our [Contributing Guidelines](https://github.com/kitematic/kitematic/blob/master/CONTRIBUTING.md). Included are directions for opening issues, coding standards, and notes on development.
 
 ## Community
 
-- [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kitematic/kitematic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 - Ask questions on our [user forum](https://forums.docker.com/c/open-source-projects/kitematic).
-- **#kitematic** on IRC. [Join the channel](http://webchat.freenode.net/?channels=%23kitematic&uio=d4).
 - Follow [@kitematic on Twitter](https://twitter.com/kitematic).
 
 ## Uninstalling
