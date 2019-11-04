@@ -3,9 +3,10 @@
 
 [![Kitematic Logo](https://cloud.githubusercontent.com/assets/251292/5269258/1b229c3c-7a2f-11e4-96f1-e7baf3c86d73.png)](https://kitematic.com)
 
-With the release of the new [Docker Desktop Dashboard](https://) Docker will be bringing the best Kitematic features straight to it’s Desktop customers. 
+In the latest Edge release of Docker Desktop we have introduced the new [Docker Desktop Dashboard](https://docs.docker.com/docker-for-mac/edge-release-notes/). As part of this, Docker is working on providing a common user experience to developers and bringing the best Kitematic features to its Desktop customers. 
 
-As a result the Docker Kitematic Project will be archived in the first half of 2020, after this date there will be no new releases made of the Kitematic product. 
+As a result, we plan on achieving feature parity and archiving the Docker Kitematic Project during 2020. After we archive the Kitematic Project there will be no new releases of Kitematic. 
+
 
 
 ![Kitematic Screenshot](https://cloud.githubusercontent.com/assets/251292/8246120/d3ab271a-15ed-11e5-8736-9a730a27c79a.png)
@@ -29,23 +30,13 @@ Security is very important to us. If you have any issue regarding security, plea
 ## Deprecation FAQ
 
 **Why are you archiving Kitematic?**
-We are introducing a new integrated Desktop dashboard and experience that will incorporate the ideas and most of the capabilities of Kitematic into one common UX. 
-We are taking the good ideas from Kitematic and incorporating them into a new developer UX that provides a future as part of Docker Desktop.
+We are learning from  the capabilities in Kitematic and incorporating them into a common developer User experience and benefit all Docker Desktop users.
 
 **When will this happen?**
-We plan to deprecate and archive Kitematic in mid 2020 once we have provided the most important features from the existing Kitematic UI. 
-
-**Does this mean I can't use it after the archive date?**
-You can continue to use Kitematic but Docker will no longer be making any security updates to the product after this point, nor adding any new features. 
-Until this date we will continue to provide critical security fixes on Kitematic. 
+Once we have reached feature parity and provided the most important capabilities from the existing Kitematic UI. We aim to achieve this and then to archive Kitematic in 2020. 
 
 **What can I do if the new UI doesn't support something I need?**
-Tell us! Please add requests on the Kitematic repo. We need you to tell us what features you use so we can bring them across into the new UI. 
-
-
-**I want to keep using Kitematic, can't I maintain the repo?**
-You are welcome to fork the repo and use the codebase! 
-However, the Kitematic brand remains part of Docker so we would ask that you do not use this as any part of the new tools you build. 
+Tell us! Please add requests on the Kitematic repo. We need you to tell us what features you use so we can bring them across into the new UI.  We are very interested in your feedback starting with the Edge release.
 
 
 ## Bugs and Feature Requests
