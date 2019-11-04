@@ -3,9 +3,18 @@
 
 [![Kitematic Logo](https://cloud.githubusercontent.com/assets/251292/5269258/1b229c3c-7a2f-11e4-96f1-e7baf3c86d73.png)](https://kitematic.com)
 
-Kitematic is a simple application for managing Docker containers on Mac, Linux and Windows.
+Please give us feedback on the new [Docker Desktop Dashboard](https://docs.docker.com/docker-for-mac/edge-release-notes/)!
+
+In the latest Edge release of Docker Desktop we have introduced the new [Docker Desktop Dashboard](https://docs.docker.com/docker-for-mac/edge-release-notes/). As part of this, Docker is working on providing a common user experience to developers and bringing the best Kitematic features to its Desktop customers. 
+
+As a result, we plan on achieving feature parity and archiving the Docker Kitematic Project during 2020. After we archive the Kitematic Project there will be no new releases of Kitematic. 
+
+
 
 ![Kitematic Screenshot](https://cloud.githubusercontent.com/assets/251292/8246120/d3ab271a-15ed-11e5-8736-9a730a27c79a.png)
+
+Kitematic is a simple application for managing Docker containers on Mac, Linux and Windows.
+
 
 ## Installing Kitematic
 
@@ -19,22 +28,34 @@ Kitematic's documentation and other information can be found at [http://kitemati
 
 Security is very important to us. If you have any issue regarding security, please disclose the information responsibly by sending an email to security@docker.com and not by creating a github issue.
 
+
+## Archive FAQ
+
+**Why are you archiving Kitematic?**
+We are learning from  the capabilities in Kitematic and incorporating them into a common developer User experience and benefit all Docker Desktop users.
+
+**When will this happen?**
+Once we have reached feature parity and provided the most important capabilities from the existing Kitematic UI. We aim to achieve this and then to archive Kitematic in 2020. 
+
+**What can I do if the new UI doesn't support something I need?**
+Tell us! Please add requests on the Kitematic repo. We need you to tell us what features you use so we can bring them across into the new UI.  We are very interested in your feedback starting with the Edge release.
+
+
 ## Bugs and Feature Requests
 
-Have a bug or a feature request? Please first read the [Issue Guidelines](https://github.com/kitematic/kitematic/blob/master/CONTRIBUTING.md#using-the-issue-tracker) and search for existing and closed issues. If your problem or idea is not addressed yet, [please open a new issue](https://github.com/kitematic/kitematic/issues/new).
+Have a bug? Please first read the [Issue Guidelines](https://github.com/kitematic/kitematic/blob/master/CONTRIBUTING.md#using-the-issue-tracker) and search for existing and closed issues. 
 
-## Roadmap & Contributing
+If your idea is not in the new UI, [please open a new issue](https://github.com/kitematic/kitematic/issues/new).
 
-We welcome all pull requests and contributions that anyone would like to make. The Kitematic team is super happy to support anyone who wants to get involved. Please checkout our [roadmap](ROADMAP.md) that we keep up to date for ideas to help you with contributing. We would love to talk to you about contributing.
 
-Please read through our [Contributing Guidelines](https://github.com/kitematic/kitematic/blob/master/CONTRIBUTING.md). Included are directions for opening issues, coding standards, and notes on development.
+If your problem is not addressed yet, [please open a new issue](https://github.com/kitematic/kitematic/issues/new).
+
 
 ## Community
 
-- [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/kitematic/kitematic?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+
 - Ask questions on our [user forum](https://forums.docker.com/c/open-source-projects/kitematic).
-- **#kitematic** on IRC. [Join the channel](http://webchat.freenode.net/?channels=%23kitematic&uio=d4).
-- Follow [@kitematic on Twitter](https://twitter.com/kitematic).
+- Follow [@Docker on Twitter](https://twitter.com/docker).
 
 ## Uninstalling
 
