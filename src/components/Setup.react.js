@@ -166,6 +166,7 @@ var Setup = React.createClass({
             <div className="contents">
               <RetinaImage src="install-error.png" checkIfRetinaImgExists={false}/>
               <div className="detail">
+               <a className="btn btn-danger small" onClick={this.handleResetSettings}>reset</a>
               </div>
             </div>
           </div>
