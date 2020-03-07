@@ -8,4 +8,8 @@
 * change directory to cloned folder
 * npm install
 * npm start
+<<<<<<< HEAD
 * this will start Hyper-V if it is installed or old functionality if not
+=======
+* this will start Hyper-V if it is installed or old functionality if not
+>>>>>>> master
