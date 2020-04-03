@@ -4,7 +4,24 @@ import Router from 'react-router';
 import util from '../utils/Util';
 import electron from 'electron';
 const remote = electron.remote;
+var FontSelect = React.createClass({
+  
+  getFontSizes: function(start, end){
+    let options = [];
+    for(let i = start; i<=end; i++){
+      options.push(<option key={i} value={i}>{i+' px'}</option>);
+    }
+    return options;
+  },
 
+  render: function(){
+    return (
+      <select id={this.props.id} value={this.props.fontSize} onChange={this.props.onChange}>
+        {this.getFontSizes(10, 30)}
+      </select>
+    );
+  }
+});
 var Preferences = React.createClass({
   mixins: [Router.Navigation],
   getInitialState: function () {
@@ -14,7 +31,8 @@ var Preferences = React.createClass({
       metricsEnabled: metrics.enabled(),
       terminalShell: localStorage.getItem('settings.terminalShell') || "sh",
       terminalPath: localStorage.getItem('settings.terminalPath') || "/usr/bin/xterm",
-      startLinkedContainers: localStorage.getItem('settings.startLinkedContainers') === 'true'
+      startLinkedContainers: localStorage.getItem('settings.startLinkedContainers') === 'true',
+      logsFontSize: localStorage.getItem('settings.logsFontSize') || 10
     };
   },
   handleGoBackClick: function () {
@@ -72,6 +90,20 @@ var Preferences = React.createClass({
       startLinkedContainers: checked
     });
     localStorage.setItem('settings.startLinkedContainers', checked ? 'true' : 'false');
+  },
+  handleChangeLogsFontSize: function (e) {
+    var fontSize = event.target.value;
+    this.setState({
+      logsFontSize: fontSize
+    });
+    localStorage.setItem('settings.logsFontSize', fontSize);
+  },
+  getFontSizes: function(start, end){
+    let options = [];
+    for(let i = start; i<=end; i++){
+      options.push(<option key={i} value={i}>{i+' px'}</option>);
+    }
+    return options;
   },
   render: function () {
     var vmSettings, vmShutdown, nativeSetting, linuxSettings;
@@ -158,6 +190,14 @@ var Preferences = React.createClass({
             </div>
             <div className="option-value">
               <input id="startLinkedContainers" type="checkbox" checked={this.state.startLinkedContainers} onChange={this.handleChangeStartLinkedContainers}/>
+            </div>
+          </div>
+          <div className="option">
+            <div className="option-name">
+              <label htmlFor="logsFontSize">Container logs font size</label>
+            </div>
+            <div className="option-value">
+              <FontSelect id="logsFontSize" fontSize={this.state.logsFontSize} onChange={this.handleChangeLogsFontSize} />
             </div>
           </div>
           {linuxSettings}

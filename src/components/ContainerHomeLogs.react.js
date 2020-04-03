@@ -40,7 +40,7 @@ let prevBottom = 0;
 module.exports = React.createClass({
   getInitialState: function(){
     return {
-      fontSize: 10,
+      fontSize: localStorage.getItem('settings.logsFontSize') || 10,
       follow: true,
     };
   },
@@ -50,6 +50,7 @@ module.exports = React.createClass({
       fontSize: $target.value,
       follow: prevState.follow
     }));
+    localStorage.setItem("settings.logsFontSize", $target.value);
   },
   componentDidUpdate: function () {
     var node = $('.logs').get()[0];
