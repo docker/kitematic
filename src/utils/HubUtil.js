@@ -28,7 +28,7 @@ module.exports = {
     return config;
   },
 
-  // Retrives the current jwt hub token or null if no token exists
+  // Retrieves the current jwt hub token or null if no token exists
   jwt: function () {
     let jwt = localStorage.getItem('auth.jwt');
     if (!jwt) {
