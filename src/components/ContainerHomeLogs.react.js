@@ -104,11 +104,11 @@ module.exports = React.createClass({
       let path = `${this.props.container.Name} ${new Date().toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g,'-')}.txt`;
       dialog.showSaveDialog({
         defaultPath: path
-      },function(fileName) {
-        if (!fileName) return;
-        fs.writeFile(fileName, _logs, (err) => {
+      }).then(({filePath}) => {
+        if (!filePath) return;
+        fs.writeFile(filePath, _logs, (err) => {
           if(!err){
-            shell.showItemInFolder(fileName);
+            shell.showItemInFolder(filePath);
           }else{
             dialog.showErrorBox('Oops! an error occured', err.message);
           }

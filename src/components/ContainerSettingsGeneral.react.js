@@ -153,8 +153,8 @@ var ContainerSettingsGeneral = React.createClass({
     dialog.showMessageBox({
       message: 'Are you sure you want to delete this container?',
       buttons: ['Delete', 'Cancel']
-    }, index => {
-      if (index === 0) {
+    }).then(({response}) => {
+      if (response === 0) {
         metrics.track('Deleted Container', {
           from: 'settings',
           type: 'existing'

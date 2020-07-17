@@ -29,7 +29,7 @@
     "test": "jest -c jest-unit.json",
     "tslint": "tslint --fix --project ./tsconfig.json"
   },
-  "electron-version": "1.8.8",
+  "electron-version": "7.2.4",
   "dependencies": {
     "JSONStream": "1.3.2",
     "alt": "0.16.10",
@@ -73,7 +73,7 @@
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
     "braces": "^2.3.1",
-    "electron": "1.8.8",
+    "electron": "^7.2.4",
     "electron-builder": "^20.28.4",
     "electron-packager": "^12.1.1",
     "eslint": "^4.18.2",
@@ -87,7 +87,7 @@
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-less": "^2.0.0",
     "grunt-contrib-watch": "^1.1.0",
-    "grunt-electron": "^9.0.1",
+    "grunt-electron": "^11.0.0",
     "grunt-electron-installer": "^2.1.0",
     "grunt-electron-packager": "0.2.1",
     "grunt-if-missing": "1.0.1",
