@@ -10,12 +10,12 @@ import containerActions from '../actions/ContainerActions';
 
 var ContainerSettingsVolumes = React.createClass({
   handleChooseVolumeClick: function (dockerVol) {
-    dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']}, (filenames) => {
-      if (!filenames) {
+    dialog.showOpenDialog({properties: ['openDirectory', 'createDirectory']}).then(({filePaths}) => {
+      if (!filePaths) {
         return;
       }
 
-      var directory = filenames[0];
+      var directory = filePaths[0];
 
       if (!directory || (!util.isNative() && directory.indexOf(util.home()) === -1)) {
         dialog.showMessageBox({

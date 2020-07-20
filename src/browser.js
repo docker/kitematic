@@ -27,17 +27,20 @@ app.on('ready', function () {
   var mainWindow = new BrowserWindow({
     width: size.width || 1080,
     height: size.height || 680,
-    'min-width': os.platform() === 'win32' ? 400 : 700,
-    'min-height': os.platform() === 'win32' ? 260 : 500,
+    minWidth: os.platform() === 'win32' ? 400 : 700,
+    minHeight: os.platform() === 'win32' ? 260 : 500,
     'standard-window': false,
     resizable: true,
     frame: false,
     backgroundColor: '#fff',
-    show: false
+    show: false,
+    webPreferences: {
+      nodeIntegration: true,
+    },
   });
 
   if (process.env.NODE_ENV === 'development') {
-    mainWindow.openDevTools({detach: true});
+    mainWindow.openDevTools({mode: 'detach'});
   }
 
   mainWindow.loadURL(path.normalize('file://' + path.join(__dirname, 'index.html')));

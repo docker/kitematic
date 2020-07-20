@@ -20,15 +20,15 @@ var ContainerListItem = React.createClass({
     dialog.showMessageBox({
       message: 'Are you sure you want to stop & remove this container?',
       buttons: ['Remove', 'Cancel']
-    }, function (index) {
-      if (index === 0) {
+    }).then(({response}) => {
+      if (response === 0) {
         metrics.track('Deleted Container', {
           from: 'list',
           type: 'existing'
         });
         containerActions.destroy(this.props.container.Name);
       }
-    }.bind(this));
+    });
   },
   render: function () {
     var self = this;

@@ -24,8 +24,8 @@ var ContainerHomeFolder = React.createClass({
       dialog.showMessageBox({
         message: `Enable all volumes to edit files? This may not work with all database containers.`,
         buttons: ['Enable Volumes', 'Cancel']
-      }, (index) => {
-        if (index === 0) {
+      }).then(({response}) => {
+        if (response === 0) {
           var mounts = _.clone(this.props.container.Mounts);
           var newSource = path.join(util.home(), util.documents(), 'Kitematic', this.props.container.Name, destination);
 
