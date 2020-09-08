@@ -110,7 +110,8 @@
     "shell-escape": "0.2.0",
     "source-map-support": "0.3.3",
     "tslint": "^5.11.0",
-    "typescript": "2.7.2"
+    "typescript": "2.7.2",
+    "yargs-parser": "^13.1.2"
   },
   "optionalDependencies": {
     "grunt-electron-installer-debian": "0.3.1",
