@@ -43,6 +43,7 @@
     "classnames": "2.2.5",
     "deep-extend": "^0.6.0",
     "dockerode": "3.0.1",
+    "bl": "^1.2.3",
     "install": "0.1.8",
     "jquery": "^3.5.0",
     "mixpanel": "kitematic/mixpanel-node",
