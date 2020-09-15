@@ -1,6 +1,6 @@
 {
   "name": "Kitematic",
-  "version": "0.17.12",
+  "version": "0.17.13",
   "author": "Kitematic",
   "license": "Apache-2.0",
   "description": "Simple Docker Container management for Mac OS X, Windows and Ubuntu.",
