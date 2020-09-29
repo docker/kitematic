@@ -20,6 +20,15 @@ Kitematic is a simple application for managing Docker containers on Mac, Linux a
 
 [Download the latest version](https://github.com/docker/kitematic/releases) of Kitematic via the github release page.
 
+**Mac**
+
+Unzip the archive, and drag kitematic.app into your applcations folder.
+
+**Windows**
+
+Unzip the archive, and drag all the contents into c:\program files\Docker\Kitematic\
+Some windows users may also need to alter `c:\windows\system32\drivers\etc\hosts` adding this entry: `127.0.0.1  docker.local`
+    
 ## Documentation
 
 Kitematic's documentation and other information can be found at [http://kitematic.com/docs](http://kitematic.com/docs).
