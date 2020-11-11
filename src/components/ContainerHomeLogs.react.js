@@ -110,7 +110,7 @@ module.exports = React.createClass({
           if(!err){
             shell.showItemInFolder(filePath);
           }else{
-            dialog.showErrorBox('Oops! an error occured', err.message);
+            dialog.showErrorBox('Oops! an error occurred', err.message);
           }
         });
       });
