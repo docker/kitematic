@@ -100,7 +100,7 @@
     "jest-cli": "^23.6.0",
     "js-yaml": "^3.13.1",
     "load-grunt-tasks": "^4.0.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.21",
     "lodash.template": "^4.5.0",
     "merge": ">=1.2.1",
     "minimatch": ">=3.0.4",
