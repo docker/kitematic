@@ -96,7 +96,7 @@
     "grunt-plistbuddy": "^0.2.0",
     "grunt-rcedit": "^0.7.0",
     "grunt-shell": "^2.1.0",
-    "handlebars": "^4.5.3",
+    "handlebars": "^4.7.7",
     "jest-cli": "^23.6.0",
     "js-yaml": "^3.13.1",
     "load-grunt-tasks": "^4.0.0",
