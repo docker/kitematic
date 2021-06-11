@@ -38,7 +38,7 @@ var Preferences = React.createClass({
     });
     localStorage.setItem('settings.useVM', checked);
     util.isNative();
-    metrics.track('Toggled VM or Native settting', {
+    metrics.track('Toggled VM or Native setting', {
       vm: checked
     });
   },
