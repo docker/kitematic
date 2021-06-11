@@ -1,3 +1,5 @@
+### :warning: Deprecation Notice: This project and repository is now deprecated and is no longer under active development, see [the related roadmap issue](https://github.com/docker/roadmap/issues/67). Please use [Docker Desktop](https://www.docker.com/products/docker-desktop) instead where possible.
+
 [![Build Status](https://travis-ci.org/docker/kitematic.svg?branch=master)](https://travis-ci.org/docker/kitematic)
 
 
