@@ -8,6 +8,7 @@ import Header from './Header.react';
 import metrics from '../utils/MetricsUtil';
 import {shell} from 'electron';
 import machine from '../utils/DockerMachineUtil';
+import docker from '../utils/DockerUtil';
 
 var Containers = React.createClass({
   contextTypes: {
@@ -115,6 +116,18 @@ var Containers = React.createClass({
     shell.openExternal('https://github.com/docker/kitematic');
   },
 
+  refreshContainerList: function ($event) {
+    let btn = $event.target;
+    btn.disabled = true;
+    btn.className += ' refreshing';
+    docker.fetchAllContainers();
+    // rotate for one second
+    setTimeout(() => {
+      btn.className = 'btn btn-action btn-refresh';
+      btn.disabled = false;
+    }, 1000);
+  },
+
   render: function () {
     var sidebarHeaderClass = 'sidebar-header';
     if (this.state.sidebarOffset) {
@@ -129,6 +142,9 @@ var Containers = React.createClass({
           <div className="sidebar">
             <section className={sidebarHeaderClass}>
               <h4>Containers</h4>
+              <button onClick={this.refreshContainerList} className="btn btn-action btn-refresh">
+                &#x21bb;
+              </button>
               <div className="create">
                 <Router.Link to="search">
                   <span className="btn btn-new btn-action has-icon btn-hollow"><span className="icon icon-add"></span>New</span>
