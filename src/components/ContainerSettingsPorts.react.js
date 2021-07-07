@@ -100,7 +100,9 @@ var ContainerSettingsPorts = React.createClass({
       return (i !== key && _.isEqual(v.port, port));
     });
 
-    if (!port.match(/^[0-9]+$/g)) {
+    if (port.length === 0) {
+      ports[key].error = null;
+    } else if (!port.match(/^[0-9]+$/g)) {
       ports[key].error = 'Needs to be an integer.';
     } else if (port <= 0 || port > 65535) {
       ports[key].error = 'Needs to be in range <1,65535>.';
@@ -180,7 +182,7 @@ var ContainerSettingsPorts = React.createClass({
     this.setState({ports: ports});
     let exposedPorts = {};
     let portBindings = _.reduce(ports, (res, value, key) => {
-      if (key !== '') {
+      if (key !== '' && value.port !== '') {
         res[key + '/' + value.portType] = [{
           HostPort: value.port
         }];
