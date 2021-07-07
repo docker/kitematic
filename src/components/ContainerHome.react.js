@@ -111,7 +111,7 @@ var ContainerHome = React.createClass({
       }
     } else {
       var logWidget = (
-        <ContainerHomeLogs container={this.props.container}/>
+        <ContainerHomeLogs container={this.props.container} />
       );
       var folderWidget;
       if (this.showFolders()) {
