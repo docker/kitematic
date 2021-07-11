@@ -1,0 +1,41 @@
+name: kitematic
+version: git
+summary: Container Management.
+description:  A simple application for managing Docker containers on Mac, Linux and Windows.
+confinement: strict
+grade: stable
+base: core18
+icon: snap/gui/kitematic.png
+
+apps:
+  kitematic:
+    command: env TMPDIR=$XDG_RUNTIME_DIR desktop-launch $SNAP/kitematic
+    plugs:
+      - desktop
+      - desktop-legacy
+      - home
+      - docker
+      - x11
+      - unity7
+      - browser-support
+      - network
+      - gsettings
+      - pulseaudio
+      - opengl
+
+parts:
+  app:
+    plugin: nodejs
+    node-engine: "12.4.0"
+    stage-packages:
+      - libgconf2-4
+      - libnotify4
+      - libnspr4
+      - libnss3
+      - libpcre3
+      - libpulse0
+      - libxss1
+      - libxtst6
+    source: dist/linux-unpacked
+    after:
+      - desktop-gtk3
